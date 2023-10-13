@@ -12,7 +12,8 @@ class BaseTabbarController: UITabBarController{
     override func viewDidLoad() {
         super.viewDidLoad()
     
-        let mainVC = MainViewController(viewModel: MainViewModel())
+        //let mainVC = MainViewController(viewModel: MainViewModel()) // 사용 자제
+        let mainVC = MainViewController(viewModel: MainViewModel(networkManager: NetworkManager()))
         let mainNavVC = BaseNavigationController(rootViewController: mainVC)
         mainVC.bind(to: mainVC.viewModel)
         mainNavVC.tabBarItem = UITabBarItem(title: "메인", image:  UIImage(systemName: "person.circle"), tag: 0)

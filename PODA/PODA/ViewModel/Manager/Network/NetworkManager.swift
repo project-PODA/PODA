@@ -14,7 +14,6 @@ class NetworkManager : NetworkManagerProtocol{
                 completion(.failure(.requestFailed(error)))
                 return
             }
-            
             guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                 completion(.failure(.invalidData))
                 return
@@ -34,12 +33,6 @@ class NetworkManager : NetworkManagerProtocol{
             }
         }.resume()
     }
-}
-struct Post: Decodable {
-    let userId: Int
-    let id: Int
-    let title: String
-    let body: String
 }
 
 
