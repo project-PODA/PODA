@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UICollectionView{
+extension UICollectionView {
     func setupBookTableView<T: UICollectionViewCell>(delegate: UICollectionViewDelegate, dataSource: UICollectionViewDataSource, cellType: T.Type) {
         self.delegate = delegate
         self.dataSource = dataSource

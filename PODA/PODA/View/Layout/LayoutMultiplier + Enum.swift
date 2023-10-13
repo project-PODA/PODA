@@ -13,6 +13,7 @@ enum LayoutMultiplier: CGFloat {
     case quarter = 0.25
     case half = 0.5
     case slightlyMoreThanHalf = 0.6
+    
     func getScale() -> Double {
         switch self{
         case .superSmall:

@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIButton {
-    func setUpButton(title: String, titleSize : CGFloat = 20.0) {
+    func setUpButton(title: String, titleSize: CGFloat = 20.0) {
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
         setTitle(title, for: .normal)

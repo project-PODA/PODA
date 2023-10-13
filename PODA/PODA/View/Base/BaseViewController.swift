@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol UIConfigurable{
+protocol UIConfigurable {
     func configUI()
 }
 
-class BaseViewController : UIViewController{
+class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Palette.podaBlack.getColor()

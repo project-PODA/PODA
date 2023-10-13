@@ -7,7 +7,7 @@
 
 import Foundation
 
-class NetworkManager : NetworkManagerProtocol{
+class NetworkManager: NetworkManagerProtocol {
     func fetchData<T: Decodable>(from url: URL, completion: @escaping (Result<T, NetworkError>) -> Void) {
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
@@ -35,6 +35,7 @@ class NetworkManager : NetworkManagerProtocol{
         }.resume()
     }
 }
+
 struct Post: Decodable {
     let userId: Int
     let id: Int

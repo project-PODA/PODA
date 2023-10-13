@@ -11,6 +11,7 @@ enum Palette {
     case podaWhite
     case podaBlue // 추억다이어리 셀 색깔
     case podaBlack
+    
     func getColor() -> UIColor {
         switch self {
         case .podaWhite:

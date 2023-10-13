@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension UIView{
+extension UIView {
     func setUpView() {
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true

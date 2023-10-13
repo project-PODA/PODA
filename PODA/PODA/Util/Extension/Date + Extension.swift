@@ -6,8 +6,8 @@
 //
 import Foundation
 
-extension Date{
-    func GetCurrentTime(Dataforamt : String = "yyyy-MM-dd HH:mm:ss") -> String{
+extension Date {
+    func GetCurrentTime(Dataforamt: String = "yyyy-MM-dd HH:mm:ss") -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = Dataforamt
         let dateString = formatter.string(from: self)

@@ -12,6 +12,7 @@ enum SafeAreaConstMargin {
     case safeAreaLeftMargin
     case safeAreaRightMargin
     case safeAreaBottomMargin
+    
     func getMargin() -> Double {
         switch self {
         case .safeAreaTopMargin:
@@ -30,6 +31,7 @@ enum ComponentSpacing {
     case small
     case medium
     case large
+    
     func getMargin() -> Double {
         switch self {
         case .small:

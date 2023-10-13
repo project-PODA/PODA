@@ -15,7 +15,7 @@ class ProfileViewController: BaseViewController,ViewModelBindable,UIConfigurable
         configUI()
     }
     
-    init(viewModel : ProfileViewModel) {
+    init(viewModel: ProfileViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

@@ -17,6 +17,7 @@ struct UserDefault<T> {
         get { self.storage.object(forKey: self.key) as? T ?? self.defaultValue }
         set { self.storage.set(newValue, forKey: self.key) }
     }
+    
     init(key: String, defaultValue: T, storage: UserDefaults = .standard) {
         self.key = key
         self.defaultValue = defaultValue
@@ -27,6 +28,5 @@ struct UserDefault<T> {
 struct UserDefaultManager {
     @UserDefault(key: "isUserLoggedIn", defaultValue: false)
     static var isUserLoggedIn: Bool
-    
 }
 

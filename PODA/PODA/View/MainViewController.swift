@@ -11,7 +11,7 @@ class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
 
     var viewModel: MainViewModel!
 
-    private lazy var moveNextButton : UIButton = {
+    private lazy var moveNextButton: UIButton = {
         let button = UIButton()
         button.setUpButton(title: "이동")
         button.addTarget(self, action: #selector(moveToCompletsButtonTapped), for: .touchUpInside)
@@ -23,7 +23,7 @@ class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
         configUI()
     }
     
-    init(viewModel : MainViewModel) {
+    init(viewModel: MainViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -44,7 +44,8 @@ class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
             $0.width.height.equalTo(50)
         }
     }
-    @objc private func moveToCompletsButtonTapped(){
+    
+    @objc private func moveToCompletsButtonTapped() {
         let mainVC = MainViewController(viewModel: MainViewModel())
         mainVC.bind(to: mainVC.viewModel)
         navigationController?.pushViewController(mainVC, animated: true)

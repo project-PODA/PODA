@@ -14,6 +14,7 @@ enum LogLevel {
     case error
     case fatal
 }
+
 struct Logger {
     private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "gjonegg")
     static func writeLog(_ level: LogLevel, message: String, isNeededStackTraceInfo : Bool = false, line : Int = #line, fileName : String = #file) {
@@ -38,13 +39,17 @@ struct Logger {
             logType = .fault
             emoji = "🚫"
         }
+        
         logMessage = "[\(Date().GetCurrentTime())] : \(emoji) : \(message) -> \(fileName.split(separator: "/").last!) :\(line)\r\n"
+        
         if isNeededStackTraceInfo{
             logMessage += Thread.callStackSymbols.joined(separator: "\r\n")
         }
+        
         if level == .error || level == .fatal {
             saveLog(logMessage)
         }
+        
         os_log("%@", log: log, type: logType, logMessage)
     }
     
