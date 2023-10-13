@@ -6,9 +6,10 @@
 //
 
 class MainViewModel {
-    
-    
-    
+
+    init(){
+        print("MainViewModel Called")
+    }
 }
 
 

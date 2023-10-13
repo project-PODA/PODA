@@ -12,7 +12,7 @@ class BaseNavigationController: UINavigationController {
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         self.rootViewController = rootViewController
-        configTheme()
+        //configTheme()
         
     }
     required init?(coder aDecoder: NSCoder) {
@@ -30,8 +30,8 @@ class BaseNavigationController: UINavigationController {
         interactivePopGestureRecognizer?.isEnabled = true
         navigationBar.isTranslucent = false
         navigationBar.backgroundColor = .white
-        navigationBar.barTintColor = Palette.black.getColor()
-        navigationBar.tintColor = Palette.red.getColor()
+        navigationBar.barTintColor = UIColor.white
+        navigationBar.tintColor = UIColor.black
     }
 }
 

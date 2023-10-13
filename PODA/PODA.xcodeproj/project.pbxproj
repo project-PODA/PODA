@@ -36,6 +36,10 @@
 		5FD54B522AD915690092D75B /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B512AD915690092D75B /* ProfileViewModel.swift */; };
 		5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B532AD915790092D75B /* ProfileViewController.swift */; };
 		5FD54B582AD915EE0092D75B /* BaseTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */; };
+		5FD54B5A2AD922B10092D75B /* FirebaseAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */; };
+		5FD54B5C2AD922B90092D75B /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */; };
+		5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */; };
+		5FD54B602AD922D10092D75B /* diaryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5F2AD922D10092D75B /* diaryInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +73,10 @@
 		5FD54B512AD915690092D75B /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		5FD54B532AD915790092D75B /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTabbarController.swift; sourceTree = "<group>"; };
+		5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthManager.swift; sourceTree = "<group>"; };
+		5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
+		5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorageManager.swift; sourceTree = "<group>"; };
+		5FD54B5F2AD922D10092D75B /* diaryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = diaryInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +149,7 @@
 		5FD54B152AD90F930092D75B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				5FD54B5F2AD922D10092D75B /* diaryInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -199,6 +208,9 @@
 		5FD54B372AD912010092D75B /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
+				5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */,
+				5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */,
+				5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";
@@ -339,9 +351,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */,
 				5FD54B292AD911120092D75B /* UITableView + Extension.swift in Sources */,
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
+				5FD54B5A2AD922B10092D75B /* FirebaseAuthManager.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
 				5FD54B342AD911D30092D75B /* NetworkManager.swift in Sources */,
 				5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */,
@@ -353,6 +367,7 @@
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
+				5FD54B5C2AD922B90092D75B /* FirestoreManager.swift in Sources */,
 				2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */,
 				5FD54B272AD910EE0092D75B /* UITextField + Extension.swift in Sources */,
 				5FD54B412AD912C20092D75B /* FontSize + Enum.swift in Sources */,
@@ -365,6 +380,7 @@
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
+				5FD54B602AD922D10092D75B /* diaryInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

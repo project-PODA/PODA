@@ -8,18 +8,21 @@
 import UIKit
 
 class BaseTabbarController: UITabBarController{
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     
-        let mainVC = MainViewController(viewModel : MainViewModel())
-        mainVC.tabBarItem = UITabBarItem(title: "First", image:  UIImage(systemName: "person.circle"), tag: 0)
+        let mainVC = MainViewController(viewModel: MainViewModel())
+        let mainNavVC = BaseNavigationController(rootViewController: mainVC)
+        mainVC.bind(to: mainVC.viewModel)
+        mainNavVC.tabBarItem = UITabBarItem(title: "메인", image:  UIImage(systemName: "person.circle"), tag: 0)
         
-        let secondVC = ProfileViewController(viewModel : ProfileViewModel())
+        let profileVC = ProfileViewController(viewModel: ProfileViewModel())
+        let profileNavVC = BaseNavigationController(rootViewController: profileVC)
+        profileVC.bind(to: profileVC.viewModel)
+        profileNavVC.tabBarItem = UITabBarItem(title: "마이페이지", image:  UIImage(systemName: "person.circle"), tag: 1)
         
-        secondVC.tabBarItem = UITabBarItem(title: "Second", image: UIImage(systemName: "book.circle"), tag: 1)
-        
-        viewControllers = [mainVC, secondVC]
-        selectedIndex = 0
+        viewControllers = [mainNavVC, profileNavVC]
     }
     
 }

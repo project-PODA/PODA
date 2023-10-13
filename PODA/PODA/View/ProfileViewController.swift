@@ -12,7 +12,7 @@ class ProfileViewController: BaseViewController,ViewModelBindable,UIConfigurable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .yellow
+        configUI()
     }
     
     init(viewModel : ProfileViewModel) {
@@ -25,7 +25,7 @@ class ProfileViewController: BaseViewController,ViewModelBindable,UIConfigurable
     }
     
     func bindViewModel() {
-        
+        print("ProfileView bindViewModel called")
     }
     
     func configUI() {
