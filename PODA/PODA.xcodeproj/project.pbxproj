@@ -12,6 +12,14 @@
 		2769858D2AD8E20B00A5100D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2769858C2AD8E20B00A5100D /* ViewController.swift */; };
 		276985922AD8E20D00A5100D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 276985912AD8E20D00A5100D /* Assets.xcassets */; };
 		276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 276985932AD8E20D00A5100D /* LaunchScreen.storyboard */; };
+		5FD54AED2AD8E5B30092D75B /* Network in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AEC2AD8E5B30092D75B /* Network */; };
+		5FD54AF52AD8E5E10092D75B /* PropertyWrapper in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AEE2AD8E5E10092D75B /* PropertyWrapper */; };
+		5FD54AF62AD8E5E10092D75B /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AEF2AD8E5E10092D75B /* Base */; };
+		5FD54AF72AD8E5E10092D75B /* Binding in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AF02AD8E5E10092D75B /* Binding */; };
+		5FD54AF82AD8E5E10092D75B /* Logger in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AF12AD8E5E10092D75B /* Logger */; };
+		5FD54AF92AD8E5E10092D75B /* Util in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AF22AD8E5E10092D75B /* Util */; };
+		5FD54AFA2AD8E5E10092D75B /* Component in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AF32AD8E5E10092D75B /* Component */; };
+		5FD54AFB2AD8E5E10092D75B /* Color in Resources */ = {isa = PBXBuildFile; fileRef = 5FD54AF42AD8E5E10092D75B /* Color */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +30,14 @@
 		276985912AD8E20D00A5100D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		276985942AD8E20D00A5100D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		276985962AD8E20D00A5100D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5FD54AEC2AD8E5B30092D75B /* Network */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Network; sourceTree = "<group>"; };
+		5FD54AEE2AD8E5E10092D75B /* PropertyWrapper */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PropertyWrapper; sourceTree = "<group>"; };
+		5FD54AEF2AD8E5E10092D75B /* Base */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Base; sourceTree = "<group>"; };
+		5FD54AF02AD8E5E10092D75B /* Binding */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Binding; sourceTree = "<group>"; };
+		5FD54AF12AD8E5E10092D75B /* Logger */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Logger; sourceTree = "<group>"; };
+		5FD54AF22AD8E5E10092D75B /* Util */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Util; sourceTree = "<group>"; };
+		5FD54AF32AD8E5E10092D75B /* Component */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Component; sourceTree = "<group>"; };
+		5FD54AF42AD8E5E10092D75B /* Color */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Color; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +70,17 @@
 		276985872AD8E20B00A5100D /* PODA */ = {
 			isa = PBXGroup;
 			children = (
+				5FD54AFF2AD8E64B0092D75B /* Model */,
+				5FD54AFD2AD8E6300092D75B /* ViewModel */,
+				5FD54AFC2AD8E6280092D75B /* View */,
+				5FD54AEF2AD8E5E10092D75B /* Base */,
+				5FD54AF02AD8E5E10092D75B /* Binding */,
+				5FD54AF42AD8E5E10092D75B /* Color */,
+				5FD54AF32AD8E5E10092D75B /* Component */,
+				5FD54AF12AD8E5E10092D75B /* Logger */,
+				5FD54AEE2AD8E5E10092D75B /* PropertyWrapper */,
+				5FD54AF22AD8E5E10092D75B /* Util */,
+				5FD54AEC2AD8E5B30092D75B /* Network */,
 				276985882AD8E20B00A5100D /* AppDelegate.swift */,
 				2769858A2AD8E20B00A5100D /* SceneDelegate.swift */,
 				2769858C2AD8E20B00A5100D /* ViewController.swift */,
@@ -62,6 +89,27 @@
 				276985962AD8E20D00A5100D /* Info.plist */,
 			);
 			path = PODA;
+			sourceTree = "<group>";
+		};
+		5FD54AFC2AD8E6280092D75B /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		5FD54AFD2AD8E6300092D75B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		5FD54AFF2AD8E64B0092D75B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,8 +170,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FD54AF82AD8E5E10092D75B /* Logger in Resources */,
+				5FD54AF72AD8E5E10092D75B /* Binding in Resources */,
+				5FD54AF92AD8E5E10092D75B /* Util in Resources */,
+				5FD54AED2AD8E5B30092D75B /* Network in Resources */,
+				5FD54AFB2AD8E5E10092D75B /* Color in Resources */,
+				5FD54AF52AD8E5E10092D75B /* PropertyWrapper in Resources */,
 				276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */,
 				276985922AD8E20D00A5100D /* Assets.xcassets in Resources */,
+				5FD54AFA2AD8E5E10092D75B /* Component in Resources */,
+				5FD54AF62AD8E5E10092D75B /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
