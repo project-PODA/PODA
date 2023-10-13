@@ -8,11 +8,9 @@
 import UIKit
 
 extension UITextField{
-    func setUpTextField(borderColor : Palette = .purple, borderWidth : CGFloat = 1.0){
+    func setUpTextField() {
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
-        self.layer.borderWidth = borderWidth
-        self.layer.borderColor = borderColor.getColor().cgColor
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: self.frame.size.height))
         self.leftView = leftPaddingView
         self.leftViewMode = .always
