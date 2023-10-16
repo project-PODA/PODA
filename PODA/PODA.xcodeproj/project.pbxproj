@@ -49,6 +49,7 @@
 		5FD54B5A2AD922B10092D75B /* FirebaseAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */; };
 		5FD54B5C2AD922B90092D75B /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */; };
 		5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */; };
+		D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7762ADD478400FFB3F7 /* LoginViewController.swift */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
 /* End PBXBuildFile section */
 
@@ -96,6 +97,7 @@
 		5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthManager.swift; sourceTree = "<group>"; };
 		5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorageManager.swift; sourceTree = "<group>"; };
+		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,6 +258,14 @@
 			path = Layout;
 			sourceTree = "<group>";
 		};
+		D879F7752ADD477500FFB3F7 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				D879F7762ADD478400FFB3F7 /* LoginViewController.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
 		E28A2CF82AD95B91004401D1 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
@@ -270,10 +280,10 @@
 		E28A2CF92ADC6B99004401D1 /* Screen */ = {
 			isa = PBXGroup;
 			children = (
+				D879F7752ADD477500FFB3F7 /* Login */,
 				E28A2CFA2ADC6BA7004401D1 /* Main */,
 				E28A2CFD2ADC6BF9004401D1 /* Profile */,
 				E28A2CFC2ADC6BE6004401D1 /* SignUp */,
-				E28A2CFB2ADC6BBC004401D1 /* Login */,
 			);
 			path = Screen;
 			sourceTree = "<group>";
@@ -285,13 +295,6 @@
 				E28A2CFE2ADC6C0B004401D1 /* ViewController */,
 			);
 			path = Main;
-			sourceTree = "<group>";
-		};
-		E28A2CFB2ADC6BBC004401D1 /* Login */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Login;
 			sourceTree = "<group>";
 		};
 		E28A2CFC2ADC6BE6004401D1 /* SignUp */ = {
@@ -492,6 +495,7 @@
 				5FD54B432AD912D60092D75B /* ConstMargin + Enum.swift in Sources */,
 				5FD54B2D2AD9114B0092D75B /* UIView + Extension.swift in Sources */,
 				5FD54B4A2AD913460092D75B /* Logger.swift in Sources */,
+				D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */,
 				5FD54B302AD9118D0092D75B /* Observable + BindableType.swift in Sources */,
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
