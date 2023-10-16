@@ -49,6 +49,7 @@
 		5FD54B5A2AD922B10092D75B /* FirebaseAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */; };
 		5FD54B5C2AD922B90092D75B /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */; };
 		5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */; };
+		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,6 +104,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FD54B092AD90AE00092D75B /* SnapKit in Frameworks */,
+				E27DD4E62ADD15C5002B194A /* Then in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +410,7 @@
 			name = PODA;
 			packageProductDependencies = (
 				5FD54B082AD90AE00092D75B /* SnapKit */,
+				E27DD4E52ADD15C5002B194A /* Then */,
 			);
 			productName = PODA;
 			productReference = 276985852AD8E20B00A5100D /* PODA.app */;
@@ -439,6 +442,7 @@
 			mainGroup = 2769857C2AD8E20B00A5100D;
 			packageReferences = (
 				5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit" */,
+				E27DD4E42ADD15C5002B194A /* XCRemoteSwiftPackageReference "Then" */,
 			);
 			productRefGroup = 276985862AD8E20B00A5100D /* Products */;
 			projectDirPath = "";
@@ -720,6 +724,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		E27DD4E42ADD15C5002B194A /* XCRemoteSwiftPackageReference "Then" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/devxoul/Then";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -727,6 +739,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		E27DD4E52ADD15C5002B194A /* Then */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E27DD4E42ADD15C5002B194A /* XCRemoteSwiftPackageReference "Then" */;
+			productName = Then;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
