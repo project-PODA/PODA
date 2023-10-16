@@ -110,38 +110,18 @@
 		276985872AD8E20B00A5100D /* PODA */ = {
 			isa = PBXGroup;
 			children = (
-				5FD54B502AD914B50092D75B /* Entry */,
-				5FD54B4B2AD9139A0092D75B /* Util */,
-				5FD54B152AD90F930092D75B /* Model */,
-				5FD54B142AD90F8A0092D75B /* ViewModel */,
-				5FD54B132AD90F7E0092D75B /* View */,
-				276985912AD8E20D00A5100D /* Assets.xcassets */,
-				276985932AD8E20D00A5100D /* LaunchScreen.storyboard */,
-				276985962AD8E20D00A5100D /* Info.plist */,
+				E28A2D002ADC6D07004401D1 /* Global */,
+				E28A2D082ADC6F95004401D1 /* Network */,
+				E28A2CF92ADC6B99004401D1 /* Screen */,
+				E28A2CF82AD95B91004401D1 /* Resource */,
 			);
 			path = PODA;
-			sourceTree = "<group>";
-		};
-		5FD54B132AD90F7E0092D75B /* View */ = {
-			isa = PBXGroup;
-			children = (
-				5FD54B562AD915AC0092D75B /* Layout */,
-				5FD54B3B2AD912740092D75B /* Color */,
-				5FD54B1F2AD9106C0092D75B /* Component */,
-				5FD54B162AD90F9A0092D75B /* Base */,
-				5FD54B192AD90FD90092D75B /* MainViewController.swift */,
-				5FD54B532AD915790092D75B /* ProfileViewController.swift */,
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		5FD54B142AD90F8A0092D75B /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				5FD54B2E2AD911670092D75B /* Binding */,
-				5FD54B312AD911AE0092D75B /* Manager */,
-				5FD54B1B2AD90FE80092D75B /* MainViewModel.swift */,
-				5FD54B512AD915690092D75B /* ProfileViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -186,25 +166,6 @@
 			path = Binding;
 			sourceTree = "<group>";
 		};
-		5FD54B312AD911AE0092D75B /* Manager */ = {
-			isa = PBXGroup;
-			children = (
-				5FD54B382AD912130092D75B /* UserDefault */,
-				5FD54B372AD912010092D75B /* Firebase */,
-				5FD54B322AD911BF0092D75B /* Network */,
-			);
-			path = Manager;
-			sourceTree = "<group>";
-		};
-		5FD54B322AD911BF0092D75B /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				5FD54B332AD911D30092D75B /* NetworkManager.swift */,
-				5FD54B352AD911EE0092D75B /* NetworkProtocol + NetworkError.swift */,
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
 		5FD54B372AD912010092D75B /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,15 +184,6 @@
 			path = UserDefault;
 			sourceTree = "<group>";
 		};
-		5FD54B3B2AD912740092D75B /* Color */ = {
-			isa = PBXGroup;
-			children = (
-				5FD54B402AD912C20092D75B /* FontSize + Enum.swift */,
-				5FD54B3E2AD912960092D75B /* Palette + Enum.swift */,
-			);
-			path = Color;
-			sourceTree = "<group>";
-		};
 		5FD54B482AD913300092D75B /* Logger */ = {
 			isa = PBXGroup;
 			children = (
@@ -243,6 +195,7 @@
 		5FD54B4B2AD9139A0092D75B /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				5FD54B562AD915AC0092D75B /* Layout */,
 				5FD54B4D2AD913DF0092D75B /* Extension */,
 				5FD54B482AD913300092D75B /* Logger */,
 			);
@@ -252,18 +205,10 @@
 		5FD54B4D2AD913DF0092D75B /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				5FD54B1F2AD9106C0092D75B /* Component */,
 				5FD54B4E2AD913F00092D75B /* Date + Extension.swift */,
 			);
 			path = Extension;
-			sourceTree = "<group>";
-		};
-		5FD54B502AD914B50092D75B /* Entry */ = {
-			isa = PBXGroup;
-			children = (
-				276985882AD8E20B00A5100D /* AppDelegate.swift */,
-				2769858A2AD8E20B00A5100D /* SceneDelegate.swift */,
-			);
-			path = Entry;
 			sourceTree = "<group>";
 		};
 		5FD54B562AD915AC0092D75B /* Layout */ = {
@@ -273,6 +218,141 @@
 				5FD54B462AD913110092D75B /* LayoutMultiplier + Enum.swift */,
 			);
 			path = Layout;
+			sourceTree = "<group>";
+		};
+		E28A2CF82AD95B91004401D1 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				276985912AD8E20D00A5100D /* Assets.xcassets */,
+				276985932AD8E20D00A5100D /* LaunchScreen.storyboard */,
+				E28A2CFF2ADC6C3D004401D1 /* Support */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		E28A2CF92ADC6B99004401D1 /* Screen */ = {
+			isa = PBXGroup;
+			children = (
+				E28A2CFA2ADC6BA7004401D1 /* Main */,
+				E28A2CFD2ADC6BF9004401D1 /* Profile */,
+				E28A2CFC2ADC6BE6004401D1 /* SignUp */,
+				E28A2CFB2ADC6BBC004401D1 /* Login */,
+			);
+			path = Screen;
+			sourceTree = "<group>";
+		};
+		E28A2CFA2ADC6BA7004401D1 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				E28A2D052ADC6EAD004401D1 /* ViewModel */,
+				E28A2CFE2ADC6C0B004401D1 /* ViewController */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		E28A2CFB2ADC6BBC004401D1 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		E28A2CFC2ADC6BE6004401D1 /* SignUp */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SignUp;
+			sourceTree = "<group>";
+		};
+		E28A2CFD2ADC6BF9004401D1 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				E28A2D072ADC6EC2004401D1 /* ViewModel */,
+				E28A2D062ADC6EBA004401D1 /* ViewController */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		E28A2CFE2ADC6C0B004401D1 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5FD54B192AD90FD90092D75B /* MainViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		E28A2CFF2ADC6C3D004401D1 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				276985962AD8E20D00A5100D /* Info.plist */,
+				276985882AD8E20B00A5100D /* AppDelegate.swift */,
+				2769858A2AD8E20B00A5100D /* SceneDelegate.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		E28A2D002ADC6D07004401D1 /* Global */ = {
+			isa = PBXGroup;
+			children = (
+				E28A2D022ADC6D8B004401D1 /* DesignSystem */,
+				5FD54B162AD90F9A0092D75B /* Base */,
+				5FD54B4B2AD9139A0092D75B /* Util */,
+				5FD54B142AD90F8A0092D75B /* ViewModel */,
+				5FD54B152AD90F930092D75B /* Model */,
+			);
+			path = Global;
+			sourceTree = "<group>";
+		};
+		E28A2D022ADC6D8B004401D1 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				5FD54B3E2AD912960092D75B /* Palette + Enum.swift */,
+				5FD54B402AD912C20092D75B /* FontSize + Enum.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		E28A2D052ADC6EAD004401D1 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5FD54B1B2AD90FE80092D75B /* MainViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		E28A2D062ADC6EBA004401D1 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5FD54B532AD915790092D75B /* ProfileViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		E28A2D072ADC6EC2004401D1 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				5FD54B512AD915690092D75B /* ProfileViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		E28A2D082ADC6F95004401D1 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				E28A2D092ADC701A004401D1 /* Base */,
+				5FD54B372AD912010092D75B /* Firebase */,
+				5FD54B382AD912130092D75B /* UserDefault */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		E28A2D092ADC701A004401D1 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				5FD54B332AD911D30092D75B /* NetworkManager.swift */,
+				5FD54B352AD911EE0092D75B /* NetworkProtocol + NetworkError.swift */,
+			);
+			path = Base;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -520,7 +600,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PODA/Info.plist;
+				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -546,7 +626,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = PODA/Info.plist;
+				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
