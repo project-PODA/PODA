@@ -28,28 +28,47 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.borderStyle = .none
     }
     
+    private let emailLineView = UIView().then {
+        $0.backgroundColor = Palette.podaBlue.getColor()
+    }
+    
     private let passwordTextField = UITextField().then {
         $0.borderStyle = .none
         $0.isSecureTextEntry = true
     }
     
     private lazy var eyeButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "eye"), for: .normal)
+        $0.setImage(UIImage(named: "icon-eye"), for: .normal)
         $0.tintColor = .gray
         $0.addTarget(self, action: #selector(eyeButtonTapped), for: .touchUpInside)
     }
+    
+    private let passwordLineView = UIView().then {
+        $0.backgroundColor = Palette.podaBlue.getColor()
+    }
+    
+    private let circleView1: UIView = {
+        let view = UIView()
+        view.backgroundColor = Palette.podaGray2.getColor()
+        view.layer.cornerRadius = 36
+        return view
+    }()
+    
+    private let circleView2: UIView = {
+        let view = UIView()
+        view.backgroundColor = Palette.podaGray2.getColor()
+        view.layer.cornerRadius = 36
+        return view
+    }()
     
     private let loginButton = UIButton().then {
         $0.setUpButton(title: "로그인", podaFont: .button1, cornerRadius: 22)
         $0.backgroundColor = Palette.podaBlue.getColor()
     }
     
-    private let emailLineView = UIView().then {
-        $0.backgroundColor = Palette.podaBlue.getColor()
-    }
-    
-    private let passwordLineView = UIView().then {
-        $0.backgroundColor = Palette.podaBlue.getColor()
+    private let askLabel = UILabel().then {
+        $0.setUpLabel(title: "아직 회원이 아니신가요?", podaFont: .caption)
+        $0.textColor = Palette.podaGray3.getColor()
     }
     
     private let signUpButton = UIButton().then {
@@ -69,19 +88,14 @@ class LoginViewController: BaseViewController, UIConfigurable {
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
         
-        view.addSubview(logoImageView)
-        view.addSubview(emailLabel)
-        view.addSubview(passwordLabel)
-        view.addSubview(emailTextField)
-        view.addSubview(emailLineView)
-        view.addSubview(passwordTextField)
-        view.addSubview(passwordLineView)
-        view.addSubview(eyeButton)
-        view.addSubview(loginButton)
-        view.addSubview(signUpButton)
+        let subviews: [UIView] = [
+            logoImageView, emailLabel, passwordLabel, emailTextField,
+            emailLineView, passwordTextField, passwordLineView, eyeButton,
+            loginButton, circleView1, circleView2, askLabel, signUpButton
+        ]
         
+        subviews.forEach { view.addSubview($0) }
         
         logoImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -137,6 +151,23 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.height.equalTo(44)
         }
         
+        circleView1.snp.makeConstraints { make in
+            make.top.equalTo(loginButton.snp.bottom).offset(20)
+            make.size.equalTo(CGSize(width: 72, height: 72))
+            make.right.equalTo(view.snp.centerX).offset(-8)
+        }
+        
+        circleView2.snp.makeConstraints { make in
+            make.top.equalTo(circleView1)
+            make.size.equalTo(circleView1)
+            make.left.equalTo(view.snp.centerX).offset(8)
+        }
+        
+        askLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(signUpButton.snp.top).offset(-8)
+            make.centerX.equalToSuperview()
+        }
+        
         signUpButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-12)
@@ -148,8 +179,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
     @objc private func eyeButtonTapped() {
         passwordTextField.isSecureTextEntry.toggle()
         
-        let imageName = passwordTextField.isSecureTextEntry ? "eye" : "eye.fill"
-        let image = UIImage(systemName: imageName)
+        let imageName = passwordTextField.isSecureTextEntry ? "icon-eye" : "icon-eye.filled"
+        let image = UIImage(named: imageName)
         eyeButton.setImage(image, for: .normal)
     }
 }
