@@ -140,6 +140,10 @@ class PieceViewController: BaseViewController, UIConfigurable {
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
         alertController.view.addSubview(datePicker)
         
+        datePicker.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+        }
+        
         let selectAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
             let selectedDate = datePicker.date
             let formattedDate = selectedDate.GetCurrentTime(Dataforamt: "yyyy-MM-dd")
