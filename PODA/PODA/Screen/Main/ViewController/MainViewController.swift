@@ -13,7 +13,7 @@ class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
 
     private lazy var moveNextButton: UIButton = {
         let button = UIButton()
-        button.setUpButton(title: "이동")
+        button.setUpButton(title: "이동", podaFont: .subhead4)
         button.addTarget(self, action: #selector(moveToCompletsButtonTapped), for: .touchUpInside)
         return button
     }()

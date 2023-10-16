@@ -8,12 +8,11 @@
 import UIKit
 
 extension UIButton {
-    func setUpButton(title: String, titleSize: CGFloat = 20.0) {
+    func setUpButton(title: String, podaFont: PodaFont) {
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
         setTitle(title, for: .normal)
-        let boldFont = UIFont.boldSystemFont(ofSize: titleSize)
-        self.titleLabel?.font = boldFont
+        self.titleLabel?.font = UIFont.podaFont(podaFont)
     }
     
     func resizeImageButton(image: UIImage?, width: Int, height: Int, color: UIColor) -> UIImage? {

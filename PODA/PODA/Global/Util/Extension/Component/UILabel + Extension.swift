@@ -8,9 +8,9 @@
 import UIKit
 
 extension UILabel {
-    func setUpLabel(title: String, fontSize: LabelFontSize, isFontBold: Bool = true) {
+    func setUpLabel(title: String, podaFont: PodaFont) {
         self.text = title
-        self.font = isFontBold ? UIFont.boldSystemFont(ofSize: fontSize.rawValue) : UIFont.systemFont(ofSize: fontSize.rawValue)
+        self.font = UIFont.podaFont(podaFont)
     }
 }
 

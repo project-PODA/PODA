@@ -11,6 +11,17 @@
 		2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2769858A2AD8E20B00A5100D /* SceneDelegate.swift */; };
 		276985922AD8E20D00A5100D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 276985912AD8E20D00A5100D /* Assets.xcassets */; };
 		276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 276985932AD8E20D00A5100D /* LaunchScreen.storyboard */; };
+		5F2B1CCF2ADCD08E00DAA9C8 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */; };
+		5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */; };
+		5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC82ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf */; };
+		5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC92ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf */; };
+		5F2B1CD32ADCD08E00DAA9C8 /* Pretendard-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CCA2ADCD08E00DAA9C8 /* Pretendard-Light.otf */; };
+		5F2B1CD42ADCD08E00DAA9C8 /* Pretendard-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CCB2ADCD08E00DAA9C8 /* Pretendard-Bold.otf */; };
+		5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CCC2ADCD08E00DAA9C8 /* Pretendard-Thin.otf */; };
+		5F2B1CD62ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CCD2ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf */; };
+		5F2B1CD72ADCD08E00DAA9C8 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CCE2ADCD08E00DAA9C8 /* Pretendard-Regular.otf */; };
+		5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2B1CD82ADCD62900DAA9C8 /* UIFont + Enum.swift */; };
+		5F2B1CDB2ADCDB7400DAA9C8 /* DiaryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2B1CDA2ADCDB7400DAA9C8 /* DiaryInfo.swift */; };
 		5FD54B092AD90AE00092D75B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5FD54B082AD90AE00092D75B /* SnapKit */; };
 		5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B172AD90FB90092D75B /* BaseViewController.swift */; };
 		5FD54B1A2AD90FD90092D75B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B192AD90FD90092D75B /* MainViewController.swift */; };
@@ -28,7 +39,6 @@
 		5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B352AD911EE0092D75B /* NetworkProtocol + NetworkError.swift */; };
 		5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B392AD912340092D75B /* UserDefaultManager.swift */; };
 		5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B3E2AD912960092D75B /* Palette + Enum.swift */; };
-		5FD54B412AD912C20092D75B /* FontSize + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B402AD912C20092D75B /* FontSize + Enum.swift */; };
 		5FD54B432AD912D60092D75B /* ConstMargin + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B422AD912D60092D75B /* ConstMargin + Enum.swift */; };
 		5FD54B472AD913110092D75B /* LayoutMultiplier + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B462AD913110092D75B /* LayoutMultiplier + Enum.swift */; };
 		5FD54B4A2AD913460092D75B /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B492AD913460092D75B /* Logger.swift */; };
@@ -39,7 +49,6 @@
 		5FD54B5A2AD922B10092D75B /* FirebaseAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */; };
 		5FD54B5C2AD922B90092D75B /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */; };
 		5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */; };
-		5FD54B602AD922D10092D75B /* diaryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5F2AD922D10092D75B /* diaryInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +58,17 @@
 		276985912AD8E20D00A5100D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		276985942AD8E20D00A5100D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		276985962AD8E20D00A5100D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
+		5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Black.otf"; sourceTree = "<group>"; };
+		5F2B1CC82ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-ExtraLight.otf"; sourceTree = "<group>"; };
+		5F2B1CC92ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-ExtraBold.otf"; sourceTree = "<group>"; };
+		5F2B1CCA2ADCD08E00DAA9C8 /* Pretendard-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Light.otf"; sourceTree = "<group>"; };
+		5F2B1CCB2ADCD08E00DAA9C8 /* Pretendard-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Bold.otf"; sourceTree = "<group>"; };
+		5F2B1CCC2ADCD08E00DAA9C8 /* Pretendard-Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Thin.otf"; sourceTree = "<group>"; };
+		5F2B1CCD2ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-SemiBold.otf"; sourceTree = "<group>"; };
+		5F2B1CCE2ADCD08E00DAA9C8 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Regular.otf"; sourceTree = "<group>"; };
+		5F2B1CD82ADCD62900DAA9C8 /* UIFont + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont + Enum.swift"; sourceTree = "<group>"; };
+		5F2B1CDA2ADCDB7400DAA9C8 /* DiaryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryInfo.swift; sourceTree = "<group>"; };
 		5FD54B172AD90FB90092D75B /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		5FD54B192AD90FD90092D75B /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		5FD54B1B2AD90FE80092D75B /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -65,7 +85,6 @@
 		5FD54B352AD911EE0092D75B /* NetworkProtocol + NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetworkProtocol + NetworkError.swift"; sourceTree = "<group>"; };
 		5FD54B392AD912340092D75B /* UserDefaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
 		5FD54B3E2AD912960092D75B /* Palette + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Palette + Enum.swift"; sourceTree = "<group>"; };
-		5FD54B402AD912C20092D75B /* FontSize + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FontSize + Enum.swift"; sourceTree = "<group>"; };
 		5FD54B422AD912D60092D75B /* ConstMargin + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConstMargin + Enum.swift"; sourceTree = "<group>"; };
 		5FD54B462AD913110092D75B /* LayoutMultiplier + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LayoutMultiplier + Enum.swift"; sourceTree = "<group>"; };
 		5FD54B492AD913460092D75B /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -76,7 +95,6 @@
 		5FD54B592AD922B10092D75B /* FirebaseAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthManager.swift; sourceTree = "<group>"; };
 		5FD54B5B2AD922B90092D75B /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorageManager.swift; sourceTree = "<group>"; };
-		5FD54B5F2AD922D10092D75B /* diaryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = diaryInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +136,22 @@
 			path = PODA;
 			sourceTree = "<group>";
 		};
+		5F2B1CC52ADCD06500DAA9C8 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */,
+				5F2B1CCB2ADCD08E00DAA9C8 /* Pretendard-Bold.otf */,
+				5F2B1CC92ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf */,
+				5F2B1CC82ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf */,
+				5F2B1CCA2ADCD08E00DAA9C8 /* Pretendard-Light.otf */,
+				5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */,
+				5F2B1CCE2ADCD08E00DAA9C8 /* Pretendard-Regular.otf */,
+				5F2B1CCD2ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf */,
+				5F2B1CCC2ADCD08E00DAA9C8 /* Pretendard-Thin.otf */,
+			);
+			path = Font;
+			sourceTree = "<group>";
+		};
 		5FD54B142AD90F8A0092D75B /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,7 +163,7 @@
 		5FD54B152AD90F930092D75B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				5FD54B5F2AD922D10092D75B /* diaryInfo.swift */,
+				5F2B1CDA2ADCDB7400DAA9C8 /* DiaryInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -223,6 +257,7 @@
 		E28A2CF82AD95B91004401D1 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				5F2B1CC52ADCD06500DAA9C8 /* Font */,
 				276985912AD8E20D00A5100D /* Assets.xcassets */,
 				276985932AD8E20D00A5100D /* LaunchScreen.storyboard */,
 				E28A2CFF2ADC6C3D004401D1 /* Support */,
@@ -307,7 +342,7 @@
 			isa = PBXGroup;
 			children = (
 				5FD54B3E2AD912960092D75B /* Palette + Enum.swift */,
-				5FD54B402AD912C20092D75B /* FontSize + Enum.swift */,
+				5F2B1CD82ADCD62900DAA9C8 /* UIFont + Enum.swift */,
 			);
 			path = DesignSystem;
 			sourceTree = "<group>";
@@ -420,7 +455,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */,
+				5F2B1CD42ADCD08E00DAA9C8 /* Pretendard-Bold.otf in Resources */,
 				276985922AD8E20D00A5100D /* Assets.xcassets in Resources */,
+				5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */,
+				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
+				5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */,
+				5F2B1CD32ADCD08E00DAA9C8 /* Pretendard-Light.otf in Resources */,
+				5F2B1CD62ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf in Resources */,
+				5F2B1CD72ADCD08E00DAA9C8 /* Pretendard-Regular.otf in Resources */,
+				5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */,
+				5F2B1CCF2ADCD08E00DAA9C8 /* Pretendard-Medium.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +480,7 @@
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
 				5FD54B5A2AD922B10092D75B /* FirebaseAuthManager.swift in Sources */,
+				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
 				5FD54B342AD911D30092D75B /* NetworkManager.swift in Sources */,
 				5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */,
@@ -450,17 +495,16 @@
 				5FD54B5C2AD922B90092D75B /* FirestoreManager.swift in Sources */,
 				2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */,
 				5FD54B272AD910EE0092D75B /* UITextField + Extension.swift in Sources */,
-				5FD54B412AD912C20092D75B /* FontSize + Enum.swift in Sources */,
 				5FD54B2B2AD9112D0092D75B /* UICollectionView + Extension.swift in Sources */,
 				5FD54B252AD910D30092D75B /* UILabel + Extension.swift in Sources */,
 				5FD54B1A2AD90FD90092D75B /* MainViewController.swift in Sources */,
 				5FD54B472AD913110092D75B /* LayoutMultiplier + Enum.swift in Sources */,
 				5FD54B1C2AD90FE80092D75B /* MainViewModel.swift in Sources */,
+				5F2B1CDB2ADCDB7400DAA9C8 /* DiaryInfo.swift in Sources */,
 				5FD54B582AD915EE0092D75B /* BaseTabbarController.swift in Sources */,
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
-				5FD54B602AD922D10092D75B /* diaryInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
