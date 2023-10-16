@@ -51,7 +51,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         configUI()
         setAddTarget()
     }
@@ -71,7 +71,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(addToGalleryButton)
         view.addSubview(memoryDate)
         view.addSubview(datePickerButton)
-
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
@@ -134,20 +133,38 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func showDatePicker() {
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .wheels
         
+        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
+        alertController.view.addSubview(datePicker)
+        
+        let selectAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            let selectedDate = datePicker.date
+            let formattedDate = selectedDate.GetCurrentTime(Dataforamt: "yyyy-MM-dd")
+            self?.datePickerButton.setTitle(formattedDate, for: .normal)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(selectAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
 }
 
 extension PieceViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true, completion: nil)
-
+        
         guard !results.isEmpty else {
             return
         }
-
+        
         let selectedResult = results[0]
-
+        
         selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
             if let error = error {
                 print("이미지 로딩 중 오류: \(error.localizedDescription)")
