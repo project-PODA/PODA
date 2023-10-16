@@ -8,6 +8,7 @@
 import UIKit
 import Then
 import SnapKit
+import PhotosUI
 
 class PieceViewController: BaseViewController, UIConfigurable {
     
@@ -115,12 +116,21 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     func setAddTarget() {
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
     }
     
+    @objc func cancelButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     @objc func addButtonTapped() {
-        
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
     }
     
     @objc func showDatePicker() {
@@ -128,6 +138,27 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
 }
 
+extension PieceViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        dismiss(animated: true, completion: nil)
+
+        guard !results.isEmpty else {
+            return
+        }
+
+        let selectedResult = results[0]
+
+        selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
+            if let error = error {
+                print("이미지 로딩 중 오류: \(error.localizedDescription)")
+            } else if let selectedImage = object as? UIImage {
+                DispatchQueue.main.async {
+                    self.imageView.image = selectedImage
+                }
+            }
+        }
+    }
+}
 
 //@objc private func moveToCompletsButtonTapped() {
 //    let pieceVC = PieceViewController()
