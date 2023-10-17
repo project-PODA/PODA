@@ -131,6 +131,11 @@ class PieceViewController: BaseViewController, UIConfigurable {
         datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
     }
     
+    func updateUIForImageAvailability(hasImage: Bool) {
+        vectorIconImage.isHidden = hasImage
+        addToGalleryButton.isHidden = hasImage
+    }
+    
     @objc func cancelButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
@@ -180,12 +185,13 @@ extension PieceViewController: PHPickerViewControllerDelegate {
         
         let selectedResult = results[0]
         
-        selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
+        selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
             if let error = error {
                 print("이미지 로딩 중 오류: \(error.localizedDescription)")
             } else if let selectedImage = object as? UIImage {
                 DispatchQueue.main.async {
-                    self.imageView.image = selectedImage
+                    self?.imageView.image = selectedImage
+                    self?.updateUIForImageAvailability(hasImage: true)
                 }
             }
         }
