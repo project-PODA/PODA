@@ -27,9 +27,9 @@ class PieceViewController: BaseViewController, UIConfigurable {
         $0.contentMode = .scaleAspectFit
     }
     
-    let vectorIconImage = UIImageView().then {
+    let photoGalleryIconImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "Vector")
+        $0.image = UIImage(named: "icon_photoGallery")
     }
     
     let addToGalleryButton = UIButton().then {
@@ -68,7 +68,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(cancelButton)
         view.addSubview(nextButton)
         view.addSubview(imageView)
-        view.addSubview(vectorIconImage)
+        view.addSubview(photoGalleryIconImage)
         view.addSubview(addToGalleryButton)
         view.addSubview(memoryDate)
         view.addSubview(datePickerButton)
@@ -90,14 +90,14 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.bottom.equalToSuperview().offset(-216)
         }
         
-        vectorIconImage.snp.makeConstraints {
+        photoGalleryIconImage.snp.makeConstraints {
             $0.center.equalTo(imageView)
             $0.width.height.equalTo(70)
         }
         
         addToGalleryButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(vectorIconImage.snp.bottom).offset(25)
+            $0.top.equalTo(photoGalleryIconImage.snp.bottom).offset(25)
             $0.width.equalTo(152)
             $0.height.equalTo(45)
         }
@@ -132,7 +132,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     func updateUIForImageAvailability(hasImage: Bool) {
-        vectorIconImage.isHidden = hasImage
+        photoGalleryIconImage.isHidden = hasImage
         addToGalleryButton.isHidden = hasImage
     }
     
