@@ -11,9 +11,16 @@ protocol UIConfigurable {
     func configUI()
 }
 
+
 class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = Palette.podaBlack.getColor()
+        
+        let className = String(describing: type(of: self))
+        if className == "LoginViewController" || className == "SignUpViewController" {
+            view.backgroundColor = .white
+        } else {
+            view.backgroundColor = Palette.podaBlack.getColor()
+        }
     }
 }
