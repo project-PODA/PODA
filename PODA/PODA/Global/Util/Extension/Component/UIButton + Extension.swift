@@ -8,8 +8,8 @@
 import UIKit
 
 extension UIButton {
-    func setUpButton(title: String, podaFont: PodaFont) {
-        self.layer.cornerRadius = 10
+    func setUpButton(title: String, podaFont: PodaFont, cornerRadius: CGFloat = 10) {
+        self.layer.cornerRadius = cornerRadius
         self.layer.masksToBounds = true
         setTitle(title, for: .normal)
         self.titleLabel?.font = UIFont.podaFont(podaFont)
