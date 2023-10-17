@@ -54,6 +54,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         
         configUI()
         setAddTarget()
+        setGesture()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -114,6 +115,16 @@ class PieceViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    func setGesture() {
+        let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(imageTapGesture)
+    }
+
+    @objc func imageViewTapped() {
+        addButtonTapped()
+    }
+
     func setAddTarget() {
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
