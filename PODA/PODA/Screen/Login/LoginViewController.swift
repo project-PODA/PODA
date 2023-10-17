@@ -38,7 +38,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
     }
     
     private lazy var eyeButton = UIButton().then {
-        $0.setImage(UIImage(named: "icon-eye"), for: .normal)
+        $0.setImage(UIImage(named: "icon_eye"), for: .normal)
         $0.tintColor = .gray
         $0.addTarget(self, action: #selector(eyeButtonTapped), for: .touchUpInside)
     }
@@ -179,7 +179,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
     @objc private func eyeButtonTapped() {
         passwordTextField.isSecureTextEntry.toggle()
         
-        let imageName = passwordTextField.isSecureTextEntry ? "icon-eye" : "icon-eye.filled"
+        let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
         let image = UIImage(named: imageName)
         eyeButton.setImage(image, for: .normal)
     }
