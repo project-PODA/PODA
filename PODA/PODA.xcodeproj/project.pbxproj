@@ -12,6 +12,8 @@
 		2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2769858A2AD8E20B00A5100D /* SceneDelegate.swift */; };
 		276985922AD8E20D00A5100D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 276985912AD8E20D00A5100D /* Assets.xcassets */; };
 		276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 276985932AD8E20D00A5100D /* LaunchScreen.storyboard */; };
+		27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652A2ADD21B800B6E211 /* PieceViewController.swift */; };
+		27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652F2ADD237600B6E211 /* PieceViewModel.swift */; };
 		5F2B1CCF2ADCD08E00DAA9C8 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */; };
 		5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */; };
 		5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC82ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf */; };
@@ -63,6 +65,8 @@
 		276985912AD8E20D00A5100D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		276985942AD8E20D00A5100D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		276985962AD8E20D00A5100D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		27D2652A2ADD21B800B6E211 /* PieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewController.swift; sourceTree = "<group>"; };
+		27D2652F2ADD237600B6E211 /* PieceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewModel.swift; sourceTree = "<group>"; };
 		5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
 		5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Black.otf"; sourceTree = "<group>"; };
 		5F2B1CC82ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-ExtraLight.otf"; sourceTree = "<group>"; };
@@ -142,6 +146,31 @@
 				E28A2CF82AD95B91004401D1 /* Resource */,
 			);
 			path = PODA;
+			sourceTree = "<group>";
+		};
+		27D2652C2ADD21DF00B6E211 /* Piece */ = {
+			isa = PBXGroup;
+			children = (
+				27D2652D2ADD230100B6E211 /* ViewModel */,
+				27D2652E2ADD230B00B6E211 /* ViewController */,
+			);
+			path = Piece;
+			sourceTree = "<group>";
+		};
+		27D2652D2ADD230100B6E211 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				27D2652F2ADD237600B6E211 /* PieceViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		27D2652E2ADD230B00B6E211 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				27D2652A2ADD21B800B6E211 /* PieceViewController.swift */,
+			);
+			path = ViewController;
 			sourceTree = "<group>";
 		};
 		5F2B1CC52ADCD06500DAA9C8 /* Font */ = {
@@ -297,6 +326,7 @@
 				D879F7782ADD93E900FFB3F7 /* SignUp */,
 				E28A2CFA2ADC6BA7004401D1 /* Main */,
 				E28A2CFD2ADC6BF9004401D1 /* Profile */,
+				27D2652C2ADD21DF00B6E211 /* Piece */,
 			);
 			path = Screen;
 			sourceTree = "<group>";
@@ -489,6 +519,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */,
+				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
 				5FD54B292AD911120092D75B /* UITableView + Extension.swift in Sources */,
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
@@ -513,6 +544,7 @@
 				5FD54B272AD910EE0092D75B /* UITextField + Extension.swift in Sources */,
 				5FD54B2B2AD9112D0092D75B /* UICollectionView + Extension.swift in Sources */,
 				5FD54B252AD910D30092D75B /* UILabel + Extension.swift in Sources */,
+				27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */,
 				5FD54B1A2AD90FD90092D75B /* MainViewController.swift in Sources */,
 				5FD54B472AD913110092D75B /* LayoutMultiplier + Enum.swift in Sources */,
 				5FD54B1C2AD90FE80092D75B /* MainViewModel.swift in Sources */,
