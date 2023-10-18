@@ -12,6 +12,8 @@ import PhotosUI
 
 class PieceViewController: BaseViewController, UIConfigurable {
     
+    // MARK: UIComponents
+    
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         $0.setUpButton(title: "취소", podaFont: .subhead2)
@@ -49,6 +51,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
         $0.setUpButton(title: "날짜 선택", podaFont: .body2)
     }
     
+    // MARK: LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,6 +68,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
         self.tabBarController?.tabBar.isHidden = true
     }
+    
+    // MARK: Functions
     
     func configUI() {
         view.addSubview(cancelButton)
@@ -201,6 +207,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
 }
 
+// MARK: - 앨범 접근 권한
+
 extension PieceViewController {
     func requestPhotoLibraryAccess() {
             let status = PHPhotoLibrary.authorizationStatus()
@@ -250,6 +258,8 @@ extension PieceViewController {
             present(alertController, animated: true, completion: nil)
         }
 }
+
+// MARK: - PHPickerViewControllerDelegate
 
 extension PieceViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
