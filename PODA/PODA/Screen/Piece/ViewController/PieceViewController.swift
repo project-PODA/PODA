@@ -117,12 +117,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.left.equalToSuperview().offset(21)
         }
         
-        //        datePickerButton.snp.makeConstraints {
-        //            $0.left.equalToSuperview().offset(20)
-        //            $0.width.equalTo(108)
-        //            $0.height.equalTo(44)
-        //            $0.bottom.equalToSuperview().offset(-104)
-        //        }
         datePickerButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
             $0.width.equalTo(108)
