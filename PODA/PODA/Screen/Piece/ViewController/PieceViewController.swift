@@ -120,11 +120,11 @@ class PieceViewController: BaseViewController, UIConfigurable {
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(imageTapGesture)
     }
-
+    
     @objc func imageViewTapped() {
         addButtonTapped()
     }
-
+    
     func setAddTarget() {
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
@@ -152,6 +152,11 @@ class PieceViewController: BaseViewController, UIConfigurable {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .wheels
+        
+        if let title = datePickerButton.title(for: .normal),
+           let currentDate = Date(dateString: title, format: "yyyy-MM-dd") {
+            datePicker.date = currentDate
+        }
         
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
         alertController.view.addSubview(datePicker)
