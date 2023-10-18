@@ -25,6 +25,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     let imageView = UIImageView().then {
+        $0.layer.masksToBounds = true
+        $0.layer.cornerRadius = 10
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.contentMode = .scaleAspectFit
     }
@@ -94,7 +96,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.top.equalToSuperview().offset(107)
-            $0.bottom.equalToSuperview().offset(-216)
+            $0.bottom.equalTo(memoryDate.snp.top).offset(-32)
         }
         
         photoGalleryIconImage.snp.makeConstraints {
@@ -110,15 +112,21 @@ class PieceViewController: BaseViewController, UIConfigurable {
         }
         
         memoryDate.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(32)
+            $0.bottom.equalTo(datePickerButton.snp.top).offset(-20)
             $0.left.equalToSuperview().offset(21)
         }
         
+//        datePickerButton.snp.makeConstraints {
+//            $0.left.equalToSuperview().offset(20)
+//            $0.width.equalTo(108)
+//            $0.height.equalTo(44)
+//            $0.bottom.equalToSuperview().offset(-104)
+//        }
         datePickerButton.snp.makeConstraints {
-            $0.top.equalTo(memoryDate.snp.bottom).offset(16)
             $0.left.equalToSuperview().offset(20)
             $0.width.equalTo(108)
             $0.height.equalTo(44)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
         }
     }
     
