@@ -126,6 +126,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     func setAddTarget() {
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
@@ -136,8 +137,27 @@ class PieceViewController: BaseViewController, UIConfigurable {
         addToGalleryButton.isHidden = hasImage
     }
     
+    func showSaveConfirmationAlert() {
+        let alertController = UIAlertController(title: "저장하시겠습니까?", message: nil, preferredStyle: .alert)
+        
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
     @objc func cancelButtonTapped() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func nextButtonTapped() {
+        showSaveConfirmationAlert()
     }
     
     @objc func addButtonTapped() {
