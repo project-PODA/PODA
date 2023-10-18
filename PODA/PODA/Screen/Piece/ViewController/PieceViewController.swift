@@ -12,9 +12,7 @@ import PhotosUI
 import RealmSwift
 
 class PieceViewController: BaseViewController, UIConfigurable {
-    
-    let realm = try! Realm()
-    
+        
     // MARK: UIComponents
     
     let cancelButton = UIButton().then {
@@ -176,13 +174,12 @@ class PieceViewController: BaseViewController, UIConfigurable {
         imageMemory.memoryDate = selectedDate
         
         do {
-            let realm = try Realm()
-            try realm.write {
-                realm.add(imageMemory)
+            try RealmManager.shared.realm.write {
+                RealmManager.shared.realm.add(imageMemory)
                 print("저장성공: \(imageMemory)")
             }
         } catch {
-            print("Realm에 데이터를 추가하는 데 문제가 발생: \(error.localizedDescription)")
+            print("Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
         }
     }
     
