@@ -35,9 +35,9 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     let addToGalleryButton = UIButton().then {
+        $0.setUpButton(title: "내 갤러리에서 추가", podaFont: .button1, cornerRadius: 23)
         $0.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
         $0.backgroundColor = Palette.podaWhite.getColor()
-        $0.setUpButton(title: "내 갤러리에서 추가", podaFont: .button1)
     }
     
     let memoryDate = UILabel().then {
@@ -46,9 +46,9 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     let datePickerButton = UIButton().then {
+        $0.setUpButton(title: "날짜 선택", podaFont: .body2, cornerRadius: 5)
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         $0.backgroundColor = Palette.podaGray5.getColor()
-        $0.setUpButton(title: "날짜 선택", podaFont: .body2)
     }
     
     // MARK: LifeCycle
@@ -181,7 +181,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         datePicker.preferredDatePickerStyle = .wheels
         
         if let title = datePickerButton.title(for: .normal),
-           let currentDate = Date(dateString: title, format: "yyyy-MM-dd") {
+           let currentDate = Date(dateString: title, format: "yyyy. MM. dd") {
             datePicker.date = currentDate
         }
         
@@ -194,7 +194,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         
         let selectAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
             let selectedDate = datePicker.date
-            let formattedDate = selectedDate.GetCurrentTime(Dataforamt: "yyyy-MM-dd")
+            let formattedDate = selectedDate.GetCurrentTime(Dataforamt: "yyyy. MM. dd")
             self?.datePickerButton.setTitle(formattedDate, for: .normal)
         }
         
