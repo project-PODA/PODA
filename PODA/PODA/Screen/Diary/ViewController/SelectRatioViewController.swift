@@ -20,13 +20,13 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
     
     private var ratio: Ratio?
     
-    private let cancelButton = UIButton().then {
+    private lazy var cancelButton = UIButton().then {
         $0.setUpButton(title: "취소", podaFont: .subhead2)
         $0.tintColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
     }
     
-    private let nextButton = UIButton().then {
+    private lazy var nextButton = UIButton().then {
         $0.setUpButton(title: "다음", podaFont: .subhead2)
         $0.tintColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
@@ -37,7 +37,7 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private var squareButton = UIButton().then {
+    private lazy var squareButton = UIButton().then {
         $0.setTitle("1:1", for: .normal)
         $0.titleLabel?.font = UIFont.podaFont(.display1)
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
@@ -45,7 +45,7 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(touchUpSquareButton), for: .touchUpInside)
     }
     
-    private var rectangleButton = UIButton().then {
+    private lazy var rectangleButton = UIButton().then {
         $0.setTitle("3:4", for: .normal)
         $0.titleLabel?.font = UIFont.podaFont(.display1)
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
