@@ -68,7 +68,10 @@
 		E24331C82AE0F3FD00244A5A /* SelectRatioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */; };
 		E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */; };
 		E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */; };
+		E24331CE2AE1032200244A5A /* DetailDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
+		E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */; };
+		E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -130,6 +133,9 @@
 		E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRatioViewController.swift; sourceTree = "<group>"; };
 		E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewController.swift; sourceTree = "<group>"; };
 		E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewModel.swift; sourceTree = "<group>"; };
+		E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailDiaryViewController.swift; sourceTree = "<group>"; };
+		E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCollectionViewCell.swift; sourceTree = "<group>"; };
+		E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageCollectionViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -377,6 +383,7 @@
 		E24331C42AE0F33F00244A5A /* Diary */ = {
 			isa = PBXGroup;
 			children = (
+				E2B8F8D12AE115F600578D15 /* View */,
 				E24331C62AE0F37600244A5A /* ViewModel */,
 				E24331C52AE0F36900244A5A /* ViewController */,
 			);
@@ -388,6 +395,7 @@
 			children = (
 				E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */,
 				E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */,
+				E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -526,6 +534,15 @@
 			path = Base;
 			sourceTree = "<group>";
 		};
+		E2B8F8D12AE115F600578D15 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */,
+				E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -604,6 +621,7 @@
 				5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */,
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
 				5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */,
+				E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */,
 				5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */,
 				5F2B1CD32ADCD08E00DAA9C8 /* Pretendard-Light.otf in Resources */,
 				5F2B1CD62ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf in Resources */,
@@ -621,8 +639,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */,
-				5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */,
 				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
+				E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */,
 				5FD54B292AD911120092D75B /* UITableView + Extension.swift in Sources */,
 				E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */,
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
@@ -642,6 +660,7 @@
 				5F54EBE72ADFFCE200331E59 /* ImageManipulator.swift in Sources */,
 				1BFF04022ADE62B100A5430D /* UIColor + Extension.swift in Sources */,
 				5FD54B302AD9118D0092D75B /* Observable + BindableType.swift in Sources */,
+				E24331CE2AE1032200244A5A /* DetailDiaryViewController.swift in Sources */,
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
