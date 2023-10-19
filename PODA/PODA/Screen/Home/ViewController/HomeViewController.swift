@@ -12,8 +12,7 @@ import SnapKit
 class HomeViewController: BaseViewController, UIConfigurable {
     
     private let statusLabel = UILabel().then {
-        $0.text = "나의 추억 현황"
-        $0.font = UIFont.podaFont(.head1)
+        $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -33,14 +32,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let pieceLabel = UILabel().then {
-        $0.text = "추억 조각"
-        $0.font = UIFont.podaFont(.body1)
+        $0.setUpLabel(title: "추억 조각", podaFont: .body1)
         $0.textColor = Palette.podaGray3.getColor()
     }
     
     private let pieceCountLabel = UILabel().then {
-        $0.text = "16개" //조각 갯수 불러오기
-        $0.font = UIFont.podaFont(.subhead4)
+        $0.setUpLabel(title: "16개", podaFont: .subhead4)  //조각 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -51,14 +48,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let diaryLabel = UILabel().then {
-        $0.text = "추억 다이어리"
-        $0.font = UIFont.podaFont(.body1)
+        $0.setUpLabel(title: "추억 다이어리", podaFont: .body1)
         $0.textColor = Palette.podaGray3.getColor()
     }
     
     private let diaryCountLabel = UILabel().then {
-        $0.text = "20권" //다이어리 갯수 불러오기
-        $0.font = UIFont.podaFont(.subhead4)
+        $0.setUpLabel(title: "20권", podaFont: .subhead4)   //다이어리 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -72,8 +67,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private let contentView = UIView()
     
     private let timeCapsuleLabel = UILabel().then {
-        $0.text = "오늘의 타임캡슐"
-        $0.font = UIFont.podaFont(.head1)
+        $0.setUpLabel(title: "오늘의 타임캡슐", podaFont: .head1)
         $0.textColor = Palette.podaGray1.getColor()
     }
     
@@ -82,9 +76,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.layer.cornerRadius = 20
         // 생성된 다이어리가 없는 경우 아래 Label 노출
         let timeCapsuleLabel = UILabel()
-        timeCapsuleLabel.text = "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !"
+        timeCapsuleLabel.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
         timeCapsuleLabel.textColor = Palette.podaGray4.getColor()
-        timeCapsuleLabel.font = UIFont.podaFont(.caption)
         timeCapsuleLabel.numberOfLines = 2
         timeCapsuleLabel.textAlignment = .center
         $0.addSubview(timeCapsuleLabel)
@@ -94,8 +87,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let diaryMenuLabel = UILabel().then {
-        $0.text = "추억 다이어리"
-        $0.font = UIFont.podaFont(.head1)
+        $0.setUpLabel(title: "추억 다이어리", podaFont: .head1)
         $0.textColor = Palette.podaGray1.getColor()
     }
     
@@ -116,8 +108,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let moreDiaryButton = UIButton().then{
-        $0.setTitle("더보기", for: .normal)
-        $0.titleLabel?.font = UIFont.podaFont(.subhead1)
+        $0.setUpButton(title: "더보기", podaFont: .subhead1)
         $0.titleLabel?.textColor = Palette.podaGray2.getColor()
         $0.addTarget(self, action: #selector(didTapMoreDiaryButton), for: .touchUpInside)
     }
@@ -126,9 +117,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.layer.cornerRadius = 5
         let diaryLabel = UILabel()
-        diaryLabel.text = "아직 다이어리가 없어요\n생성하기를 통해 만들어보세요 :)"
+        diaryLabel.setUpLabel(title: "아직 다이어리가 없어요\n생성하기를 통해 만들어보세요 :)", podaFont: .caption)
         diaryLabel.textColor = Palette.podaGray3.getColor()
-        diaryLabel.font = UIFont.podaFont(.caption)
         diaryLabel.numberOfLines = 2
         diaryLabel.textAlignment = .center
         $0.addSubview(diaryLabel)
@@ -148,8 +138,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }()
     
     private let pieceMenuLabel = UILabel().then {
-        $0.text = "추억 조각들"
-        $0.font = UIFont.podaFont(.head1)
+        $0.setUpLabel(title: "추억 조각들", podaFont: .head1)
         $0.textColor = Palette.podaGray1.getColor()
     }
     
@@ -174,9 +163,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.layer.cornerRadius = 5
         let diaryLabel = UILabel()
-        diaryLabel.text = "아직 추억조각이 없어요\n생성하기를 통해 만들어보세요 :)"
+        diaryLabel.setUpLabel(title: "아직 추억조각이 없어요\n생성하기를 통해 만들어보세요 :)", podaFont: .caption)
         diaryLabel.textColor = Palette.podaGray3.getColor()
-        diaryLabel.font = UIFont.podaFont(.caption)
         diaryLabel.numberOfLines = 2
         diaryLabel.textAlignment = .center
         $0.addSubview(diaryLabel)
@@ -186,8 +174,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let morePieceButton = UIButton().then{
-        $0.setTitle("더보기", for: .normal)
-        $0.titleLabel?.font = UIFont.podaFont(.subhead1)
+        $0.setUpButton(title: "더보기", podaFont: .subhead1)
         $0.titleLabel?.textColor = Palette.podaGray2.getColor()
         $0.addTarget(self, action: #selector(didTapMorePieceButton), for: .touchUpInside)
     }
@@ -201,17 +188,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func configUI() {
-        [statusLabel, addButton].forEach { mainStackView.addArrangedSubview($0) }
-        view.addSubview(mainStackView)
-        [pieceLabel, pieceCountLabel].forEach { pieceLabelStackView.addArrangedSubview($0) }
-        view.addSubview(pieceLabelStackView)
-        [diaryLabel, diaryCountLabel].forEach { diaryLabelStackView.addArrangedSubview($0) }
-        view.addSubview(diaryLabelStackView)
-        view.addSubview(scrollView)
+        [mainStackView, pieceLabelStackView, diaryLabelStackView, scrollView].forEach(view.addSubview)
+        [statusLabel, addButton].forEach(mainStackView.addArrangedSubview)
+        [pieceLabel, pieceCountLabel].forEach(pieceLabelStackView.addArrangedSubview)
+        [diaryLabel, diaryCountLabel].forEach(diaryLabelStackView.addArrangedSubview)
         scrollView.addSubview(contentView)
-        [diaryMenuLabel, addDiaryButton].forEach { diaryStackView.addArrangedSubview($0) }
-        [pieceMenuLabel, addPieceButton].forEach { pieceStackView.addArrangedSubview($0) }
-        [timeCapsuleLabel, timeCapsuleImageView, diaryStackView, diaryCollectionView, moreDiaryButton, pieceStackView, pieceImageView, morePieceButton].forEach { contentView.addSubview($0) }
+        [diaryMenuLabel, addDiaryButton].forEach(diaryStackView.addArrangedSubview)
+        [pieceMenuLabel, addPieceButton].forEach(pieceStackView.addArrangedSubview)
+        [timeCapsuleLabel, timeCapsuleImageView, diaryStackView, diaryCollectionView, moreDiaryButton, pieceStackView, pieceImageView, morePieceButton].forEach (contentView.addSubview)
 
         mainStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(7)

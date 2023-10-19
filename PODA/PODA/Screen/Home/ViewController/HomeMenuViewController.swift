@@ -17,8 +17,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     }
     
     private let qrLabel = UILabel().then {
-        $0.text = "QR코드 촬영"
-        $0.font = UIFont.podaFont(.subhead2)
+        $0.setUpLabel(title: "QR코드 촬영", podaFont: .subhead2)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -28,8 +27,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     }
     
     private let addDiaryLabel = UILabel().then {
-        $0.text = "추억 다이어리 만들기"
-        $0.font = UIFont.podaFont(.subhead2)
+        $0.setUpLabel(title: "추억 다이어리 만들기", podaFont: .subhead2)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -39,8 +37,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     }
     
     private let addPieceLabel = UILabel().then {
-        $0.text = "추억 조각 등록하기"
-        $0.font = UIFont.podaFont(.subhead2)
+        $0.setUpLabel(title: "추억 조각 등록하기", podaFont: .subhead2)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -126,6 +123,6 @@ extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigation
         camera.delegate = self
         camera.sourceType = .camera
         camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? []
-        self.present(camera, animated: true)
+        present(camera, animated: true)
     }
 }
