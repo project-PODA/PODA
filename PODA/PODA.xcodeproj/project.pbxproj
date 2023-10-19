@@ -121,6 +121,7 @@
 		5FD54B512AD915690092D75B /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		5FD54B532AD915790092D75B /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTabbarController.swift; sourceTree = "<group>"; };
+		5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DiaryInfo.md; sourceTree = "<group>"; };
 		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -343,6 +344,14 @@
 			path = Layout;
 			sourceTree = "<group>";
 		};
+		5FEC85872AE0BD87000E5D4C /* Dummy */ = {
+			isa = PBXGroup;
+			children = (
+				5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */,
+			);
+			path = Dummy;
+			sourceTree = "<group>";
+		};
 		D879F7782ADD93E900FFB3F7 /* SignUp */ = {
 			isa = PBXGroup;
 			children = (
@@ -421,6 +430,7 @@
 		E28A2D002ADC6D07004401D1 /* Global */ = {
 			isa = PBXGroup;
 			children = (
+				5FEC85872AE0BD87000E5D4C /* Dummy */,
 				5F54EC032AE0035100331E59 /* Config */,
 				E28A2D022ADC6D8B004401D1 /* DesignSystem */,
 				5FD54B162AD90F9A0092D75B /* Base */,

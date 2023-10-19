@@ -49,45 +49,5 @@ class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
     }
     
     @objc private func moveToCompletsButtonTapped() {
-        //        let mainVC = MainViewController(viewModel: MainViewModel())
-        //        mainVC.bind(to: mainVC.viewModel)
-        //        navigationController?.pushViewController(mainVC, animated: true)
-        
-        //밑에는 테스트코드. 머지시 삭제예정
-        let image1 = UIImage(named: "logo_poda")
-        let image2 = UIImage(named: "logo_poda")
-        let imageList = [image1!.pngData()!, image2!.pngData()!]
-        let pageDataList = [
-            PageInfo(
-                page: 1,
-                backgroundColor: "#AA00EE",
-                componentInfo: ComponentInfo(
-                    image: [],
-                    sticker: [],
-                    label: []
-                )
-            ),
-            PageInfo(
-                page: 2,
-                backgroundColor: "#EEAA33",
-                componentInfo: ComponentInfo(
-                    image: [],
-                    sticker: [],
-                    label: []
-                )
-            )
-        ]
-
-        let title = "제목4"
-        
-        firebaseManager.createDiary(deviceName: UIDevice.current.name,pageDataList : pageDataList,title: title, description: "내용임2", frameRate: .OneToOne, backgroundColor: "#FF00FF"){ [weak self] error in
-            guard let self = self else{return}
-            if error == nil {
-                firebaseStorageManager.createDiaryImage(diaryTitle: title, pageImageList: imageList){ error in
-                }
-            }else{
-                print("error -> \(error?.localizedDescription)")
-            }
-        }
     }
 }

@@ -20,4 +20,5 @@ struct ImageManipulator{
         }
         return format
     }
+    
 }

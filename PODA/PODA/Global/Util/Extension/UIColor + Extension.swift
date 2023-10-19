@@ -18,7 +18,7 @@ extension UIColor {
         return String(format:"#%06x", rgb)
     }
     
-    func fromHexString(_ hex: String) -> UIColor? {
+    static func fromHexString(_ hex: String) -> UIColor? {
         var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
         if cString.hasPrefix("#") {

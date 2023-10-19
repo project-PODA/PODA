@@ -8,7 +8,7 @@
 import Foundation
 
 extension Encodable {
-    func toJson() -> String? {
+    func toJson() -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         do {
@@ -20,6 +20,6 @@ extension Encodable {
             print(error.localizedDescription)
             Logger.writeLog(.error, message: error.localizedDescription)
         }
-        return nil
+        return ""
     }
 }
