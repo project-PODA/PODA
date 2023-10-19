@@ -188,7 +188,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
     @objc private func eyeButtonTapped() {
         passwordTextField.isSecureTextEntry.toggle()
         
-        let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
+        let imageName = passwordTextField.isSecureTextEntry ? "icon-eye" : "icon-eye.filled"
         let image = UIImage(named: imageName)
         eyeButton.setImage(image, for: .normal)
     }

@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		1BFF04022ADE62B100A5430D /* UIColor + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */; };
+		26B79F6C2AE1135000455539 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6B2AE1135000455539 /* HomeViewController.swift */; };
+		26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */; };
+		26B79F702AE113A300455539 /* HomeDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6F2AE113A300455539 /* HomeDiaryViewController.swift */; };
+		26B79F722AE113B600455539 /* HomePieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F712AE113B600455539 /* HomePieceViewController.swift */; };
+		26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */; };
 		276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276985882AD8E20B00A5100D /* AppDelegate.swift */; };
 		2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2769858A2AD8E20B00A5100D /* SceneDelegate.swift */; };
 		276985922AD8E20D00A5100D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 276985912AD8E20D00A5100D /* Assets.xcassets */; };
@@ -76,6 +81,11 @@
 
 /* Begin PBXFileReference section */
 		1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor + Extension.swift"; sourceTree = "<group>"; };
+		26B79F6B2AE1135000455539 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuViewController.swift; sourceTree = "<group>"; };
+		26B79F6F2AE113A300455539 /* HomeDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDiaryViewController.swift; sourceTree = "<group>"; };
+		26B79F712AE113B600455539 /* HomePieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePieceViewController.swift; sourceTree = "<group>"; };
+		26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		276985852AD8E20B00A5100D /* PODA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PODA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		276985882AD8E20B00A5100D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2769858A2AD8E20B00A5100D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -156,6 +166,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		26B79F6A2AE1133600455539 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				26B79F732AE113C500455539 /* ViewController */,
+				26B79F742AE113CE00455539 /* ViewModel */,
+				26B79F752AE113D600455539 /* Cell */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		26B79F732AE113C500455539 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				26B79F6B2AE1135000455539 /* HomeViewController.swift */,
+				26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */,
+				26B79F6F2AE113A300455539 /* HomeDiaryViewController.swift */,
+				26B79F712AE113B600455539 /* HomePieceViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		26B79F742AE113CE00455539 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		26B79F752AE113D600455539 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
 		2769857C2AD8E20B00A5100D = {
 			isa = PBXGroup;
 			children = (
@@ -409,6 +455,7 @@
 			children = (
 				D879F77B2ADD941400FFB3F7 /* Login */,
 				D879F7782ADD93E900FFB3F7 /* SignUp */,
+				26B79F6A2AE1133600455539 /* Home */,
 				E28A2CFA2ADC6BA7004401D1 /* Main */,
 				E28A2CFD2ADC6BF9004401D1 /* Profile */,
 				27D2652C2ADD21DF00B6E211 /* Piece */,
@@ -641,6 +688,10 @@
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
 				5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */,
 				2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */,
+				26B79F702AE113A300455539 /* HomeDiaryViewController.swift in Sources */,
+				26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */,
+				26B79F6C2AE1135000455539 /* HomeViewController.swift in Sources */,
+				26B79F722AE113B600455539 /* HomePieceViewController.swift in Sources */,
 				5FD54B272AD910EE0092D75B /* UITextField + Extension.swift in Sources */,
 				5FD54B2B2AD9112D0092D75B /* UICollectionView + Extension.swift in Sources */,
 				5FD54B252AD910D30092D75B /* UILabel + Extension.swift in Sources */,
@@ -658,6 +709,7 @@
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
+				26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */,
 				5F54EBF82ADFFEA700331E59 /* Decodable + Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
