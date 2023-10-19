@@ -8,11 +8,9 @@ import UIKit
 import SnapKit
 
 class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
-    
+
     var viewModel: MainViewModel!
-    var firebaseAuth = FireAuthManager()
-    var firebaseManager = FireStoreDBManager()
-    var firebaseStorageManager = FireStorageImageManager()
+
     private lazy var moveNextButton: UIButton = {
         let button = UIButton()
         button.setUpButton(title: "이동", podaFont: .subhead4)
@@ -23,7 +21,6 @@ class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        firebaseAuth.userLogin()
     }
     
     init(viewModel: MainViewModel) {
@@ -49,5 +46,8 @@ class MainViewController: BaseViewController,ViewModelBindable,UIConfigurable {
     }
     
     @objc private func moveToCompletsButtonTapped() {
+        let mainVC = MainViewController(viewModel: MainViewModel())
+        mainVC.bind(to: mainVC.viewModel)
+        navigationController?.pushViewController(mainVC, animated: true)
     }
 }

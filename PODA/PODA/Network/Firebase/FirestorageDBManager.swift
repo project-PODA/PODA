@@ -119,7 +119,6 @@ class FireStoreDBManager{
         }
     }
 
-    
     func deleteDiary(diaryName: String, completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             return
@@ -145,7 +144,7 @@ class FireStoreDBManager{
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             return
         }
-
+        
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
 
@@ -155,18 +154,30 @@ class FireStoreDBManager{
                 if let error = error {
                     completion(.unknown)
                     Logger.writeLog(.error, message: (error.localizedDescription))
-                } else {
-                    for document in querySnapshot!.documents {
+                    return
+                }
+                let dispatchGroup = DispatchGroup()
+                for document in querySnapshot!.documents {
+                    dispatchGroup.enter()
+                    if self.isDiaryPath(refDocPath: document.reference.path, accountPath: currentUserUID + "/account") {
+                        print("A")
                         document.reference.delete { error in
                             if let error = error {
                                 completion(.unknown)
                                 Logger.writeLog(.error, message: (error.localizedDescription))
                             }
+                            dispatchGroup.leave()
                         }
                     }
+                }
+                dispatchGroup.notify(queue: .main) {
                     completion(.none)
                 }
             }
         }
+    }
+    
+    func isDiaryPath(refDocPath: String, accountPath: String) -> Bool {
+        return refDocPath == accountPath ? false : true
     }
 }
