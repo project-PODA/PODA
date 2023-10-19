@@ -164,6 +164,7 @@ class SignUpViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
         addKeyboardObservers()
     }
     
@@ -176,6 +177,7 @@ class SignUpViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.isHidden = false
         removeKeyboardObservers()
     }
     
@@ -358,7 +360,6 @@ class SignUpViewController: BaseViewController {
         }
         
         signUpButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
             make.height.equalTo(44)
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().offset(-40)

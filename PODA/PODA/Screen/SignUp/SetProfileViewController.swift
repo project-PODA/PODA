@@ -52,6 +52,26 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         $0.setUpLabel(title: "5자 이내로 입력해주세요.", podaFont: .caption)
     }
     
+    private let clearButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_delete"), for: .normal)
+        $0.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        
+    }
+    
+    private let descriptionLabel = UILabel().then {
+        $0.numberOfLines = 2
+        $0.textColor = Palette.podaGray3.getColor()
+        $0.setUpLabel(title: "프로필 정보는 내가 친구간 커뮤니케이션\n동의목적으로 활용되며, PODA 이용기간동안 보관됩니다.", podaFont: .caption)
+    }
+    
+    private let signUpButton = UIButton().then {
+        $0.setUpButton(title: "가입 완료", podaFont: .button1, cornerRadius: 22)
+        $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
+        $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
+        $0.layer.borderWidth = 1
+    }
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
@@ -64,6 +84,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
         setActions()
+        nicknameTextField.delegate = self
         
     }
     
@@ -75,21 +96,15 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
     
     func setActions() {
         cameraButton.addTarget(self, action: #selector(openGallery), for: .touchUpInside)
+        clearButton.addTarget(self, action: #selector(clearTextField), for: .touchUpInside)
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if textField == nicknameTextField {
-            let newText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-            let isWithinLimit = newText.count <= 5
-            nicknameWarningLabel.isHidden = isWithinLimit
-            return isWithinLimit
-        }
-        return true
-    }    
     
     func configUI() {
+        nicknameTextField.rightView = clearButton
+        nicknameTextField.rightViewMode = .whileEditing
         
-        [titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel].forEach { view.addSubview($0) }
+        [titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, descriptionLabel, signUpButton].forEach { view.addSubview($0) }
         
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
@@ -124,6 +139,19 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
             make.top.equalTo(nicknameUnderlineView.snp.bottom).offset(5)
             make.left.right.equalTo(nicknameTextField)
         }
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(nicknameWarningLabel.snp.bottom).offset(10)
+            make.left.equalToSuperview().offset(20)
+            make.right.equalToSuperview().offset(-20)
+        }
+        
+        signUpButton.snp.makeConstraints { make in
+            make.height.equalTo(44)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().offset(-40)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+        }
     }
     
     @objc private func openGallery() {
@@ -134,6 +162,10 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         self.present(picker, animated: true, completion: nil)
     }
     
+    @objc private func clearTextField() {
+        nicknameTextField.text = ""
+        nicknameWarningLabel.isHidden = true
+    }
     
     
     
@@ -146,5 +178,17 @@ extension SetProfileViewController: UIImagePickerControllerDelegate, UINavigatio
             profileImageView.image = image
         }
         dismiss(animated: true, completion: nil)
+    }
+}
+
+extension SetProfileViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == nicknameTextField {
+            let newText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+            let isWithinLimit = newText.count <= 5
+            nicknameWarningLabel.isHidden = isWithinLimit
+            return isWithinLimit
+        }
+        return true
     }
 }
