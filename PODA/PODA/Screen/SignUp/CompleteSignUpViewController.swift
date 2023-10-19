@@ -30,10 +30,9 @@ class CompleteSignUpViewController: BaseViewController, UIConfigurable {
     }
     
     private let letsLoginButton = UIButton().then {
+        $0.backgroundColor = Palette.podaWhite.getColor()
         $0.setUpButton(title: "로그인 하러가기", podaFont: .button1, cornerRadius: 22)
         $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
-        $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
-        $0.layer.borderWidth = 1
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,6 +44,8 @@ class CompleteSignUpViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        setActions()
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -53,8 +54,12 @@ class CompleteSignUpViewController: BaseViewController, UIConfigurable {
     }
     
     
+    func setActions() {
+            letsLoginButton.addTarget(self, action: #selector(goToLogin), for: .touchUpInside)
+        }
+    
     func configUI() {
-        [titleLabel, checkImageView].forEach { view.addSubview($0) }
+        [titleLabel, checkImageView, letsLoginButton].forEach { view.addSubview($0) }
         
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
@@ -76,7 +81,17 @@ class CompleteSignUpViewController: BaseViewController, UIConfigurable {
     }
     
     
-    
+    @objc func goToLogin() {
+           // 모든 뷰 컨트롤러를 제거하고, LoginViewController만 남기도록
+           if let viewControllers = navigationController?.viewControllers {
+               for viewController in viewControllers {
+                   if viewController is LoginViewController {
+                       navigationController?.popToViewController(viewController, animated: true)
+                       break
+                   }
+               }
+           }
+       }
     
     
     
