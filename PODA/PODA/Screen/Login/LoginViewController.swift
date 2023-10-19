@@ -37,10 +37,10 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.isSecureTextEntry = true
     }
     
-    private lazy var eyeButton = UIButton().then {
+    private let eyeButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_eye"), for: .normal)
         $0.tintColor = .gray
-        $0.addTarget(self, action: #selector(eyeButtonTapped), for: .touchUpInside)
+        
     }
     
     private let passwordLineView = UIView().then {
@@ -81,10 +81,19 @@ class LoginViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        setupActions()
+        
     }
     
     func configUI() {
         setupUI()
+    }
+    
+    private func setupActions() {
+        signUpButton.addTarget(self, action: #selector(signUpButtonTap), for: .touchUpInside)
+        eyeButton.addTarget(self, action: #selector(eyeButtonTapped), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(goToMain), for: .touchUpInside)
+        
     }
     
     private func setupUI() {
@@ -179,8 +188,18 @@ class LoginViewController: BaseViewController, UIConfigurable {
     @objc private func eyeButtonTapped() {
         passwordTextField.isSecureTextEntry.toggle()
         
-        let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
+        let imageName = passwordTextField.isSecureTextEntry ? "icon-eye" : "icon-eye.filled"
         let image = UIImage(named: imageName)
         eyeButton.setImage(image, for: .normal)
+    }
+    
+    @objc private func signUpButtonTap() {
+        let signUpVC = SignUpViewController()
+        self.navigationController?.pushViewController(signUpVC, animated: true)
+    }
+    
+    @objc private func goToMain() {
+        let mainVC = MainViewController(viewModel: MainViewModel())
+        self.navigationController?.pushViewController(mainVC, animated: true)
     }
 }

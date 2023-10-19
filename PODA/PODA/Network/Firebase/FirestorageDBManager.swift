@@ -160,7 +160,6 @@ class FireStoreDBManager{
                 for document in querySnapshot!.documents {
                     dispatchGroup.enter()
                     if self.isDiaryPath(refDocPath: document.reference.path, accountPath: currentUserUID + "/account") {
-                        print("A")
                         document.reference.delete { error in
                             if let error = error {
                                 completion(.unknown)
