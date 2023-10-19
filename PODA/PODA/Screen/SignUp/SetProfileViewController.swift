@@ -97,6 +97,8 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
     func setActions() {
         cameraButton.addTarget(self, action: #selector(openGallery), for: .touchUpInside)
         clearButton.addTarget(self, action: #selector(clearTextField), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(navigateToCompleteSignUp), for: .touchUpInside)
+
     }
     
     
@@ -167,7 +169,10 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         nicknameWarningLabel.isHidden = true
     }
     
-    
+    @objc private func navigateToCompleteSignUp() {
+           let completeSignUpVC = CompleteSignUpViewController()
+           navigationController?.pushViewController(completeSignUpVC, animated: true)
+       }
     
     
 }
