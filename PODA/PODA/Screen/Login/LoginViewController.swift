@@ -40,7 +40,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let eyeButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_eye"), for: .normal)
         $0.tintColor = .gray
-
+        
     }
     
     private let passwordLineView = UIView().then {
@@ -82,7 +82,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
         setupActions()
-
+        
     }
     
     func configUI() {
@@ -92,6 +92,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private func setupActions() {
         signUpButton.addTarget(self, action: #selector(signUpButtonTap), for: .touchUpInside)
         eyeButton.addTarget(self, action: #selector(eyeButtonTapped), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(goToMain), for: .touchUpInside)
+        
     }
     
     private func setupUI() {
@@ -194,5 +196,10 @@ class LoginViewController: BaseViewController, UIConfigurable {
     @objc private func signUpButtonTap() {
         let signUpVC = SignUpViewController()
         self.navigationController?.pushViewController(signUpVC, animated: true)
+    }
+    
+    @objc private func goToMain() {
+        let mainVC = MainViewController(viewModel: MainViewModel())
+        self.navigationController?.pushViewController(mainVC, animated: true)
     }
 }
