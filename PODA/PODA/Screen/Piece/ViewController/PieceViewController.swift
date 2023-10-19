@@ -9,8 +9,11 @@ import UIKit
 import Then
 import SnapKit
 import PhotosUI
+import RealmSwift
 
 class PieceViewController: BaseViewController, UIConfigurable {
+        
+    // MARK: UIComponents
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
@@ -23,6 +26,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     let imageView = UIImageView().then {
+        $0.layer.masksToBounds = true
+        $0.layer.cornerRadius = 10
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.contentMode = .scaleAspectFit
     }
@@ -33,9 +38,9 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     let addToGalleryButton = UIButton().then {
+        $0.setUpButton(title: "내 갤러리에서 추가", podaFont: .button1, cornerRadius: 23)
         $0.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
         $0.backgroundColor = Palette.podaWhite.getColor()
-        $0.setUpButton(title: "내 갤러리에서 추가", podaFont: .button1)
     }
     
     let memoryDate = UILabel().then {
@@ -44,10 +49,18 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     let datePickerButton = UIButton().then {
+        $0.setUpButton(title: "날짜 선택", podaFont: .body2, cornerRadius: 5)
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         $0.backgroundColor = Palette.podaGray5.getColor()
-        $0.setUpButton(title: "날짜 선택", podaFont: .body2)
     }
+    
+//    let testPageButton = UIButton().then {
+//        $0.setUpButton(title: "불러오기 테스트", podaFont: .body2, cornerRadius: 5)
+//        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+//        $0.backgroundColor = Palette.podaGray5.getColor()
+//    }
+    
+    // MARK: LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +68,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         configUI()
         setAddTarget()
         setGesture()
+        requestPhotoLibraryAccess()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,6 +78,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
         self.tabBarController?.tabBar.isHidden = true
     }
     
+    // MARK: Functions
+    
     func configUI() {
         view.addSubview(cancelButton)
         view.addSubview(nextButton)
@@ -72,6 +88,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(addToGalleryButton)
         view.addSubview(memoryDate)
         view.addSubview(datePickerButton)
+//        view.addSubview(testPageButton)
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
@@ -87,7 +104,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.top.equalToSuperview().offset(107)
-            $0.bottom.equalToSuperview().offset(-216)
+            $0.bottom.equalTo(memoryDate.snp.top).offset(-32)
         }
         
         vectorIconImage.snp.makeConstraints {
@@ -103,16 +120,23 @@ class PieceViewController: BaseViewController, UIConfigurable {
         }
         
         memoryDate.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(32)
+            $0.bottom.equalTo(datePickerButton.snp.top).offset(-20)
             $0.left.equalToSuperview().offset(21)
         }
         
         datePickerButton.snp.makeConstraints {
-            $0.top.equalTo(memoryDate.snp.bottom).offset(16)
             $0.left.equalToSuperview().offset(20)
             $0.width.equalTo(108)
             $0.height.equalTo(44)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
         }
+        
+//        testPageButton.snp.makeConstraints {
+//            $0.right.equalToSuperview().offset(-20)
+//            $0.width.equalTo(108)
+//            $0.height.equalTo(44)
+//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
+//        }
     }
     
     func setGesture() {
@@ -120,15 +144,17 @@ class PieceViewController: BaseViewController, UIConfigurable {
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(imageTapGesture)
     }
-
+    
     @objc func imageViewTapped() {
         addButtonTapped()
     }
-
+    
     func setAddTarget() {
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
+//        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
     }
     
     func updateUIForImageAvailability(hasImage: Bool) {
@@ -136,9 +162,71 @@ class PieceViewController: BaseViewController, UIConfigurable {
         addToGalleryButton.isHidden = hasImage
     }
     
+    func saveImageToRealm(image: UIImage, date: Date?) {
+        guard let imageData = image.pngData(), let selectedDate = date else {
+                print("경고: 이미지 데이터 변환에 실패 또는 날짜 변환 실패")
+                return
+            }
+        
+        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let fileURL = directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("png")
+        
+        do {
+            try imageData.write(to: fileURL)
+        } catch {
+            print("경고: 파일로 이미지 저장 실패: \(error.localizedDescription)")
+            return
+        }
+        
+        let imageMemory = ImageMemory()
+        imageMemory.imagePath = fileURL.path
+        imageMemory.memoryDate = selectedDate
+        
+        do {
+            try RealmManager.shared.realm.write {
+                RealmManager.shared.realm.add(imageMemory)
+                print("저장성공: \(imageMemory)")
+            }
+        } catch {
+            print("Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
+        }
+    }
+    
+    func showSaveConfirmationAlert() {
+        let alertController = UIAlertController(title: "저장하시겠습니까?", message: nil, preferredStyle: .alert)
+        
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            
+            
+            guard let selectedImage = self?.imageView.image, let selectedDate = self?.datePickerButton.title(for: .normal) else {
+                self?.showAlert(title: "주의!", message: "이미지와 날짜가 모두 입력 되어야만 저장할 수 있습니다.")
+                return
+            }
+            
+            self?.saveImageToRealm(image: selectedImage, date: Date(dateString: selectedDate, format: "yyyy. MM. dd"))
+            
+            self?.navigationController?.popViewController(animated: true)
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
     @objc func cancelButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
+    
+    @objc func nextButtonTapped() {
+        showSaveConfirmationAlert()
+    }
+    
+//    @objc func testPageButtonTapped() {
+//        navigationController?.pushViewController(TestPageViewController(), animated: true)
+//    }
     
     @objc func addButtonTapped() {
         var configuration = PHPickerConfiguration()
@@ -153,6 +241,11 @@ class PieceViewController: BaseViewController, UIConfigurable {
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .wheels
         
+        if let title = datePickerButton.title(for: .normal),
+           let currentDate = Date(dateString: title, format: "yyyy. MM. dd") {
+            datePicker.date = currentDate
+        }
+        
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
         alertController.view.addSubview(datePicker)
         
@@ -162,7 +255,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         
         let selectAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
             let selectedDate = datePicker.date
-            let formattedDate = selectedDate.GetCurrentTime(Dataforamt: "yyyy-MM-dd")
+            let formattedDate = selectedDate.GetCurrentTime(Dataforamt: "yyyy. MM. dd")
             self?.datePickerButton.setTitle(formattedDate, for: .normal)
         }
         
@@ -174,6 +267,60 @@ class PieceViewController: BaseViewController, UIConfigurable {
         present(alertController, animated: true, completion: nil)
     }
 }
+
+// MARK: - 앨범 접근 권한
+
+extension PieceViewController {
+    func requestPhotoLibraryAccess() {
+        let status = PHPhotoLibrary.authorizationStatus()
+        
+        switch status {
+        case .authorized:
+            // 이미 권한이 허용된 경우
+            break
+        case .denied, .restricted:
+            // 권한이 거부되었거나 제한된 경우
+            // 사용자에게 설정 앱으로 이동하여 권한을 변경하도록 요청
+            showAlertToSettings()
+        case .notDetermined:
+            // 아직 권한을 요청하지 않은 경우
+            PHPhotoLibrary.requestAuthorization { [weak self] (newStatus) in
+                if newStatus == .authorized {
+                    // 사용자가 권한을 허용한 경우
+                } else {
+                    // 사용자가 권한을 거부한 경우
+                    // 사용자에게 설정 앱으로 이동하여 권한을 변경하도록 요청
+                    self?.showAlertToSettings()
+                }
+            }
+        default:
+            break
+        }
+    }
+    
+    func showAlertToSettings() {
+        let alertController = UIAlertController(
+            title: "앨범 접근 권한이 필요합니다",
+            message: "앨범 접근을 허용하려면 설정에서 권한을 변경해주세요.",
+            preferredStyle: .alert
+        )
+        
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { (action) in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(settingsAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+}
+
+// MARK: - PHPickerViewControllerDelegate
 
 extension PieceViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
