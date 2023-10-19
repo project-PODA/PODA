@@ -54,6 +54,9 @@
 		5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */; };
 		D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7762ADD478400FFB3F7 /* LoginViewController.swift */; };
 		D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */; };
+		E24331C82AE0F3FD00244A5A /* SelectRatioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */; };
+		E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */; };
+		E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
 /* End PBXBuildFile section */
 
@@ -106,6 +109,9 @@
 		5FD54B5D2AD922C60092D75B /* FirestorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorageManager.swift; sourceTree = "<group>"; };
 		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRatioViewController.swift; sourceTree = "<group>"; };
+		E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewController.swift; sourceTree = "<group>"; };
+		E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -308,6 +314,32 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
+		E24331C42AE0F33F00244A5A /* Diary */ = {
+			isa = PBXGroup;
+			children = (
+				E24331C62AE0F37600244A5A /* ViewModel */,
+				E24331C52AE0F36900244A5A /* ViewController */,
+			);
+			path = Diary;
+			sourceTree = "<group>";
+		};
+		E24331C52AE0F36900244A5A /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */,
+				E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		E24331C62AE0F37600244A5A /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		E28A2CF82AD95B91004401D1 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
@@ -322,6 +354,7 @@
 		E28A2CF92ADC6B99004401D1 /* Screen */ = {
 			isa = PBXGroup;
 			children = (
+				E24331C42AE0F33F00244A5A /* Diary */,
 				D879F77B2ADD941400FFB3F7 /* Login */,
 				D879F7782ADD93E900FFB3F7 /* SignUp */,
 				E28A2CFA2ADC6BA7004401D1 /* Main */,
@@ -518,9 +551,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */,
 				5FD54B5E2AD922C60092D75B /* FirestorageManager.swift in Sources */,
 				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
 				5FD54B292AD911120092D75B /* UITableView + Extension.swift in Sources */,
+				E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */,
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
 				5FD54B5A2AD922B10092D75B /* FirebaseAuthManager.swift in Sources */,
@@ -542,6 +577,7 @@
 				5FD54B5C2AD922B90092D75B /* FirestoreManager.swift in Sources */,
 				2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */,
 				5FD54B272AD910EE0092D75B /* UITextField + Extension.swift in Sources */,
+				E24331C82AE0F3FD00244A5A /* SelectRatioViewController.swift in Sources */,
 				5FD54B2B2AD9112D0092D75B /* UICollectionView + Extension.swift in Sources */,
 				5FD54B252AD910D30092D75B /* UILabel + Extension.swift in Sources */,
 				27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */,
@@ -691,6 +727,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 53AWLX6CVV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -717,6 +754,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 53AWLX6CVV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
