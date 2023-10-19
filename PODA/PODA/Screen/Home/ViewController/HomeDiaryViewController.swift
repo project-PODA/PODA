@@ -18,7 +18,7 @@ class HomeDiaryViewController: BaseViewController, UIConfigurable {
     }
     
 //    private let diaryCollectionView = UICollectionView().then {
-//        
+//
 //    }
 
     override func viewDidLoad() {
@@ -41,3 +41,4 @@ class HomeDiaryViewController: BaseViewController, UIConfigurable {
     }
 
 }
+

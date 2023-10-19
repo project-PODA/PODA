@@ -372,3 +372,4 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
         return 2.0
     }
 }
+
