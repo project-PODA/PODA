@@ -28,6 +28,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
     }
     
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+        $0.backgroundColor = Palette.podaBlack.getColor()
+    }
+    
     private let diaryView = UIView().then {
         $0.backgroundColor = Palette.podaGray4.getColor()
     }
@@ -82,6 +87,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.spacing = 30
     }
     
+    private lazy var decorateView = UIView().then {
+        $0.backgroundColor = Palette.podaBlack.getColor()
+        $0.addSubview(decorateStackView)
+    }
+    
     private let selectBackgroundColorView = ColorPaletteView().then {
         $0.isHidden = true
     }
@@ -115,10 +125,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             decorateStackView.addArrangedSubview($0)
         }
         
+        [diaryView, pageLabel, pageAddButton, pageCollectionView].forEach {
+            scrollView.addSubview($0)
+        }
+        
         [cancelButton, nextButton,
-         diaryView,
-         pageLabel, pageAddButton, pageCollectionView,
-         decorateStackView,
+         scrollView,
+         decorateView,
          selectBackgroundColorView].forEach {
             view.addSubview($0)
         }
@@ -133,10 +146,25 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             $0.trailing.equalToSuperview().inset(20)
         }
         
-        diaryView.snp.makeConstraints {
+        scrollView.snp.makeConstraints {
             $0.top.equalTo(nextButton.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
-            $0.width.height.equalTo(393)
+            $0.bottom.equalTo(decorateView.snp.top)
+        }
+        
+        diaryView.snp.makeConstraints {
+            $0.top.equalTo(scrollView)
+            $0.leading.trailing.equalToSuperview()
+            
+            switch ratio {
+            case .square:
+                $0.width.height.equalTo(393)
+            case .rectangle:
+                $0.width.equalTo(393)
+                $0.height.equalTo(524)
+            case .none:
+                $0.width.height.equalTo(393)
+            }
         }
         
         pageLabel.snp.makeConstraints {
@@ -147,19 +175,25 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         pageAddButton.snp.makeConstraints {
             $0.top.equalTo(pageLabel.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview()
             $0.width.height.equalTo(106)
         }
         
         pageCollectionView.snp.makeConstraints {
             $0.top.equalTo(pageAddButton.snp.top).offset(-15)
             $0.leading.equalTo(pageAddButton.snp.trailing).offset(11)
-            $0.trailing.equalToSuperview()
+            $0.trailing.bottom.equalToSuperview()
             $0.height.equalTo(121)
         }
         
+        decorateView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(100)
+        }
+        
         decorateStackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(40)
-            $0.bottom.equalToSuperview().inset(34)
+            $0.leading.trailing.equalTo(decorateView).inset(40)
+            $0.bottom.equalTo(decorateView).inset(18)
         }
         
         selectBackgroundColorView.snp.makeConstraints {
