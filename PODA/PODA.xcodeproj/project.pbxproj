@@ -90,6 +90,7 @@
 		E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */; };
 		E2B8F8DC2AE2538F00578D15 /* ColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */; };
 		E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */; };
+		E2B8F8E12AE2872300578D15 /* DiaryNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -168,6 +169,7 @@
 		E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteView.swift; sourceTree = "<group>"; };
 		E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
 		E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColorCollectionViewCell.xib; sourceTree = "<group>"; };
+		E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryNavigationBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -626,6 +628,7 @@
 			children = (
 				E2B8F8D72AE1A3A600578D15 /* Color */,
 				E2B8F8D62AE1A39B00578D15 /* Cell */,
+				E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -754,6 +757,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */,
+				E2B8F8E12AE2872300578D15 /* DiaryNavigationBar.swift in Sources */,
 				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
 				E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */,
 				E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */,

@@ -20,16 +20,9 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
     
     private var ratio: Ratio?
     
-    private lazy var cancelButton = UIButton().then {
-        $0.setUpButton(title: "취소", podaFont: .subhead2)
-        $0.tintColor = Palette.podaWhite.getColor()
-        $0.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
-    }
-    
-    private lazy var nextButton = UIButton().then {
-        $0.setUpButton(title: "다음", podaFont: .subhead2)
-        $0.tintColor = Palette.podaWhite.getColor()
-        $0.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
+    private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "취소", rightButtonTitle: "다음").then {
+        $0.leftButton.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
+        $0.rightButton.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
     }
     
     private let messageLabel = UILabel().then {
@@ -75,22 +68,17 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
             ratioStackView.addArrangedSubview($0)
         }
         
-        [cancelButton, nextButton, messageLabel, ratioStackView].forEach {
+        [navigationBar, messageLabel, ratioStackView].forEach {
             view.addSubview($0)
         }
         
-        cancelButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.equalToSuperview().inset(20)
-        }
-        
-        nextButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.trailing.equalToSuperview().inset(20)
+        navigationBar.snp.makeConstraints {
+            $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(40)
         }
         
         messageLabel.snp.makeConstraints {
-            $0.top.equalTo(nextButton.snp.bottom).offset(244)
+            $0.top.equalTo(navigationBar.snp.bottom).offset(244)
             $0.centerX.equalToSuperview()
         }
         
