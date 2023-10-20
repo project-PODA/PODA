@@ -53,6 +53,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.isNavigationBarHidden = true
         configUI()
     }
     
@@ -108,10 +109,12 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapAddPieceButton() {
         // 추억 조각 등록하기 페이지로 이동
+        let pieceViewController = PieceViewController()
+        navigationController?.pushViewController(pieceViewController, animated: true)
     }
     
     @objc func didTapCloseButton() {
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 }
 

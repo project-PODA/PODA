@@ -77,7 +77,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         // 생성된 다이어리가 없는 경우 아래 Label 노출
         let timeCapsuleLabel = UILabel()
         timeCapsuleLabel.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
-        timeCapsuleLabel.textColor = Palette.podaGray4.getColor()
+        timeCapsuleLabel.textColor = Palette.podaGray3.getColor()
         timeCapsuleLabel.numberOfLines = 2
         timeCapsuleLabel.textAlignment = .center
         $0.addSubview(timeCapsuleLabel)
@@ -113,6 +113,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapMoreDiaryButton), for: .touchUpInside)
     }
     
+    // 생성된 다이어리가 없는 경우 아래 Label 노출
     private let diaryImageView = UIImageView().then {
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.layer.cornerRadius = 5
@@ -150,13 +151,18 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.setImage(image, for: .normal)
         $0.tintColor = Palette.podaGray2.getColor()
         $0.addTarget(self, action: #selector(didTapAddPieceButton), for: .touchUpInside)
-        
     }
     
     private let pieceStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
         $0.spacing = 8
+    }
+    
+    private let morePieceButton = UIButton().then{
+        $0.setUpButton(title: "더보기", podaFont: .subhead1)
+        $0.titleLabel?.textColor = Palette.podaGray2.getColor()
+        $0.addTarget(self, action: #selector(didTapMorePieceButton), for: .touchUpInside)
     }
     
     private let pieceImageView = UIImageView().then {
@@ -173,18 +179,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    private let morePieceButton = UIButton().then{
-        $0.setUpButton(title: "더보기", podaFont: .subhead1)
-        $0.titleLabel?.textColor = Palette.podaGray2.getColor()
-        $0.addTarget(self, action: #selector(didTapMorePieceButton), for: .touchUpInside)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.isNavigationBarHidden = true
         configUI()
         diaryCollectionView.delegate = self
         diaryCollectionView.dataSource = self
-
     }
     
     func configUI() {
@@ -195,7 +195,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         scrollView.addSubview(contentView)
         [diaryMenuLabel, addDiaryButton].forEach(diaryStackView.addArrangedSubview)
         [pieceMenuLabel, addPieceButton].forEach(pieceStackView.addArrangedSubview)
-        [timeCapsuleLabel, timeCapsuleImageView, diaryStackView, diaryCollectionView, moreDiaryButton, pieceStackView, pieceImageView, morePieceButton].forEach (contentView.addSubview)
+        [timeCapsuleLabel, timeCapsuleImageView, diaryStackView, moreDiaryButton, diaryCollectionView, pieceStackView, morePieceButton, pieceImageView].forEach(contentView.addSubview)
 
         mainStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(7)
@@ -224,8 +224,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         
         timeCapsuleImageView.snp.makeConstraints { make in
             make.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().offset(-40)
             make.height.equalTo(416)
         }
         
@@ -302,8 +302,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapAddButton() {
         let homeMenuViewController = HomeMenuViewController()
-        homeMenuViewController.modalPresentationStyle = .overFullScreen
-        present(homeMenuViewController, animated: true)
+        navigationController?.pushViewController(homeMenuViewController, animated: true)
     }
     
     @objc func didTapAddDiaryButton() {
@@ -318,9 +317,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapAddPieceButton() {
         // 추억 조각 등록하기 페이지로 이동
-//        let pieceViewController = PieceViewController()
-//        pieceViewController.modalPresentationStyle = .fullScreen
-//        present(pieceViewController, animated: true)
+        let pieceViewController = PieceViewController()
+        navigationController?.pushViewController(pieceViewController, animated: true)
     }
     
     @objc func didTapMorePieceButton() {
