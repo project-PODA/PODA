@@ -95,6 +95,35 @@ class FireStorageImageManager{
             }
         }
     }
+    func createProfileImage(imageData : Data, completion: @escaping (FireStorageImageError) -> Void){
+        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            completion(.unknown)
+            return
+        }
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let self = self else { return }
+
+            let fileName = "profileImage"
+            let format = imageManipulator.checkImageFormat(imageData: imageData)
+            let fileFullName = "\(fileName)_\(format)"
+
+            let storageReference = storage.reference()
+            let imageReference = storageReference.child("\(currentUserUID)/profile/\(fileFullName)")
+            let metadata = StorageMetadata()
+
+            metadata.contentType = format
+
+            imageReference.putData(imageData, metadata: metadata) { (metadata, error) in
+                if let error = error {
+                    completion(.uploadFailed)
+                    print(error.localizedDescription)
+                    Logger.writeLog(.error, message: error.localizedDescription)
+                } else {
+                    completion(.none)
+                }
+            }
+        }
+    }
     
     func deleteDiaryImage(diaryName: String, completion: @escaping (FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {

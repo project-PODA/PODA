@@ -7,16 +7,19 @@
 
 enum FireStorageDBError {
     case invalidURL
-    case requestFailed
     case invalidData
     case unknown
     case none
 }
 
 enum FireStorageImageError {
-    case ImageDataError
     case uploadFailed
-    case downloadFailed
     case unknown
+    case none
+}
+
+enum FireAuthError: Equatable {
+    case unknown
+    case error(Int, String)
     case none
 }

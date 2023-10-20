@@ -9,7 +9,7 @@ import FirebaseAuth
 import Firebase
 import FirebaseStorage
 
-class FireStoreDBManager{
+class FirestorageDBManager{
     private var db = Firestore.firestore()
     
     func createDiary(deviceName : String , pageDataList : [PageInfo], title : String, description : String, frameRate : FrameRate, backgroundColor : String,completion: @escaping (FireStorageDBError) -> Void) {
@@ -47,6 +47,27 @@ class FireStoreDBManager{
                 }
             }
         }
+    }
+    func createUser(userInfo : UserInfo, completion: @escaping (FireStorageDBError) -> Void){
+        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            return
+        }
+        DispatchQueue.global(qos: .background).async{ [weak self] in
+            guard let self = self else {return}
+            
+            let collectionRef = db.collection(currentUserUID)
+            let documentRef = collectionRef.document("/account")
+            
+            documentRef.setData(["accountInfo" : userInfo.toJson()]) { error in
+                if let error = error {
+                    completion(.unknown)
+                    Logger.writeLog(.error, message: (error.localizedDescription))
+                }else{
+                    completion(.none)
+                }
+            }
+        }
+        
     }
     
     func getDiaryDocuments(completion: @escaping ([String], FireStorageDBError) -> Void) {
