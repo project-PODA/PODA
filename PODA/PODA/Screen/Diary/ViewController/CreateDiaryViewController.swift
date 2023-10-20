@@ -97,6 +97,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.isHidden = true
     }
     
+    private let selectTextColorView = ColorPaletteView().then {
+        $0.isHidden = true
+    }
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -130,10 +134,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             scrollView.addSubview($0)
         }
         
-        [cancelButton, nextButton,
-         scrollView,
-         decorateView,
-         selectBackgroundColorView].forEach {
+        [cancelButton, nextButton, scrollView, decorateView, selectBackgroundColorView, selectTextColorView].forEach {
             view.addSubview($0)
         }
         
@@ -203,6 +204,12 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             $0.bottom.equalTo(decorateStackView.snp.top)
             $0.height.equalTo(67)
         }
+        
+        selectTextColorView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(decorateStackView.snp.top)
+            $0.height.equalTo(67)
+        }
     }
     
     //MARK: - @objc
@@ -240,7 +247,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpTextButton() {
-        
+        addText()
+        selectTextColorView.isHidden = false
     }
     
     // MARK: - Custom Method
@@ -276,6 +284,17 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         imageView.snp.makeConstraints {
             $0.center.equalTo(diaryView)
             $0.width.height.equalTo(200)
+        }
+    }
+    
+    private func addText() {
+        let textField = UITextField()
+        textField.becomeFirstResponder()
+        textField.inputAccessoryView = selectTextColorView
+        textField.delegate = self
+        diaryView.addSubview(textField)
+        textField.snp.makeConstraints {
+            $0.center.equalTo(diaryView)
         }
     }
 
@@ -323,6 +342,14 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
                 }
             }
         }
+    }
+}
+
+extension CreateDiaryViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        selectTextColorView.isHidden = true
+        return true
     }
 }
 
