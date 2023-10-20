@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import PhotosUI
 
 class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfigurable {
     
@@ -187,13 +188,14 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
         
         decorateView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(100)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(80)
         }
         
         decorateStackView.snp.makeConstraints {
             $0.leading.trailing.equalTo(decorateView).inset(40)
-            $0.bottom.equalTo(decorateView).inset(18)
+            $0.centerY.equalTo(decorateView)
         }
         
         selectBackgroundColorView.snp.makeConstraints {
@@ -226,7 +228,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpGalleryButton() {
-        
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        present(picker, animated: true, completion: nil)
     }
     
     @objc private func touchUpStickerButton() {
@@ -243,14 +249,14 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
     }
     
-    func setCollectionView() {
+    private func setCollectionView() {
         pageCollectionView.delegate = self
         pageCollectionView.dataSource = self
         pageCollectionView.register(PageCollectionViewCell.nib(), forCellWithReuseIdentifier: PageCollectionViewCell.identifier)
         pageCollectionView.backgroundColor = .clear
     }
     
-    func getButtonConfiguration(title: String, iconName: String) -> UIButton.Configuration {
+    private func getButtonConfiguration(title: String, iconName: String) -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
         var titleAttr = AttributedString.init(title)
         titleAttr.foregroundColor = Palette.podaWhite.getColor()
@@ -261,6 +267,16 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         config.imagePadding = 10
         
         return config
+    }
+    
+    private func addImage(_ image: UIImage) {
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        diaryView.addSubview(imageView)
+        imageView.snp.makeConstraints {
+            $0.center.equalTo(diaryView)
+            $0.width.height.equalTo(200)
+        }
     }
 
 }
@@ -287,3 +303,26 @@ extension CreateDiaryViewController: UICollectionViewDelegate {
         
     }
 }
+
+// MARK: - PHPickerViewControllerDelegate
+
+extension CreateDiaryViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        dismiss(animated: true, completion: nil)
+        
+        guard !results.isEmpty else { return }
+        
+        let selectedResult = results[0]
+        
+        selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
+            if let error = error {
+                print("이미지 로딩 중 오류: \(error.localizedDescription)")
+            } else if let selectedImage = object as? UIImage {
+                DispatchQueue.main.async {
+                    self?.addImage(selectedImage)
+                }
+            }
+        }
+    }
+}
+
