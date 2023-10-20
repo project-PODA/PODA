@@ -9,11 +9,14 @@ import FirebaseAuth
 import Firebase
 import FirebaseStorage
 
-class FireStorageImageManager{
+class FireStorageImageManager {
+    private let imageManipulator : ImageManipulator
+
+    init(imageManipulator : ImageManipulator){
+        self.imageManipulator = imageManipulator
+    }
     
-    private var db = Firestore.firestore()
-    private let storage = Storage.storage()
-    private let imageManipulator = ImageManipulator()
+    private let storageReference = Storage.storage().reference()
     
     func createDiaryImage(diaryName: String, pageImageList: [Data], completion: @escaping (FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
@@ -29,7 +32,6 @@ class FireStorageImageManager{
                 let format = imageManipulator.checkImageFormat(imageData: pageImageList[i])
                 let fileFullName = "\(fileName)_\(format)"
                 
-                let storageReference = storage.reference()
                 let imageReference = storageReference.child("\(currentUserUID)/images/\(diaryName)/\(fileFullName)")
                 let metadata = StorageMetadata()
                 
@@ -57,7 +59,6 @@ class FireStorageImageManager{
         DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
             guard let self = self else {return}
             
-            let storageReference = storage.reference()
             let imageReference = storageReference.child("\(currentUserUID)/images/\(dinaryName)")
             
             imageReference.listAll { (result, error) in
@@ -109,7 +110,6 @@ class FireStorageImageManager{
             let format = imageManipulator.checkImageFormat(imageData: imageData)
             let fileFullName = "\(fileName)_\(format)"
             
-            let storageReference = storage.reference()
             let imageReference = storageReference.child("\(currentUserUID)/profile/\(fileFullName)")
             let metadata = StorageMetadata()
             
@@ -135,7 +135,6 @@ class FireStorageImageManager{
         DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
             guard let self = self else {return}
             
-            let storageReference = storage.reference()
             let imageReference = storageReference.child("\(currentUserUID)/images/\(diaryName)")
             
             imageReference.listAll { (result, error) in

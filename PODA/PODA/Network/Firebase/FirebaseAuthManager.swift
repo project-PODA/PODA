@@ -8,8 +8,13 @@
 import FirebaseAuth
 
 class FireAuthManager {
-    let firebaseDBManager = FirestorageDBManager()
-    let fireStorageImageManager = FireStorageImageManager()
+    var firestorageDBManager: FirestorageDBManager
+    var firestorageImageManager: FireStorageImageManager
+
+    init(firestorageDBManager: FirestorageDBManager, firestorageImageManager: FireStorageImageManager) {
+        self.firestorageDBManager = firestorageDBManager
+        self.firestorageImageManager = firestorageImageManager
+    }
     
     func userLogin(email : String, password: String, completion: @escaping (FireAuthError) -> Void){
         DispatchQueue.global(qos: .userInteractive).async{
@@ -66,7 +71,7 @@ class FireAuthManager {
                         return
                     }
                     
-                    self.firebaseDBManager.createUserAccount(userInfo: userInfo) { dbManagerError in
+                    self.firestorageDBManager.createUserAccount(userInfo: userInfo) { dbManagerError in
                         if dbManagerError != .none {
                             Logger.writeLog(.error, message: "유저 정보 생성 중 문제 발생")
                             completion(.unknown)
@@ -74,7 +79,7 @@ class FireAuthManager {
                         }
                         
                         if let profileImage = profileImage {
-                            self.fireStorageImageManager.createProfileImage(imageData: profileImage) { storageError in
+                            self.firestorageImageManager.createProfileImage(imageData: profileImage) { storageError in
                                 if storageError != .none {
                                     print("프로필 이미지 생성 실패")
                                     Logger.writeLog(.error, message: "프로필 이미지 생성 실패")

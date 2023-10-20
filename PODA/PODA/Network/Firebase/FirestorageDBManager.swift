@@ -9,7 +9,7 @@ import FirebaseAuth
 import Firebase
 import FirebaseStorage
 
-class FirestorageDBManager{
+class FirestorageDBManager {
     private var db = Firestore.firestore()
     
     func createDiary(deviceName : String , pageDataList : [PageInfo], title : String, description : String, frameRate : FrameRate, backgroundColor : String,completion: @escaping (FireStorageDBError) -> Void) {
