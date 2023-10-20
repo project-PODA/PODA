@@ -23,6 +23,9 @@
 		27986DDE2AE125B900D27C84 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 27986DDD2AE125B900D27C84 /* RealmSwift */; };
 		27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652A2ADD21B800B6E211 /* PieceViewController.swift */; };
 		27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652F2ADD237600B6E211 /* PieceViewModel.swift */; };
+		27DB5D0D2AE2532900489318 /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */; };
+		27DB5D102AE2544100489318 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D0F2AE2544100489318 /* SwiftSMTP */; };
+		27DB5D132AE2554600489318 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D122AE2554600489318 /* GoogleSignIn */; };
 		5F2B1CCF2ADCD08E00DAA9C8 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */; };
 		5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */; };
 		5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC82ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf */; };
@@ -72,6 +75,7 @@
 		5FEC85BF2AE14E0F000E5D4C /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85BE2AE14E0F000E5D4C /* FirebaseDatabase */; };
 		5FEC85C12AE14E0F000E5D4C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85C02AE14E0F000E5D4C /* FirebaseFirestore */; };
 		5FEC85C32AE14E0F000E5D4C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85C22AE14E0F000E5D4C /* FirebaseStorage */; };
+		5FEC85C72AE156B0000E5D4C /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEC85C62AE156B0000E5D4C /* UserInfo.swift */; };
 		D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7762ADD478400FFB3F7 /* LoginViewController.swift */; };
 		D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */; };
 		D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */; };
@@ -150,6 +154,7 @@
 		5FD54B532AD915790092D75B /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTabbarController.swift; sourceTree = "<group>"; };
 		5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DiaryInfo.md; sourceTree = "<group>"; };
+		5FEC85C62AE156B0000E5D4C /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
@@ -172,6 +177,9 @@
 			files = (
 				5FEC85BF2AE14E0F000E5D4C /* FirebaseDatabase in Frameworks */,
 				27986DDE2AE125B900D27C84 /* RealmSwift in Frameworks */,
+				27DB5D132AE2554600489318 /* GoogleSignIn in Frameworks */,
+				27DB5D102AE2544100489318 /* SwiftSMTP in Frameworks */,
+				27DB5D0D2AE2532900489318 /* NVActivityIndicatorView in Frameworks */,
 				5FEC85BD2AE14E0F000E5D4C /* FirebaseAuth in Frameworks */,
 				5FD54B092AD90AE00092D75B /* SnapKit in Frameworks */,
 				5FEC85BB2AE14E0F000E5D4C /* FirebaseAnalytics in Frameworks */,
@@ -335,6 +343,7 @@
 			isa = PBXGroup;
 			children = (
 				5F2B1CDA2ADCDB7400DAA9C8 /* DiaryInfo.swift */,
+				5FEC85C62AE156B0000E5D4C /* UserInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -665,6 +674,9 @@
 				5FEC85BE2AE14E0F000E5D4C /* FirebaseDatabase */,
 				5FEC85C02AE14E0F000E5D4C /* FirebaseFirestore */,
 				5FEC85C22AE14E0F000E5D4C /* FirebaseStorage */,
+				27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */,
+				27DB5D0F2AE2544100489318 /* SwiftSMTP */,
+				27DB5D122AE2554600489318 /* GoogleSignIn */,
 			);
 			productName = PODA;
 			productReference = 276985852AD8E20B00A5100D /* PODA.app */;
@@ -699,6 +711,9 @@
 				E27DD4E42ADD15C5002B194A /* XCRemoteSwiftPackageReference "Then" */,
 				27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				5FEC85B92AE14E0F000E5D4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				27DB5D0B2AE2532900489318 /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
+				27DB5D0E2AE2544100489318 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
+				27DB5D112AE2554600489318 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 276985862AD8E20B00A5100D /* Products */;
 			projectDirPath = "";
@@ -751,6 +766,7 @@
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
 				E2B8F8DC2AE2538F00578D15 /* ColorCollectionViewCell.swift in Sources */,
+				5FEC85C72AE156B0000E5D4C /* UserInfo.swift in Sources */,
 				5FD54B342AD911D30092D75B /* NetworkManager.swift in Sources */,
 				5F54EBFA2ADFFF3100331E59 /* FirestorageDBManager.swift in Sources */,
 				5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */,
@@ -1012,6 +1028,30 @@
 				kind = branch;
 			};
 		};
+		27DB5D0B2AE2532900489318 /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ninjaprox/NVActivityIndicatorView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		27DB5D0E2AE2544100489318 /* XCRemoteSwiftPackageReference "Swift-SMTP" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Kitura/Swift-SMTP";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		27DB5D112AE2554600489318 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 		5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -1043,6 +1083,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 27DB5D0B2AE2532900489318 /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */;
+			productName = NVActivityIndicatorView;
+		};
+		27DB5D0F2AE2544100489318 /* SwiftSMTP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 27DB5D0E2AE2544100489318 /* XCRemoteSwiftPackageReference "Swift-SMTP" */;
+			productName = SwiftSMTP;
+		};
+		27DB5D122AE2554600489318 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 27DB5D112AE2554600489318 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 		5FD54B082AD90AE00092D75B /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

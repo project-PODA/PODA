@@ -9,11 +9,13 @@ import FirebaseAuth
 import Firebase
 import FirebaseStorage
 
-class FireStoreDBManager{
+class FirestorageDBManager {
     private var db = Firestore.firestore()
     
     func createDiary(deviceName : String , pageDataList : [PageInfo], title : String, description : String, frameRate : FrameRate, backgroundColor : String,completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
             return
         }
         //밑에껀 더미데이터.
@@ -31,18 +33,42 @@ class FireStoreDBManager{
             )
         )
         
-        DispatchQueue.global(qos: .background).async { [weak self] in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let self = self else {return}
             
             let collectionRef = db.collection(currentUserUID)
             let documentRef = collectionRef.document(title)
             
-            documentRef.setData(["diaryInfo" : diaryInfo.toJson()
-            ]) { error in
-                if let error = error {
-                    completion(.unknown)
-                    Logger.writeLog(.error, message: (error.localizedDescription))
+            documentRef.setData(["diaryInfo" : diaryInfo.toJson()]) { error in
+                if let errCode = error as NSError? {
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    completion(.error(errCode.code, errCode.localizedDescription))
                 }else{
+                    print("다이어리 정보 생성 성공")
+                    completion(.none)
+                }
+            }
+        }
+    }
+    
+    func createUserAccount(userInfo : UserInfo, completion: @escaping (FireStorageDBError) -> Void){
+        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
+            return
+        }
+        DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
+            guard let self = self else {return}
+            
+            let collectionRef = db.collection(currentUserUID)
+            let documentRef = collectionRef.document("/account")
+            
+            documentRef.setData(["accountInfo" : userInfo.toJson()]) { error in
+                if let errCode = error as NSError? {
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    completion(.error(errCode.code, errCode.localizedDescription))
+                }else{
+                    print("유저정보 생성 성공")
                     completion(.none)
                 }
             }
@@ -51,23 +77,25 @@ class FireStoreDBManager{
     
     func getDiaryDocuments(completion: @escaping ([String], FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion([],.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
             return
         }
         
-        DispatchQueue.global(qos: .background).async{ [weak self] in
+        DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
             guard let self = self else {return}
             let collectionRef = db.collection(currentUserUID)
             
             collectionRef.getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    completion([], .unknown)
-                    Logger.writeLog(.error, message: (error.localizedDescription))
-                } else {
-                    var documentNames = [String]()
-                    for document in querySnapshot!.documents {
-                        documentNames.append(document.documentID)
-                    }
-                    completion(documentNames, .none)
+                if let errCode = error as NSError? {
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    completion([], .error(errCode.code, errCode.localizedDescription))
+                }else{
+                      var documentNames = [String]()
+                      for document in querySnapshot!.documents {
+                          documentNames.append(document.documentID)
+                      }
+                      completion(documentNames, .none)
                 }
             }
         }
@@ -75,13 +103,15 @@ class FireStoreDBManager{
     
     func getDiaryData(diaryNameList: [String], completion: @escaping ([DiaryInfo], FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion([],.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
             return
         }
         
         var diaryInfoList = [DiaryInfo]()
         let dispatchGroup = DispatchGroup()
         
-        DispatchQueue.global(qos: .background).async { [weak self] in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let self = self else {return}
             
             for diaryName in diaryNameList {
@@ -91,17 +121,18 @@ class FireStoreDBManager{
                 let documentRef = collectionRef.document(diaryName)
                 
                 documentRef.getDocument { (document, error) in
-                    if let error = error {
-                        completion([], .unknown)
-                        Logger.writeLog(.error, message: (error.localizedDescription))
+                    if let errCode = error as NSError? {
+                        Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                        completion([], .error(errCode.code, errCode.localizedDescription))
                         dispatchGroup.leave()
+                        return
                     } else {
                         if let document = document {
                             if let diaryInfoDataString = document["diaryInfo"] as? String {
                                 if let diaryInfo = DiaryInfo.fromJson(jsonString: diaryInfoDataString, model: DiaryInfo.self) {
                                     diaryInfoList.append(diaryInfo)
                                 } else {
-                                    completion([], .invalidData)
+                                    completion([], .error(9999, "DiaryInfo Decdoing Error"))//좀더 생각해보기
                                     Logger.writeLog(.error, message: "json decoding error")
                                 }
                             }
@@ -121,19 +152,22 @@ class FireStoreDBManager{
 
     func deleteDiary(diaryName: String, completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
             return
         }
         
-        DispatchQueue.global(qos: .background).async{ [weak self] in
+        DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
             guard let self = self else {return}
             
             let collectionRef = db.collection(currentUserUID)
             let documentRef = collectionRef.document(diaryName)
             documentRef.delete { error in
-                if let error = error {
-                    completion(.unknown)
-                    Logger.writeLog(.error, message: (error.localizedDescription))
-                } else {
+                if let errCode = error as NSError? {
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    completion(.error(errCode.code, errCode.localizedDescription))
+                    return
+                }  else {
                     completion(.none)
                 }
             }
@@ -142,20 +176,23 @@ class FireStoreDBManager{
     
     func deleteDiaryAll(completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
             return
         }
         
-        DispatchQueue.global(qos: .background).async { [weak self] in
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let self = self else { return }
 
             let collectionRef = db.collection(currentUserUID)
 
             collectionRef.getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    completion(.unknown)
-                    Logger.writeLog(.error, message: (error.localizedDescription))
+                if let errCode = error as NSError? {
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    completion(.error(errCode.code, errCode.localizedDescription))
                     return
                 }
+                
                 let dispatchGroup = DispatchGroup()
                 for document in querySnapshot!.documents {
                     dispatchGroup.enter()
