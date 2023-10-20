@@ -59,6 +59,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.configuration = getButtonConfiguration(title: "배경", iconName: "icon_background")
         $0.addTarget(self, action: #selector(touchUpBackgroundButton), for: .touchUpInside)
     }
+    private var isSelectedBackgroundButton = false
     
     private lazy var galleryButton = UIButton().then {
         $0.configuration = getButtonConfiguration(title: "사진", iconName: "icon_gallery")
@@ -79,6 +80,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.axis = .horizontal
         $0.distribution = .fillProportionally
         $0.spacing = 30
+    }
+    
+    private let selectBackgroundColorView = ColorPaletteView().then {
+        $0.isHidden = true
     }
     
     // MARK: - Life Cycle
@@ -113,7 +118,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         [cancelButton, nextButton,
          diaryView,
          pageLabel, pageAddButton, pageCollectionView,
-         decorateStackView].forEach {
+         decorateStackView,
+         selectBackgroundColorView].forEach {
             view.addSubview($0)
         }
         
@@ -155,6 +161,12 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             $0.leading.trailing.equalToSuperview().inset(40)
             $0.bottom.equalToSuperview().inset(34)
         }
+        
+        selectBackgroundColorView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(decorateStackView.snp.top)
+            $0.height.equalTo(67)
+        }
     }
     
     //MARK: - @objc
@@ -173,7 +185,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpBackgroundButton() {
-        
+        UIView.animate(withDuration: 0.8) {
+            self.selectBackgroundColorView.isHidden = self.isSelectedBackgroundButton
+        }
+        isSelectedBackgroundButton.toggle()
     }
     
     @objc private func touchUpGalleryButton() {

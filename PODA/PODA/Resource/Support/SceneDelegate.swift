@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window = UIWindow(windowScene: windowScene)
 
             let loginVC = LoginViewController()
-            let navigationController = UINavigationController(rootViewController: loginVC)
+        let navigationController = UINavigationController(rootViewController: CreateDiaryViewController(viewModel: CreateDiaryViewModel(), ratio: .square))
 
             self.window?.rootViewController = navigationController
             self.window?.makeKeyAndVisible()

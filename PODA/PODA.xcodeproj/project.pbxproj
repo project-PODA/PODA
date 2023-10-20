@@ -74,15 +74,18 @@
 		5FEC85C32AE14E0F000E5D4C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85C22AE14E0F000E5D4C /* FirebaseStorage */; };
 		D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7762ADD478400FFB3F7 /* LoginViewController.swift */; };
 		D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */; };
+		D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */; };
+		D8E5D0522AE12471005EE3C9 /* CompleteSignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */; };
 		E24331C82AE0F3FD00244A5A /* SelectRatioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */; };
 		E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */; };
 		E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */; };
 		E24331CE2AE1032200244A5A /* DetailDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */; };
-		D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */; };
-		D8E5D0522AE12471005EE3C9 /* CompleteSignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
 		E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */; };
 		E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */; };
+		E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */; };
+		E2B8F8DC2AE2538F00578D15 /* ColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */; };
+		E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -149,14 +152,17 @@
 		5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DiaryInfo.md; sourceTree = "<group>"; };
 		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
+		D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteSignUpViewController.swift; sourceTree = "<group>"; };
 		E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRatioViewController.swift; sourceTree = "<group>"; };
 		E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewController.swift; sourceTree = "<group>"; };
 		E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewModel.swift; sourceTree = "<group>"; };
 		E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailDiaryViewController.swift; sourceTree = "<group>"; };
 		E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCollectionViewCell.swift; sourceTree = "<group>"; };
 		E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageCollectionViewCell.xib; sourceTree = "<group>"; };
-		D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
-		D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteSignUpViewController.swift; sourceTree = "<group>"; };
+		E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteView.swift; sourceTree = "<group>"; };
+		E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
+		E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColorCollectionViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -609,10 +615,29 @@
 		E2B8F8D12AE115F600578D15 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */,
-				E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */,
+				E2B8F8D72AE1A3A600578D15 /* Color */,
+				E2B8F8D62AE1A39B00578D15 /* Cell */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		E2B8F8D62AE1A39B00578D15 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */,
+				E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */,
+				E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */,
+				E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		E2B8F8D72AE1A3A600578D15 /* Color */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */,
+			);
+			path = Color;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -695,6 +720,7 @@
 				5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */,
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
 				5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */,
+				E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */,
 				E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */,
 				5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */,
 				5F2B1CD32ADCD08E00DAA9C8 /* Pretendard-Light.otf in Resources */,
@@ -714,6 +740,7 @@
 			files = (
 				E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */,
 				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
+				E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */,
 				E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */,
 				5FD54B292AD911120092D75B /* UITableView + Extension.swift in Sources */,
 				E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */,
@@ -723,6 +750,7 @@
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
+				E2B8F8DC2AE2538F00578D15 /* ColorCollectionViewCell.swift in Sources */,
 				5FD54B342AD911D30092D75B /* NetworkManager.swift in Sources */,
 				5F54EBFA2ADFFF3100331E59 /* FirestorageDBManager.swift in Sources */,
 				5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */,
