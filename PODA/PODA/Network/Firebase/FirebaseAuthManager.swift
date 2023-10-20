@@ -12,39 +12,47 @@ class FireAuthManager {
     let fireStorageImageManager = FireStorageImageManager()
     
     func userLogin(email : String, password: String, completion: @escaping (FireAuthError) -> Void){
-        DispatchQueue.global(qos: .background).async{
+        DispatchQueue.global(qos: .userInteractive).async{
             Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                 if let errCode = error as NSError?{
                     Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                     completion(.error(errCode.code, errCode.localizedDescription))
                 } else {
-                    print("로그인 성공")
                     completion(.none)
                 }
             }
         }
     }
+    
+    func userLogOut(completion: @escaping (FireAuthError) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            completion(.none)
+        } catch  {
+            Logger.writeLog(.error, message: "[\(FireAuthError.logoutFailed)] : \(error.localizedDescription)")
+            completion(.error(FireAuthError.logoutFailed.code, FireAuthError.logoutFailed.description))
+        }
+    }
+    
+    
     func createUser(email: String, password: String, completion: @escaping (FireAuthError) -> Void) {
-        DispatchQueue.global(qos:.background).async{
+        DispatchQueue.global(qos: .userInteractive).async{
             Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
                 if let errCode = error as NSError?{
                     Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                     completion(.error(errCode.code, errCode.localizedDescription))
                 } else {
-                    print("유저 생성 성공")
                     completion(.none)
                 }
             }
         }
     }
             
-
-    
     func signUpUser(email: String, password: String, profileImage: Data?, nickName: String, completion: @escaping (FireAuthError) -> Void) {
         
         let userInfo = UserInfo(createDate: Date().GetCurrentTime(), loginDate: "", isUsing: false, image: profileImage, userNickname: nickName, email: email, password: password, followers: [], followings: [])
         
-        DispatchQueue.global(qos: .background).async{
+        DispatchQueue.global(qos: .userInteractive).async{
             self.createUser(email: email, password: password) { createUserError in
                 if createUserError != .none {
                     Logger.writeLog(.error, message: "유저 생성 중 예상치 못한 에러 발생")
@@ -58,7 +66,7 @@ class FireAuthManager {
                         return
                     }
                     
-                    self.firebaseDBManager.createUser(userInfo: userInfo) { dbManagerError in
+                    self.firebaseDBManager.createUserAccount(userInfo: userInfo) { dbManagerError in
                         if dbManagerError != .none {
                             Logger.writeLog(.error, message: "유저 정보 생성 중 문제 발생")
                             completion(.unknown)
