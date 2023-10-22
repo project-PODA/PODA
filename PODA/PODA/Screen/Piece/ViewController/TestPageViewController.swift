@@ -47,8 +47,8 @@ class TestPageViewController: BaseViewController, UIConfigurable {
     }
     
     func loadImagesFromRealm() {
-        // Realm에서 이미지 메모리를 불러오기
-        imageMemories = RealmManager.shared.realm.objects(ImageMemory.self)
+        imageMemories = RealmManager.shared.loadImageMemories()
+        
         for imageMemory in imageMemories! {
             print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
         }
@@ -146,7 +146,7 @@ class Cell: UICollectionViewCell {
         if let image = UIImage(contentsOfFile: imagePath) {
             imageView.image = image
         } else {
-            print("이미지 로드 실패: \(imagePath)")
+            print("이미지 경로 없음: \(imagePath)")
         }
         
         

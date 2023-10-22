@@ -23,6 +23,7 @@ class RealmManager {
         }
     }()
     
+    // Realm 저장 함수
     func saveImageMemory(imagePath: String?, memoryDate: Date?) {
         let imageMemory = ImageMemory()
         imageMemory.imagePath = imagePath
@@ -36,5 +37,10 @@ class RealmManager {
         } catch {
             print("Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
         }
+    }
+    
+    // Realm 로드 함수
+    func loadImageMemories() -> Results<ImageMemory> {
+        return realm.objects(ImageMemory.self)
     }
 }
