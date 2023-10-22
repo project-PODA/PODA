@@ -231,7 +231,18 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpStickerButton() {
+        let stickerViewController = StickerViewController()
+        stickerViewController.modalPresentationStyle = .pageSheet
         
+        if let sheetPresentationController = stickerViewController.presentationController as? UISheetPresentationController {
+            sheetPresentationController.detents = [.custom { _ in
+                return 700
+            }]
+            sheetPresentationController.prefersGrabberVisible = true
+            sheetPresentationController.largestUndimmedDetentIdentifier = .medium
+        }
+        
+        present(stickerViewController, animated: true)
     }
     
     @objc private func touchUpTextButton() {
@@ -332,6 +343,8 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
         }
     }
 }
+
+//MARK: - UITextFieldDelegate
 
 extension CreateDiaryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
