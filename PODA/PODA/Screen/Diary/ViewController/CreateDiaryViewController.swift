@@ -243,6 +243,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
         
         present(stickerViewController, animated: true)
+        
+        stickerViewController.touchedCell = { image in
+            stickerViewController.dismiss(animated: true)
+            self.addImage(image)
+        }
     }
     
     @objc private func touchUpTextButton() {

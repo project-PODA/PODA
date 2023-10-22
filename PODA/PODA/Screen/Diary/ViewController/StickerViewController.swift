@@ -16,6 +16,8 @@ class StickerViewController: BaseViewController, UIConfigurable {
     private let stickerList: [UIImage?] = [UIImage(named: "image_profile"), UIImage(named: "image_profile"), UIImage(named: "image_profile")]
     private let pieceList: [UIImage?] = [UIImage(named: "image_profile"), UIImage(named: "image_profile")]
     
+    var touchedCell: ((_ image: UIImage)->())?
+    
     private lazy var cancelButton = UIButton().then {
         $0.setUpButton(title: "Cancel", podaFont: .body2)
         $0.setTitleColor(.systemBlue, for: .normal)
@@ -118,10 +120,8 @@ extension StickerViewController: UICollectionViewDataSource {
         switch segmentedControl.selectedSegmentIndex {
         case 0:
             cell.setImage(stickerList[indexPath.item] ?? UIImage())
-            cell.imageView.contentMode = .scaleAspectFit
         case 1:
             cell.setImage(pieceList[indexPath.item] ?? UIImage())
-            cell.imageView.contentMode = .scaleAspectFit
         default:
             break
         }
@@ -133,5 +133,14 @@ extension StickerViewController: UICollectionViewDataSource {
 //MARK: - UICollectionViewDelegate
 
 extension StickerViewController: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            touchedCell?(stickerList[indexPath.item] ?? UIImage())
+        case 1:
+            touchedCell?(pieceList[indexPath.item] ?? UIImage())
+        default:
+            break
+        }
+    }
 }
