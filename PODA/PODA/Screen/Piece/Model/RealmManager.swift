@@ -23,7 +23,7 @@ class RealmManager {
         }
     }()
     
-    // Realm 저장 함수
+    // Realm 데이터 저장 함수
     func saveImageMemory(imagePath: String?, memoryDate: Date?) {
         let imageMemory = ImageMemory()
         imageMemory.imagePath = imagePath
@@ -39,8 +39,19 @@ class RealmManager {
         }
     }
     
-    // Realm 로드 함수
+    // Realm 데이터 로드 함수
     func loadImageMemories() -> Results<ImageMemory> {
         return realm.objects(ImageMemory.self)
+    }
+    
+    // Realm 데이터 삭제 함수
+    func deleteImageMemory(_ imageMemory: ImageMemory) {
+        do {
+            try realm.write {
+                realm.delete(imageMemory)
+            }
+        } catch {
+            print("Realm에서 이미지 메모리 삭제 실패: \(error.localizedDescription)")
+        }
     }
 }
