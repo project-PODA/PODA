@@ -6,6 +6,7 @@
 //
 
 import RealmSwift
+import Foundation
 
 class RealmManager {
     static let shared = RealmManager()
@@ -21,4 +22,19 @@ class RealmManager {
             fatalError("Realm 인스턴스를 생성하는데 실패하였습니다: \(error)")
         }
     }()
+    
+    func saveImageMemory(imagePath: String?, memoryDate: Date?) {
+        let imageMemory = ImageMemory()
+        imageMemory.imagePath = imagePath
+        imageMemory.memoryDate = memoryDate
+        
+        do {
+            try realm.write {
+                realm.add(imageMemory)
+                print("저장 성공: \(imageMemory)")
+            }
+        } catch {
+            print("Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
+        }
+    }
 }
