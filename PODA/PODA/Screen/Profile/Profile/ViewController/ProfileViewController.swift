@@ -63,11 +63,13 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     
     func bindViewModel() {
         print("ProfileView bindViewModel called")
-        // ViewModel의 데이터를 바인딩하는 코드를 여기에 추가합니다.
-        // 예: usernameLabel.text = viewModel.username
+
     }
     
     func configUI() {
+        setupNavigationBar()
+
+        
         [profileImageView, cameraButton, usernameLabel, profileEditButton, logoutButton].forEach { view.addSubview($0) }
         
         profileImageView.snp.makeConstraints { make in
@@ -97,15 +99,31 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             make.height.equalTo(44)
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().offset(-40)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-100)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-80)
         }
     }
+    
+    private func setupNavigationBar() {
+        self.navigationController?.navigationBar.isHidden = false
+
+        let infoIcon = UIImage(named: "icon_info")?.withRenderingMode(.alwaysTemplate)
+        let infoButtonItem = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(didTapInfoButton))
+        infoButtonItem.tintColor = .white
+        navigationItem.rightBarButtonItem = infoButtonItem
+    }
+
+
     
     @objc private func didTapCameraButton() {
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
         imagePickerController.sourceType = .photoLibrary
         present(imagePickerController, animated: true, completion: nil)
+    }
+    
+    @objc private func didTapInfoButton() {
+        let infoVC = InfoViewController()
+        self.navigationController?.pushViewController(infoVC, animated: true)
     }
 }
 
