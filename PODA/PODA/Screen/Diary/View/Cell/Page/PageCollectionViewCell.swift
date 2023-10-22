@@ -11,22 +11,25 @@ class PageCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "PageCollectionViewCell"
 
-    @IBOutlet weak var pageButton: UIButton!
+    @IBOutlet weak var pageImageView: UIImageView!
     @IBOutlet weak var deleteButton: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        pageImageView.layer.cornerRadius = 5
     }
     
     static func nib() -> UINib {
         return UINib(nibName: "PageCollectionViewCell", bundle: nil)
     }
     
-    @IBAction func touchUpPageButton(_ sender: Any) {
+    @IBAction func touchUpDeleteButton(_ sender: Any) {
         
     }
     
-    @IBAction func touchUpDeleteButton(_ sender: Any) {
-        
+    func setPageImage(_ image: UIImage) {
+        pageImageView.layer.cornerRadius = 5
+        pageImageView.clipsToBounds = true
+        pageImageView.image = image
     }
 }
