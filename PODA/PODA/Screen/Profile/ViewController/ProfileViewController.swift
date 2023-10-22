@@ -34,6 +34,13 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         $0.backgroundColor = Palette.podaGray5.getColor()
     }
     
+    private let logoutButton = UIButton().then {
+        $0.setUpButton(title: "로그아웃", podaFont: .button1, cornerRadius: 22)
+        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
+        $0.layer.borderWidth = 1
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
@@ -61,7 +68,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     }
     
     func configUI() {
-        [profileImageView, cameraButton, usernameLabel, profileEditButton].forEach { view.addSubview($0) }
+        [profileImageView, cameraButton, usernameLabel, profileEditButton, logoutButton].forEach { view.addSubview($0) }
         
         profileImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -84,7 +91,13 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             make.width.equalTo(100)
             make.height.equalTo(44)
             make.centerX.equalToSuperview()
-
+        }
+        
+        logoutButton.snp.makeConstraints { make in
+            make.height.equalTo(44)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().offset(-40)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-100)
         }
     }
     
