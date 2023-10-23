@@ -10,6 +10,15 @@ import Then
 import SnapKit
 
 class SignUpViewController: BaseViewController {
+    private let smtpManager = SMTPManager(htmpParser: HTMLParser())
+    private var userAuthCode = 0
+    
+    private var emailAuthSuccess = false // 이메일 코드 전송 성공 여부
+    private var authCodeSuccess = false // 이메일 코드 인증 성공 여부
+    private var passwordAuthSuccess = false // 패스워드 일치 성공 여부
+    private var firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    private let authManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    private let fireStoreDB = FirestorageDBManager()
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -83,6 +92,11 @@ class SignUpViewController: BaseViewController {
         $0.borderStyle = .none
         $0.backgroundColor = Palette.podaGray1.getColor()
         $0.layer.cornerRadius = 5
+    }
+    private let verificationCodeErrorLabel = UILabel().then {
+        $0.textColor = Palette.podaRed.getColor()
+        $0.isHidden = true
+        $0.setUpLabel(title: "인증코드가 올바르지 않습니다.다시 확인해주세요.", podaFont: .caption)
     }
     
     private let verificationCodeDeleteButton: UIButton = {
@@ -193,13 +207,18 @@ class SignUpViewController: BaseViewController {
     
     private func isValidEmail(_ email: String) -> Bool {
         let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailFormat)
-        return emailPredicate.evaluate(with: email)
+        emailAuthSuccess = NSPredicate(format: "SELF MATCHES %@", emailFormat).evaluate(with: email)
+        return emailAuthSuccess
     }
     
     private func isValidPassword(_ password: String) -> Bool {
         let pattern = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{6,15}$"
-        return NSPredicate(format: "SELF MATCHES %@", pattern).evaluate(with: password)
+        passwordAuthSuccess = NSPredicate(format: "SELF MATCHES %@", pattern).evaluate(with: password)
+        return passwordAuthSuccess
+    }
+    
+    private func isValidAuthCode(_ authCode : Int) -> Bool {
+        return String(authCode) == verificationCodeTextField.text ? true : false
     }
     
     private func setActions() {
@@ -213,6 +232,9 @@ class SignUpViewController: BaseViewController {
         passwordConfirmationTextField.addTarget(self, action: #selector(passwordConfirmationTextFieldDidChange(_:)), for: .editingChanged)
         signUpButton.addTarget(self, action: #selector(nextButtonTap), for: .touchUpInside)
         
+        //인증코드 및 확인 버튼 추가
+        emailSendButton.addTarget(self, action: #selector(sendAuthUserCode), for: .touchUpInside)
+        verifyCodeButton.addTarget(self, action: #selector(checkAuthUserCode), for: .touchUpInside)
         
     }
     
@@ -222,7 +244,7 @@ class SignUpViewController: BaseViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, confirmPasswordErrorLabel].forEach { contentView.addSubview($0) }
+        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, verificationCodeErrorLabel, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, confirmPasswordErrorLabel].forEach { contentView.addSubview($0) }
         view.addSubview(signUpButton)
         
         
@@ -307,6 +329,11 @@ class SignUpViewController: BaseViewController {
             make.height.equalTo(emailTextField)
         }
         
+        verificationCodeErrorLabel.snp.makeConstraints { make in
+            make.left.equalTo(emailLabel)
+            make.top.equalTo(verificationCodeTextField.snp.bottom).offset(4)
+        }
+        
         passwordLabel.snp.makeConstraints { make in
             make.left.equalTo(emailLabel)
             make.top.equalTo(verificationCodeTextField.snp.bottom).offset(50)
@@ -383,7 +410,6 @@ class SignUpViewController: BaseViewController {
         emailErrorLabel.isHidden = isValidEmail(email)
     }
     
-    
     @objc private func togglePasswordVisibility(_ sender: UIButton) {
         passwordTextField.isSecureTextEntry.toggle()
         let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
@@ -423,20 +449,99 @@ class SignUpViewController: BaseViewController {
     @objc private func passwordTextFieldDidChange(_ textField: UITextField) {
         guard let password = textField.text else { return }
         passwordErrorLabel.isHidden = isValidPassword(password)
+        if passwordErrorLabel.isHidden {
+            passwordErrorLabel.isHidden = false
+            passwordErrorLabel.text = "비밀번호 확인을 위해 다시 한번 입력해주세요"
+            passwordErrorLabel.textColor = Palette.podaBlue.getColor()
+        } else{
+            passwordErrorLabel.text = "양식을 지켜 다시 입력해주세요."
+            passwordErrorLabel.textColor = Palette.podaRed.getColor()
+        }
     }
     
     @objc private func passwordConfirmationTextFieldDidChange(_ textField: UITextField) {
         guard let originalPassword = passwordTextField.text,
               let confirmPassword = textField.text else { return }
         confirmPasswordErrorLabel.isHidden = originalPassword == confirmPassword
+        if confirmPasswordErrorLabel.isHidden {
+            confirmPasswordErrorLabel.isHidden = false
+            confirmPasswordErrorLabel.text = "비밀번호가 일치합니다."
+            confirmPasswordErrorLabel.textColor = Palette.podaBlue.getColor()
+        } else{
+            confirmPasswordErrorLabel.text = "비밀번호가 일치하지 않습니다."
+            confirmPasswordErrorLabel.textColor = Palette.podaRed.getColor()
+        }
+        
     }
-    
     @objc private func nextButtonTap() {
-        let setProfileVC = SetProfileViewController()
-        self.navigationController?.pushViewController(setProfileVC, animated: true)
+
+        if authCodeSuccess && emailAuthSuccess && passwordAuthSuccess {
+            let setProfileVC = SetProfileViewController()
+            setProfileVC.email = emailTextField.text!
+            setProfileVC.password = passwordTextField.text!
+            self.navigationController?.pushViewController(setProfileVC, animated: true)
+        }else {
+            showAlert(title: "에러", message: "빠드린 정보를 확인해주세요.")
+        }
+    }
+    //메일 인증 보내기
+    @objc private func sendAuthUserCode() {
+        guard let _ = emailTextField.text  else {return}
+
+        firebaseAuthManager.userLogin(email: "admin@naver.com", password: "admin1!"){ [weak self] error in
+            guard let self = self else {return}
+            
+            fireStoreDB.emailCheck(email: emailTextField.text!){[weak self] error in
+            guard let self = self else {return}
+                //로그인 못하는 상태라면 -> 유저정보가 없다면 다시 비활성화 된 버튼들을 활성화시킴
+                if error == .none{
+                    showAlert(title: "에러", message: "유저 정보가 존재합니다. 다른 계정으로 가입해주세요.")
+                    emailSendButton.isEnabled = true
+                    verifyCodeButton.isEnabled = true
+
+                } else {
+                    smtpManager.sendAuth(userEmail: emailTextField.text!, logoImage: UIImage(named: "logo_poda")?.pngData()!){ [weak self] (authCode, success) in
+                        guard let self = self else {return}
+                        if ((authCode >= 10000 && authCode <= 99999) && success){
+                            userAuthCode = authCode
+                            DispatchQueue.main.async{
+                                self.emailErrorLabel.isHidden = false
+                                self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
+                                self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //메일 인증 
+    @objc private func checkAuthUserCode() {
+        guard let _ = verificationCodeTextField.text else { return }
+        
+        let success = isValidAuthCode(userAuthCode)
+        
+        verificationCodeErrorLabel.isHidden = false
+        if success {
+            verificationCodeErrorLabel.textColor = Palette.podaBlue.getColor()
+            verificationCodeErrorLabel.text = "인증이 완료되었습니다.."
+            authCodeSuccess = true
+            
+            //인증버튼 누르면 더이상 disable
+            verifyCodeButton.isEnabled = false
+            verifyCodeButton.setTitleColor(Palette.podaRed.getColor(), for: .disabled)
+            
+            //인증버튼 누르면 더이상 disable
+            emailSendButton.isEnabled = false
+            emailSendButton.setTitleColor(Palette.podaRed.getColor(), for: .disabled)
+            
+        } else {
+            verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
+            verificationCodeErrorLabel.text = "인증에 실패했습니다. 다시 확인해주세요."
+        }
     }
     
-    
+
     
     
     //💥deinit 추가!! dismiss추가

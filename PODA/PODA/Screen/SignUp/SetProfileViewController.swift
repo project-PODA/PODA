@@ -11,6 +11,10 @@ import SnapKit
 
 class SetProfileViewController: BaseViewController, UIConfigurable {
     
+    var email: String = ""
+    var password: String = ""
+    private var firebaseAuth = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
     
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 2
@@ -170,11 +174,27 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func navigateToCompleteSignUp() {
-           let completeSignUpVC = CompleteSignUpViewController()
-           navigationController?.pushViewController(completeSignUpVC, animated: true)
-       }
-    
-    
+        guard let _ = nicknameTextField.text, let imageData = profileImageView.image?.jpegData(compressionQuality: 0.5) else {
+            showAlert(title: "에러", message: "데이터가 올바르지 않습니다. 확인해주세요.")
+            return
+        }
+        if nicknameTextField.text == "" {
+            showAlert(title: "에러", message: "닉네임을 입력해주세요.")
+            return
+        }
+        
+        firebaseAuth.signUpUser(email: email, password: password, profileImage: imageData, nickName: nicknameTextField.text!) { [weak self] error in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                if error == .none {
+                    let completeSignUpVC = CompleteSignUpViewController()
+                    self.navigationController?.pushViewController(completeSignUpVC, animated: true)
+                } else {
+                    self.showAlert(title: "에러", message: error.description)
+                }
+            }
+        }
+    }
 }
 
 extension SetProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
