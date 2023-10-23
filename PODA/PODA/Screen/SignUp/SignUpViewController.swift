@@ -488,6 +488,7 @@ class SignUpViewController: BaseViewController {
     @objc private func sendAuthUserCode() {
         guard let _ = emailTextField.text  else {return}
 
+        //어드민계정으로 접속후 이메일에 중복된 값이 있는지 확인
         firebaseAuthManager.userLogin(email: "admin@naver.com", password: "admin1!"){ [weak self] error in
             guard let self = self else {return}
             

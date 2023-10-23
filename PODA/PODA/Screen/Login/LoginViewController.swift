@@ -47,19 +47,22 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaBlue.getColor()
     }
     
-    private let circleView1: UIView = {
-        let view = UIView()
-        view.backgroundColor = Palette.podaGray2.getColor()
-        view.layer.cornerRadius = 36
-        return view
-    }()
+    private lazy var googleIconView = UIButton().then {
+        $0.setImage(UIImage(named: "icon_google"), for:.normal)
+        $0.setImage(UIImage(named: "icon_google"), for:.highlighted)
+        $0.layer.cornerRadius = 36
+        $0.clipsToBounds = true
+        $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
+        
+    }
+    private lazy var appleIconView = UIButton().then {
+        $0.setImage(UIImage(named: "icon_apple"), for:.normal)
+        $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
+        $0.layer.cornerRadius = 36
+        $0.clipsToBounds = true
+        $0.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
+    }
     
-    private let circleView2: UIView = {
-        let view = UIView()
-        view.backgroundColor = Palette.podaGray2.getColor()
-        view.layer.cornerRadius = 36
-        return view
-    }()
     
     private let loginButton = UIButton().then {
         $0.setUpButton(title: "로그인", podaFont: .button1, cornerRadius: 22)
@@ -77,6 +80,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
         $0.layer.borderWidth = 1
     }
+    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,7 +105,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         let subviews: [UIView] = [
             logoImageView, emailLabel, passwordLabel, emailTextField,
             emailLineView, passwordTextField, passwordLineView, eyeButton,
-            loginButton, circleView1, circleView2, askLabel, signUpButton
+            loginButton, googleIconView, appleIconView, askLabel, signUpButton
         ]
         
         subviews.forEach { view.addSubview($0) }
@@ -160,15 +164,15 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.height.equalTo(44)
         }
         
-        circleView1.snp.makeConstraints { make in
+        googleIconView.snp.makeConstraints { make in
             make.top.equalTo(loginButton.snp.bottom).offset(20)
             make.size.equalTo(CGSize(width: 72, height: 72))
             make.right.equalTo(view.snp.centerX).offset(-8)
         }
         
-        circleView2.snp.makeConstraints { make in
-            make.top.equalTo(circleView1)
-            make.size.equalTo(circleView1)
+        appleIconView.snp.makeConstraints { make in
+            make.top.equalTo(googleIconView)
+            make.size.equalTo(googleIconView)
             make.left.equalTo(view.snp.centerX).offset(8)
         }
         
@@ -184,6 +188,14 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.width.equalTo(loginButton)
         }
     }
+    @objc private func googleButtonTapped() {
+        print("google")
+    }
+    
+    @objc private func appleButtonTapped() {
+        print("apple")
+    }
+    
     
     @objc private func eyeButtonTapped() {
         passwordTextField.isSecureTextEntry.toggle()
@@ -199,7 +211,23 @@ class LoginViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func goToMain() {
-        let mainVC = MainViewController(viewModel: MainViewModel())
-        self.navigationController?.pushViewController(mainVC, animated: true)
+        let email = emailTextField.text!
+        let password = passwordTextField.text!
+        
+        fireAuthManager.userLogin(email: email, password: password){ [weak self] error in
+            guard let self = self else {return}
+            
+            if error == .none {
+                let mainVC = MainViewController(viewModel: MainViewModel())
+                navigationController?.pushViewController(mainVC, animated: true)
+                
+                UserDefaultManager.isUserLoggedIn = true
+                UserDefaultManager.userEmail = email
+                UserDefaultManager.userPassword = password
+                
+            } else {
+                showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
+            }   
+        }
     }
 }
