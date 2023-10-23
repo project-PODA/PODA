@@ -184,6 +184,14 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             self.selectBackgroundColorView.isHidden = self.isSelectedBackgroundButton
         }
         isSelectedBackgroundButton.toggle()
+        
+        selectBackgroundColorView.touchedColor = { color in
+            self.diaryView.backgroundColor = color
+        }
+        
+        selectBackgroundColorView.touchedCustomColor = { color in
+            self.diaryView.backgroundColor = color
+        }
     }
     
     @objc private func touchUpGalleryButton() {

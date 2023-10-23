@@ -17,6 +17,10 @@ struct Font {
 class ColorPaletteView: UIView {
     
     // MARK: - Properties
+    
+    var touchedColor: ((_ color: UIColor) -> ())?
+    var touchedCustomColor: ((_ color: UIColor) -> ())?
+    
     private let fontList: [Font] = [
         Font(text: "프리텐다드", font: UIFont(name: "Pretendard-Regular", size: 17) ?? UIFont()),
         Font(text: "도스샘물", font: UIFont(name: "DOSSaemmul", size: 17) ?? UIFont()),
@@ -28,7 +32,9 @@ class ColorPaletteView: UIView {
     ]
     private var colorList: [UIColor] = [.red, .orange, .yellow, .green, .blue, .purple, .cyan, .magenta]
     
-    private let customColorButton = UIColorWell()
+    private lazy var customColorButton = UIColorWell().then {
+        $0.addTarget(self, action: #selector(colorChanged), for: .valueChanged)
+    }
     
     private let fontFlowLayout = UICollectionViewFlowLayout().then {
         $0.scrollDirection = .horizontal
@@ -107,6 +113,12 @@ class ColorPaletteView: UIView {
         colorCollectionView.register(ColorCollectionViewCell.nib(), forCellWithReuseIdentifier: ColorCollectionViewCell.identifier)
     }
     
+    //MARK: - @objc
+    
+    @objc private func colorChanged() {
+        touchedCustomColor?(customColorButton.selectedColor ?? UIColor())
+    }
+    
     // MARK: - Custom Method
     
     func isHiddenFont(_ isHidden: Bool) {
@@ -163,5 +175,7 @@ extension ColorPaletteView: UICollectionViewDelegateFlowLayout {
 //MARK: - UICollectionViewDelegate
 
 extension ColorPaletteView: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        touchedColor?(colorList[indexPath.item])
+    }
 }
