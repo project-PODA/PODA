@@ -4,7 +4,7 @@
 //
 //  Created by t2023-m0080 on 2023/10/22.
 //
-
+//test
 import UIKit
 
 class InfoViewController: BaseViewController, ViewModelBindable, UIConfigurable {
