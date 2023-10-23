@@ -36,24 +36,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private lazy var pageAddButton = UIButton().then {
-        $0.setImage($0.resizeImageButton(image: UIImage(systemName: "plus"), width: 48, height: 48, color: Palette.podaWhite.getColor()), for: .normal)
-        $0.backgroundColor = Palette.podaGray4.getColor()
-        $0.layer.cornerRadius = 5
-        $0.addTarget(self, action: #selector(touchUpAddPageButton), for: .touchUpInside)
-    }
-    
-    private let flowLayout = UICollectionViewFlowLayout().then {
-        $0.scrollDirection = .horizontal
-        $0.minimumInteritemSpacing = 11
-        $0.itemSize = CGSize(width: 121, height: 121)
-    }
-    
-    private lazy var pageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout).then {
-        $0.delegate = self
-        $0.dataSource = self
-    }
-    
     private lazy var backgroundButton = UIButton().then {
         $0.configuration = getButtonConfiguration(title: "배경", iconName: "icon_background")
         $0.addTarget(self, action: #selector(touchUpBackgroundButton), for: .touchUpInside)
@@ -115,7 +97,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     func configUI() {
         setupLayout()
-        setCollectionView()
     }
     
     private func setupLayout() {
@@ -123,9 +104,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             decorateStackView.addArrangedSubview($0)
         }
         
-        [diaryView, pageLabel, pageAddButton, pageCollectionView].forEach {
-            scrollView.addSubview($0)
-        }
+        scrollView.addSubview(diaryView)
         
         [navigationBar, scrollView, decorateView, selectBackgroundColorView, selectTextColorView].forEach {
             view.addSubview($0)
@@ -143,37 +122,19 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
         
         diaryView.snp.makeConstraints {
-            $0.top.equalTo(scrollView)
             $0.leading.trailing.equalToSuperview()
             
             switch ratio {
             case .square:
+                $0.top.equalTo(scrollView).offset(30)
                 $0.width.height.equalTo(393)
             case .rectangle:
+                $0.top.equalTo(scrollView)
                 $0.width.equalTo(393)
                 $0.height.equalTo(524)
             case .none:
                 $0.width.height.equalTo(393)
             }
-        }
-        
-        pageLabel.snp.makeConstraints {
-            $0.top.equalTo(diaryView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(26)
-        }
-        
-        pageAddButton.snp.makeConstraints {
-            $0.top.equalTo(pageLabel.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(20)
-            $0.bottom.equalToSuperview()
-            $0.width.height.equalTo(106)
-        }
-        
-        pageCollectionView.snp.makeConstraints {
-            $0.top.equalTo(pageAddButton.snp.top).offset(-15)
-            $0.leading.equalTo(pageAddButton.snp.trailing).offset(11)
-            $0.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(121)
         }
         
         decorateView.snp.makeConstraints {
@@ -261,13 +222,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
     }
     
-    private func setCollectionView() {
-        pageCollectionView.delegate = self
-        pageCollectionView.dataSource = self
-        pageCollectionView.register(PageCollectionViewCell.nib(), forCellWithReuseIdentifier: PageCollectionViewCell.identifier)
-        pageCollectionView.backgroundColor = .clear
-    }
-    
     private func getButtonConfiguration(title: String, iconName: String) -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
         var titleAttr = AttributedString.init(title)
@@ -300,30 +254,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         textField.snp.makeConstraints {
             $0.center.equalTo(diaryView)
         }
-    }
-
-}
-
-//MARK: - UICollectionViewDataSource
-
-extension CreateDiaryViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = pageCollectionView.dequeueReusableCell(withReuseIdentifier: PageCollectionViewCell.identifier, for: indexPath) as? PageCollectionViewCell
-        else { return UICollectionViewCell() }
-        
-        return cell
-    }
-}
-
-//MARK: - UICollectionViewDelegate
-
-extension CreateDiaryViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
     }
 }
 
