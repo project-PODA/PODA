@@ -70,10 +70,12 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     private let selectBackgroundColorView = ColorPaletteView().then {
         $0.isHidden = true
+        $0.isHiddenFont(true)
     }
     
     private let selectTextColorView = ColorPaletteView().then {
         $0.isHidden = true
+        $0.isHiddenFont(false)
     }
     
     // MARK: - Life Cycle
@@ -123,6 +125,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         diaryView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(scrollView)
             
             switch ratio {
             case .square:
@@ -157,7 +160,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         selectTextColorView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(decorateStackView.snp.top)
-            $0.height.equalTo(67)
+            $0.height.equalTo(100)
         }
     }
     

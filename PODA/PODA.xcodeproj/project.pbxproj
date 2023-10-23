@@ -99,6 +99,8 @@
 		E24A31512AE65DBC006CF02C /* NanumSquareRoundB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */; };
 		E24A31532AE65DE4006CF02C /* NanumMyeongjoOTF.otf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31522AE65DE4006CF02C /* NanumMyeongjoOTF.otf */; };
 		E24A31572AE65FF2006CF02C /* NanumBaReunHiPi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31562AE65FF2006CF02C /* NanumBaReunHiPi.ttf */; };
+		E24A315E2AE665AB006CF02C /* FontCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */; };
+		E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
 		E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */; };
 		E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */; };
@@ -188,18 +190,20 @@
 		E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewController.swift; sourceTree = "<group>"; };
 		E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewModel.swift; sourceTree = "<group>"; };
 		E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailDiaryViewController.swift; sourceTree = "<group>"; };
-		E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCollectionViewCell.swift; sourceTree = "<group>"; };
-		E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageCollectionViewCell.xib; sourceTree = "<group>"; };
-		E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteView.swift; sourceTree = "<group>"; };
-		E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
-		E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColorCollectionViewCell.xib; sourceTree = "<group>"; };
-		E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryNavigationBar.swift; sourceTree = "<group>"; };
 		E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DOSSaemmul.ttf; sourceTree = "<group>"; };
 		E24A314C2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cafe24SsurroundOTF.otf; sourceTree = "<group>"; };
 		E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GowunDodum-Regular.ttf"; sourceTree = "<group>"; };
 		E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundB.ttf; sourceTree = "<group>"; };
 		E24A31522AE65DE4006CF02C /* NanumMyeongjoOTF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumMyeongjoOTF.otf; sourceTree = "<group>"; };
 		E24A31562AE65FF2006CF02C /* NanumBaReunHiPi.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumBaReunHiPi.ttf; sourceTree = "<group>"; };
+		E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontCollectionViewCell.swift; sourceTree = "<group>"; };
+		E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FontCollectionViewCell.xib; sourceTree = "<group>"; };
+		E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCollectionViewCell.swift; sourceTree = "<group>"; };
+		E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageCollectionViewCell.xib; sourceTree = "<group>"; };
+		E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteView.swift; sourceTree = "<group>"; };
+		E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
+		E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColorCollectionViewCell.xib; sourceTree = "<group>"; };
+		E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryNavigationBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -620,6 +624,15 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		E24A31582AE66553006CF02C /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */,
+				E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */,
+			);
+			path = Font;
+			sourceTree = "<group>";
+		};
 		E28A2CF82AD95B91004401D1 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
@@ -762,6 +775,7 @@
 		E2B8F8D62AE1A39B00578D15 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				E24A31582AE66553006CF02C /* Font */,
 				E20C9AE72AE4205B00BA5754 /* Sticker */,
 				E20C9AE62AE4203D00BA5754 /* Color */,
 				E20C9AE52AE4202300BA5754 /* Page */,
@@ -866,6 +880,7 @@
 				5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */,
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
 				E24A314D2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf in Resources */,
+				E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */,
 				5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */,
 				E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */,
 				E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */,
@@ -945,6 +960,7 @@
 				5FD54B1C2AD90FE80092D75B /* MainViewModel.swift in Sources */,
 				D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */,
 				5F54EBFC2ADFFF5D00331E59 /* FirestorageImageManager.swift in Sources */,
+				E24A315E2AE665AB006CF02C /* FontCollectionViewCell.swift in Sources */,
 				5F2B1CDB2ADCDB7400DAA9C8 /* DiaryInfo.swift in Sources */,
 				5F54EC022AE0012300331E59 /* FirebaseAuthManager.swift in Sources */,
 				5FD54B582AD915EE0092D75B /* BaseTabbarController.swift in Sources */,
