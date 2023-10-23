@@ -367,11 +367,11 @@ class SignUpViewController: BaseViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
     }
+
     
     @objc private func clearEmailField(_ sender: UIButton) {
         emailTextField.text = ""
     }
-    
     
     
     @objc private func clearVerificationCodeField(_ sender: UIButton) {
