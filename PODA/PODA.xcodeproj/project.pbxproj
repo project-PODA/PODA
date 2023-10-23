@@ -93,6 +93,12 @@
 		E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */; };
 		E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */; };
 		E24331CE2AE1032200244A5A /* DetailDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */; };
+		E24A314B2AE65C72006CF02C /* DOSSaemmul.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */; };
+		E24A314D2AE65CC0006CF02C /* Cafe24Ssurround-v2.0.otf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314C2AE65CC0006CF02C /* Cafe24Ssurround-v2.0.otf */; };
+		E24A314F2AE65D20006CF02C /* GowunDodum-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */; };
+		E24A31512AE65DBC006CF02C /* NanumSquareRoundB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */; };
+		E24A31532AE65DE4006CF02C /* NanumMyeongjo.otf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31522AE65DE4006CF02C /* NanumMyeongjo.otf */; };
+		E24A31572AE65FF2006CF02C /* BareunHippie.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31562AE65FF2006CF02C /* BareunHippie.ttf */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
 		E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */; };
 		E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */; };
@@ -188,6 +194,12 @@
 		E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
 		E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColorCollectionViewCell.xib; sourceTree = "<group>"; };
 		E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryNavigationBar.swift; sourceTree = "<group>"; };
+		E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DOSSaemmul.ttf; sourceTree = "<group>"; };
+		E24A314C2AE65CC0006CF02C /* Cafe24Ssurround-v2.0.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cafe24Ssurround-v2.0.otf"; sourceTree = "<group>"; };
+		E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GowunDodum-Regular.ttf"; sourceTree = "<group>"; };
+		E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundB.ttf; sourceTree = "<group>"; };
+		E24A31522AE65DE4006CF02C /* NanumMyeongjo.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumMyeongjo.otf; sourceTree = "<group>"; };
+		E24A31562AE65FF2006CF02C /* BareunHippie.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BareunHippie.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -348,6 +360,12 @@
 		5F2B1CC52ADCD06500DAA9C8 /* Font */ = {
 			isa = PBXGroup;
 			children = (
+				E24A31562AE65FF2006CF02C /* BareunHippie.ttf */,
+				E24A31522AE65DE4006CF02C /* NanumMyeongjo.otf */,
+				E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */,
+				E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */,
+				E24A314C2AE65CC0006CF02C /* Cafe24Ssurround-v2.0.otf */,
+				E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */,
 				5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */,
 				5F2B1CCB2ADCD08E00DAA9C8 /* Pretendard-Bold.otf */,
 				5F2B1CC92ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf */,
@@ -842,14 +860,20 @@
 				276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */,
 				E20C9AEB2AE4209300BA5754 /* StickerCollectionViewCell.xib in Resources */,
 				5F2B1CD42ADCD08E00DAA9C8 /* Pretendard-Bold.otf in Resources */,
+				E24A31572AE65FF2006CF02C /* BareunHippie.ttf in Resources */,
+				E24A314B2AE65C72006CF02C /* DOSSaemmul.ttf in Resources */,
 				276985922AD8E20D00A5100D /* Assets.xcassets in Resources */,
 				5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */,
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
+				E24A314D2AE65CC0006CF02C /* Cafe24Ssurround-v2.0.otf in Resources */,
 				5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */,
 				E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */,
 				E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */,
+				E24A31532AE65DE4006CF02C /* NanumMyeongjo.otf in Resources */,
+				E24A314F2AE65D20006CF02C /* GowunDodum-Regular.ttf in Resources */,
 				5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */,
 				5F2B1CD32ADCD08E00DAA9C8 /* Pretendard-Light.otf in Resources */,
+				E24A31512AE65DBC006CF02C /* NanumSquareRoundB.ttf in Resources */,
 				5F2B1CD62ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf in Resources */,
 				5F2B1CD72ADCD08E00DAA9C8 /* Pretendard-Regular.otf in Resources */,
 				5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */,
