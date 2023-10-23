@@ -13,28 +13,16 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     static let identifier = "DiaryCollectionViewCell"
     
-    let diaryView = UIView().then {
-        $0.backgroundColor = Palette.podaBlue.getColor()
-        $0.layer.cornerRadius = 5
-        let titleLabel = UILabel()
-        titleLabel.text = "나홀로\n인생네컷\n모음"
-        titleLabel.textColor = Palette.podaWhite.getColor()
-        titleLabel.font = UIFont.podaFont(.subhead3)
-        titleLabel.numberOfLines = 3
-        titleLabel.textAlignment = .left
-        $0.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(8)
-            make.bottom.equalToSuperview().offset(-6)
-        }
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "icon_bookMark")
-        imageView.contentMode = .scaleAspectFill
-        $0.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.right.equalToSuperview().offset(-6)
-        }
+    private let titleLabel = UILabel().then { 
+        $0.setUpLabel(title: "나홀로\n인생네컷\n모음", podaFont: .subhead3)
+        $0.textColor = Palette.podaWhite.getColor()
+        $0.numberOfLines = 3
+        $0.textAlignment = .left
+    }
+    
+    private let imageView = UIImageView().then {
+        $0.image = UIImage(named: "icon_bookMark")
+        $0.contentMode = .scaleAspectFill
     }
     
     override init(frame: CGRect) {
@@ -47,12 +35,20 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     }
     
     func configUI() {
-        backgroundColor = Palette.podaBlack.getColor()
+        backgroundColor = Palette.podaBlue.getColor()
+        layer.cornerRadius = 5
+        layer.masksToBounds = true
         
-        addSubview(diaryView)
+        [titleLabel, imageView].forEach(addSubview)
         
-        diaryView.snp.makeConstraints { make in
-            make.top.bottom.left.right.equalToSuperview()
+        titleLabel.snp.makeConstraints { make in
+            make.left.equalTo(8)
+            make.bottom.equalToSuperview().offset(-6)
+        }
+        
+        imageView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.right.equalToSuperview().offset(-6)
         }
     }
 }

@@ -11,6 +11,8 @@ import SnapKit
 
 class HomeMenuViewController: BaseViewController, UIConfigurable {
     
+    var touchedPiece: (() -> ())?
+    
     private let qrButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_qr"), for: .normal)
         $0.addTarget(self, action: #selector(didTapQrButton), for: .touchUpInside)    // warning - lazy var 로 해결?
@@ -109,12 +111,12 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapAddPieceButton() {
         // 추억 조각 등록하기 페이지로 이동
-        let pieceViewController = PieceViewController()
-        navigationController?.pushViewController(pieceViewController, animated: true)
+        guard let touchedPiece else { return }
+        touchedPiece()
     }
     
     @objc func didTapCloseButton() {
-        navigationController?.popViewController(animated: true)
+        dismiss(animated: true)
     }
 }
 
