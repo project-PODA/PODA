@@ -28,5 +28,11 @@ struct UserDefault<T> {
 struct UserDefaultManager {
     @UserDefault(key: "isUserLoggedIn", defaultValue: false)
     static var isUserLoggedIn: Bool
+    
+    @UserDefault(key: "userEmail", defaultValue: "")
+    static var userEmail: String
+    
+    @UserDefault(key: "userPassword", defaultValue: "")
+    static var userPassword: String
 }
 

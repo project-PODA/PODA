@@ -13,6 +13,7 @@ class BaseNavigationController: UINavigationController {
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         self.rootViewController = rootViewController
+        self.navigationBar.isHidden = true
         //configTheme()
         
     }

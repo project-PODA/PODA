@@ -8,8 +8,13 @@
 import UIKit
 import Then
 import SnapKit
+import NVActivityIndicatorView
 
 class SetProfileViewController: BaseViewController, UIConfigurable {
+    
+    var email: String = ""
+    var password: String = ""
+    private var firebaseAuth = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     
     private let titleLabel = UILabel().then {
@@ -71,14 +76,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         $0.layer.borderWidth = 1
     }
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-    }
-    
-    
-    
+    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,12 +84,6 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         setActions()
         nicknameTextField.delegate = self
         
-    }
-    
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.isHidden = false
     }
     
     func setActions() {
@@ -106,7 +98,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         nicknameTextField.rightView = clearButton
         nicknameTextField.rightViewMode = .whileEditing
         
-        [titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, descriptionLabel, signUpButton].forEach { view.addSubview($0) }
+        [titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, descriptionLabel, signUpButton,loadingIndicator].forEach { view.addSubview($0) }
         
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
@@ -154,6 +146,11 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
             make.right.equalToSuperview().offset(-40)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(100)
+        }
     }
     
     @objc private func openGallery() {
@@ -168,13 +165,39 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         nicknameTextField.text = ""
         nicknameWarningLabel.isHidden = true
     }
+    private func setComponentDisable(_ enabled : Bool){
+        cameraButton.isEnabled = enabled
+        clearButton.isEnabled = enabled
+        signUpButton.isEnabled = enabled
+        nicknameTextField.isEnabled = enabled
+    }
     
     @objc private func navigateToCompleteSignUp() {
-           let completeSignUpVC = CompleteSignUpViewController()
-           navigationController?.pushViewController(completeSignUpVC, animated: true)
-       }
-    
-    
+        guard let _ = nicknameTextField.text, let imageData = profileImageView.image?.jpegData(compressionQuality: 0.5) else {
+            showAlert(title: "에러", message: "데이터가 올바르지 않습니다. 확인해주세요.")
+            return
+        }
+        if nicknameTextField.text == "" {
+            showAlert(title: "에러", message: "닉네임을 입력해주세요.")
+            return
+        }
+        loadingIndicator.startAnimating()
+        setComponentDisable(false)
+        firebaseAuth.signUpUser(email: email, password: password, profileImage: imageData, nickName: nicknameTextField.text!) { [weak self] error in
+            guard let self = self else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {return}
+                if error == .none {
+                    let completeSignUpVC = CompleteSignUpViewController()
+                    navigationController?.pushViewController(completeSignUpVC, animated: true)
+                } else {
+                    showAlert(title: "에러", message: error.description)
+                }
+                loadingIndicator.stopAnimating()
+                setComponentDisable(true)
+            }
+        }
+    }
 }
 
 extension SetProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

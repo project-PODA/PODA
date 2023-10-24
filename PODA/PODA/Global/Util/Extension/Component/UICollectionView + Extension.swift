@@ -8,7 +8,7 @@
 import UIKit
 
 extension UICollectionView {
-    func setupBookTableView<T: UICollectionViewCell>(delegate: UICollectionViewDelegate, dataSource: UICollectionViewDataSource, cellType: T.Type) {
+    func setUpCollectionView<T: UICollectionViewCell>(delegate: UICollectionViewDelegate, dataSource: UICollectionViewDataSource, cellType: T.Type) {
         self.delegate = delegate
         self.dataSource = dataSource
         self.register(cellType, forCellWithReuseIdentifier: String(describing: cellType))
