@@ -39,7 +39,9 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
         layer.cornerRadius = 5
         layer.masksToBounds = true
         
-        [titleLabel, imageView].forEach(addSubview)
+        [titleLabel, imageView].forEach {
+            addSubview($0)
+        }
         
         titleLabel.snp.makeConstraints { 
             $0.left.equalTo(8)

@@ -44,7 +44,6 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
         }
     }
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
@@ -52,7 +51,9 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
     }
     
     func configUI() {
-        [backgroundImageView, backButton, translucentView].forEach(view.addSubview)
+        [backgroundImageView, backButton, translucentView].forEach {
+            view.addSubview($0)
+        }
         
         backgroundImageView.snp.makeConstraints { 
             $0.top.left.right.equalTo(view.safeAreaLayoutGuide)

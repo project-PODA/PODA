@@ -18,21 +18,28 @@ class DetailViewController: BaseViewController, UIConfigurable {
     
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
-//        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20)
-//        let image = UIImage(systemName: "chevron.backward", withConfiguration: imageConfig)
-//        $0.setImage(image, for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
-    private let imageView = UIImageView().then {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .thin)
+    private let pageCountimageView = UIImageView().then {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 60, weight: .ultraLight)
         let image = UIImage(systemName: "square", withConfiguration: imageConfig)
         $0.image = image
+        //$0.contentMode = .scaleAspectFill
         $0.tintColor = Palette.podaWhite.getColor()
         
+//        let gradientLayer = CAGradientLayer()
+//        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width , height: UIScreen.main.bounds.height)
+//        gradientLayer.colors = [UIColor(red: 1, green: 0.541, blue: 0.541, alpha: 1).cgColor,
+//                                UIColor(red: 0, green: 0, blue: 0, alpha: 0).cgColor]
+//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
+//        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+//        gradientLayer.locations = [0.0 ,1.0]
+//        $0.layer.addSublayer(gradientLayer)
+        
         let pageCountLabel = UILabel()
-        pageCountLabel.setUpLabel(title: "05", podaFont: .head1) // 다이어리 페이지 수 가져오기
+        pageCountLabel.setUpLabel(title: "05", podaFont: .display2) // 다이어리 페이지 수 가져오기
         pageCountLabel.textColor = Palette.podaWhite.getColor()
         $0.addSubview(pageCountLabel)
         pageCountLabel.snp.makeConstraints { 
@@ -51,7 +58,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
     }
     
     private let titleLabel = UILabel().then {
-        $0.setUpLabel(title: "석진이랑 인생네컷 모음", podaFont: .display1) // 저장된 title 불러오기
+        $0.setUpLabel(title: "석진이랑 인생네컷 모음", podaFont: .display3) // 저장된 title 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -85,7 +92,9 @@ class DetailViewController: BaseViewController, UIConfigurable {
     }
     
     func configUI() {
-        [backgroundImageView, backButton, imageView, titleLabel, dateLabel, contentLabel, scrollImageView, scrollLabel].forEach(view.addSubview)
+        [backgroundImageView, backButton, pageCountimageView, titleLabel, dateLabel, contentLabel].forEach {
+            view.addSubview($0)
+        }
         
         backgroundImageView.snp.makeConstraints { 
             $0.top.bottom.left.right.equalToSuperview()
@@ -97,9 +106,9 @@ class DetailViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(30)
         }
         
-        imageView.snp.makeConstraints { 
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.right.equalToSuperview().offset(-20)
+        pageCountimageView.snp.makeConstraints {
+            $0.bottom.equalTo(titleLabel.snp.top).offset(-16)
+            $0.left.equalToSuperview().offset(20)
         }
         
         titleLabel.snp.makeConstraints { 
@@ -113,20 +122,20 @@ class DetailViewController: BaseViewController, UIConfigurable {
         }
         
         contentLabel.snp.makeConstraints { 
-            $0.bottom.equalTo(scrollImageView.snp.top).offset(-40)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
         }
         
-        scrollImageView.snp.makeConstraints { 
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(scrollLabel.snp.top)
-        }
-        
-        scrollLabel.snp.makeConstraints { 
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
+//        scrollImageView.snp.makeConstraints { 
+//            $0.centerX.equalToSuperview()
+//            $0.bottom.equalTo(scrollLabel.snp.top)
+//        }
+//        
+//        scrollLabel.snp.makeConstraints { 
+//            $0.centerX.equalToSuperview()
+//            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+//        }
     }
     
     @objc func didTapBackButton() {
