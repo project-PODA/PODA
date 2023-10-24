@@ -98,7 +98,7 @@ class SignUpViewController: BaseViewController {
     private let verificationCodeErrorLabel = UILabel().then {
         $0.textColor = Palette.podaRed.getColor()
         $0.isHidden = true
-        $0.setUpLabel(title: "인증코드가 올바르지 않습니다.다시 확인해주세요.", podaFont: .caption)
+        $0.setUpLabel(title: "인증코드가 올바르지 않습니다. 다시 확인해주세요.", podaFont: .caption)
     }
     
     private let verificationCodeDeleteButton: UIButton = {
@@ -467,7 +467,7 @@ class SignUpViewController: BaseViewController {
         passwordErrorLabel.isHidden = isValidPassword(password)
         if passwordErrorLabel.isHidden {
             passwordErrorLabel.isHidden = false
-            passwordErrorLabel.text = "비밀번호 확인을 위해 다시 한번 입력해주세요"
+            passwordErrorLabel.text = "비밀번호 확인을 위해 다시 한번 입력해주세요."
             passwordErrorLabel.textColor = Palette.podaBlue.getColor()
         } else{
             passwordErrorLabel.text = "양식을 지켜 다시 입력해주세요."
@@ -497,7 +497,7 @@ class SignUpViewController: BaseViewController {
             setProfileVC.password = passwordTextField.text!
             self.navigationController?.pushViewController(setProfileVC, animated: true)
         }else {
-            showAlert(title: "에러", message: "빠드린 정보를 확인해주세요.")
+            showAlert(title: "에러", message: "빠뜨린 정보를 확인해주세요.")
         }
     }
     //메일 인증 보내기
