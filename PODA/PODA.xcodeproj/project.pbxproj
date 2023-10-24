@@ -90,13 +90,28 @@
 		D8BD5C612AE6B0CA00A3802A /* InfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BD5C602AE6B0CA00A3802A /* InfoCell.swift */; };
 		D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */; };
 		D8E5D0522AE12471005EE3C9 /* CompleteSignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */; };
+		E20C9AE42AE41A0300BA5754 /* StickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C9AE32AE41A0300BA5754 /* StickerViewController.swift */; };
+		E20C9AEA2AE4209300BA5754 /* StickerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20C9AE82AE4209300BA5754 /* StickerCollectionViewCell.swift */; };
+		E20C9AEB2AE4209300BA5754 /* StickerCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E20C9AE92AE4209300BA5754 /* StickerCollectionViewCell.xib */; };
+		E24331C82AE0F3FD00244A5A /* SelectRatioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */; };
+		E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */; };
+		E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */; };
+		E24331CE2AE1032200244A5A /* DetailDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */; };
 		E24A314B2AE65C72006CF02C /* DOSSaemmul.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */; };
 		E24A314D2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314C2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf */; };
 		E24A314F2AE65D20006CF02C /* GowunDodum-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */; };
 		E24A31512AE65DBC006CF02C /* NanumSquareRoundB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */; };
 		E24A31532AE65DE4006CF02C /* NanumMyeongjoOTF.otf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31522AE65DE4006CF02C /* NanumMyeongjoOTF.otf */; };
 		E24A31572AE65FF2006CF02C /* NanumBaReunHiPi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31562AE65FF2006CF02C /* NanumBaReunHiPi.ttf */; };
+		E24A315E2AE665AB006CF02C /* FontCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */; };
+		E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
+		E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */; };
+		E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */; };
+		E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */; };
+		E2B8F8DC2AE2538F00578D15 /* ColorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */; };
+		E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */; };
+		E2B8F8E12AE2872300578D15 /* DiaryNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -176,12 +191,27 @@
 		D8BD5C602AE6B0CA00A3802A /* InfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoCell.swift; sourceTree = "<group>"; };
 		D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteSignUpViewController.swift; sourceTree = "<group>"; };
+		E20C9AE32AE41A0300BA5754 /* StickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerViewController.swift; sourceTree = "<group>"; };
+		E20C9AE82AE4209300BA5754 /* StickerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerCollectionViewCell.swift; sourceTree = "<group>"; };
+		E20C9AE92AE4209300BA5754 /* StickerCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StickerCollectionViewCell.xib; sourceTree = "<group>"; };
+		E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectRatioViewController.swift; sourceTree = "<group>"; };
+		E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewController.swift; sourceTree = "<group>"; };
+		E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDiaryViewModel.swift; sourceTree = "<group>"; };
+		E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailDiaryViewController.swift; sourceTree = "<group>"; };
 		E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DOSSaemmul.ttf; sourceTree = "<group>"; };
 		E24A314C2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cafe24SsurroundOTF.otf; sourceTree = "<group>"; };
 		E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GowunDodum-Regular.ttf"; sourceTree = "<group>"; };
 		E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundB.ttf; sourceTree = "<group>"; };
 		E24A31522AE65DE4006CF02C /* NanumMyeongjoOTF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumMyeongjoOTF.otf; sourceTree = "<group>"; };
 		E24A31562AE65FF2006CF02C /* NanumBaReunHiPi.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumBaReunHiPi.ttf; sourceTree = "<group>"; };
+		E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontCollectionViewCell.swift; sourceTree = "<group>"; };
+		E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FontCollectionViewCell.xib; sourceTree = "<group>"; };
+		E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCollectionViewCell.swift; sourceTree = "<group>"; };
+		E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageCollectionViewCell.xib; sourceTree = "<group>"; };
+		E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteView.swift; sourceTree = "<group>"; };
+		E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCollectionViewCell.swift; sourceTree = "<group>"; };
+		E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ColorCollectionViewCell.xib; sourceTree = "<group>"; };
+		E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryNavigationBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -557,6 +587,71 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
+		E20C9AE52AE4202300BA5754 /* Page */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */,
+				E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */,
+			);
+			path = Page;
+			sourceTree = "<group>";
+		};
+		E20C9AE62AE4203D00BA5754 /* Color */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8DA2AE2538F00578D15 /* ColorCollectionViewCell.swift */,
+				E2B8F8DB2AE2538F00578D15 /* ColorCollectionViewCell.xib */,
+			);
+			path = Color;
+			sourceTree = "<group>";
+		};
+		E20C9AE72AE4205B00BA5754 /* Sticker */ = {
+			isa = PBXGroup;
+			children = (
+				E20C9AE82AE4209300BA5754 /* StickerCollectionViewCell.swift */,
+				E20C9AE92AE4209300BA5754 /* StickerCollectionViewCell.xib */,
+			);
+			path = Sticker;
+			sourceTree = "<group>";
+		};
+		E24331C42AE0F33F00244A5A /* Diary */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8D12AE115F600578D15 /* View */,
+				E24331C62AE0F37600244A5A /* ViewModel */,
+				E24331C52AE0F36900244A5A /* ViewController */,
+			);
+			path = Diary;
+			sourceTree = "<group>";
+		};
+		E24331C52AE0F36900244A5A /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E24331C72AE0F3FD00244A5A /* SelectRatioViewController.swift */,
+				E24331C92AE0F45C00244A5A /* CreateDiaryViewController.swift */,
+				E24331CD2AE1032200244A5A /* DetailDiaryViewController.swift */,
+				E20C9AE32AE41A0300BA5754 /* StickerViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		E24331C62AE0F37600244A5A /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				E24331CB2AE0F4BB00244A5A /* CreateDiaryViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		E24A31582AE66553006CF02C /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */,
+				E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */,
+			);
+			path = Font;
+			sourceTree = "<group>";
+		};
 		E28A2CF82AD95B91004401D1 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
@@ -571,6 +666,7 @@
 		E28A2CF92ADC6B99004401D1 /* Screen */ = {
 			isa = PBXGroup;
 			children = (
+				E24331C42AE0F33F00244A5A /* Diary */,
 				D879F77B2ADD941400FFB3F7 /* Login */,
 				D879F7782ADD93E900FFB3F7 /* SignUp */,
 				26B79F6A2AE1133600455539 /* Home */,
@@ -686,6 +782,35 @@
 			path = Base;
 			sourceTree = "<group>";
 		};
+		E2B8F8D12AE115F600578D15 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8E02AE2872300578D15 /* DiaryNavigationBar.swift */,
+				E2B8F8D72AE1A3A600578D15 /* Color */,
+				E2B8F8D62AE1A39B00578D15 /* Cell */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E2B8F8D62AE1A39B00578D15 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E24A31582AE66553006CF02C /* Font */,
+				E20C9AE72AE4205B00BA5754 /* Sticker */,
+				E20C9AE62AE4203D00BA5754 /* Color */,
+				E20C9AE52AE4202300BA5754 /* Page */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		E2B8F8D72AE1A3A600578D15 /* Color */ = {
+			isa = PBXGroup;
+			children = (
+				E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */,
+			);
+			path = Color;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -767,6 +892,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */,
+				E20C9AEB2AE4209300BA5754 /* StickerCollectionViewCell.xib in Resources */,
 				5F2B1CD42ADCD08E00DAA9C8 /* Pretendard-Bold.otf in Resources */,
 				E24A31572AE65FF2006CF02C /* NanumBaReunHiPi.ttf in Resources */,
 				E24A314B2AE65C72006CF02C /* DOSSaemmul.ttf in Resources */,
@@ -774,7 +900,10 @@
 				5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */,
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
 				E24A314D2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf in Resources */,
+				E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */,
 				5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */,
+				E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */,
+				E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */,
 				E24A31532AE65DE4006CF02C /* NanumMyeongjoOTF.otf in Resources */,
 				E24A314F2AE65D20006CF02C /* GowunDodum-Regular.ttf in Resources */,
 				5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */,
@@ -794,14 +923,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */,
+				E2B8F8E12AE2872300578D15 /* DiaryNavigationBar.swift in Sources */,
 				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
+				E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */,
+				E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */,
 				5FD54B292AD911120092D75B /* UITableView + Extension.swift in Sources */,
+				E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */,
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				2794D7AE2AE01C9700B999EC /* RealmManager.swift in Sources */,
 				2794D7B02AE0216000B999EC /* TestPageViewController.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
+				E2B8F8DC2AE2538F00578D15 /* ColorCollectionViewCell.swift in Sources */,
 				5FEC85C72AE156B0000E5D4C /* UserInfo.swift in Sources */,
 				5F5447C62AE6350E00365DB7 /* HTMLParser.swift in Sources */,
 				5FD54B342AD911D30092D75B /* NetworkManager.swift in Sources */,
@@ -822,6 +957,8 @@
 				1BFF04022ADE62B100A5430D /* UIColor + Extension.swift in Sources */,
 				1B883AA62AE4F9D0004D5FCE /* InfoViewController.swift in Sources */,
 				5FD54B302AD9118D0092D75B /* Observable + BindableType.swift in Sources */,
+				E24331CE2AE1032200244A5A /* DetailDiaryViewController.swift in Sources */,
+				E20C9AEA2AE4209300BA5754 /* StickerCollectionViewCell.swift in Sources */,
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
@@ -833,6 +970,7 @@
 				26B79F722AE113B600455539 /* MorePieceViewController.swift in Sources */,
 				5F5447CB2AE6355900365DB7 /* SMTPManager.swift in Sources */,
 				5FD54B272AD910EE0092D75B /* UITextField + Extension.swift in Sources */,
+				E24331C82AE0F3FD00244A5A /* SelectRatioViewController.swift in Sources */,
 				5FD54B2B2AD9112D0092D75B /* UICollectionView + Extension.swift in Sources */,
 				5FD54B252AD910D30092D75B /* UILabel + Extension.swift in Sources */,
 				5F54EBF42ADFFE4800331E59 /* FrameRate + Enum.swift in Sources */,
@@ -845,9 +983,11 @@
 				2683649A2AE2A92E00872ABB /* DiaryDetailCollectionViewCell.swift in Sources */,
 				D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */,
 				5F54EBFC2ADFFF5D00331E59 /* FirestorageImageManager.swift in Sources */,
+				E24A315E2AE665AB006CF02C /* FontCollectionViewCell.swift in Sources */,
 				5F2B1CDB2ADCDB7400DAA9C8 /* DiaryInfo.swift in Sources */,
 				5F54EC022AE0012300331E59 /* FirebaseAuthManager.swift in Sources */,
 				5FD54B582AD915EE0092D75B /* BaseTabbarController.swift in Sources */,
+				E20C9AE42AE41A0300BA5754 /* StickerViewController.swift in Sources */,
 				D8BD5C612AE6B0CA00A3802A /* InfoCell.swift in Sources */,
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
 				26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */,
@@ -993,6 +1133,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 53AWLX6CVV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1019,6 +1160,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 53AWLX6CVV;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
