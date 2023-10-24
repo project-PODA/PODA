@@ -20,13 +20,12 @@ class BaseTabbarController: UITabBarController {
         super.viewDidLoad()
         
         let homeVC = HomeViewController()
-        let homeNavVC = BaseNavigationController(rootViewController: homeVC)
         
         let profileVC = ProfileViewController(viewModel: ProfileViewModel())
         let profileNavVC = BaseNavigationController(rootViewController: profileVC)
         profileVC.bind(to: profileVC.viewModel)
         
-        viewControllers = [homeNavVC, profileNavVC]
+        viewControllers = [homeVC, profileNavVC]
         
         setupCustomTabbar()
         updateTabbarImages()
