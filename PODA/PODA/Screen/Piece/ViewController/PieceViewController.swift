@@ -229,6 +229,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .wheels
+        datePicker.locale = Locale(identifier: "ko_KR")
         
         if let title = datePickerButton.title(for: .normal),
            let currentDate = Date(dateString: title, format: "yyyy. MM. dd") {
