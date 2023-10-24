@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B883AA62AE4F9D0004D5FCE /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B883AA52AE4F9D0004D5FCE /* InfoViewController.swift */; };
+		1B883AAA2AE4FAF8004D5FCE /* InfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B883AA92AE4FAF8004D5FCE /* InfoViewModel.swift */; };
 		1BFF04022ADE62B100A5430D /* UIColor + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */; };
 		2683649A2AE2A92E00872ABB /* DiaryDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 268364992AE2A92E00872ABB /* DiaryDetailCollectionViewCell.swift */; };
 		2683649D2AE2CDDE00872ABB /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2683649C2AE2CDDE00872ABB /* DetailViewController.swift */; };
@@ -41,6 +43,10 @@
 		5F2B1CD72ADCD08E00DAA9C8 /* Pretendard-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CCE2ADCD08E00DAA9C8 /* Pretendard-Regular.otf */; };
 		5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2B1CD82ADCD62900DAA9C8 /* UIFont + Enum.swift */; };
 		5F2B1CDB2ADCDB7400DAA9C8 /* DiaryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2B1CDA2ADCDB7400DAA9C8 /* DiaryInfo.swift */; };
+		5F5447C62AE6350E00365DB7 /* HTMLParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5447C52AE6350E00365DB7 /* HTMLParser.swift */; };
+		5F5447C92AE6354B00365DB7 /* InquireManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5447C82AE6354B00365DB7 /* InquireManager.swift */; };
+		5F5447CB2AE6355900365DB7 /* SMTPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5447CA2AE6355900365DB7 /* SMTPManager.swift */; };
+		5F5447CD2AE6356300365DB7 /* SMTPError + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5447CC2AE6356300365DB7 /* SMTPError + Enum.swift */; };
 		5F54EBE72ADFFCE200331E59 /* ImageManipulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EBE62ADFFCE200331E59 /* ImageManipulator.swift */; };
 		5F54EBF42ADFFE4800331E59 /* FrameRate + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EBF32ADFFE4800331E59 /* FrameRate + Enum.swift */; };
 		5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EBF52ADFFE8600331E59 /* Encodable + Extension.swift */; };
@@ -84,10 +90,18 @@
 		D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */; };
 		D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */; };
 		D8E5D0522AE12471005EE3C9 /* CompleteSignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */; };
+		E24A314B2AE65C72006CF02C /* DOSSaemmul.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */; };
+		E24A314D2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314C2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf */; };
+		E24A314F2AE65D20006CF02C /* GowunDodum-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */; };
+		E24A31512AE65DBC006CF02C /* NanumSquareRoundB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */; };
+		E24A31532AE65DE4006CF02C /* NanumMyeongjoOTF.otf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31522AE65DE4006CF02C /* NanumMyeongjoOTF.otf */; };
+		E24A31572AE65FF2006CF02C /* NanumBaReunHiPi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E24A31562AE65FF2006CF02C /* NanumBaReunHiPi.ttf */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B883AA52AE4F9D0004D5FCE /* InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
+		1B883AA92AE4FAF8004D5FCE /* InfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewModel.swift; sourceTree = "<group>"; };
 		1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor + Extension.swift"; sourceTree = "<group>"; };
 		268364992AE2A92E00872ABB /* DiaryDetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryDetailCollectionViewCell.swift; sourceTree = "<group>"; };
 		2683649C2AE2CDDE00872ABB /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -120,6 +134,10 @@
 		5F2B1CCE2ADCD08E00DAA9C8 /* Pretendard-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Regular.otf"; sourceTree = "<group>"; };
 		5F2B1CD82ADCD62900DAA9C8 /* UIFont + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont + Enum.swift"; sourceTree = "<group>"; };
 		5F2B1CDA2ADCDB7400DAA9C8 /* DiaryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryInfo.swift; sourceTree = "<group>"; };
+		5F5447C52AE6350E00365DB7 /* HTMLParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLParser.swift; sourceTree = "<group>"; };
+		5F5447C82AE6354B00365DB7 /* InquireManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InquireManager.swift; sourceTree = "<group>"; };
+		5F5447CA2AE6355900365DB7 /* SMTPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMTPManager.swift; sourceTree = "<group>"; };
+		5F5447CC2AE6356300365DB7 /* SMTPError + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SMTPError + Enum.swift"; sourceTree = "<group>"; };
 		5F54EBE62ADFFCE200331E59 /* ImageManipulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManipulator.swift; sourceTree = "<group>"; };
 		5F54EBF32ADFFE4800331E59 /* FrameRate + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FrameRate + Enum.swift"; sourceTree = "<group>"; };
 		5F54EBF52ADFFE8600331E59 /* Encodable + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable + Extension.swift"; sourceTree = "<group>"; };
@@ -158,6 +176,12 @@
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteSignUpViewController.swift; sourceTree = "<group>"; };
+		E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DOSSaemmul.ttf; sourceTree = "<group>"; };
+		E24A314C2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cafe24SsurroundOTF.otf; sourceTree = "<group>"; };
+		E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GowunDodum-Regular.ttf"; sourceTree = "<group>"; };
+		E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumSquareRoundB.ttf; sourceTree = "<group>"; };
+		E24A31522AE65DE4006CF02C /* NanumMyeongjoOTF.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumMyeongjoOTF.otf; sourceTree = "<group>"; };
+		E24A31562AE65FF2006CF02C /* NanumBaReunHiPi.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NanumBaReunHiPi.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +219,40 @@
 			children = (
 				2683649C2AE2CDDE00872ABB /* DetailViewController.swift */,
 				26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */,
+                );
+            path = ViewController;
+            sourceTree = "<group>";
+        };
+		1B883AA32AE4F99C004D5FCE /* Info */ = {
+			isa = PBXGroup;
+			children = (
+				1B883AA72AE4FA7B004D5FCE /* ViewModel */,
+				1B883AA82AE4FA89004D5FCE /* ViewController */,
+			);
+			path = Info;
+			sourceTree = "<group>";
+		};
+		1B883AA42AE4F9AB004D5FCE /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				E28A2D072ADC6EC2004401D1 /* ViewModel */,
+				E28A2D062ADC6EBA004401D1 /* ViewController */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		1B883AA72AE4FA7B004D5FCE /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				1B883AA92AE4FAF8004D5FCE /* InfoViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		1B883AA82AE4FA89004D5FCE /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				1B883AA52AE4F9D0004D5FCE /* InfoViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -303,6 +361,12 @@
 		5F2B1CC52ADCD06500DAA9C8 /* Font */ = {
 			isa = PBXGroup;
 			children = (
+				E24A31562AE65FF2006CF02C /* NanumBaReunHiPi.ttf */,
+				E24A31522AE65DE4006CF02C /* NanumMyeongjoOTF.otf */,
+				E24A31502AE65DBC006CF02C /* NanumSquareRoundB.ttf */,
+				E24A314E2AE65D20006CF02C /* GowunDodum-Regular.ttf */,
+				E24A314C2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf */,
+				E24A314A2AE65C72006CF02C /* DOSSaemmul.ttf */,
 				5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */,
 				5F2B1CCB2ADCD08E00DAA9C8 /* Pretendard-Bold.otf */,
 				5F2B1CC92ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf */,
@@ -314,6 +378,32 @@
 				5F2B1CCC2ADCD08E00DAA9C8 /* Pretendard-Thin.otf */,
 			);
 			path = Font;
+			sourceTree = "<group>";
+		};
+		5F5447C42AE634FC00365DB7 /* Parser */ = {
+			isa = PBXGroup;
+			children = (
+				5F5447C52AE6350E00365DB7 /* HTMLParser.swift */,
+			);
+			path = Parser;
+			sourceTree = "<group>";
+		};
+		5F5447C72AE6353D00365DB7 /* Email */ = {
+			isa = PBXGroup;
+			children = (
+				5F5447CE2AE635C000365DB7 /* Error */,
+				5F5447C82AE6354B00365DB7 /* InquireManager.swift */,
+				5F5447CA2AE6355900365DB7 /* SMTPManager.swift */,
+			);
+			path = Email;
+			sourceTree = "<group>";
+		};
+		5F5447CE2AE635C000365DB7 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				5F5447CC2AE6356300365DB7 /* SMTPError + Enum.swift */,
+			);
+			path = Error;
 			sourceTree = "<group>";
 		};
 		5F54EBE52ADFFCD700331E59 /* ImageManipulator */ = {
@@ -495,6 +585,7 @@
 				2683649B2AE2CDC100872ABB /* Detail */,
 				E28A2CFA2ADC6BA7004401D1 /* Main */,
 				E28A2CFD2ADC6BF9004401D1 /* Profile */,
+				1B883AA32AE4F99C004D5FCE /* Info */,
 				27D2652C2ADD21DF00B6E211 /* Piece */,
 			);
 			path = Screen;
@@ -512,8 +603,7 @@
 		E28A2CFD2ADC6BF9004401D1 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				E28A2D072ADC6EC2004401D1 /* ViewModel */,
-				E28A2D062ADC6EBA004401D1 /* ViewController */,
+				1B883AA42AE4F9AB004D5FCE /* Profile */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -539,6 +629,7 @@
 		E28A2D002ADC6D07004401D1 /* Global */ = {
 			isa = PBXGroup;
 			children = (
+				5F5447C42AE634FC00365DB7 /* Parser */,
 				5FEC85872AE0BD87000E5D4C /* Dummy */,
 				5F54EC032AE0035100331E59 /* Config */,
 				E28A2D022ADC6D8B004401D1 /* DesignSystem */,
@@ -586,6 +677,7 @@
 		E28A2D082ADC6F95004401D1 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				5F5447C72AE6353D00365DB7 /* Email */,
 				E28A2D092ADC701A004401D1 /* Base */,
 				5FD54B372AD912010092D75B /* Firebase */,
 				5FD54B382AD912130092D75B /* UserDefault */,
@@ -684,12 +776,18 @@
 			files = (
 				276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */,
 				5F2B1CD42ADCD08E00DAA9C8 /* Pretendard-Bold.otf in Resources */,
+				E24A31572AE65FF2006CF02C /* NanumBaReunHiPi.ttf in Resources */,
+				E24A314B2AE65C72006CF02C /* DOSSaemmul.ttf in Resources */,
 				276985922AD8E20D00A5100D /* Assets.xcassets in Resources */,
 				5F2B1CD52ADCD08E00DAA9C8 /* Pretendard-Thin.otf in Resources */,
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
+				E24A314D2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf in Resources */,
 				5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */,
+				E24A31532AE65DE4006CF02C /* NanumMyeongjoOTF.otf in Resources */,
+				E24A314F2AE65D20006CF02C /* GowunDodum-Regular.ttf in Resources */,
 				5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */,
 				5F2B1CD32ADCD08E00DAA9C8 /* Pretendard-Light.otf in Resources */,
+				E24A31512AE65DBC006CF02C /* NanumSquareRoundB.ttf in Resources */,
 				5F2B1CD62ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf in Resources */,
 				5F2B1CD72ADCD08E00DAA9C8 /* Pretendard-Regular.otf in Resources */,
 				5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */,
@@ -713,6 +811,7 @@
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
 				5FEC85C72AE156B0000E5D4C /* UserInfo.swift in Sources */,
+				5F5447C62AE6350E00365DB7 /* HTMLParser.swift in Sources */,
 				5FD54B342AD911D30092D75B /* NetworkManager.swift in Sources */,
 				5F54EBFA2ADFFF3100331E59 /* FirestorageDBManager.swift in Sources */,
 				5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */,
@@ -721,6 +820,7 @@
 				26A7D49B2AE63F6D00810D63 /* PieceCollectionViewCell.swift in Sources */,
 				5F54EC002ADFFFFD00331E59 /* FirebaseError + Enum.swift in Sources */,
 				5FD54B432AD912D60092D75B /* ConstMargin + Enum.swift in Sources */,
+				5F5447CD2AE6356300365DB7 /* SMTPError + Enum.swift in Sources */,
 				5FD54B2D2AD9114B0092D75B /* UIView + Extension.swift in Sources */,
 				2794D7AC2ADFFDD900B999EC /* PieceImageModel.swift in Sources */,
 				5FD54B4A2AD913460092D75B /* Logger.swift in Sources */,
@@ -728,15 +828,18 @@
 				2683649D2AE2CDDE00872ABB /* DetailViewController.swift in Sources */,
 				5F54EBE72ADFFCE200331E59 /* ImageManipulator.swift in Sources */,
 				1BFF04022ADE62B100A5430D /* UIColor + Extension.swift in Sources */,
+				1B883AA62AE4F9D0004D5FCE /* InfoViewController.swift in Sources */,
 				5FD54B302AD9118D0092D75B /* Observable + BindableType.swift in Sources */,
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
 				5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */,
+				5F5447C92AE6354B00365DB7 /* InquireManager.swift in Sources */,
 				2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */,
 				26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */,
 				26B79F6C2AE1135000455539 /* HomeViewController.swift in Sources */,
 				26B79F722AE113B600455539 /* MorePieceViewController.swift in Sources */,
+				5F5447CB2AE6355900365DB7 /* SMTPManager.swift in Sources */,
 				5FD54B272AD910EE0092D75B /* UITextField + Extension.swift in Sources */,
 				5FD54B2B2AD9112D0092D75B /* UICollectionView + Extension.swift in Sources */,
 				5FD54B252AD910D30092D75B /* UILabel + Extension.swift in Sources */,
@@ -758,6 +861,7 @@
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
 				26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */,
+				1B883AAA2AE4FAF8004D5FCE /* InfoViewModel.swift in Sources */,
 				5F54EBF82ADFFEA700331E59 /* Decodable + Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

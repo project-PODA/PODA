@@ -15,6 +15,12 @@
 		<string>Pretendard-Regular.otf</string>
 		<string>Pretendard-SemiBold.otf</string>
 		<string>Pretendard-Thin.otf</string>
+		<string>DOSSaemmul.ttf</string>
+		<string>Cafe24SsurroundOTF.otf</string>
+		<string>GowunDodum-Regular.ttf</string>
+		<string>NanumSquareRoundB.ttf</string>
+		<string>NanumMyeongjoOTF.otf</string>
+		<string>NanumBaReunHiPi.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
