@@ -199,7 +199,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func goToMain() {
-        let mainVC = MainViewController(viewModel: MainViewModel())
+        let mainVC = HomeViewController()
         self.navigationController?.pushViewController(mainVC, animated: true)
     }
 }
