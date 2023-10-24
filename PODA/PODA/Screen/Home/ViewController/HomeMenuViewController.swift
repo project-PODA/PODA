@@ -11,14 +11,16 @@ import SnapKit
 
 class HomeMenuViewController: BaseViewController, UIConfigurable {
     
+    var touchedDiary: (() -> Void)?
+    var touchedPiece: (() -> Void)?
+    
     private let qrButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_qr"), for: .normal)
         $0.addTarget(self, action: #selector(didTapQrButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
     private let qrLabel = UILabel().then {
-        $0.text = "QR코드 촬영"
-        $0.font = UIFont.podaFont(.subhead2)
+        $0.setUpLabel(title: "QR코드 촬영", podaFont: .subhead2)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -28,8 +30,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     }
     
     private let addDiaryLabel = UILabel().then {
-        $0.text = "추억 다이어리 만들기"
-        $0.font = UIFont.podaFont(.subhead2)
+        $0.setUpLabel(title: "추억 다이어리 만들기", podaFont: .subhead2)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -39,8 +40,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     }
     
     private let addPieceLabel = UILabel().then {
-        $0.text = "추억 조각 등록하기"
-        $0.font = UIFont.podaFont(.subhead2)
+        $0.setUpLabel(title: "추억 조각 등록하기", podaFont: .subhead2)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -84,33 +84,35 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
         
         view.addSubview(buttonStackView)
         
-        qrButton.snp.makeConstraints { make in
-            make.width.height.equalTo(96)
+        qrButton.snp.makeConstraints { 
+            $0.width.height.equalTo(96)
         }
         
-        addDiaryButton.snp.makeConstraints { make in
-            make.width.height.equalTo(96)
+        addDiaryButton.snp.makeConstraints { 
+            $0.width.height.equalTo(96)
         }
         
-        addPieceButton.snp.makeConstraints { make in
-            make.width.height.equalTo(96)
+        addPieceButton.snp.makeConstraints { 
+            $0.width.height.equalTo(96)
         }
         
-        closeButton.snp.makeConstraints { make in
-            make.width.height.equalTo(56)
+        closeButton.snp.makeConstraints { 
+            $0.width.height.equalTo(56)
         }
         
-        buttonStackView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        buttonStackView.snp.makeConstraints { 
+            $0.center.equalToSuperview()
         }
     }
     
     @objc func didTapAddDiaryButton() {
-        // 추억 다이어리 만들기 페이지로 이동
+        guard let touchedDiary else { return }
+        touchedDiary()
     }
     
     @objc func didTapAddPieceButton() {
-        // 추억 조각 등록하기 페이지로 이동
+        guard let touchedPiece else { return }
+        touchedPiece()
     }
     
     @objc func didTapCloseButton() {
@@ -120,12 +122,13 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
 
 extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
+    // FIXME: - 카메라 권한 설정
     @objc func didTapQrButton() {
         // 카메라 On
         let camera = UIImagePickerController()
         camera.delegate = self
         camera.sourceType = .camera
         camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? []
-        self.present(camera, animated: true)
+        present(camera, animated: true)
     }
 }
