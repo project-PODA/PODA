@@ -89,6 +89,10 @@ extension InfoViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 3 {
             sendEmail()
+        } else if indexPath.row == 1 { // "개인정보처리방침" 셀을 눌렀을 때
+            if let url = URL(string: "https://poda-project.notion.site/bf5c40465131409297eb8d5217b0c441?pvs=4") {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
