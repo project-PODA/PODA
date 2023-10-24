@@ -16,9 +16,8 @@ class SMTPManager {
         self.htmlParser = htmpParser
     }
     
-    func sendAuth(userEmail: String, logoImage: Data?, code : inout Int) {
-        code = Int.random(in: 10000...99999)
-        let userCode = code
+    func sendAuth(userEmail: String, logoImage: Data?, completion: @escaping (Int, Bool) -> Void) {
+        let code = Int.random(in: 10000...99999)
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             let fromUser = Mail.User(email: "poda_official@naver.com")
@@ -27,10 +26,8 @@ class SMTPManager {
             if let imageData = logoImage {
                 let base64String = imageData.base64EncodedString(options: .lineLength64Characters)
                 
-                let htmlContent = htmlParser.getSMTPSampleString(email: toUser.email, authCode: userCode, base64Image: base64String)
-                let htmlAttachment = Attachment(
-                    htmlContent: htmlContent
-                )
+                let htmlContent = htmlParser.getSMTPSampleString(email: toUser.email, authCode: code, base64Image: base64String)
+                let htmlAttachment = Attachment(htmlContent: htmlContent)
                 let mail = Mail(
                     from: fromUser,
                     to: [toUser],
@@ -39,16 +36,20 @@ class SMTPManager {
                     attachments: [htmlAttachment]
                 )
                 
-                hostSMTP.send([mail], completion : { success, fail in
+                hostSMTP.send([mail], completion: { success, fail in
                     if !fail.isEmpty {
-                        if let error = (fail.first?.1 as? NSError){
+                        if let error = (fail.first?.1 as? NSError) {
                             Logger.writeLog(.error, message: "[\(SMTPError.error(error.code, "전송실패"))] : \(error.localizedDescription)")
+                            completion(code, false)
                         }
+                    } else {
+                        completion(code, true)
+                        print(code)
                     }
-                })
-            }
-            else {
+                }
+            )} else {
                 Logger.writeLog(.error, message: "[\(SMTPError.error(SMTPError.worngFileFormat.code, "전송실패"))] : \(SMTPError.worngFileFormat.description)")
+                completion(code, false)
             }
         }
     }

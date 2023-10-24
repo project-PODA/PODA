@@ -73,6 +73,16 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray1.getColor()
     }
     
+    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword){ [weak self] error in
+            guard let self = self else {return}
+        }
+    }
+    
+    
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()

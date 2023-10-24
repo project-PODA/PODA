@@ -8,7 +8,7 @@
 import UIKit
 
 extension UITableView {
-    func setupableView<T: UITableViewCell>(delegate: UITableViewDelegate, dataSource: UITableViewDataSource, cellType: T.Type) {
+    func setUpTableView<T: UITableViewCell>(delegate: UITableViewDelegate, dataSource: UITableViewDataSource, cellType: T.Type) {
         self.delegate = delegate
         self.dataSource = dataSource
         self.register(cellType, forCellReuseIdentifier: String(describing: cellType))

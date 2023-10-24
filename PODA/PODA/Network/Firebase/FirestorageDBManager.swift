@@ -5,7 +5,7 @@
 //  Created by 박유경 on 2023/10/18.
 //
 
-import FirebaseAuth
+
 import Firebase
 import FirebaseStorage
 
@@ -50,31 +50,59 @@ class FirestorageDBManager {
             }
         }
     }
-    
-    func createUserAccount(userInfo : UserInfo, completion: @escaping (FireStorageDBError) -> Void){
-        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+    func emailCheck(email: String, completion: @escaping (FireStorageDBError) -> Void) {
+        guard let _ = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
             return
         }
-        DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
-            guard let self = self else {return}
-            
-            let collectionRef = db.collection(currentUserUID)
-            let documentRef = collectionRef.document("/account")
-            
-            documentRef.setData(["accountInfo" : userInfo.toJson()]) { error in
-                if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
-                    completion(.error(errCode.code, errCode.localizedDescription))
-                }else{
-                    print("유저정보 생성 성공")
-                    completion(.none)
+        
+        let query = db.collection("USER").whereField("email", isEqualTo: email)
+        DispatchQueue.global(qos:.userInteractive).async{
+            query.getDocuments() { (querySnapshot, error) in
+                if let error = error {
+                    Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+                    completion(.error(-1, "Error getting documents"))
+                    return
+                } else {
+                    if querySnapshot!.documents.isEmpty {
+                        completion(.unavailableUUID)
+                    } else {
+                        completion(.none)
+                    }
                 }
             }
         }
     }
     
+    func createUserAccount(userInfo: UserInfo, completion: @escaping (FireStorageDBError) -> Void) {
+        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
+            return
+        }
+
+        let batch = db.batch()
+
+        let userCollectionRef = db.collection("USER")
+        let userDocumentRef = userCollectionRef.document(currentUserUID)
+        batch.setData(["email": userInfo.email], forDocument: userDocumentRef)
+
+        let currentUserCollectionRef = db.collection(currentUserUID)
+        let accountDocumentRef = currentUserCollectionRef.document("account")
+        batch.setData(["accountInfo": userInfo.toJson()], forDocument: accountDocumentRef)
+
+        batch.commit { error in
+            if let err = error {
+                Logger.writeLog(.error, message: "[\(err._code)] : \(err.localizedDescription)")
+                completion(.error(err._code, err.localizedDescription))
+            } else {
+                print("유저정보 생성 및 계정 성공")
+                completion(.none)
+            }
+        }
+    }
+
     func getDiaryDocuments(completion: @escaping ([String], FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")

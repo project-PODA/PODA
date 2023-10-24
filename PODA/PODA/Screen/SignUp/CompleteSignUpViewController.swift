@@ -35,24 +35,12 @@ class CompleteSignUpViewController: BaseViewController, UIConfigurable {
         $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-    }
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
         setActions()
 
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.isHidden = false
-    }
-    
     
     func setActions() {
             letsLoginButton.addTarget(self, action: #selector(goToLogin), for: .touchUpInside)
@@ -80,7 +68,6 @@ class CompleteSignUpViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    
     @objc func goToLogin() {
            // 모든 뷰 컨트롤러를 제거하고, LoginViewController만 남기도록
            if let viewControllers = navigationController?.viewControllers {
@@ -92,8 +79,4 @@ class CompleteSignUpViewController: BaseViewController, UIConfigurable {
                }
            }
        }
-    
-    
-    
-    
 }
