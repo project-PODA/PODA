@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1B883AA62AE4F9D0004D5FCE /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B883AA52AE4F9D0004D5FCE /* InfoViewController.swift */; };
-		1B883AAA2AE4FAF8004D5FCE /* InfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B883AA92AE4FAF8004D5FCE /* InfoViewModel.swift */; };
 		1BFF04022ADE62B100A5430D /* UIColor + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */; };
 		26B79F6C2AE1135000455539 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6B2AE1135000455539 /* HomeViewController.swift */; };
 		26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */; };
@@ -92,7 +91,6 @@
 
 /* Begin PBXFileReference section */
 		1B883AA52AE4F9D0004D5FCE /* InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
-		1B883AA92AE4FAF8004D5FCE /* InfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewModel.swift; sourceTree = "<group>"; };
 		1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor + Extension.swift"; sourceTree = "<group>"; };
 		26B79F6B2AE1135000455539 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuViewController.swift; sourceTree = "<group>"; };
@@ -191,7 +189,6 @@
 		1B883AA32AE4F99C004D5FCE /* Info */ = {
 			isa = PBXGroup;
 			children = (
-				1B883AA72AE4FA7B004D5FCE /* ViewModel */,
 				1B883AA82AE4FA89004D5FCE /* ViewController */,
 			);
 			path = Info;
@@ -204,14 +201,6 @@
 				E28A2D062ADC6EBA004401D1 /* ViewController */,
 			);
 			path = Profile;
-			sourceTree = "<group>";
-		};
-		1B883AA72AE4FA7B004D5FCE /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				1B883AA92AE4FAF8004D5FCE /* InfoViewModel.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		1B883AA82AE4FA89004D5FCE /* ViewController */ = {
@@ -809,7 +798,6 @@
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
 				26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */,
-				1B883AAA2AE4FAF8004D5FCE /* InfoViewModel.swift in Sources */,
 				5F54EBF82ADFFEA700331E59 /* Decodable + Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

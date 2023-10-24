@@ -2,20 +2,21 @@
 //  InfoViewController.swift
 //  PODA
 //
-//  Created by t2023-m0080 on 2023/10/22.
+//  Created by FUTURE on 2023/10/22.
 //
-//test
-import UIKit
 
-class InfoViewController: BaseViewController, ViewModelBindable, UIConfigurable {
+import UIKit
+import SnapKit
+import MessageUI
+import Then
+
+class InfoViewController: BaseViewController, UIConfigurable {
     
-    var viewModel: InfoViewModel!
     
-    private let tableView: UITableView = {
-        let tv = UITableView(frame: .zero, style: .plain)
-        tv.register(InfoCell.self, forCellReuseIdentifier: "infoCell")
-        return tv
-    }()
+    private let tableView = UITableView(frame: .zero, style: .plain).then {
+        $0.register(InfoCell.self, forCellReuseIdentifier: "infoCell")
+        $0.backgroundColor = .clear
+    }
     
     
     private let items: [String] = ["버전", "개인정보처리방침", "공지사항", "기능 추가 요청/오류 신고", "만든이", "탈퇴하기"]
@@ -23,18 +24,14 @@ class InfoViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        bindViewModel()
         
         tableView.dataSource = self
         tableView.delegate = self
     }
     
-    func bindViewModel() {
-    }
+    
     
     func configUI() {
-        tableView.backgroundColor = .clear
-        
         let backButton = UIBarButtonItem(image: UIImage(named: "icon_back")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(didTapBackButton))
         self.navigationItem.leftBarButtonItem = backButton
         self.navigationItem.hidesBackButton = true
@@ -42,6 +39,20 @@ class InfoViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+    }
+    
+    func sendEmail() {
+        if MFMailComposeViewController.canSendMail() {
+            let mail = MFMailComposeViewController()
+            mail.mailComposeDelegate = self
+            mail.setToRecipients(["poda_official@naver.com"])
+            //첨부파일 보내려면 코드 추가해야함. 다음 커밋에 올리겠음.
+            present(mail, animated: true)
+        } else {
+            let alert = UIAlertController(title: "Error", message: "메일을 보내실 수 없습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
         }
     }
     
@@ -76,6 +87,17 @@ extension InfoViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 3 {
+            sendEmail()
+        }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+
+// MARK: - MFMailComposeViewControllerDelegate
+extension InfoViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true)
     }
 }
