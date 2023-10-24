@@ -36,8 +36,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray3.getColor()
     }
     
+    // FIXME: - 추억 조각 갯수 불러오기
     private let pieceCountLabel = UILabel().then {
-        $0.setUpLabel(title: "16개", podaFont: .subhead4)  //조각 갯수 불러오기
+        $0.setUpLabel(title: "16개", podaFont: .subhead4)  // 조각 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -52,8 +53,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray3.getColor()
     }
     
+    // FIXME: - 추억 다이어리 갯수 불러오기
     private let diaryCountLabel = UILabel().then {
-        $0.setUpLabel(title: "20권", podaFont: .subhead4)   //다이어리 갯수 불러오기
+        $0.setUpLabel(title: "20권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -81,16 +83,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
+    // FIXME: - 랜덤한 추억 다이어리 커버 불러오기
     private let timeCapsuleImageView = UIImageView().then {
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.layer.cornerRadius = 20
         $0.layer.shadowRadius = 10
         $0.layer.shadowColor = Palette.podaWhite.getColor().cgColor
         $0.layer.shadowOpacity = 0.8
-        // $0.image = 랜덤 다이어리 커버
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
-        $0.addGestureRecognizer(tapGesture)
-        $0.isUserInteractionEnabled = true
+        // $0.image = 랜덤 추억 다이어리 커버
     }
     
     private let diaryMenuLabel = UILabel().then {
@@ -130,14 +130,16 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
+    // FIXME: - 최신순으로 등록되도록
     private let diaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         let width = (UIScreen.main.bounds.width / 5) - 2
-        layout.itemSize = CGSize(width: width, height: 104) // height = collectionView.frame.height 으로 변경.. 비율 계산해서 적어주기,,
+        layout.itemSize = CGSize(width: width, height: width * 1.35)
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 2.0
         $0.collectionViewLayout = layout
         $0.backgroundColor = Palette.podaBlack.getColor()
+        $0.showsHorizontalScrollIndicator = false  // 스크롤바 없애기
         $0.register(DiaryCollectionViewCell.self, forCellWithReuseIdentifier: "DiaryCollectionViewCell")
     }
     
@@ -178,6 +180,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
+    // FIXME: - pieceCollectionView 생성 후 삭제하기
     private let pieceImageView = UIImageView().then {
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.layer.cornerRadius = 5
@@ -187,13 +190,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
         diaryLabel.numberOfLines = 2
         diaryLabel.textAlignment = .center
         $0.addSubview(diaryLabel)
-        diaryLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        diaryLabel.snp.makeConstraints { 
+            $0.center.equalToSuperview()
         }
     }
     
     private let pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
+        let pieceImageView = UIImageView()
         let width = (UIScreen.main.bounds.width / 5) - 2
         layout.itemSize = CGSize(width: width, height: 104) // height = collectionView.frame.height 으로 변경.. 비율 계산해서 적어주기,,
         layout.scrollDirection = .horizontal
@@ -208,10 +212,13 @@ class HomeViewController: BaseViewController, UIConfigurable {
         navigationController?.isNavigationBarHidden = true
         configUI()
         setTimeCapsuleView()
+        setDiaryView()
+        setPieceView()
         diaryCollectionView.delegate = self
         diaryCollectionView.dataSource = self
     }
     
+    // FIXME: - Stackview 정리하기
     func configUI() {
         [mainStackView, pieceLabelStackView, diaryLabelStackView, scrollView].forEach(view.addSubview)
         [statusLabel, addButton].forEach(mainStackView.addArrangedSubview)
@@ -222,125 +229,131 @@ class HomeViewController: BaseViewController, UIConfigurable {
         [pieceMenuLabel, addPieceButton].forEach(pieceStackView.addArrangedSubview)
         [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceStackView, morePieceButton, pieceImageView].forEach(contentView.addSubview)
 
-        mainStackView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(7)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
+        mainStackView.snp.makeConstraints { 
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(7)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
         }
         
-        addButton.snp.makeConstraints { make in
-            make.width.height.equalTo(36)
+        addButton.snp.makeConstraints { 
+            $0.width.height.equalTo(36)
         }
         
-        pieceLabelStackView.snp.makeConstraints { make in
-            make.top.equalTo(statusLabel.snp.bottom).offset(16)
-            make.left.equalToSuperview().offset(20)
+        pieceLabelStackView.snp.makeConstraints { 
+            $0.top.equalTo(statusLabel.snp.bottom).offset(16)
+            $0.left.equalToSuperview().offset(20)
         }
         
-        diaryLabelStackView.snp.makeConstraints { make in
-            make.top.equalTo(statusLabel.snp.bottom).offset(16)
-            make.left.equalTo(pieceLabelStackView.snp.right).offset(20)
+        diaryLabelStackView.snp.makeConstraints { 
+            $0.top.equalTo(statusLabel.snp.bottom).offset(16)
+            $0.left.equalTo(pieceLabelStackView.snp.right).offset(20)
         }
         
-        timeCapsuleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.left.equalToSuperview().offset(20)
+        timeCapsuleLabel.snp.makeConstraints { 
+            $0.top.equalToSuperview().offset(20)
+            $0.left.equalToSuperview().offset(20)
         }
         
-        emptyTimeCapsuleLabel.snp.makeConstraints { make in
-            make.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().offset(-40)
-            make.height.equalTo(416)
+        emptyTimeCapsuleLabel.snp.makeConstraints { 
+            $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.height.equalTo(416)
         }
         
-        timeCapsuleImageView.snp.makeConstraints { make in
-            make.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().offset(-40)
-            make.height.equalTo(416)
+        timeCapsuleImageView.snp.makeConstraints { 
+            $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.height.equalTo(416)
         }
         
-        addDiaryButton.snp.makeConstraints { make in
-            make.width.height.equalTo(28)
+        addDiaryButton.snp.makeConstraints { 
+            $0.width.height.equalTo(28)
         }
         
-        diaryStackView.snp.makeConstraints { make in
-            make.top.equalTo(timeCapsuleImageView.snp.bottom).offset(60)
-            make.left.equalToSuperview().offset(20)
+        diaryStackView.snp.makeConstraints { 
+            $0.top.equalTo(timeCapsuleImageView.snp.bottom).offset(60)
+            $0.left.equalToSuperview().offset(20)
         }
         
-        emptyDiaryLabel.snp.makeConstraints { make in
-            make.top.equalTo(diaryStackView.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
-            make.height.equalTo(108)
+        emptyDiaryLabel.snp.makeConstraints { 
+            $0.top.equalTo(diaryStackView.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
+            $0.height.equalTo(108)
         }
         
-        diaryCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(diaryStackView.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
-            make.height.equalTo(108)
+        diaryCollectionView.snp.makeConstraints { 
+            $0.top.equalTo(diaryStackView.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
+            $0.height.equalTo(108)
         }
         
-        moreDiaryButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.bottom.equalTo(diaryCollectionView.snp.top).offset(-16)
+        moreDiaryButton.snp.makeConstraints { 
+            $0.right.equalToSuperview().offset(-20)
+            $0.bottom.equalTo(diaryCollectionView.snp.top).offset(-16)
         }
         
-        addPieceButton.snp.makeConstraints { make in
-            make.width.height.equalTo(28)
+        addPieceButton.snp.makeConstraints { 
+            $0.width.height.equalTo(28)
         }
         
-        pieceStackView.snp.makeConstraints { make in
-            make.top.equalTo(diaryCollectionView.snp.bottom).offset(60)
-            make.left.equalToSuperview().offset(20)
+        pieceStackView.snp.makeConstraints { 
+            $0.top.equalTo(diaryCollectionView.snp.bottom).offset(60)
+            $0.left.equalToSuperview().offset(20)
         }
         
-        pieceImageView.snp.makeConstraints { make in
-            make.top.equalTo(pieceStackView.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
-            make.height.equalTo(180)
+        pieceImageView.snp.makeConstraints { 
+            $0.top.equalTo(pieceStackView.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
+            $0.height.equalTo(180)
         }
         
-        morePieceButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.bottom.equalTo(pieceImageView.snp.top).offset(-16)
+        morePieceButton.snp.makeConstraints { 
+            $0.right.equalToSuperview().offset(-20)
+            $0.bottom.equalTo(pieceImageView.snp.top).offset(-16)
         }
         
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(pieceLabelStackView.snp.bottom).offset(30)
-            make.left.right.bottom.equalToSuperview()
+        scrollView.snp.makeConstraints { 
+            $0.top.equalTo(pieceLabelStackView.snp.bottom).offset(30)
+            $0.left.right.bottom.equalToSuperview()
         }
         
-        contentView.snp.makeConstraints { make in
-            make.top.left.right.bottom.equalToSuperview()
-            make.width.equalTo(scrollView.snp.width)
-            make.height.equalTo(1080)    // 스크롤 가능 높이 조절하기
+        // FIXME: - 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기 or collectionview 아래에 마진 주기
+        contentView.snp.makeConstraints {
+            $0.top.left.right.bottom.equalToSuperview()
+            $0.width.equalTo(scrollView.snp.width)
+            $0.height.equalTo(1080)    // 스크롤 가능 높이 조절하기 > 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기
         }
     }
     
+    // FIXME: - 데이터 받아와서 조건 달기
     func setTimeCapsuleView() {
         // 생성된 다이어리가 있는 경우
         // emptyTimeCapsuleLabel.isHidden = true
         
         // 생성된 다이어리가 없는 경우
         timeCapsuleImageView.isHidden = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
+        timeCapsuleImageView.addGestureRecognizer(tapGesture)
+        timeCapsuleImageView.isUserInteractionEnabled = true
     }
     
     func setDiaryView() {
         // 생성된 다이어리가 있는 경우
-        // emptyDiaryLabel.isHidden = true
+        emptyDiaryLabel.isHidden = true
         
         // 생성된 다이어리가 없는 경우
-        diaryCollectionView.isHidden = true
+        //diaryCollectionView.isHidden = true
     }
     
     func setPieceView() {
         // 등록된 추억 조각이 있는 경우
-        // emptyPieceLabel.isHidden = true
+        //emptyPieceLabel.isHidden = true
         
         // 등록된 추억 조각이 없는 경우
         pieceCollectionView.isHidden = true
@@ -350,6 +363,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
         let homeMenuViewController = HomeMenuViewController()
         homeMenuViewController.modalPresentationStyle = .overFullScreen
         present(homeMenuViewController, animated: true)
+        
+        homeMenuViewController.touchedDiary = {
+            homeMenuViewController.dismiss(animated: true)
+            //self.navigationController?.pushViewController(추억 다이어리 만들기 페이지, animated: true)
+        }
         
         homeMenuViewController.touchedPiece = {
             homeMenuViewController.dismiss(animated: true)
@@ -362,7 +380,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddDiaryButton() {
-        // 추억 다이어리 만들기 페이지로 이동
+        //navigationController?.pushViewController(추억 다이어리 만들기 페이지, animated: true)
     }
     
     @objc func didTapMoreDiaryButton() {
@@ -370,19 +388,21 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddPieceButton() {
-        // 추억 조각 등록하기 페이지로 이동
         navigationController?.pushViewController(PieceViewController(), animated: true)
     }
     
     @objc func didTapMorePieceButton() {
         navigationController?.pushViewController(MorePieceViewController(), animated: true)
     }
-
 }
 
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        navigationController?.pushViewController(DetailViewController(), animated: true)
+//        if collectionView == diaryCollectionView {
+//            
+//        } else if collectionView ==
+                    
+                    navigationController?.pushViewController(DetailViewController(), animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

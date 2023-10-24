@@ -11,7 +11,8 @@ import SnapKit
 
 class HomeMenuViewController: BaseViewController, UIConfigurable {
     
-    var touchedPiece: (() -> ())?
+    var touchedDiary: (() -> Void)?
+    var touchedPiece: (() -> Void)?
     
     private let qrButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_qr"), for: .normal)
@@ -55,7 +56,6 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.isNavigationBarHidden = true
         configUI()
     }
     
@@ -84,33 +84,33 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
         
         view.addSubview(buttonStackView)
         
-        qrButton.snp.makeConstraints { make in
-            make.width.height.equalTo(96)
+        qrButton.snp.makeConstraints { 
+            $0.width.height.equalTo(96)
         }
         
-        addDiaryButton.snp.makeConstraints { make in
-            make.width.height.equalTo(96)
+        addDiaryButton.snp.makeConstraints { 
+            $0.width.height.equalTo(96)
         }
         
-        addPieceButton.snp.makeConstraints { make in
-            make.width.height.equalTo(96)
+        addPieceButton.snp.makeConstraints { 
+            $0.width.height.equalTo(96)
         }
         
-        closeButton.snp.makeConstraints { make in
-            make.width.height.equalTo(56)
+        closeButton.snp.makeConstraints { 
+            $0.width.height.equalTo(56)
         }
         
-        buttonStackView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+        buttonStackView.snp.makeConstraints { 
+            $0.center.equalToSuperview()
         }
     }
     
     @objc func didTapAddDiaryButton() {
-        // 추억 다이어리 만들기 페이지로 이동
+        guard let touchedDiary else { return }
+        touchedDiary()
     }
     
     @objc func didTapAddPieceButton() {
-        // 추억 조각 등록하기 페이지로 이동
         guard let touchedPiece else { return }
         touchedPiece()
     }
@@ -122,6 +122,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
 
 extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
+    // FIXME: - 카메라 권한 설정
     @objc func didTapQrButton() {
         // 카메라 On
         let camera = UIImagePickerController()

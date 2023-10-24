@@ -33,14 +33,14 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
             $0.textColor = Palette.podaWhite.getColor()
         }
         [fingerImageView, infoLabel].forEach($0.addSubview)
-        fingerImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(248)
-            make.width.height.equalTo(140)
+        fingerImageView.snp.makeConstraints { 
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(248)
+            $0.width.height.equalTo(140)
         }
-        infoLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(fingerImageView.snp.bottom).offset(20)
+        infoLabel.snp.makeConstraints { 
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(fingerImageView.snp.bottom).offset(20)
         }
     }
 
@@ -54,26 +54,26 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
     func configUI() {
         [backgroundImageView, backButton, translucentView].forEach(view.addSubview)
         
-        backgroundImageView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalToSuperview()
+        backgroundImageView.snp.makeConstraints { 
+            $0.top.left.right.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview()
         }
         
-        backButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.left.equalToSuperview().offset(20)
-            make.width.height.equalTo(30)
+        backButton.snp.makeConstraints { 
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.height.equalTo(30)
         }
         
-        translucentView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalToSuperview()
+        translucentView.snp.makeConstraints { 
+            $0.top.left.right.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview()
         }
     }
     
     func hideTranslucentView() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTranslucentView))
-        view.addGestureRecognizer(tapGesture)
+        translucentView.addGestureRecognizer(tapGesture)
     }
     
     @objc func didTapBackButton() {

@@ -41,14 +41,14 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
         
         [titleLabel, imageView].forEach(addSubview)
         
-        titleLabel.snp.makeConstraints { make in
-            make.left.equalTo(8)
-            make.bottom.equalToSuperview().offset(-6)
+        titleLabel.snp.makeConstraints { 
+            $0.left.equalTo(8)
+            $0.bottom.equalToSuperview().offset(-6)
         }
         
-        imageView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.right.equalToSuperview().offset(-6)
+        imageView.snp.makeConstraints { 
+            $0.top.equalToSuperview()
+            $0.right.equalToSuperview().offset(-6)
         }
     }
 }

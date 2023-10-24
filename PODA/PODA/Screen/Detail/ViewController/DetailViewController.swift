@@ -35,18 +35,18 @@ class DetailViewController: BaseViewController, UIConfigurable {
         pageCountLabel.setUpLabel(title: "05", podaFont: .head1) // 다이어리 페이지 수 가져오기
         pageCountLabel.textColor = Palette.podaWhite.getColor()
         $0.addSubview(pageCountLabel)
-        pageCountLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(12)
+        pageCountLabel.snp.makeConstraints { 
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(12)
         }
         
         let pageLabel = UILabel()
         pageLabel.setUpLabel(title: "pages", podaFont: .caption)
         pageLabel.textColor = Palette.podaWhite.getColor()
         $0.addSubview(pageLabel)
-        pageLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(pageCountLabel.snp.bottom).offset(-4)
+        pageLabel.snp.makeConstraints { 
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(pageCountLabel.snp.bottom).offset(-4)
         }
     }
     
@@ -87,45 +87,45 @@ class DetailViewController: BaseViewController, UIConfigurable {
     func configUI() {
         [backgroundImageView, backButton, imageView, titleLabel, dateLabel, contentLabel, scrollImageView, scrollLabel].forEach(view.addSubview)
         
-        backgroundImageView.snp.makeConstraints { make in
-            make.top.bottom.left.right.equalToSuperview()
+        backgroundImageView.snp.makeConstraints { 
+            $0.top.bottom.left.right.equalToSuperview()
         }
         
-        backButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.left.equalToSuperview().offset(20)
-            make.width.height.equalTo(30)
+        backButton.snp.makeConstraints { 
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.height.equalTo(30)
         }
         
-        imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.right.equalToSuperview().offset(-20)
+        imageView.snp.makeConstraints { 
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.right.equalToSuperview().offset(-20)
         }
         
-        titleLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(dateLabel.snp.top)
-            make.left.equalToSuperview().offset(20)
+        titleLabel.snp.makeConstraints { 
+            $0.bottom.equalTo(dateLabel.snp.top)
+            $0.left.equalToSuperview().offset(20)
         }
         
-        dateLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(contentLabel.snp.top).offset(-32)
-            make.left.equalToSuperview().offset(20)
+        dateLabel.snp.makeConstraints { 
+            $0.bottom.equalTo(contentLabel.snp.top).offset(-32)
+            $0.left.equalToSuperview().offset(20)
         }
         
-        contentLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(scrollImageView.snp.top).offset(-40)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
+        contentLabel.snp.makeConstraints { 
+            $0.bottom.equalTo(scrollImageView.snp.top).offset(-40)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
         }
         
-        scrollImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(scrollLabel.snp.top)
+        scrollImageView.snp.makeConstraints { 
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(scrollLabel.snp.top)
         }
         
-        scrollLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide)
+        scrollLabel.snp.makeConstraints { 
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
@@ -155,7 +155,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
                 let saveDeleteViewController = SaveDeleteViewController()
                 saveDeleteViewController.modalPresentationStyle = .fullScreen
                 saveDeleteViewController.modalTransitionStyle = .coverVertical
-                navigationController?.pushViewController(saveDeleteViewController, animated: true)
+                navigationController?.pushViewController(saveDeleteViewController, animated: false)
 //                present(editSaveViewController, animated: true)
             }
         default:

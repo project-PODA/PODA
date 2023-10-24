@@ -10,10 +10,7 @@ import UIKit
 class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
     private let backButton = UIButton().then {
-        //$0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20)
-        let image = UIImage(systemName: "chevron.backward", withConfiguration: imageConfig)
-        $0.setImage(image, for: .normal)
+        $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
@@ -24,9 +21,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     private let addButton = UIButton().then {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20)
-        let image = UIImage(systemName: "plus", withConfiguration: imageConfig)
-        $0.setImage(image, for: .normal)
+        $0.setImage(UIImage(systemName: "plus"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
@@ -50,7 +45,6 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-
     }
 
     func configUI() {
@@ -66,35 +60,34 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         
         [navigationBarStackView, imageView, buttonStackView].forEach(view.addSubview)
         
-        backButton.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
+        backButton.snp.makeConstraints { 
+            $0.width.height.equalTo(30)
         }
         
-        addButton.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
+        addButton.snp.makeConstraints { 
+            $0.width.height.equalTo(30)
         }
         
-        navigationBarStackView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
+        navigationBarStackView.snp.makeConstraints { 
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
         }
         
-        imageView.snp.makeConstraints { make in
-            make.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
-            make.left.right.equalToSuperview()
-            make.height.equalTo(512)
+        imageView.snp.makeConstraints { 
+            $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(512)
         }
         
-        buttonStackView.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().offset(-40)
-            make.bottom.equalToSuperview().offset(-116)
+        buttonStackView.snp.makeConstraints { 
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.bottom.equalToSuperview().offset(-116)
         }
     }
     
     @objc func didTapBackButton() {
-        //dismiss(animated: true)
         navigationController?.popViewController(animated: true)
     }
     
@@ -102,16 +95,12 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         
     }
     
-    @objc func didTapEditButton() {
-        // 추억 다이어리 만들기 페이지로 이동
-    }
-    
     @objc func didTapSaveButton() {
-        // 저장되었습니다 토스메세지 띄우기 & 앨범에 이미지 추가
+        // 저장되었습니다 토스트 메세지 띄우기 & 앨범에 이미지 추가
     }
     
     @objc func didTapDeleteButton() {
-        // 삭제되었습니다 토스메세지 띄우기 & 삭제하고 데이터 저장
+        // 삭제되었습니다 토스트 메세지 띄우기 & 삭제하고 데이터 저장
     }
     
 }

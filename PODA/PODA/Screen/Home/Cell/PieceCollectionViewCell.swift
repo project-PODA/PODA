@@ -34,8 +34,8 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
         
         addSubview(pieceImageView)
         
-        pieceImageView.snp.makeConstraints { make in
-            make.top.bottom.left.right.equalToSuperview()
+        pieceImageView.snp.makeConstraints { 
+            $0.top.bottom.left.right.equalToSuperview()
         }
     }
 }

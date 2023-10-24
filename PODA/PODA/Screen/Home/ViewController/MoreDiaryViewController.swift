@@ -17,10 +17,12 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
+    // FIXME: - UIScreen.main.bounds.height * 5 / 7 따로 빼서 상수로 정의해두기
     private let diaryDetailCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         let width = (UIScreen.main.bounds.width - 40) * 2 / 3
-        layout.itemSize = CGSize(width: width, height: 320) // 셀 사이즈
+        let height = ((UIScreen.main.bounds.height * 5 / 7) - 12) / 2
+        layout.itemSize = CGSize(width: width, height: height)
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 12.0  // 셀 옆 간격
         layout.minimumLineSpacing = 12.0  // 셀 위 아래 간격
@@ -38,21 +40,20 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     }
 
     func configUI() {
-        view.addSubview(backButton)
-        view.addSubview(diaryDetailCollectionView)
+        [backButton, diaryDetailCollectionView].forEach(view.addSubview)
         
-        backButton.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.left.equalToSuperview().offset(20)
-            make.width.height.equalTo(36)
+        backButton.snp.makeConstraints { 
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.height.equalTo(36)
         }
         
-        diaryDetailCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(backButton.snp.bottom).offset(16)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
-            //make.height.equalTo(480)
-            make.bottom.equalTo(view.safeAreaLayoutGuide)
+        diaryDetailCollectionView.snp.makeConstraints { 
+            $0.top.equalTo(backButton.snp.bottom).offset(12)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
+            $0.height.equalTo(UIScreen.main.bounds.height * 5 / 7)
+            //$0.bottom.equalToSuperview().offset(-120)
         }
     }
     
@@ -77,7 +78,6 @@ extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let editSaveViewController = SaveDeleteViewController()
-        navigationController?.pushViewController(editSaveViewController, animated: true)
+        navigationController?.pushViewController(SaveDeleteViewController(), animated: true)
     }
 }
