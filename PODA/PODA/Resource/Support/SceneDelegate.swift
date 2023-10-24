@@ -18,11 +18,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if !UserDefaultManager.isUserLoggedIn{
             let loginViewController = LoginViewController()
-            let navigationController = UINavigationController(rootViewController: loginViewController)
+            let navigationController = BaseNavigationController(rootViewController: loginViewController)
             window?.rootViewController = navigationController
         } else {
             let tabBarController = BaseTabbarController()
-            window?.rootViewController = tabBarController
+            let navigationController = BaseNavigationController(rootViewController: tabBarController)
+            window?.rootViewController = navigationController
         }
         window?.makeKeyAndVisible()
     }

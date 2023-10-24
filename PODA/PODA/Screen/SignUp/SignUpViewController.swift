@@ -8,6 +8,7 @@
 import UIKit
 import Then
 import SnapKit
+import NVActivityIndicatorView
 
 class SignUpViewController: BaseViewController {
     private let smtpManager = SMTPManager(htmpParser: HTMLParser())
@@ -19,6 +20,7 @@ class SignUpViewController: BaseViewController {
     private var firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let authManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let fireStoreDB = FirestorageDBManager()
+    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -178,7 +180,6 @@ class SignUpViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
         addKeyboardObservers()
     }
     
@@ -191,7 +192,6 @@ class SignUpViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.isHidden = false
         removeKeyboardObservers()
     }
     
@@ -237,6 +237,20 @@ class SignUpViewController: BaseViewController {
         verifyCodeButton.addTarget(self, action: #selector(checkAuthUserCode), for: .touchUpInside)
         
     }
+    private func setComponentDisable(_ enabled : Bool){
+        emailTextField.isEnabled = enabled
+        emailDeleteButton.isEnabled = enabled
+        emailSendButton.isEnabled = enabled
+        passwordTextField.isEnabled = enabled
+        passwordEyeButton.isEnabled = enabled
+        passwordConfirmationTextField.isEnabled = enabled
+        verificationCodeTextField.isEnabled = enabled
+        verificationCodeDeleteButton.isEnabled = enabled
+        verifyCodeButton.isEnabled = enabled
+        confirmPasswordEyeButton.isEnabled = enabled
+        signUpButton.isEnabled = enabled
+    }
+    
     
     private func setupUI() {
         
@@ -244,7 +258,7 @@ class SignUpViewController: BaseViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, verificationCodeErrorLabel, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, confirmPasswordErrorLabel].forEach { contentView.addSubview($0) }
+        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, verificationCodeErrorLabel, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, confirmPasswordErrorLabel,loadingIndicator].forEach { contentView.addSubview($0) }
         view.addSubview(signUpButton)
         
         
@@ -278,8 +292,6 @@ class SignUpViewController: BaseViewController {
             make.top.equalTo(emailLabel.snp.bottom).offset(10)
             make.height.equalTo(40)
         }
-        
-        
         
         emailDeleteButton.snp.makeConstraints { make in
             make.right.equalTo(emailSendButton.snp.left).offset(-5)
@@ -393,6 +405,10 @@ class SignUpViewController: BaseViewController {
             make.top.equalTo(scrollView.snp.bottom).offset(20)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(100)
+        }
     }
 
     
@@ -488,6 +504,8 @@ class SignUpViewController: BaseViewController {
     @objc private func sendAuthUserCode() {
         guard let _ = emailTextField.text  else {return}
 
+        loadingIndicator.startAnimating()
+        setComponentDisable(false)
         //어드민계정으로 접속후 이메일에 중복된 값이 있는지 확인
         firebaseAuthManager.userLogin(email: "admin@naver.com", password: "admin1!"){ [weak self] error in
             guard let self = self else {return}
@@ -512,6 +530,11 @@ class SignUpViewController: BaseViewController {
                             }
                         }
                     }
+                }
+                DispatchQueue.main.async{ [weak self] in
+                    guard let self = self else {return}
+                    loadingIndicator.stopAnimating()
+                    setComponentDisable(true)
                 }
             }
         }

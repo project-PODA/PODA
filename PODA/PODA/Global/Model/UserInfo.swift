@@ -12,7 +12,6 @@ struct UserInfo: Codable {
     let isUsing : Bool
     let userNickname : String
     let email : String
-    let password : String
     let followers : [String]
     let followings : [String]
 }

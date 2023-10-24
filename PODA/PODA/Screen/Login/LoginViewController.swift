@@ -7,6 +7,7 @@
 
 import UIKit
 import Then
+import NVActivityIndicatorView
 
 class LoginViewController: BaseViewController, UIConfigurable {
     
@@ -47,7 +48,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaBlue.getColor()
     }
     
-    private lazy var googleIconView = UIButton().then {
+    private lazy var googleIconButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_google"), for:.normal)
         $0.setImage(UIImage(named: "icon_google"), for:.highlighted)
         $0.layer.cornerRadius = 36
@@ -55,7 +56,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
         
     }
-    private lazy var appleIconView = UIButton().then {
+    private lazy var appleIconButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_apple"), for:.normal)
         $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
         $0.layer.cornerRadius = 36
@@ -81,13 +82,13 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.layer.borderWidth = 1
     }
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
         setupActions()
-        
-    }
+    }    
     
     func configUI() {
         setupUI()
@@ -97,7 +98,6 @@ class LoginViewController: BaseViewController, UIConfigurable {
         signUpButton.addTarget(self, action: #selector(signUpButtonTap), for: .touchUpInside)
         eyeButton.addTarget(self, action: #selector(eyeButtonTapped), for: .touchUpInside)
         loginButton.addTarget(self, action: #selector(goToMain), for: .touchUpInside)
-        
     }
     
     private func setupUI() {
@@ -105,7 +105,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         let subviews: [UIView] = [
             logoImageView, emailLabel, passwordLabel, emailTextField,
             emailLineView, passwordTextField, passwordLineView, eyeButton,
-            loginButton, googleIconView, appleIconView, askLabel, signUpButton
+            loginButton, googleIconButton, appleIconButton, askLabel, signUpButton, loadingIndicator
         ]
         
         subviews.forEach { view.addSubview($0) }
@@ -164,15 +164,15 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.height.equalTo(44)
         }
         
-        googleIconView.snp.makeConstraints { make in
+        googleIconButton.snp.makeConstraints { make in
             make.top.equalTo(loginButton.snp.bottom).offset(20)
             make.size.equalTo(CGSize(width: 72, height: 72))
             make.right.equalTo(view.snp.centerX).offset(-8)
         }
         
-        appleIconView.snp.makeConstraints { make in
-            make.top.equalTo(googleIconView)
-            make.size.equalTo(googleIconView)
+        appleIconButton.snp.makeConstraints { make in
+            make.top.equalTo(googleIconButton)
+            make.size.equalTo(googleIconButton)
             make.left.equalTo(view.snp.centerX).offset(8)
         }
         
@@ -186,6 +186,11 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-12)
             make.height.equalTo(loginButton)
             make.width.equalTo(loginButton)
+        }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(100)
         }
     }
     @objc private func googleButtonTapped() {
@@ -214,12 +219,14 @@ class LoginViewController: BaseViewController, UIConfigurable {
         let email = emailTextField.text!
         let password = passwordTextField.text!
         
+        loadingIndicator.startAnimating()
+        setComponentDisable(false)
         fireAuthManager.userLogin(email: email, password: password){ [weak self] error in
             guard let self = self else {return}
             
             if error == .none {
-                let mainVC = MainViewController(viewModel: MainViewModel())
-                navigationController?.pushViewController(mainVC, animated: true)
+                let tabBarController = BaseTabbarController()
+                navigationController!.pushViewController(tabBarController, animated: true)
                 
                 UserDefaultManager.isUserLoggedIn = true
                 UserDefaultManager.userEmail = email
@@ -227,7 +234,22 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 
             } else {
                 showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
-            }   
+            }
+            DispatchQueue.main.async{ [weak self] in
+                guard let self = self else {return}
+                loadingIndicator.stopAnimating()
+                setComponentDisable(true)
+            }
         }
+    }
+    
+    private func setComponentDisable(_ enabled : Bool){
+        emailTextField.isEnabled = enabled
+        passwordTextField.isEnabled = enabled
+        eyeButton.isEnabled = enabled
+        googleIconButton.isEnabled = enabled
+        appleIconButton.isEnabled = enabled
+        loginButton.isEnabled = enabled
+        signUpButton.isEnabled = enabled
     }
 }

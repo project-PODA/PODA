@@ -78,22 +78,12 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
     
     private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
         setActions()
         nicknameTextField.delegate = self
         
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.navigationController?.navigationBar.isHidden = false
     }
     
     func setActions() {
