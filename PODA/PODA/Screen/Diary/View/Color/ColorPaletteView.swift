@@ -19,7 +19,10 @@ class ColorPaletteView: UIView {
     // MARK: - Properties
     
     var touchedColor: ((_ color: UIColor) -> ())?
-    var touchedCustomColor: ((_ color: UIColor) -> ())?
+    var changedCustomColor: ((_ color: UIColor) -> ())?
+    var touchedCustomColorButton: (() -> ())?
+    
+    var touchedFont: ((_ font: UIFont) -> ())?
     
     private let fontList: [Font] = [
         Font(text: "프리텐다드", font: UIFont(name: "Pretendard-Regular", size: 17) ?? UIFont()),
@@ -32,7 +35,11 @@ class ColorPaletteView: UIView {
     ]
     private var colorList: [UIColor] = [.red, .orange, .yellow, .green, .blue, .purple, .cyan, .magenta]
     
+    
+    private let colorPicker = UIColorPickerViewController()
+    
     private lazy var customColorButton = UIColorWell().then {
+        $0.addTarget(self, action: #selector(touchUpCustomColorButton), for: .touchUpInside)
         $0.addTarget(self, action: #selector(colorChanged), for: .valueChanged)
     }
     
@@ -115,8 +122,12 @@ class ColorPaletteView: UIView {
     
     //MARK: - @objc
     
+    @objc private func touchUpCustomColorButton() {
+        touchedCustomColorButton?()
+    }
+    
     @objc private func colorChanged() {
-        touchedCustomColor?(customColorButton.selectedColor ?? UIColor())
+        changedCustomColor?(customColorButton.selectedColor ?? UIColor())
     }
     
     // MARK: - Custom Method
@@ -176,6 +187,10 @@ extension ColorPaletteView: UICollectionViewDelegateFlowLayout {
 
 extension ColorPaletteView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        touchedColor?(colorList[indexPath.item])
+        if collectionView == colorCollectionView {
+            touchedColor?(colorList[indexPath.item])
+        } else {
+            touchedFont?(fontList[indexPath.item].font)
+        }
     }
 }

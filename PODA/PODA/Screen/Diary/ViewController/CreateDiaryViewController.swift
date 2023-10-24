@@ -175,10 +175,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         navigationController?.pushViewController(viewController, animated: true)
     }
     
-    @objc private func touchUpAddPageButton() {
-        
-    }
-    
     @objc private func touchUpBackgroundButton() {
         UIView.animate(withDuration: 0.8) {
             self.selectBackgroundColorView.isHidden = self.isSelectedBackgroundButton
@@ -189,7 +185,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             self.diaryView.backgroundColor = color
         }
         
-        selectBackgroundColorView.touchedCustomColor = { color in
+        selectBackgroundColorView.changedCustomColor = { color in
             self.diaryView.backgroundColor = color
         }
     }
@@ -223,8 +219,25 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpTextButton() {
-        addText()
+        var textField = UITextField()
+        textField = addText(textField)
         selectTextColorView.isHidden = false
+        
+        selectTextColorView.touchedColor = { color in
+            textField.textColor = color
+        }
+        
+        selectTextColorView.touchedCustomColorButton = {
+            textField.resignFirstResponder()
+        }
+        
+        selectTextColorView.changedCustomColor = { color in
+            textField.textColor = color
+        }
+        
+        selectTextColorView.touchedFont = { font in
+            textField.font = font
+        }
     }
     
     // MARK: - Custom Method
@@ -256,8 +269,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
-    private func addText() {
-        let textField = UITextField()
+    private func addText(_ textField: UITextField) -> UITextField {
         textField.becomeFirstResponder()
         textField.inputAccessoryView = selectTextColorView
         textField.delegate = self
@@ -265,6 +277,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         textField.snp.makeConstraints {
             $0.center.equalTo(diaryView)
         }
+        
+        return textField
     }
 }
 
@@ -296,6 +310,11 @@ extension CreateDiaryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         selectTextColorView.isHidden = true
+        return true
+    }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        selectTextColorView.isHidden = false
         return true
     }
 }
