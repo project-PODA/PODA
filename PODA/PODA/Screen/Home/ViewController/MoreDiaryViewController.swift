@@ -31,7 +31,6 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
         $0.register(DiaryDetailCollectionViewCell.self, forCellWithReuseIdentifier: "DiaryDetailCollectionViewCell")
     }
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
@@ -40,7 +39,9 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     }
 
     func configUI() {
-        [backButton, diaryDetailCollectionView].forEach(view.addSubview)
+        [backButton, diaryDetailCollectionView].forEach {
+            view.addSubview($0)
+        }
         
         backButton.snp.makeConstraints { 
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -53,14 +54,12 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(UIScreen.main.bounds.height * 5 / 7)
-            //$0.bottom.equalToSuperview().offset(-120)
         }
     }
     
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }
-
 }
 
 extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewDelegate {

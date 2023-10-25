@@ -18,6 +18,8 @@ enum PodaFont {
     case caption
     case head1
     case display1
+    case display2
+    case display3
 }
 
 extension UIFont {
@@ -43,7 +45,10 @@ extension UIFont {
             return UIFont(name: "Pretendard-Bold", size: 24) ?? UIFont()
         case .display1:
             return UIFont(name: "Pretendard-Regular", size: 30) ?? UIFont()
-            
+        case .display2:
+            return UIFont(name: "Pretendard-Bold", size: 28) ?? UIFont()
+        case .display3:
+            return UIFont(name: "Pretendard-Bold", size: 36) ?? UIFont()
         }
     }
 }
