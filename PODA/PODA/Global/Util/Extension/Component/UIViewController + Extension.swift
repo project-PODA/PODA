@@ -15,6 +15,16 @@ enum AnimationType: String {
 
 
 extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tapGesture: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
     func showAlert(title: String?, message: String?, buttonTitle: String = "OK", completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: buttonTitle, style: .default) { _ in
@@ -24,14 +34,14 @@ extension UIViewController {
     }
     func showAlertWithTextField(title: String, message: String, placeholder: String, completion: @escaping (String?) -> Void)  {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
+        
         var confirmAction: UIAlertAction!
-
+        
         alertController.addTextField { textField in
             textField.placeholder = placeholder
             textField.addTarget(self, action: #selector(self.textChanged(_:)), for: .editingChanged)
         }
-
+        
         confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
             guard let text = alertController.textFields?.first?.text else {
                 completion(nil)
@@ -42,11 +52,11 @@ extension UIViewController {
             }
             completion(text)
         }
-
+        
         let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
             completion(nil)
         }
-
+        
         alertController.addAction(confirmAction)
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true)
@@ -72,15 +82,15 @@ extension UIViewController {
     }
     
     private func makeAnimation(animationType: AnimationType, for textField: UITextField) {
-            switch animationType {
-            case .shake:
+        switch animationType {
+        case .shake:
             let shakeAnimation = CABasicAnimation(keyPath: "position")
-                shakeAnimation.duration = 0.1
-                shakeAnimation.repeatCount = 3
-                shakeAnimation.autoreverses = true
-                shakeAnimation.fromValue = NSValue(cgPoint: CGPoint(x: textField.center.x - 5, y: textField.center.y))
-                shakeAnimation.toValue = NSValue(cgPoint: CGPoint(x: textField.center.x + 5, y: textField.center.y))
-                textField.layer.add(shakeAnimation, forKey: "position")
+            shakeAnimation.duration = 0.1
+            shakeAnimation.repeatCount = 3
+            shakeAnimation.autoreverses = true
+            shakeAnimation.fromValue = NSValue(cgPoint: CGPoint(x: textField.center.x - 5, y: textField.center.y))
+            shakeAnimation.toValue = NSValue(cgPoint: CGPoint(x: textField.center.x + 5, y: textField.center.y))
+            textField.layer.add(shakeAnimation, forKey: "position")
         }
     }
     @objc private func textChanged(_ textField: UITextField) {

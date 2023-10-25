@@ -55,7 +55,7 @@ class SignUpViewController: BaseViewController {
     }
     
     private let emailTextField = UITextField().then {
-        $0.placeholder = "  ex. poda123@gmail.com"
+        $0.placeholder = "ex. poda123@gmail.com"
         $0.borderStyle = .none
         $0.backgroundColor = Palette.podaGray1.getColor()
         $0.layer.cornerRadius = 5
@@ -90,7 +90,7 @@ class SignUpViewController: BaseViewController {
     }
     
     private let verificationCodeTextField = UITextField().then {
-        $0.placeholder = "  인증코드 입력"
+        $0.placeholder = "인증코드 입력"
         $0.borderStyle = .none
         $0.backgroundColor = Palette.podaGray1.getColor()
         $0.layer.cornerRadius = 5
@@ -124,7 +124,7 @@ class SignUpViewController: BaseViewController {
     }
     
     private let passwordTextField = UITextField().then {
-        $0.placeholder = "  비밀번호 입력"
+        $0.placeholder = "비밀번호 입력"
         $0.borderStyle = .none
         $0.isSecureTextEntry = true
         $0.backgroundColor = Palette.podaGray1.getColor()
@@ -149,7 +149,7 @@ class SignUpViewController: BaseViewController {
     }
     
     private let passwordConfirmationTextField = UITextField().then {
-        $0.placeholder = "  비밀번호 다시 입력"
+        $0.placeholder = "비밀번호 다시 입력"
         $0.borderStyle = .none
         $0.isSecureTextEntry = true
         $0.backgroundColor = Palette.podaGray1.getColor()
@@ -188,6 +188,12 @@ class SignUpViewController: BaseViewController {
         super.viewDidLoad()
         setActions()
         setupUI()
+        setupTextFields()
+        hideKeyboardWhenTappedAround()
+        emailTextField.enableHideKeyboardOnReturn()
+        passwordTextField.enableHideKeyboardOnReturn()
+        passwordConfirmationTextField.enableHideKeyboardOnReturn()
+        verificationCodeTextField.enableHideKeyboardOnReturn()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -493,7 +499,7 @@ class SignUpViewController: BaseViewController {
 
         if authCodeSuccess && emailAuthSuccess && passwordAuthSuccess {
             let setProfileVC = SetProfileViewController()
-            setProfileVC.email = emailTextField.text!
+            setProfileVC.email = emailTextField.text!.lowercased()
             setProfileVC.password = passwordTextField.text!
             self.navigationController?.pushViewController(setProfileVC, animated: true)
         }else {
@@ -510,7 +516,7 @@ class SignUpViewController: BaseViewController {
         firebaseAuthManager.userLogin(email: "admin@naver.com", password: "admin1!"){ [weak self] error in
             guard let self = self else {return}
             
-            fireStoreDB.emailCheck(email: emailTextField.text!){[weak self] error in
+            fireStoreDB.emailCheck(email: emailTextField.text!.lowercased()){[weak self] error in
             guard let self = self else {return}
                 //로그인 못하는 상태라면 -> 유저정보가 없다면 다시 비활성화 된 버튼들을 활성화시킴
                 if error == .none{
@@ -582,5 +588,15 @@ extension UIView {
             }
         }
         return nil
+    }
+}
+
+extension SignUpViewController: UITextFieldDelegate {
+    
+    func setupTextFields() {
+        emailTextField.setUpTextField(delegate: self)
+        verificationCodeTextField.setUpTextField(delegate: self)
+        passwordTextField.setUpTextField(delegate: self)
+        passwordConfirmationTextField.setUpTextField(delegate: self)
     }
 }
