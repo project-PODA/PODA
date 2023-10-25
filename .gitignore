@@ -90,7 +90,6 @@ playground.xcworkspace
 # Pods/
 # Add this line if you want to avoid checking in source code from the Xcode workspace
 # *.xcworkspace
-.build/
 
 # Carthage
 # Add this line if you want to avoid checking in source code from Carthage dependencies.
@@ -133,3 +132,8 @@ iOSInjectionProject/
 **/xcshareddata/WorkspaceSettings.xcsettings
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,swift,xcode
+
+
+*.xcodeproj
+.project
+.playground
