@@ -106,6 +106,8 @@ class FireAuthManager {
                             Logger.writeLog(.error, message: "Authentification User 삭제 중 문제 발생")
                             completion(.unknown)
                             return
+                        } else {
+                            completion(.none)
                         }
                     }
                 }
@@ -116,7 +118,7 @@ class FireAuthManager {
     func signUpUser(email: String, password: String, profileImage: Data?, nickName: String, completion: @escaping (FireAuthError) -> Void) {
         
         let userInfo = UserInfo(createDate: Date().GetCurrentTime(), loginDate: "", isUsing: false, userNickname: nickName, email: email, followers: [], followings: [])
-        
+
         DispatchQueue.global(qos: .userInteractive).async {
             self.createUser(email: email, password: password) { createUserError in
                 if createUserError != .none {
@@ -141,11 +143,9 @@ class FireAuthManager {
                         if let profileImage = profileImage {
                             self.firestorageImageManager.createProfileImage(imageData: profileImage) { storageError in
                                 if storageError != .none {
-                                    print("프로필 이미지 생성 실패")
                                     Logger.writeLog(.error, message: "프로필 이미지 생성 실패")
                                     completion(.unknown)
                                 } else {
-                                    print("프로필 이미지 성공")
                                     completion(.none)
                                 }
                             }

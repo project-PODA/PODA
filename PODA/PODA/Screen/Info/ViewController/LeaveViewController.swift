@@ -9,8 +9,9 @@ import UIKit
 import SnapKit
 import MessageUI
 import Then
-
+import NVActivityIndicatorView
 class LeaveViewController: BaseViewController, UIConfigurable {
+    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     private let topLabel = UILabel().then {
         $0.numberOfLines = 0
@@ -32,18 +33,21 @@ class LeaveViewController: BaseViewController, UIConfigurable {
     
     private let bottomLabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.setUpLabel(title: "버튼을 눌러 탈퇴가 완료되면\n탈퇴 확인 메일이 발송됩니다.", podaFont: .subhead2)
+        $0.setUpLabel(title: "아래의 탈퇴하기 버튼을 누르면\n현재 계정의 데이터가 영구적으로 삭제됩니다.", podaFont: .subhead2)
         $0.textColor = Palette.podaWhite.getColor()
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 5
         $0.attributedText = NSAttributedString(string: $0.text!, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
     }
     
-    private let signUpButton = UIButton().then {
+    private lazy var signOutButton = UIButton().then {
         $0.setUpButton(title: "탈퇴하기", podaFont: .button1, cornerRadius: 22)
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         $0.backgroundColor = Palette.podaRed.getColor()
+        $0.addTarget(self, action: #selector(didSignOutButton), for: .touchUpInside)
     }
+    
+    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +63,7 @@ class LeaveViewController: BaseViewController, UIConfigurable {
             NSAttributedString.Key.foregroundColor: UIColor(named: "podaWhite") ?? .white
         ]
         
-        [topLabel, middleLabel, bottomLabel, signUpButton].forEach { view.addSubview($0) }
+        [topLabel, middleLabel, bottomLabel, signOutButton, loadingIndicator].forEach { view.addSubview($0) }
         
         topLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(30)
@@ -77,11 +81,41 @@ class LeaveViewController: BaseViewController, UIConfigurable {
             make.leading.trailing.equalTo(topLabel)
         }
         
-        signUpButton.snp.makeConstraints { make in
+        signOutButton.snp.makeConstraints { make in
             make.height.equalTo(44)
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().offset(-40)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-30)
+        }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(100)
+        }
+    }
+    
+    @objc func didSignOutButton() {
+        showAlertWithTextField(title: "경고", message: "탈퇴를 원하시면 \"동의합니다\"를 입력해주세요", placeholder: "동의합니다"){ [weak self]  text in
+            guard let self = self else {return}
+            if let text = text {
+                if text == "동의합니다" {
+                   loadingIndicator.startAnimating()
+                   fireAuthManager.deleteAccount{ [weak self] error in
+                       guard let self = self else {return}
+                       DispatchQueue.main.async{ [weak self] in
+                           guard let self = self else{return}
+                           if error == .none {
+                               loadingIndicator.stopAnimating()
+                               moveToHome()
+                           } else {
+                               showAlert(title: "에러", message: "탈퇴에 문제가 발생했습니다. 고객센터에 연락해주세요.")
+                           }
+                       }
+                   }
+                } else {
+                    showAlert(title: "에러", message: "\"동의합니다\"를 입력해주세요")
+                }
+            }
         }
     }
     

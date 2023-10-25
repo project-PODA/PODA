@@ -52,6 +52,25 @@ extension UIViewController {
         self.present(alertController, animated: true)
     }
     
+    func moveToHome() {
+        UserDefaultManager.isUserLoggedIn = false
+        UserDefaultManager.userEmail = ""
+        UserDefaultManager.userPassword = ""
+        
+        DispatchQueue.main.async {
+            self.dismiss(animated: true) {
+                let loginViewController = LoginViewController()
+                let navigationController = BaseNavigationController(rootViewController: loginViewController)
+                if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
+                    UIView.transition(with: sceneDelegate.window!, duration: 0.5, options: .transitionCrossDissolve, animations: {
+                        sceneDelegate.window?.rootViewController = navigationController
+                        sceneDelegate.window?.makeKeyAndVisible()
+                    }, completion: nil)
+                }
+            }
+        }
+    }
+    
     private func makeAnimation(animationType: AnimationType, for textField: UITextField) {
             switch animationType {
             case .shake:
