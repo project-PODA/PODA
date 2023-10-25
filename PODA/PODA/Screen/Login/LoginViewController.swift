@@ -10,6 +10,7 @@ import Then
 import NVActivityIndicatorView
 import GoogleSignIn
 import Firebase
+import FirebaseAuth
 
 class LoginViewController: BaseViewController, UIConfigurable {
     
@@ -214,8 +215,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 return
             }
             
-            // 로그인 성공했을때, 유저정보
             guard let user = user else { return }
+            
             let userId = user.userID ?? ""
             let idToken = user.authentication.idToken ?? ""
             let fullName = user.profile?.name ?? ""
@@ -228,6 +229,18 @@ class LoginViewController: BaseViewController, UIConfigurable {
                     사용자 이름: \(fullName)
                     이메일 주소: \(email)
                     """)
+            
+            let authentication = user.authentication
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                                  accessToken: authentication.accessToken)
+                Auth.auth().signIn(with: credential) { (authResult, error) in
+                    if let error = error {
+                        print("파이어베이스 인증 실패: \(error.localizedDescription)")
+                        return
+                    }
+                    print("파이어베이스 인증 성공")
+                }
+            
             DispatchQueue.main.async { [weak self] in
                 let tabBarController = BaseTabbarController()
                 self?.navigationController?.pushViewController(tabBarController, animated: true)
