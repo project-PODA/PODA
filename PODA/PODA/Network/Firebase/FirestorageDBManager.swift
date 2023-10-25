@@ -44,7 +44,6 @@ class FirestorageDBManager {
                     Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                     completion(.error(errCode.code, errCode.localizedDescription))
                 }else{
-                    print("다이어리 정보 생성 성공")
                     completion(.none)
                 }
             }
@@ -97,7 +96,6 @@ class FirestorageDBManager {
                 Logger.writeLog(.error, message: "[\(err._code)] : \(err.localizedDescription)")
                 completion(.error(err._code, err.localizedDescription))
             } else {
-                print("유저정보 생성 및 계정 성공")
                 completion(.none)
             }
         }
@@ -160,13 +158,13 @@ class FirestorageDBManager {
                                 if let diaryInfo = DiaryInfo.fromJson(jsonString: diaryInfoDataString, model: DiaryInfo.self) {
                                     diaryInfoList.append(diaryInfo)
                                 } else {
-                                    completion([], .error(9999, "DiaryInfo Decdoing Error"))//좀더 생각해보기
-                                    Logger.writeLog(.error, message: "json decoding error")
+                                    completion([], .error(FireStorageDBError.decodingError.code, FireStorageDBError.decodingError.description))
+                                    Logger.writeLog(.error, message: FireStorageDBError.decodingError.description)
                                 }
                             }
                         }else{
-                            completion([], .unknown)
-                            Logger.writeLog(.error, message: "document is null")
+                            completion([], .error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
+                            Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
                         }
                         dispatchGroup.leave()
                     }
@@ -222,19 +220,18 @@ class FirestorageDBManager {
                     model?.userNickname = updateName
 
                     docRef.setData(["accountInfo" : model.toJson()]) { error in
-                        if let error = error {
-                            print("닉네임 업데이트 실패: \(error)")
-                            completion(.unknown)
+                        if let errCode = error as NSError?{
+                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                            completion(.error(errCode.code, errCode.localizedDescription))
                             return
                         } else {
-                            print("닉네임 업데이트 성공")
                             completion(.none)
                             return
                         }
                     }
                 } else {
-                    print("해당 문서를 찾을 수 없습니다.")
-                    completion(.unknown)
+                    Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
+                    completion(.error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
                     return
                 }
             }
@@ -305,19 +302,19 @@ class FirestorageDBManager {
                                     completion(nickname, .none)
                                     return
                                 } else {
-                                    completion("", .error(9999, "DiaryInfo Decoding Error"))
-                                    Logger.writeLog(.error, message: "JSON decoding error")
+                                    completion("", .error(FireStorageDBError.decodingError.code, FireStorageDBError.decodingError.description))
+                                    Logger.writeLog(.error, message: FireStorageDBError.decodingError.description)
                                     return
                                 }
                             } else {
-                                completion("", .error(9999, "No Account Info"))
-                                Logger.writeLog(.error, message: "No account info found")
+                                completion("", .error(FireStorageDBError.fieldEmpty.code, FireStorageDBError.fieldEmpty.description))
+                                Logger.writeLog(.error, message: FireStorageDBError.fieldEmpty.description)
                                 return
                             }
                         }
                     } else {
-                        completion("", .unknown)
-                        Logger.writeLog(.error, message: "Document is null")
+                        Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
+                        completion("", .error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
                         return
                     }
                 }
