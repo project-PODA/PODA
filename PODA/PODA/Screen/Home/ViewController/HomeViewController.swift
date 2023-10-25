@@ -126,6 +126,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private let diaryStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
+        
         $0.spacing = 8
     }
     
