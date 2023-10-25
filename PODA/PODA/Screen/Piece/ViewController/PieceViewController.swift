@@ -17,12 +17,12 @@ class PieceViewController: BaseViewController, UIConfigurable {
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        $0.setUpButton(title: "취소", podaFont: .subhead2)
+        $0.setUpButton(title: "뒤로", podaFont: .subhead3)
     }
     
     let nextButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        $0.setUpButton(title: "다음", podaFont: .subhead2)
+        $0.setUpButton(title: "저장", podaFont: .subhead3)
     }
     
     let imageView = UIImageView().then {
@@ -54,11 +54,11 @@ class PieceViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaGray5.getColor()
     }
     
-    let testPageButton = UIButton().then {
-        $0.setUpButton(title: "불러오기 테스트", podaFont: .body2, cornerRadius: 5)
-        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        $0.backgroundColor = Palette.podaGray5.getColor()
-    }
+//    let testPageButton = UIButton().then {
+//        $0.setUpButton(title: "불러오기 테스트", podaFont: .body2, cornerRadius: 5)
+//        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+//        $0.backgroundColor = Palette.podaGray5.getColor()
+//    }
     
     // MARK: LifeCycle
     
@@ -88,7 +88,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(addToGalleryButton)
         view.addSubview(memoryDate)
         view.addSubview(datePickerButton)
-        view.addSubview(testPageButton)
+//        view.addSubview(testPageButton)
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
@@ -131,12 +131,12 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
         }
         
-        testPageButton.snp.makeConstraints {
-            $0.right.equalToSuperview().offset(-20)
-            $0.width.equalTo(108)
-            $0.height.equalTo(44)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
-        }
+//        testPageButton.snp.makeConstraints {
+//            $0.right.equalToSuperview().offset(-20)
+//            $0.width.equalTo(108)
+//            $0.height.equalTo(44)
+//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
+//        }
     }
     
     func setGesture() {
@@ -154,7 +154,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
-        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
+//        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
     }
     
     func updateUIForImageAvailability(hasImage: Bool) {
@@ -213,9 +213,9 @@ class PieceViewController: BaseViewController, UIConfigurable {
         showSaveConfirmationAlert()
     }
     
-    @objc func testPageButtonTapped() {
-        present(TestPageViewController(), animated: true)
-    }
+//    @objc func testPageButtonTapped() {
+//        present(TestPageViewController(), animated: true)
+//    }
     
     @objc func addButtonTapped() {
         var configuration = PHPickerConfiguration()
@@ -229,6 +229,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .wheels
+        datePicker.locale = Locale(identifier: "ko_KR")
         
         if let title = datePickerButton.title(for: .normal),
            let currentDate = Date(dateString: title, format: "yyyy. MM. dd") {
