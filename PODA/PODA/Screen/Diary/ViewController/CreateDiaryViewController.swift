@@ -17,6 +17,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     var viewModel: CreateDiaryViewModel!
     var ratio: Ratio!
     
+    private var currentTextPosition: CGPoint?
+    
     private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "취소", rightButtonTitle: "다음").then {
         $0.leftButton.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
         $0.rightButton.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
@@ -59,7 +61,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     private let decorateStackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.distribution = .fillProportionally
+        $0.distribution = .fill
         $0.spacing = 30
     }
     
@@ -99,6 +101,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     func configUI() {
         setupLayout()
+        hideKeyboardWhenTappedAround()
     }
     
     private func setupLayout() {
@@ -147,8 +150,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
         
         decorateStackView.snp.makeConstraints {
-            $0.leading.trailing.equalTo(decorateView).inset(40)
-            $0.centerY.equalTo(decorateView)
+            $0.centerX.centerY.equalTo(decorateView)
         }
         
         selectBackgroundColorView.snp.makeConstraints {
@@ -219,24 +221,40 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpTextButton() {
-        var textField = UITextField()
-        textField = addText(textField)
+        var textView = UITextView()
+        textView = addText(textView)
         selectTextColorView.isHidden = false
-        
-        selectTextColorView.touchedColor = { color in
-            textField.textColor = color
+    }
+    
+    @objc func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
+        if let imageView = recognizer.view as? UIImageView {
+            imageView.transform = imageView.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
+            recognizer.scale = 1.0
+        } else if let textField = recognizer.view as? UITextView {
+            textField.transform = textField.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
+            recognizer.scale = 1.0
         }
-        
-        selectTextColorView.touchedCustomColorButton = {
-            textField.resignFirstResponder()
+    }
+    
+    @objc func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
+        if let imageView = recognizer.view as? UIImageView {
+            imageView.transform = imageView.transform.rotated(by: recognizer.rotation)
+            recognizer.rotation = 0
+        } else if let textField = recognizer.view as? UITextView {
+            textField.transform = textField.transform.rotated(by: recognizer.rotation)
+            recognizer.rotation = 0
         }
-        
-        selectTextColorView.changedCustomColor = { color in
-            textField.textColor = color
-        }
-        
-        selectTextColorView.touchedFont = { font in
-            textField.font = font
+    }
+    
+    @objc func handlePan(_ recognizer: UIPanGestureRecognizer) {
+        if let imageView = recognizer.view as? UIImageView {
+            let translation = recognizer.translation(in: view)
+            imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
+            recognizer.setTranslation(CGPoint.zero, in: view)
+        } else if let textField = recognizer.view as? UITextView {
+            let translation = recognizer.translation(in: view)
+            textField.center = CGPoint(x: textField.center.x + translation.x, y: textField.center.y + translation.y)
+            recognizer.setTranslation(CGPoint.zero, in: view)
         }
     }
     
@@ -262,23 +280,45 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     private func addImage(_ image: UIImage) {
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
+        
+        imageView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: 200, height: 200)
         diaryView.addSubview(imageView)
-        imageView.snp.makeConstraints {
-            $0.center.equalTo(diaryView)
-            $0.width.height.equalTo(200)
-        }
+        
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
+        imageView.addGestureRecognizer(pinchGesture)
+        
+        let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(handleRotation(_:)))
+        imageView.addGestureRecognizer(rotationGesture)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        imageView.addGestureRecognizer(panGesture)
     }
     
-    private func addText(_ textField: UITextField) -> UITextField {
-        textField.becomeFirstResponder()
-        textField.inputAccessoryView = selectTextColorView
-        textField.delegate = self
-        diaryView.addSubview(textField)
-        textField.snp.makeConstraints {
-            $0.center.equalTo(diaryView)
-        }
+    private func addText(_ textView: UITextView) -> UITextView {
+        textView.becomeFirstResponder()
+        textView.inputAccessoryView = selectTextColorView
+        textView.backgroundColor = .clear
+        textView.font = UIFont.podaFont(.body2)
+        textView.textAlignment = .center
+        textView.textContainer.maximumNumberOfLines = 4
+        textView.isScrollEnabled = false
+        textView.delegate = self
+        textView.isUserInteractionEnabled = true
         
-        return textField
+        textView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: diaryView.frame.width/2, height: 100)
+        diaryView.addSubview(textView)
+        
+        let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
+        textView.addGestureRecognizer(pinchGesture)
+        
+        let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(handleRotation(_:)))
+        textView.addGestureRecognizer(rotationGesture)
+        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        textView.addGestureRecognizer(panGesture)
+        
+        return textView
     }
 }
 
@@ -304,18 +344,43 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
     }
 }
 
-//MARK: - UITextFieldDelegate
+//MARK: - UITextViewDelegate
 
-extension CreateDiaryViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        selectTextColorView.isHidden = true
-        return true
+extension CreateDiaryViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        selectTextColorView.isHidden = false
+        
+        currentTextPosition = textView.frame.origin
+        
+        textView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: diaryView.frame.width/2, height: 100)
+        
+        selectTextColorView.touchedColor = { color in
+            textView.tintColor = color
+            textView.textColor = color
+        }
+        
+        selectTextColorView.touchedCustomColorButton = {
+            textView.resignFirstResponder()
+        }
+        
+        selectTextColorView.changedCustomColor = { color in
+            textView.textColor = color
+        }
+        
+        selectTextColorView.touchedFont = { font in
+            textView.font = font
+        }
     }
     
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        selectTextColorView.isHidden = false
-        return true
+    func textViewDidEndEditing(_ textView: UITextView) {
+        textView.sizeToFit()
+        textView.frame.origin = currentTextPosition ?? CGPoint()
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        guard let currentText = textView.text else { return true }
+        let newLength = currentText.count + text.count - range.length
+        return newLength <= 50
     }
 }
 

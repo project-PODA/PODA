@@ -22,6 +22,7 @@ extension UIViewController {
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
+    
     func showAlertWithTextField(title: String, message: String, placeholder: String, completion: @escaping (String?) -> Void)  {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
@@ -64,6 +65,7 @@ extension UIViewController {
                 textField.layer.add(shakeAnimation, forKey: "position")
         }
     }
+    
     @objc private func textChanged(_ textField: UITextField) {
         if let text = textField.text, text.count > 5 {
             textField.textColor = .red
@@ -77,5 +79,15 @@ extension UIViewController {
             }
             textField.textColor = .black
         }
+    }
+    
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
