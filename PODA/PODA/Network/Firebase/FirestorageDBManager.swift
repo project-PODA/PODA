@@ -10,9 +10,9 @@ import Firebase
 import FirebaseStorage
 
 class FirestorageDBManager {
-    private var db = Firestore.firestore()
+    private let db = Firestore.firestore()
     
-    func createDiary(deviceName : String , pageDataList : [PageInfo], title : String, description : String, frameRate : FrameRate, backgroundColor : String,completion: @escaping (FireStorageDBError) -> Void) {
+    func createDiary(deviceName: String , pageDataList: [PageInfo], title: String, description: String, frameRate: FrameRate, backgroundColor: String,completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -81,22 +81,26 @@ class FirestorageDBManager {
             return
         }
         
-        let batch = db.batch()
-        
-        let userCollectionRef = db.collection("USER")
-        let userDocumentRef = userCollectionRef.document(currentUserUID)
-        batch.setData(["email": userInfo.email], forDocument: userDocumentRef)
-        
-        let currentUserCollectionRef = db.collection(currentUserUID)
-        let accountDocumentRef = currentUserCollectionRef.document("account")
-        batch.setData(["accountInfo": userInfo.toJson()], forDocument: accountDocumentRef)
-        
-        batch.commit { error in
-            if let err = error {
-                Logger.writeLog(.error, message: "[\(err._code)] : \(err.localizedDescription)")
-                completion(.error(err._code, err.localizedDescription))
-            } else {
-                completion(.none)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let self = self else {return}
+            
+            let batch = db.batch()
+            
+            let userCollectionRef = db.collection("USER")
+            let userDocumentRef = userCollectionRef.document(currentUserUID)
+            batch.setData(["email": userInfo.email], forDocument: userDocumentRef)
+            
+            let currentUserCollectionRef = db.collection(currentUserUID)
+            let accountDocumentRef = currentUserCollectionRef.document("account")
+            batch.setData(["accountInfo": userInfo.toJson()], forDocument: accountDocumentRef)
+            
+            batch.commit { error in
+                if let err = error {
+                    Logger.writeLog(.error, message: "[\(err._code)] : \(err.localizedDescription)")
+                    completion(.error(err._code, err.localizedDescription))
+                } else {
+                    completion(.none)
+                }
             }
         }
     }
@@ -276,7 +280,7 @@ class FirestorageDBManager {
             }
         }
     }
-    func getUserNickname(completion: @escaping (String, FireStorageDBError) -> Void){
+    func getUserNickname(completion: @escaping (String, FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion("", .error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -321,7 +325,7 @@ class FirestorageDBManager {
             }
         }
     }
-    func deleteUserMail (completion: @escaping (FireStorageDBError) -> Void){
+    func deleteUserMail (completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -376,7 +380,6 @@ class FirestorageDBManager {
             }
         }
     }
-    
     
     func isDiaryPath(refDocPath: String, accountPath: String) -> Bool {
         return refDocPath == accountPath ? false : true

@@ -11,7 +11,7 @@ struct DiaryInfo: Codable {
     var diaryName: String
     var createTime: String
     var updateTime: String
-    var diaryTitle : String
+    var diaryTitle: String
     var description: String
     var frameRate: String
     var diaryDetail: DiaryDetail
@@ -42,8 +42,8 @@ struct ImageInfo: Codable {
     var height: Double
     var angle: Double
     var name: String
-    var xScale : Double
-    var yScale : Double
+    var xScale: Double
+    var yScale: Double
 }
 
 struct StickerInfo: Codable {
@@ -54,8 +54,8 @@ struct StickerInfo: Codable {
     var width: Double
     var height: Double
     var angle: Double
-    var xScale : Double
-    var yScale : Double
+    var xScale: Double
+    var yScale: Double
 }
 
 struct LabelInfo: Codable {

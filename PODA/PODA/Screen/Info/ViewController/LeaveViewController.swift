@@ -23,7 +23,7 @@ class LeaveViewController: BaseViewController, UIConfigurable {
     
     private let middleLabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.setUpLabel(title: "• 모든 사진 데이터가 삭제됩니다.\n  (추억 조각, 다이어리 등)\n• 계정이 삭제된 후에는 복구하실 수 없습니다.\n• 계정 삭제 후에는 현재 계정으로 로그인 불가능합니다.\n• 7일 동안 재가입할 수 없습니다.", podaFont: .body2)
+        $0.setUpLabel(title: "• 모든 사진 데이터가 삭제됩니다.\n  (추억 조각, 다이어리 등)\n• 계정이 삭제된 후에는 복구하실 수 없습니다.\n• 계정 삭제 후에는 현재 계정으로 로그인 불가능합니다.", podaFont: .body2)
         $0.textColor = Palette.podaWhite.getColor()
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 10
