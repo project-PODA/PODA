@@ -77,13 +77,14 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         imageView.snp.makeConstraints { 
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
             $0.left.right.equalToSuperview()
-            $0.height.equalTo(512)
+            //$0.height.equalTo(512)
+            $0.height.equalTo(view.frame.width * 1.25)
         }
         
         buttonStackView.snp.makeConstraints { 
+            $0.top.equalTo(imageView.snp.bottom).offset(72)
             $0.left.equalToSuperview().offset(40)
             $0.right.equalToSuperview().offset(-40)
-            $0.bottom.equalToSuperview().offset(-116)
         }
     }
     
