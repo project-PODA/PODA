@@ -10,9 +10,9 @@ import Firebase
 import FirebaseStorage
 
 class FirestorageDBManager {
-    private var db = Firestore.firestore()
+    private let db = Firestore.firestore()
     
-    func createDiary(deviceName : String , pageDataList : [PageInfo], title : String, description : String, frameRate : FrameRate, backgroundColor : String,completion: @escaping (FireStorageDBError) -> Void) {
+    func createDiary(deviceName: String , pageDataList: [PageInfo], title: String, description: String, frameRate: FrameRate, backgroundColor: String,completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -81,22 +81,26 @@ class FirestorageDBManager {
             return
         }
         
-        let batch = db.batch()
-        
-        let userCollectionRef = db.collection("USER")
-        let userDocumentRef = userCollectionRef.document(currentUserUID)
-        batch.setData(["email": userInfo.email], forDocument: userDocumentRef)
-        
-        let currentUserCollectionRef = db.collection(currentUserUID)
-        let accountDocumentRef = currentUserCollectionRef.document("account")
-        batch.setData(["accountInfo": userInfo.toJson()], forDocument: accountDocumentRef)
-        
-        batch.commit { error in
-            if let err = error {
-                Logger.writeLog(.error, message: "[\(err._code)] : \(err.localizedDescription)")
-                completion(.error(err._code, err.localizedDescription))
-            } else {
-                completion(.none)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let self = self else {return}
+            
+            let batch = db.batch()
+            
+            let userCollectionRef = db.collection("USER")
+            let userDocumentRef = userCollectionRef.document(currentUserUID)
+            batch.setData(["email": userInfo.email], forDocument: userDocumentRef)
+            
+            let currentUserCollectionRef = db.collection(currentUserUID)
+            let accountDocumentRef = currentUserCollectionRef.document("account")
+            batch.setData(["accountInfo": userInfo.toJson()], forDocument: accountDocumentRef)
+            
+            batch.commit { error in
+                if let err = error {
+                    Logger.writeLog(.error, message: "[\(err._code)] : \(err.localizedDescription)")
+                    completion(.error(err._code, err.localizedDescription))
+                } else {
+                    completion(.none)
+                }
             }
         }
     }
@@ -276,7 +280,7 @@ class FirestorageDBManager {
             }
         }
     }
-    func getUserNickname(completion: @escaping (String, FireStorageDBError) -> Void){
+    func getUserNickname(completion: @escaping (String, FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion("", .error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -321,7 +325,7 @@ class FirestorageDBManager {
             }
         }
     }
-    func deleteUserMail (completion: @escaping (FireStorageDBError) -> Void){
+    func deleteUserMail (completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -330,7 +334,6 @@ class FirestorageDBManager {
         
         DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
             guard let self = self else {return}
-            let db = Firestore.firestore()
             let userCollection = db.collection("USER")
             
             userCollection.document(currentUserUID).delete { error in
@@ -348,7 +351,12 @@ class FirestorageDBManager {
     }
     
     func deleteCollection(collection: String, completion: @escaping (FireStorageDBError) -> Void) {
-        let db = Firestore.firestore()
+        guard let _ = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
+            return
+        }
+        
         let batch = db.batch()
 
         db.collection(collection).getDocuments { (snapshot, error) in
@@ -377,7 +385,49 @@ class FirestorageDBManager {
         }
     }
     
-    
+    func getNotices(completion: @escaping ([NoticeInfo],FireStorageDBError) -> Void) {
+        guard let _ = Auth.auth().currentUser?.uid else {
+            let error = FireStorageDBError.unavailableUUID
+            Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
+            completion([], .error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
+            return
+        }
+        
+        let collectionRef = db.collection("Notice")
+        var noitceInfoList: [NoticeInfo] = []
+        
+        collectionRef.getDocuments { (querySnapshot, error) in
+            if let errCode = error as NSError?{
+                
+                Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
+                completion([], .error(errCode.code, errCode.description))
+            } else {
+                for document in querySnapshot!.documents {
+                    if let noticeInfoJson = document["noticeInfo"] as? String {
+                        if let noticeInfo = NoticeInfo.fromJson(jsonString: noticeInfoJson, model: NoticeInfo.self){
+                            noitceInfoList.append(noticeInfo)
+                        }else {
+                            completion([], .error(FireStorageDBError.fieldEmpty.code, FireStorageDBError.fieldEmpty.description))
+                            Logger.writeLog(.error, message: FireStorageDBError.fieldEmpty.description)
+                            return
+                        }
+                    }
+                }
+            }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            
+            let sortedNoticeInfoArray = noitceInfoList.sorted { (noticeInfo1, noticeInfo2) -> Bool in
+                if let date1 = dateFormatter.date(from: noticeInfo1.date), let date2 = dateFormatter.date(from: noticeInfo2.date) {
+                    return date1 > date2
+                } else {
+                    return false 
+                }
+            }
+            completion(sortedNoticeInfoArray, .none)
+        }
+        
+    }
     func isDiaryPath(refDocPath: String, accountPath: String) -> Bool {
         return refDocPath == accountPath ? false : true
     }
