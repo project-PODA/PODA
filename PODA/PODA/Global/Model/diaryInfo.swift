@@ -7,67 +7,67 @@
 
 
 struct DiaryInfo: Codable {
-    let deviceName: String
-    let diaryName: String
-    let createTime: String
-    let updateTime: String
-    let diaryTitle : String
-    let description: String
-    let frameRate: String
-    let diaryDetail: DiaryDetail
+    var deviceName: String
+    var diaryName: String
+    var createTime: String
+    var updateTime: String
+    var diaryTitle : String
+    var description: String
+    var frameRate: String
+    var diaryDetail: DiaryDetail
 }
 
 struct DiaryDetail: Codable {
-    let totalPage: Int
-    let pageInfo: [PageInfo]
+    var totalPage: Int
+    var pageInfo: [PageInfo]
 }
 
 struct PageInfo: Codable {
-    let page: Int
-    let backgroundColor: String
-    let componentInfo: ComponentInfo
+    var page: Int
+    var backgroundColor: String
+    var componentInfo: ComponentInfo
 }
 
 struct ComponentInfo: Codable {
-    let image: [ImageInfo]
-    let sticker: [StickerInfo]
-    let label: [LabelInfo]
+    var image: [ImageInfo]
+    var sticker: [StickerInfo]
+    var label: [LabelInfo]
 }
 
 struct ImageInfo: Codable {
-    let step: Int
-    let x: Double
-    let y: Double
-    let width: Double
-    let height: Double
-    let angle: Double
-    let name: String
-    let xScale : Double
-    let yScale : Double
+    var step: Int
+    var x: Double
+    var y: Double
+    var width: Double
+    var height: Double
+    var angle: Double
+    var name: String
+    var xScale : Double
+    var yScale : Double
 }
 
 struct StickerInfo: Codable {
-    let step: Int
-    let type: Int
-    let x: Double
-    let y: Double
-    let width: Double
-    let height: Double
-    let angle: Double
+    var step: Int
+    var type: Int
+    var x: Double
+    var y: Double
+    var width: Double
+    var height: Double
+    var angle: Double
     var xScale : Double
     var yScale : Double
 }
 
 struct LabelInfo: Codable {
-    let step: Int
-    let x: Double
-    let y: Double
-    let width: Double
-    let height: Double
-    let angle: Double
-    let fontsize: Double
-    let fontname: String
-    let fontcolor: String
+    var step: Int
+    var x: Double
+    var y: Double
+    var width: Double
+    var height: Double
+    var angle: Double
+    var fontsize: Double
+    var fontname: String
+    var fontcolor: String
     var xScale : Double
     var yScale : Double
 }

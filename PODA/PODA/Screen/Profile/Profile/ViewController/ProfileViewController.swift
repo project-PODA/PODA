@@ -6,10 +6,13 @@
 //
 import UIKit
 import Then
-
+import NVActivityIndicatorView
 class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurable {
     
     var viewModel: ProfileViewModel!
+    private let fireImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
+    private let fireDBManager = FirestorageDBManager()
+    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     private let profileImageView = UIImageView().then {
         $0.layer.cornerRadius = 105
@@ -28,8 +31,8 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let profileEditButton = UIButton().then {
-        $0.setUpButton(title: "프로필 편집", podaFont: .button1, cornerRadius: 22)
+    private let nickNameEditButton = UIButton().then {
+        $0.setUpButton(title: "닉네임 편집", podaFont: .button1, cornerRadius: 22)
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         $0.backgroundColor = Palette.podaGray5.getColor()
     }
@@ -41,15 +44,55 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         $0.layer.borderWidth = 1
     }
     
+    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
         setActions()
         bindViewModel()
+        getFirebaseData()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    private func getFirebaseData(){
+        loadingIndicator.startAnimating()
+        fireImageManager.getProfileImage { [weak self] (error, image) in
+            guard let self = self else { return }
+
+            if error == .none, let imageData = image {
+                DispatchQueue.main.async{ [weak self] in
+                    guard let self = self else {return}
+                    profileImageView.image = UIImage(data: imageData)
+                    loadingIndicator.stopAnimating()
+                }
+            }
+        }
+        fireDBManager.getUserNickname{[weak self] (name, error) in
+            guard let self = self else {return}
+            if error == .none {
+                DispatchQueue.main.async{ [weak self] in
+                    guard let self = self else {return}
+                    usernameLabel.text = name
+                    print("nickName 얻어오기 성공")
+                }
+            }
+        }
+    }
+    
+    private func setComponentDisable(_ enabled : Bool){
+        cameraButton.isEnabled = enabled
+        nickNameEditButton.isEnabled = enabled
+        logoutButton.isEnabled = enabled
+    }
+    
     
     private func setActions() {
         cameraButton.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)
+        nickNameEditButton.addTarget(self, action: #selector(didnickNameButton), for: .touchUpInside)
+        logoutButton.addTarget(self, action: #selector(didLogoutButton), for: .touchUpInside)
     }
     
     init(viewModel: ProfileViewModel) {
@@ -70,12 +113,19 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         setupNavigationBar()
 
         
-        [profileImageView, cameraButton, usernameLabel, profileEditButton, logoutButton].forEach { view.addSubview($0) }
+        [profileImageView, cameraButton, usernameLabel, nickNameEditButton, logoutButton, loadingIndicator].forEach { view.addSubview($0) }
         
         profileImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
             make.width.height.equalTo(210)
+        }
+        
+        loadingIndicator.snp.makeConstraints{ make in
+            make.top.equalTo(profileImageView.snp.top)
+            make.width.equalTo(profileImageView.snp.width)
+            make.height.equalTo(profileImageView.snp.height)
+            make.centerX.equalTo(profileImageView.snp.centerX)
         }
         
         cameraButton.snp.makeConstraints { make in
@@ -88,7 +138,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             make.top.equalTo(profileImageView.snp.bottom).offset(24)
         }
         
-        profileEditButton.snp.makeConstraints { make in
+        nickNameEditButton.snp.makeConstraints { make in
             make.top.equalTo(usernameLabel.snp.bottom).offset(16)
             make.width.equalTo(100)
             make.height.equalTo(44)
@@ -112,8 +162,6 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         navigationItem.rightBarButtonItem = infoButtonItem
     }
 
-
-    
     @objc private func didTapCameraButton() {
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
@@ -121,6 +169,47 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         present(imagePickerController, animated: true, completion: nil)
     }
     
+    @objc private func didnickNameButton() {
+        showAlertWithTextField(title: "닉네임 변경", message: "5글자 이하로 입력해주세요.", placeholder: usernameLabel.text!){ [weak self]  text in
+            guard let self = self else {return}
+            if let nickname = text {
+                usernameLabel.text = nickname
+                updateNickname(nickname: nickname)
+            }
+        }
+    }
+    private func updateNickname(nickname newNickname: String) {
+        fireDBManager.updateNickname(updateName: newNickname) { [weak self]  error in
+            guard let _ = self else { return }
+            print("Update 성공")
+        }
+    }
+    @objc private func didLogoutButton(){
+        fireAuthManager.userLogOut(){ [weak self] error in
+            guard let self = self else {return}
+            if error == .none {
+                moveToHome()
+            }
+        }
+    }
+    private func moveToHome() {
+        UserDefaultManager.isUserLoggedIn = false
+        UserDefaultManager.userEmail = ""
+        UserDefaultManager.userPassword = ""
+        
+        DispatchQueue.main.async {
+            self.dismiss(animated: true) {
+                let loginViewController = LoginViewController()
+                let navigationController = BaseNavigationController(rootViewController: loginViewController)
+                if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
+                    UIView.transition(with: sceneDelegate.window!, duration: 0.5, options: .transitionCrossDissolve, animations: {
+                        sceneDelegate.window?.rootViewController = navigationController
+                        sceneDelegate.window?.makeKeyAndVisible()
+                    }, completion: nil)
+                }
+            }
+        }
+    }
     @objc private func didTapInfoButton() {
         let infoVC = InfoViewController()
         self.navigationController?.pushViewController(infoVC, animated: true)
@@ -132,7 +221,20 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.originalImage] as? UIImage {
+            
             profileImageView.image = selectedImage
+            loadingIndicator.startAnimating()
+            setComponentDisable(false)
+            fireImageManager.updateProfileImage(imageData: selectedImage.jpegData(compressionQuality: 0.5)!) { [weak self] (error) in
+                guard let self = self else { return }
+                DispatchQueue.main.async{ [weak self]  in
+                    if error == .none {
+                        guard let self = self else {return}
+                        loadingIndicator.stopAnimating()
+                        setComponentDisable(true)
+                    }
+                }
+            }
         }
         dismiss(animated: true, completion: nil)
     }

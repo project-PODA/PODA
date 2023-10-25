@@ -8,10 +8,10 @@
 import Foundation
 struct UserInfo: Codable {
     let createDate: String
-    let loginDate: String
-    let isUsing : Bool
-    let userNickname : String
+    var loginDate: String
+    var isUsing : Bool
+    var userNickname : String
     let email : String
-    let followers : [String]
-    let followings : [String]
+    var followers : [String]
+    var followings : [String]
 }
