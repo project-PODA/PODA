@@ -8,6 +8,8 @@
 import UIKit
 import Then
 import NVActivityIndicatorView
+import GoogleSignIn
+import Firebase
 
 class LoginViewController: BaseViewController, UIConfigurable {
     
@@ -198,6 +200,43 @@ class LoginViewController: BaseViewController, UIConfigurable {
     
     @objc private func googleButtonTapped() {
         print("google")
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            print("Firebase clientID를 가져오지 못했습니다.")
+            return
+        }
+        
+        let config = GIDConfiguration(clientID: clientID)
+        
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
+            
+            if let error = error {
+                print("로그인 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            // 로그인 성공했을때, 유저정보
+            guard let user = user else { return }
+            let userId = user.userID ?? ""
+            let idToken = user.authentication.idToken ?? ""
+            let fullName = user.profile?.name ?? ""
+            let email = user.profile?.email ?? ""
+            
+            print("""
+                    로그인 성공
+                    사용자 ID: \(userId)
+                    ID 토큰: \(idToken)
+                    사용자 이름: \(fullName)
+                    이메일 주소: \(email)
+                    """)
+            DispatchQueue.main.async { [weak self] in
+                let tabBarController = BaseTabbarController()
+                self?.navigationController?.pushViewController(tabBarController, animated: true)
+                
+                UserDefaultManager.isUserLoggedIn = true
+                UserDefaultManager.userEmail = email
+                //                UserDefaultManager.userPassword = password
+            }
+        }
     }
     
     @objc private func appleButtonTapped() {
