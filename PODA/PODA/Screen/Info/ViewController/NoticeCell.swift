@@ -24,12 +24,12 @@ class NoticeCell: UITableViewCell {
         $0.font = .podaFont(.body2)
     }
     
-    private let contentLabel = UILabel().then {
-        $0.textColor = Palette.podaWhite.getColor()
-        $0.font = .podaFont(.body2)
-        $0.layer.backgroundColor = Palette.podaGray5.getColor().cgColor
-        $0.numberOfLines = 0
-    }
+//    private let contentLabel = UILabel().then {
+//        $0.textColor = Palette.podaWhite.getColor()
+//        $0.font = .podaFont(.body2)
+//        $0.layer.backgroundColor = Palette.podaGray5.getColor().cgColor
+//        $0.numberOfLines = 0
+//    }
     
     //    private let disclosureImageView = UIImageView(image: UIImage(named: "icon_disclosure")).then {
     //        $0.contentMode = .scaleAspectFit
@@ -49,7 +49,7 @@ class NoticeCell: UITableViewCell {
         
         addSubview(titleLabel)
         addSubview(dateLabel)
-        addSubview(contentLabel)
+//        addSubview(contentLabel)
         
         //        addSubview(disclosureImageView)
         
@@ -63,14 +63,14 @@ class NoticeCell: UITableViewCell {
             make.leading.equalTo(titleLabel)
         }
         
-        contentLabel.snp.makeConstraints { make in
-            make.top.equalTo(dateLabel.snp.bottom).offset(10)
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-10)
-        }
+//        contentLabel.snp.makeConstraints { make in
+//            make.top.equalTo(dateLabel.snp.bottom).offset(10)
+//            make.leading.equalToSuperview()
+//            make.trailing.equalToSuperview()
+//            make.bottom.equalToSuperview().offset(-10)
+//        }
         
-        contentLabel.isHidden = true  // 기본적으로 숨깁니다.
+//        contentLabel.isHidden = true  // 기본적으로 숨깁니다.
         
         //
         //        disclosureImageView.snp.makeConstraints { make in
@@ -80,18 +80,18 @@ class NoticeCell: UITableViewCell {
         //        }
     }
     
-    func configure(title: String, date: String, content: String, isExpanded: Bool) {
+    func configure(title: String, date: String) {
         titleLabel.text = "[공지] \(title)"
         dateLabel.text = date
-        contentLabel.text = content
-        
-        self.isExpanded = isExpanded
-        contentLabel.isHidden = !isExpanded
+//        contentLabel.text = content
+
+//        self.isExpanded = isExpanded
+//        contentLabel.isHidden = !isExpanded
     }
-    
-    func contentLabelHeight() -> CGFloat {
-        let width = contentView.frame.width
-        let size = contentLabel.sizeThatFits(CGSize(width: width, height: CGFloat.greatestFiniteMagnitude))
-        return size.height
-    }
+
+//    func contentLabelHeight() -> CGFloat {
+//        let width = contentView.frame.width
+//        let size = contentLabel.sizeThatFits(CGSize(width: width, height: CGFloat.greatestFiniteMagnitude))
+//        return size.height
+//    }
 }
