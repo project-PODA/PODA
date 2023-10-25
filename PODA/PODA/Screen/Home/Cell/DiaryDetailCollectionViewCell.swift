@@ -56,7 +56,9 @@ class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
         layer.cornerRadius = 20
         layer.masksToBounds = true
         
-        [gradientImageView, titleLabel, dateLabel].forEach(addSubview)
+        [gradientImageView, titleLabel, dateLabel].forEach {
+            addSubview($0)
+        }
         
         gradientImageView.snp.makeConstraints {
             $0.top.bottom.left.right.equalToSuperview()
