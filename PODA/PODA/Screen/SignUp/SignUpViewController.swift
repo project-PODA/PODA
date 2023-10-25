@@ -119,7 +119,7 @@ class SignUpViewController: BaseViewController {
     }
     
     private let passwordDetailLabel = UILabel().then {
-        $0.setUpLabel(title: "영문, 숫자, 특수문자 중 2가지 이상을 조합하여 6-15자로 입력해주세요", podaFont: .caption)
+        $0.setUpLabel(title: "영문, 숫자, 특수문자 3가지를 포함하여 6-15자로 입력해주세요", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
     }
     
