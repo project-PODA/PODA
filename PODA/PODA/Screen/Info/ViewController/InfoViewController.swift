@@ -19,19 +19,25 @@ class InfoViewController: BaseViewController, UIConfigurable {
     }
     
     
-    private let items: [String] = ["버전", "개인정보처리방침", "공지사항", "기능 추가 요청/오류 신고", "만든이", "탈퇴하기"]
+    private let items: [String] = ["버전", "개인정보처리방침", "공지사항", "기능 추가 요청/오류 신고", "탈퇴하기"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        
-        tableView.dataSource = self
-        tableView.delegate = self
+        setTableView()
     }
     
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.tabBarController?.tabBar.isHidden = false
+    }
+    
     
     func configUI() {
+        self.tabBarController?.tabBar.isHidden = true
+        
         let backButton = UIBarButtonItem(image: UIImage(named: "icon_back")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(didTapBackButton))
         self.navigationItem.leftBarButtonItem = backButton
         self.navigationItem.hidesBackButton = true
@@ -42,12 +48,16 @@ class InfoViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    
+    func setTableView() {
+        tableView.setUpTableView(delegate: self, dataSource: self, cellType: InfoCell.self)
+    }
+    
     func sendEmail() {
         if MFMailComposeViewController.canSendMail() {
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
             mail.setToRecipients(["poda_official@naver.com"])
-            //첨부파일 보내려면 코드 추가해야함. 다음 커밋에 올리겠음.
             present(mail, animated: true)
         } else {
             let alert = UIAlertController(title: "Error", message: "메일을 보내실 수 없습니다.", preferredStyle: .alert)
@@ -76,27 +86,42 @@ extension InfoViewController: UITableViewDataSource {
             cell.setTitle(items[indexPath.row])
         }
         
+        cell.selectionStyle = .none
+        
         return cell
     }
 }
 
-// MARK: - UITableViewDelegate
 extension InfoViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 3 {
-            sendEmail()
-        } else if indexPath.row == 1 { // "개인정보처리방침" 셀을 눌렀을 때
+        switch indexPath.row {
+        case 0: // 버전
+            break
+        case 1: // 개인정보처리방침
             if let url = URL(string: "https://poda-project.notion.site/bf5c40465131409297eb8d5217b0c441?pvs=4") {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
+        case 2: // 공지사항
+            let noticeVC = NoticeViewController()
+            self.navigationController?.pushViewController(noticeVC, animated: true)
+        case 3: // 기능 추가 요청/오류 신고
+            sendEmail()
+        case 4: // 탈퇴하기
+            let leaveVC = LeaveViewController()
+            self.navigationController?.pushViewController(leaveVC, animated: true)
+        default:
+            break
         }
+        
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
+
+
 
 
 // MARK: - MFMailComposeViewControllerDelegate
