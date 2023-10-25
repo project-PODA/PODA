@@ -63,6 +63,10 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        hideKeyboardWhenTappedAround()
+        titleTextField.enableHideKeyboardOnReturn()
+        
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
