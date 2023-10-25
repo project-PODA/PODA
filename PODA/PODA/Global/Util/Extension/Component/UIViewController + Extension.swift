@@ -6,8 +6,11 @@
 //
 
 import UIKit
-enum AnimationType {
+enum AnimationType: String {
     case shake
+    func toString() -> String {
+        return self.rawValue
+    }
 }
 
 
@@ -50,9 +53,9 @@ extension UIViewController {
     }
     
     private func makeAnimation(animationType: AnimationType, for textField: UITextField) {
-        switch animationType {
+            switch animationType {
             case .shake:
-                let shakeAnimation = CABasicAnimation(keyPath: "position")
+            let shakeAnimation = CABasicAnimation(keyPath: "position")
                 shakeAnimation.duration = 0.1
                 shakeAnimation.repeatCount = 3
                 shakeAnimation.autoreverses = true
