@@ -10,7 +10,7 @@ import FirebaseAuth
 class FireAuthManager {
     var firestorageDBManager: FirestorageDBManager
     var firestorageImageManager: FireStorageImageManager
-
+    
     init(firestorageDBManager: FirestorageDBManager, firestorageImageManager: FireStorageImageManager) {
         self.firestorageDBManager = firestorageDBManager
         self.firestorageImageManager = firestorageImageManager
@@ -53,13 +53,70 @@ class FireAuthManager {
             }
         }
     }
+    func deleteEmail(completion: @escaping (FireAuthError) -> Void) {
+        if let currentUser = Auth.auth().currentUser {
+            currentUser.delete { error in
+                if let err = error as NSError? {
+                    Logger.writeLog(.error, message: "[\(err.code)] : \(err.localizedDescription)")
+                    completion(.error(err.code, err.localizedDescription))
+                } else {
+                    completion(.none)
+                }
+            }
+        } else {
+            Logger.writeLog(.error, message: "유저 계정 삭제 중 문제 발생")
+            completion(.unknown)
+        }
+    }
     
-            
+    func deleteAccount(completion: @escaping (FireAuthError) -> Void) {
+        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
+            return
+        }
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.firestorageDBManager.deleteUserMail { deleUserError in
+                if deleUserError != .none{
+                    Logger.writeLog(.error, message: "User Email 삭제 중 문제 발생")
+                    completion(.unknown)
+                    return
+                }
+                self.firestorageDBManager.deleteCollection(collection : currentUserUID) { deleteCollectionError in
+                    if deleteCollectionError != .none {
+                        Logger.writeLog(.error, message: "UUID Collection 삭제 중 문제 발생")
+                        completion(.unknown)
+                        return
+                    }
+                }
+                
+                self.firestorageImageManager.deleteTopFolder() { deleteTopFolder in
+                    if deleteTopFolder != .none {
+                        Logger.writeLog(.error, message: "Storage 폴더 삭제 중 문제 발생")
+                        completion(.unknown)
+                        return
+                        
+                    }
+                    self.deleteEmail() { deleteEmailError in
+                        if deleteEmailError != .none {
+                            Logger.writeLog(.error, message: "Authentification User 삭제 중 문제 발생")
+                            completion(.unknown)
+                            return
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    
+    
     func signUpUser(email: String, password: String, profileImage: Data?, nickName: String, completion: @escaping (FireAuthError) -> Void) {
         
         let userInfo = UserInfo(createDate: Date().GetCurrentTime(), loginDate: "", isUsing: false, userNickname: nickName, email: email, followers: [], followings: [])
         
-        DispatchQueue.global(qos: .userInteractive).async{
+        DispatchQueue.global(qos: .userInteractive).async {
             self.createUser(email: email, password: password) { createUserError in
                 if createUserError != .none {
                     Logger.writeLog(.error, message: "유저 생성 중 예상치 못한 에러 발생")
