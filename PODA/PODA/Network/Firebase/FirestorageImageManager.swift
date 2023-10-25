@@ -31,7 +31,7 @@ class FireStorageImageManager {
             for i in 0..<pageImageList.count {
                 let fileName = "image\(i + 1)"
                 let format = imageManipulator.checkImageFormat(imageData: pageImageList[i])
-                let fileFullName = "\(fileName)_\(format)"
+                let fileFullName = "\(fileName).\(format)"
                 
                 let imageReference = storageReference.child("\(currentUserUID)/images/\(diaryName)/\(fileFullName)")
                 let metadata = StorageMetadata()
@@ -185,6 +185,66 @@ class FireStorageImageManager {
             }
         }
     }
+    
+    func deleteFolderContents(reference: StorageReference, completion: @escaping (Error?) -> Void) {
+        reference.listAll { (result, error) in
+            if let error = error {
+                completion(error)
+            } else {
+                let dispatchGroup = DispatchGroup()
+                for item in result!.items {
+                    dispatchGroup.enter()
+                    item.delete { error in
+                        if let error = error {
+                            print("Error deleting file: \(error.localizedDescription)")
+                        } else {
+                            print("File deleted successfully.")
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+                for prefix in result!.prefixes {
+                    dispatchGroup.enter()
+                    self.deleteFolderContents(reference: prefix) { error in
+                        if let error = error {
+                            completion(error)
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+                dispatchGroup.notify(queue: .main) {
+                    completion(nil)
+                }
+            }
+        }
+    }
+
+    func deleteTopFolder(completion: @escaping(FireStorageImageError) -> Void) {
+        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
+            return
+        }
+        
+        let topLevelFolderRef = storageReference.child(currentUserUID)
+
+        deleteFolderContents(reference: topLevelFolderRef) { error in
+            if let errCode = error as NSError?{
+                Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
+            } else {
+                topLevelFolderRef.delete { error in
+                    if let error = error {
+                        completion(.none)//여기서 에러떨어지는 이유가 몰겠네
+                    } else {
+                        completion(.none)
+                    }
+                }
+            }
+        }
+
+    }
+
     
     func updateProfileImage(imageData: Data, completion: @escaping(FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {

@@ -9,6 +9,7 @@ enum FireStorageDBError: Equatable {
     case unknown
     case error(Int, String)
     case unavailableUUID
+    case documentEmpty
     case none
     var description: String {
         switch self {
@@ -18,6 +19,8 @@ enum FireStorageDBError: Equatable {
                 return "[\(errCode)]: \(message)"
             case .unavailableUUID:
                 return "[Storage]사용자의 UUID를 확인할 수 없습니다."
+            case .documentEmpty:
+                return "Document가 비어있습니다."
             case .none:
                 return "none"
         }
@@ -28,6 +31,8 @@ enum FireStorageDBError: Equatable {
                 return 9999
             case .unavailableUUID:
                 return 10001
+            case .documentEmpty:
+                return 10002
             case .none:
                 return 0
             default:
