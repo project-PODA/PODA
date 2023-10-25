@@ -32,7 +32,7 @@ extension UIFont {
         case .body2:
             return UIFont(name: "Pretendard-Regular", size: 16) ?? UIFont()
         case .subhead1:
-            return UIFont(name: "Pretendard-Bold", size: 12) ?? UIFont()
+            return UIFont(name: "Pretendard-Bold", size: 13) ?? UIFont()
         case .subhead2:
             return UIFont(name: "Pretendard-Bold", size: 14) ?? UIFont()
         case .subhead3:
@@ -40,7 +40,7 @@ extension UIFont {
         case .subhead4:
             return UIFont(name: "Pretendard-Bold", size: 19) ?? UIFont()
         case .caption:
-            return UIFont(name: "Pretendard-Regular", size: 12) ?? UIFont()
+            return UIFont(name: "Pretendard-Regular", size: 13) ?? UIFont()
         case .head1:
             return UIFont(name: "Pretendard-Bold", size: 24) ?? UIFont()
         case .display1:

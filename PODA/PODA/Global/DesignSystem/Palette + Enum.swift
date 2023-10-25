@@ -27,7 +27,7 @@ enum Palette {
         case .podaBlue:
             return UIColor(red: 97/255, green: 154/255, blue: 238/255, alpha: 1)
         case .podaBlack:
-            return UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1)
+            return UIColor(red: 28/255, green: 29/255, blue: 30/255, alpha: 1)
         case .podaRed:
             return UIColor(red: 255/255, green: 111/255, blue: 102/255, alpha: 1)
         case .podaGray1:
