@@ -27,6 +27,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
+        $0.isScrollEnabled = false
         $0.backgroundColor = Palette.podaBlack.getColor()
     }
     

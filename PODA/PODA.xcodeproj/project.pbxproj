@@ -1161,9 +1161,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53AWLX6CVV;
+				DEVELOPMENT_TEAM = 6A4DKMQA22;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 다이어리 꾸미기, 나의 추억조각 등록, 등록된 사진들의 편집기능 이용을 위해 사진 라이브러리에 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1173,7 +1175,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = poda;
+				PRODUCT_BUNDLE_IDENTIFIER = com.poda121576;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1188,9 +1190,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53AWLX6CVV;
+				DEVELOPMENT_TEAM = 6A4DKMQA22;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 다이어리 꾸미기, 나의 추억조각 등록, 등록된 사진들의 편집기능 이용을 위해 사진 라이브러리에 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -1200,7 +1204,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = poda;
+				PRODUCT_BUNDLE_IDENTIFIER = com.poda121576;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
