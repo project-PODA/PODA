@@ -81,7 +81,9 @@ extension InfoViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "infoCell", for: indexPath) as! InfoCell
         
         if indexPath.row == 0 {
-            cell.setVersion("1.0.1")
+            if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                cell.setVersion(version)
+            }
         } else {
             cell.setTitle(items[indexPath.row])
         }

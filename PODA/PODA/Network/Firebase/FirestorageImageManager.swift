@@ -12,12 +12,11 @@ import FirebaseStorage
 //최대 10메가만 저장.
 class FireStorageImageManager {
     private let imageManipulator : ImageManipulator
+    private let storageReference = Storage.storage().reference()
     
     init(imageManipulator : ImageManipulator){
         self.imageManipulator = imageManipulator
     }
-    
-    private let storageReference = Storage.storage().reference()
     
     func createDiaryImage(diaryName: String, pageImageList: [Data], completion: @escaping (FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
@@ -50,7 +49,7 @@ class FireStorageImageManager {
         }
     }
     
-    func getDiaryImage(dinaryName : String , completion: @escaping (FireStorageImageError, [Data]) -> Void) {
+    func getDiaryImage(dinaryName: String , completion: @escaping (FireStorageImageError, [Data]) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description),[])
@@ -98,7 +97,8 @@ class FireStorageImageManager {
             }
         }
     }
-    func createProfileImage(imageData : Data, completion: @escaping (FireStorageImageError) -> Void){
+
+    func createProfileImage(imageData: Data, completion: @escaping (FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
@@ -245,7 +245,6 @@ class FireStorageImageManager {
 
     }
 
-    
     func updateProfileImage(imageData: Data, completion: @escaping(FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
@@ -255,10 +254,7 @@ class FireStorageImageManager {
         
         let imageReference = storageReference.child("\(currentUserUID)/profile/profileImage")
 
-        let metadata = StorageMetadata()
-        metadata.contentType = "jpeg"
-
-        imageReference.putData(imageData, metadata: metadata) { metadata, error in
+        imageReference.putData(imageData) { metadata, error in
             if let err = error as NSError? {
                 completion(.error(err.code, err.localizedDescription))
             } else {

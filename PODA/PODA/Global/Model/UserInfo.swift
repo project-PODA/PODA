@@ -9,9 +9,9 @@ import Foundation
 struct UserInfo: Codable {
     let createDate: String
     var loginDate: String
-    var isUsing : Bool
+    var isUsing: Bool
     var userNickname : String
-    let email : String
-    var followers : [String]
-    var followings : [String]
+    let email: String
+    var followers: [String]
+    var followings: [String]
 }

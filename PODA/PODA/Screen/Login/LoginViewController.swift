@@ -41,7 +41,6 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let eyeButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_eye"), for: .normal)
         $0.tintColor = .gray
-        
     }
     
     private let passwordLineView = UIView().then {
@@ -54,8 +53,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.layer.cornerRadius = 36
         $0.clipsToBounds = true
         $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
-        
     }
+    
     private lazy var appleIconButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_apple"), for:.normal)
         $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
@@ -63,7 +62,6 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
         $0.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
     }
-    
     
     private let loginButton = UIButton().then {
         $0.setUpButton(title: "로그인", podaFont: .button1, cornerRadius: 22)
@@ -81,18 +79,21 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
         $0.layer.borderWidth = 1
     }
+    
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
     private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
         setupActions()
-    }    
-    
-    func configUI() {
-        setupUI()
+        setupTextFields()
+        hideKeyboardWhenTappedAround()
+        emailTextField.enableHideKeyboardOnReturn()
+        passwordTextField.enableHideKeyboardOnReturn()
     }
+    
     
     private func setupActions() {
         signUpButton.addTarget(self, action: #selector(signUpButtonTap), for: .touchUpInside)
@@ -100,7 +101,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         loginButton.addTarget(self, action: #selector(goToMain), for: .touchUpInside)
     }
     
-    private func setupUI() {
+    func configUI() {
         
         let subviews: [UIView] = [
             logoImageView, emailLabel, passwordLabel, emailTextField,
@@ -151,6 +152,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.right.equalTo(emailLineView)
             make.height.equalTo(1)
         }
+        
         eyeButton.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-20)
             make.centerY.equalTo(passwordTextField)
@@ -193,6 +195,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(100)
         }
     }
+    
     @objc private func googleButtonTapped() {
         print("google")
     }
@@ -251,5 +254,20 @@ class LoginViewController: BaseViewController, UIConfigurable {
         appleIconButton.isEnabled = enabled
         loginButton.isEnabled = enabled
         signUpButton.isEnabled = enabled
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    
+    func setupTextFields() {
+        
+        emailTextField.setUpTextField(delegate: self)
+        passwordTextField.setUpTextField(delegate: self)
+        
+        // 왼쪽 패딩값 제거
+        emailTextField.leftView = nil
+        emailTextField.leftViewMode = .never
+        passwordTextField.leftView = nil
+        passwordTextField.leftViewMode = .never
     }
 }

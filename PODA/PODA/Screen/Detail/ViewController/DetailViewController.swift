@@ -18,21 +18,45 @@ class DetailViewController: BaseViewController, UIConfigurable {
     
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
-//        let imageConfig = UIImage.SymbolConfiguration(pointSize: 20)
-//        let image = UIImage(systemName: "chevron.backward", withConfiguration: imageConfig)
-//        $0.setImage(image, for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
-    private let imageView = UIImageView().then {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .thin)
-        let image = UIImage(systemName: "square", withConfiguration: imageConfig)
+    private let scrollImageView = UIImageView().then {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 32)
+        let image = UIImage(systemName: "chevron.left", withConfiguration: imageConfig)
         $0.image = image
         $0.tintColor = Palette.podaWhite.getColor()
+        $0.backgroundColor = .systemPink
+    }
+
+    private let scrollLabel = UILabel().then {
+        $0.setUpLabel(title: "scroll to open diary", podaFont: .body2)
+        $0.textColor = Palette.podaWhite.getColor()
+//        $0.sizeToFit()
+//        print(($0.bounds.width, $0.bounds.height))
+        $0.transform = CGAffineTransform(rotationAngle: -.pi / 2)
+        $0.backgroundColor = .systemPink
+    }
+    
+    private let pageCountimageView = UIImageView().then {
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 60, weight: .ultraLight)
+        let image = UIImage(systemName: "square", withConfiguration: imageConfig)
+        $0.image = image
+        //$0.contentMode = .scaleAspectFill
+        $0.tintColor = Palette.podaWhite.getColor()
+        
+//        let gradientLayer = CAGradientLayer()
+//        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width , height: UIScreen.main.bounds.height)
+//        gradientLayer.colors = [UIColor(red: 1, green: 0.541, blue: 0.541, alpha: 1).cgColor,
+//                                UIColor(red: 0, green: 0, blue: 0, alpha: 0).cgColor]
+//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
+//        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+//        gradientLayer.locations = [0.0 ,1.0]
+//        $0.layer.addSublayer(gradientLayer)
         
         let pageCountLabel = UILabel()
-        pageCountLabel.setUpLabel(title: "05", podaFont: .head1) // 다이어리 페이지 수 가져오기
+        pageCountLabel.setUpLabel(title: "05", podaFont: .display2) // 다이어리 페이지 수 가져오기
         pageCountLabel.textColor = Palette.podaWhite.getColor()
         $0.addSubview(pageCountLabel)
         pageCountLabel.snp.makeConstraints { 
@@ -51,7 +75,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
     }
     
     private let titleLabel = UILabel().then {
-        $0.setUpLabel(title: "석진이랑 인생네컷 모음", podaFont: .display1) // 저장된 title 불러오기
+        $0.setUpLabel(title: "석진이랑 인생네컷 모음", podaFont: .display3) // 저장된 title 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -66,26 +90,16 @@ class DetailViewController: BaseViewController, UIConfigurable {
         $0.numberOfLines = 3
     }
     
-    private let scrollImageView = UIImageView().then {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 32)
-        let image = UIImage(systemName: "chevron.up", withConfiguration: imageConfig)
-        $0.image = image
-        $0.tintColor = Palette.podaWhite.getColor()
-    }
-
-    private let scrollLabel = UILabel().then {
-        $0.setUpLabel(title: "scroll to open diary", podaFont: .body2)
-        $0.textColor = Palette.podaWhite.getColor()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(scrollView)))
+        addSwipeGesture()
     }
     
     func configUI() {
-        [backgroundImageView, backButton, imageView, titleLabel, dateLabel, contentLabel, scrollImageView, scrollLabel].forEach(view.addSubview)
+        [backgroundImageView, backButton, scrollLabel, scrollImageView, pageCountimageView, titleLabel, dateLabel, contentLabel].forEach {
+            view.addSubview($0)
+        }
         
         backgroundImageView.snp.makeConstraints { 
             $0.top.bottom.left.right.equalToSuperview()
@@ -97,9 +111,19 @@ class DetailViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(30)
         }
         
-        imageView.snp.makeConstraints { 
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+        scrollLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
             $0.right.equalToSuperview().offset(-20)
+        }
+        
+        scrollImageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalTo(scrollLabel.snp.left)
+        }
+        
+        pageCountimageView.snp.makeConstraints {
+            $0.bottom.equalTo(titleLabel.snp.top).offset(-16)
+            $0.left.equalToSuperview().offset(20)
         }
         
         titleLabel.snp.makeConstraints { 
@@ -108,58 +132,30 @@ class DetailViewController: BaseViewController, UIConfigurable {
         }
         
         dateLabel.snp.makeConstraints { 
-            $0.bottom.equalTo(contentLabel.snp.top).offset(-32)
+            $0.bottom.equalTo(contentLabel.snp.top).offset(-28)
             $0.left.equalToSuperview().offset(20)
         }
         
         contentLabel.snp.makeConstraints { 
-            $0.bottom.equalTo(scrollImageView.snp.top).offset(-40)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-44)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
         }
-        
-        scrollImageView.snp.makeConstraints { 
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(scrollLabel.snp.top)
-        }
-        
-        scrollLabel.snp.makeConstraints { 
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
+    }
+    
+    func addSwipeGesture() {
+        let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(scrollView))
+        swipeGestureRecognizer.direction = .left
+        view.addGestureRecognizer(swipeGestureRecognizer)
     }
     
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }
     
-    @objc func scrollView(_ sender: UIPanGestureRecognizer) {
-        viewTranslation = sender.translation(in: view)
-        viewVelocity = sender.translation(in: view)
-        
-        switch sender.state {
-        case .changed:
-            if abs(viewVelocity.y) > abs(viewVelocity.x) {
-                if viewVelocity.y < 0 {
-                    UIView.animate(withDuration: 0.1, animations: {
-                        self.view.transform = CGAffineTransform(translationX: 0, y: self.viewTranslation.y)
-                    })
-                }
-            }
-        case .ended:
-            if viewTranslation.y < -500 {
-                UIView.animate(withDuration: 0.1, animations: {
-                    self.view.transform = .identity
-                })
-            } else {
-                let saveDeleteViewController = SaveDeleteViewController()
-                saveDeleteViewController.modalPresentationStyle = .fullScreen
-                saveDeleteViewController.modalTransitionStyle = .coverVertical
-                navigationController?.pushViewController(saveDeleteViewController, animated: false)
-//                present(editSaveViewController, animated: true)
-            }
-        default:
-            break
+    @objc func scrollView(_ sender: UISwipeGestureRecognizer) {
+        if sender.direction == .left {
+            navigationController?.pushViewController(SaveDeleteViewController(), animated: true)
         }
     }
 }
