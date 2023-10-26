@@ -12,14 +12,13 @@ import FirebaseStorage
 //최대 10메가만 저장.
 class FireStorageImageManager {
     private let imageManipulator : ImageManipulator
+    private let storageReference = Storage.storage().reference()
     
     init(imageManipulator : ImageManipulator){
         self.imageManipulator = imageManipulator
     }
     
-    private let storageReference = Storage.storage().reference()
-    
-    func createDiaryImage(diaryName: String, pageImageList: [Data], completion: @escaping (FireStorageImageError) -> Void) {
+    func createDiaryImage(diaryName: String, pageImage: Data, completion: @escaping (FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
@@ -28,9 +27,11 @@ class FireStorageImageManager {
         
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let self = self else { return }
-            for i in 0..<pageImageList.count {
-                let fileName = "image\(i + 1)"
-                let format = imageManipulator.checkImageFormat(imageData: pageImageList[i])
+            getDiaryImageCount(diaryName: diaryName){ [weak self] error, diaryImageCount in
+                guard let self = self else {return}
+                
+                let fileName = "image" + (diaryImageCount == 0 ? "" : String(diaryImageCount))
+                let format = imageManipulator.checkImageFormat(imageData: pageImage)
                 let fileFullName = "\(fileName).\(format)"
                 
                 let imageReference = storageReference.child("\(currentUserUID)/images/\(diaryName)/\(fileFullName)")
@@ -38,7 +39,7 @@ class FireStorageImageManager {
                 
                 metadata.contentType = format
                 
-                imageReference.putData(pageImageList[i], metadata: metadata) { (metadata, error) in
+                imageReference.putData(pageImage, metadata: metadata) { (metadata, error) in
                     if let errCode = error as NSError?{
                         completion(.error(errCode.code, errCode.localizedDescription))
                         Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
@@ -50,7 +51,40 @@ class FireStorageImageManager {
         }
     }
     
-    func getDiaryImage(dinaryName : String , completion: @escaping (FireStorageImageError, [Data]) -> Void) {
+    func getDiaryImageCount(diaryName: String, completion:@escaping (FireStorageImageError, Int) -> Void ) {
+        guard let currentUserUID = Auth.auth().currentUser?.uid else {
+            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
+            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description), -1)
+            return
+        }
+        
+        let imagesRef = storageReference.child("\(currentUserUID)/images/\(diaryName)")
+
+         imagesRef.listAll { (result, error) in
+             if let error = error {
+                 if let errorCode = StorageErrorCode(rawValue: error._code) {
+                     if errorCode == .objectNotFound {
+                         completion(.unknown, 0)
+                         print("0")
+                     } else {
+                         completion(.unknown, 0)
+                         print("0")
+                     }
+                 } else {
+                     completion(.unknown, 0)
+                     print("0")
+                 }
+             } else {
+                 let count = result?.items.count
+                 completion(.none, count!)
+                 print(count!)
+             }
+         }
+        
+    }
+    
+    
+    func getDiaryImage(dinaryName: String, completion: @escaping (FireStorageImageError, [Data]) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description),[])
@@ -98,7 +132,8 @@ class FireStorageImageManager {
             }
         }
     }
-    func createProfileImage(imageData : Data, completion: @escaping (FireStorageImageError) -> Void){
+
+    func createProfileImage(imageData: Data, completion: @escaping (FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
@@ -245,7 +280,6 @@ class FireStorageImageManager {
 
     }
 
-    
     func updateProfileImage(imageData: Data, completion: @escaping(FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
@@ -255,10 +289,7 @@ class FireStorageImageManager {
         
         let imageReference = storageReference.child("\(currentUserUID)/profile/profileImage")
 
-        let metadata = StorageMetadata()
-        metadata.contentType = "jpeg"
-
-        imageReference.putData(imageData, metadata: metadata) { metadata, error in
+        imageReference.putData(imageData) { metadata, error in
             if let err = error as NSError? {
                 completion(.error(err.code, err.localizedDescription))
             } else {

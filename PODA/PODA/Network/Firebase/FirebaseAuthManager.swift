@@ -8,15 +8,15 @@
 import FirebaseAuth
 
 class FireAuthManager {
-    var firestorageDBManager: FirestorageDBManager
-    var firestorageImageManager: FireStorageImageManager
+    private let firestorageDBManager: FirestorageDBManager
+    private let firestorageImageManager: FireStorageImageManager
     
     init(firestorageDBManager: FirestorageDBManager, firestorageImageManager: FireStorageImageManager) {
         self.firestorageDBManager = firestorageDBManager
         self.firestorageImageManager = firestorageImageManager
     }
     
-    func userLogin(email : String, password: String, completion: @escaping (FireAuthError) -> Void){
+    func userLogin(email: String, password: String, completion: @escaping (FireAuthError) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async{
             Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                 if let errCode = error as NSError?{
@@ -29,17 +29,17 @@ class FireAuthManager {
         }
     }
     
-    
     func userLogOut(completion: @escaping (FireAuthError) -> Void) {
-        do {
-            try Auth.auth().signOut()
-            completion(.none)
-        } catch  {
-            Logger.writeLog(.error, message: "[\(FireAuthError.logoutFailed)] : \(error.localizedDescription)")
-            completion(.error(FireAuthError.logoutFailed.code, FireAuthError.logoutFailed.description))
+        DispatchQueue.global(qos: .userInteractive).async{
+            do {
+                try Auth.auth().signOut()
+                completion(.none)
+            } catch  {
+                Logger.writeLog(.error, message: "[\(FireAuthError.logoutFailed)] : \(error.localizedDescription)")
+                completion(.error(FireAuthError.logoutFailed.code, FireAuthError.logoutFailed.description))
+            }
         }
     }
-    
     
     func createUser(email: String, password: String, completion: @escaping (FireAuthError) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async{
@@ -53,19 +53,22 @@ class FireAuthManager {
             }
         }
     }
+    
     func deleteEmail(completion: @escaping (FireAuthError) -> Void) {
-        if let currentUser = Auth.auth().currentUser {
-            currentUser.delete { error in
-                if let err = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(err.code)] : \(err.localizedDescription)")
-                    completion(.error(err.code, err.localizedDescription))
-                } else {
-                    completion(.none)
+        DispatchQueue.global(qos: .userInteractive).async{
+            if let currentUser = Auth.auth().currentUser {
+                currentUser.delete { error in
+                    if let err = error as NSError? {
+                        Logger.writeLog(.error, message: "[\(err.code)] : \(err.localizedDescription)")
+                        completion(.error(err.code, err.localizedDescription))
+                    } else {
+                        completion(.none)
+                    }
                 }
+            } else {
+                Logger.writeLog(.error, message: "유저 계정 삭제 중 문제 발생")
+                completion(.unknown)
             }
-        } else {
-            Logger.writeLog(.error, message: "유저 계정 삭제 중 문제 발생")
-            completion(.unknown)
         }
     }
     
@@ -103,6 +106,8 @@ class FireAuthManager {
                             Logger.writeLog(.error, message: "Authentification User 삭제 중 문제 발생")
                             completion(.unknown)
                             return
+                        } else {
+                            completion(.none)
                         }
                     }
                 }
@@ -110,12 +115,10 @@ class FireAuthManager {
         }
     }
 
-    
-    
     func signUpUser(email: String, password: String, profileImage: Data?, nickName: String, completion: @escaping (FireAuthError) -> Void) {
         
         let userInfo = UserInfo(createDate: Date().GetCurrentTime(), loginDate: "", isUsing: false, userNickname: nickName, email: email, followers: [], followings: [])
-        
+
         DispatchQueue.global(qos: .userInteractive).async {
             self.createUser(email: email, password: password) { createUserError in
                 if createUserError != .none {
@@ -140,11 +143,9 @@ class FireAuthManager {
                         if let profileImage = profileImage {
                             self.firestorageImageManager.createProfileImage(imageData: profileImage) { storageError in
                                 if storageError != .none {
-                                    print("프로필 이미지 생성 실패")
                                     Logger.writeLog(.error, message: "프로필 이미지 생성 실패")
                                     completion(.unknown)
                                 } else {
-                                    print("프로필 이미지 성공")
                                     completion(.none)
                                 }
                             }

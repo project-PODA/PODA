@@ -8,6 +8,9 @@
 import UIKit
 import Then
 import NVActivityIndicatorView
+import GoogleSignIn
+import Firebase
+import FirebaseAuth
 
 class LoginViewController: BaseViewController, UIConfigurable {
     
@@ -41,7 +44,6 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let eyeButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_eye"), for: .normal)
         $0.tintColor = .gray
-        
     }
     
     private let passwordLineView = UIView().then {
@@ -54,8 +56,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.layer.cornerRadius = 36
         $0.clipsToBounds = true
         $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
-        
     }
+    
     private lazy var appleIconButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_apple"), for:.normal)
         $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
@@ -63,7 +65,6 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
         $0.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
     }
-    
     
     private let loginButton = UIButton().then {
         $0.setUpButton(title: "로그인", podaFont: .button1, cornerRadius: 22)
@@ -81,18 +82,21 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
         $0.layer.borderWidth = 1
     }
-    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
     
+    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
         setupActions()
-    }    
-    
-    func configUI() {
-        setupUI()
+        setupTextFields()
+        hideKeyboardWhenTappedAround()
+        emailTextField.enableHideKeyboardOnReturn()
+        passwordTextField.enableHideKeyboardOnReturn()
     }
+    
     
     private func setupActions() {
         signUpButton.addTarget(self, action: #selector(signUpButtonTap), for: .touchUpInside)
@@ -100,7 +104,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         loginButton.addTarget(self, action: #selector(goToMain), for: .touchUpInside)
     }
     
-    private func setupUI() {
+    func configUI() {
         
         let subviews: [UIView] = [
             logoImageView, emailLabel, passwordLabel, emailTextField,
@@ -151,6 +155,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.right.equalTo(emailLineView)
             make.height.equalTo(1)
         }
+        
         eyeButton.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-20)
             make.centerY.equalTo(passwordTextField)
@@ -190,11 +195,60 @@ class LoginViewController: BaseViewController, UIConfigurable {
         
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
         }
     }
+    
     @objc private func googleButtonTapped() {
         print("google")
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            print("Firebase clientID를 가져오지 못했습니다.")
+            return
+        }
+        
+        let config = GIDConfiguration(clientID: clientID)
+        
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
+            
+            if let error = error {
+                print("로그인 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let user = user else { return }
+            
+            let userId = user.userID ?? ""
+            let idToken = user.authentication.idToken ?? ""
+            let fullName = user.profile?.name ?? ""
+            let email = user.profile?.email ?? ""
+            
+            print("""
+                    로그인 성공
+                    사용자 ID: \(userId)
+                    ID 토큰: \(idToken)
+                    사용자 이름: \(fullName)
+                    이메일 주소: \(email)
+                    """)
+            
+            let authentication = user.authentication
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                                  accessToken: authentication.accessToken)
+                Auth.auth().signIn(with: credential) { (authResult, error) in
+                    if let error = error {
+                        print("파이어베이스 인증 실패: \(error.localizedDescription)")
+                        return
+                    }
+                    print("파이어베이스 인증 성공")
+                }
+            
+            DispatchQueue.main.async { [weak self] in
+                let tabBarController = BaseTabbarController()
+                self?.navigationController?.pushViewController(tabBarController, animated: true)
+                
+                UserDefaultManager.isUserLoggedIn = true
+                UserDefaultManager.userEmail = email
+                //                UserDefaultManager.userPassword = password
+            }
+        }
     }
     
     @objc private func appleButtonTapped() {
@@ -251,5 +305,20 @@ class LoginViewController: BaseViewController, UIConfigurable {
         appleIconButton.isEnabled = enabled
         loginButton.isEnabled = enabled
         signUpButton.isEnabled = enabled
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    
+    func setupTextFields() {
+        
+        emailTextField.setUpTextField(delegate: self)
+        passwordTextField.setUpTextField(delegate: self)
+        
+        // 왼쪽 패딩값 제거
+        emailTextField.leftView = nil
+        emailTextField.leftViewMode = .never
+        passwordTextField.leftView = nil
+        passwordTextField.leftViewMode = .never
     }
 }

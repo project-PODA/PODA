@@ -44,7 +44,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         $0.layer.borderWidth = 1
     }
     
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
+    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, type: .lineSpinFadeLoader, color: Palette.podaWhite.getColor())
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -76,7 +76,6 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
                 DispatchQueue.main.async{ [weak self] in
                     guard let self = self else {return}
                     usernameLabel.text = name
-                    print("nickName 얻어오기 성공")
                 }
             }
         }
@@ -122,10 +121,8 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         }
         
         loadingIndicator.snp.makeConstraints{ make in
-            make.top.equalTo(profileImageView.snp.top)
-            make.width.equalTo(profileImageView.snp.width)
-            make.height.equalTo(profileImageView.snp.height)
-            make.centerX.equalTo(profileImageView.snp.centerX)
+            make.width.height.equalTo(50)
+            make.center.equalTo(profileImageView)
         }
         
         cameraButton.snp.makeConstraints { make in
@@ -192,24 +189,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             }
         }
     }
-    private func moveToHome() {
-        UserDefaultManager.isUserLoggedIn = false
-        UserDefaultManager.userEmail = ""
-        UserDefaultManager.userPassword = ""
-        
-        DispatchQueue.main.async {
-            self.dismiss(animated: true) {
-                let loginViewController = LoginViewController()
-                let navigationController = BaseNavigationController(rootViewController: loginViewController)
-                if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
-                    UIView.transition(with: sceneDelegate.window!, duration: 0.5, options: .transitionCrossDissolve, animations: {
-                        sceneDelegate.window?.rootViewController = navigationController
-                        sceneDelegate.window?.makeKeyAndVisible()
-                    }, completion: nil)
-                }
-            }
-        }
-    }
+
     @objc private func didTapInfoButton() {
         let infoVC = InfoViewController()
         self.navigationController?.pushViewController(infoVC, animated: true)
@@ -221,7 +201,6 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.originalImage] as? UIImage {
-            
             profileImageView.image = selectedImage
             loadingIndicator.startAnimating()
             setComponentDisable(false)

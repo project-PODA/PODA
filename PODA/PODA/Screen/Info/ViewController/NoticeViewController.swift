@@ -12,8 +12,7 @@ import Then
 
 class NoticeViewController: BaseViewController, UIConfigurable {
     
-    // 샘플 공지사항 데이터
-    private let notices: [Notice] = Array(repeating: Notice(title: "어쩌구저쩌구 어쩌구 제목입니다.", date: "2023.09.12", content: " 내용입니다.공지사항 내용입니다.공지사항 내용입니다.공지사항 내용입니다.공지사항 내용입니다.공지사항 내용입니다.공지사항 내용입니다.공지사항 내용입니다.공지사항 내용입니다."), count: 10)
+    private var notices: [NoticeInfo] = []
     
     // 선택된 셀의 인덱스
     private var selectedIndex: IndexPath? = nil
@@ -27,10 +26,29 @@ class NoticeViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        
         tableView.dataSource = self
         tableView.delegate = self
+        
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getNotices()
+    }
+    
+    private let dbManager = FirestorageDBManager()
+    private func getNotices() {
+        dbManager.getNotices { [weak self] notices, error in
+            guard let self = self else { return }
+
+            if error == .none && !notices.isEmpty {
+                self.notices = notices
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        }
+    }
+    
     
     func configUI() {
         let navigationBarAppearance = UINavigationBarAppearance().then {
@@ -68,7 +86,6 @@ class NoticeViewController: BaseViewController, UIConfigurable {
         }
         
         tableView.backgroundColor = .clear
-        //        tableView.separatorStyle = .none
     }
     
     
@@ -81,13 +98,14 @@ class NoticeViewController: BaseViewController, UIConfigurable {
 // MARK: - UITableViewDataSource
 extension NoticeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(notices.count)
         return notices.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "noticeCell", for: indexPath) as! NoticeCell
-        let notice = notices[indexPath.row]
-        cell.configure(title: notice.title, date: notice.date)
+        var notice = notices[indexPath.row]
+        cell.configure(title: notice.title, date: Date.updateTime(dateTime: notice.date))
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
         
@@ -99,22 +117,9 @@ extension NoticeViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension NoticeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let defaultHeight: CGFloat = 84
-//        if selectedIndex == indexPath {
-//            if let cell = tableView.cellForRow(at: indexPath) as? NoticeCell {
-//                return defaultHeight + cell.contentLabelHeight()
-//            }
-//            return 200
-//        }
-        return defaultHeight
+
+        return 84
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        if selectedIndex == indexPath {
-//            selectedIndex = nil
-//        } else {
-//            selectedIndex = indexPath
-//        }
-//        tableView.reloadData()
-//    }
+
 }

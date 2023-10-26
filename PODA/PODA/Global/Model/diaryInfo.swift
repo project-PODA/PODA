@@ -5,27 +5,27 @@
 //  Created by 박유경 on 2023/10/16.
 //
 
+import Foundation
 
 struct DiaryInfo: Codable {
     var deviceName: String
     var diaryName: String
     var createTime: String
     var updateTime: String
-    var diaryTitle : String
+    var diaryTitle: String
     var description: String
     var frameRate: String
     var diaryDetail: DiaryDetail
 }
 
 struct DiaryDetail: Codable {
-    var totalPage: Int
     var pageInfo: [PageInfo]
 }
 
 struct PageInfo: Codable {
-    var page: Int
+    var imageData: Data
     var backgroundColor: String
-    var componentInfo: ComponentInfo
+    var componentInfo: ComponentInfo?
 }
 
 struct ComponentInfo: Codable {
@@ -42,8 +42,8 @@ struct ImageInfo: Codable {
     var height: Double
     var angle: Double
     var name: String
-    var xScale : Double
-    var yScale : Double
+    var xScale: Double
+    var yScale: Double
 }
 
 struct StickerInfo: Codable {
@@ -54,8 +54,8 @@ struct StickerInfo: Codable {
     var width: Double
     var height: Double
     var angle: Double
-    var xScale : Double
-    var yScale : Double
+    var xScale: Double
+    var yScale: Double
 }
 
 struct LabelInfo: Codable {

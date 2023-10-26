@@ -24,5 +24,15 @@ extension Date {
         let dateString = formatter.string(from: self)
         return dateString
     }
+    static func updateTime(dateTime: String, dateFormat: String = "yyyy-MM-dd HH:mm:ss", outputFormat: String = "yyyy-MM-dd") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat
+        if let date = dateFormatter.date(from: dateTime) {
+            let modifiedDateFormatter = DateFormatter()
+            modifiedDateFormatter.dateFormat = outputFormat
+            return modifiedDateFormatter.string(from: date)
+        }
+        return ""
+    }
 }
 

@@ -9,11 +9,24 @@ import UIKit
 import Then
 import SnapKit
 import RealmSwift
+import Foundation
+
+//UI에 보여질 데이터순.
+struct DiaryData{
+    var diaryName: String
+    var diaryImageList: [Data]
+    var createDate: String
+    var ratio: String
+    var description: String
+    
+}
 
 class HomeViewController: BaseViewController, UIConfigurable {
     
-    var imageMemories: Results<ImageMemory>?
+    var pieceImageList = [UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3"), UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3")]
     
+    var imageMemories: Results<ImageMemory>?
+    var diaryDataList: [DiaryData] = []
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
         $0.textColor = Palette.podaWhite.getColor()
@@ -45,7 +58,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let pieceLabelStackView = UIStackView().then {
+    private let pieceCountStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .leading
         $0.spacing = 4
@@ -58,11 +71,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - 추억 다이어리 갯수 불러오기
     private let diaryCountLabel = UILabel().then {
-        $0.setUpLabel(title: "20권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
+        $0.setUpLabel(title: "0권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let diaryLabelStackView = UIStackView().then {
+    private let diaryCountStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .leading
         $0.spacing = 4
@@ -80,13 +93,25 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    private let firebaseDBManager = FirestorageDBManager()
+    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword){ [weak self] error in
             guard let self = self else {return}
         }
+        loadImagesFromRealm()
+        loadDataFromFirebase()
+        print("viewwillappear")
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        diaryDataList = []
+        
+    }
+
     
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
@@ -123,10 +148,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapAddDiaryButton), for: .touchUpInside)
     }
     
-    private let diaryStackView = UIStackView().then {
+    private let diaryMenuStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
-        
         $0.spacing = 8
     }
     
@@ -149,10 +173,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     // FIXME: - 최신순으로 등록되도록
     private let diaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
-        let width = (UIScreen.main.bounds.width / 5) - 2
-        layout.itemSize = CGSize(width: width, height: width * 1.35)
         layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 2.0
+        layout.minimumLineSpacing = 8.0
         $0.collectionViewLayout = layout
         $0.backgroundColor = Palette.podaBlack.getColor()
         $0.showsHorizontalScrollIndicator = false  // 스크롤바 없애기
@@ -174,7 +196,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapAddPieceButton), for: .touchUpInside)
     }
     
-    private let pieceStackView = UIStackView().then {
+    private let pieceMenuStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
         $0.spacing = 8
@@ -186,6 +208,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapMorePieceButton), for: .touchUpInside)
     }
     
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+    
     private let emptyPieceLabel = UILabel().then {
         $0.setUpLabel(title: "아직 추억조각이 없어요\n생성하기를 통해 만들어보세요 :)", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
@@ -196,27 +220,10 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
-    // FIXME: - pieceCollectionView 생성 후 삭제하기
-    private let pieceImageView = UIImageView().then {
-        $0.backgroundColor = Palette.podaGray6.getColor()
-        $0.layer.cornerRadius = 5
-        let diaryLabel = UILabel()
-        diaryLabel.setUpLabel(title: "아직 추억조각이 없어요\n생성하기를 통해 만들어보세요 :)", podaFont: .caption)
-        diaryLabel.textColor = Palette.podaGray3.getColor()
-        diaryLabel.numberOfLines = 2
-        diaryLabel.textAlignment = .center
-        $0.addSubview(diaryLabel)
-        diaryLabel.snp.makeConstraints { 
-            $0.center.equalToSuperview()
-        }
-    }
-    
     private let pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
-        let width = (UIScreen.main.bounds.width / 5) - 2
-        layout.itemSize = CGSize(width: width, height: width * 1.35)
         layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 16.0
+        layout.minimumLineSpacing = 16.0
         $0.collectionViewLayout = layout
         $0.backgroundColor = Palette.podaBlack.getColor()
         $0.showsHorizontalScrollIndicator = false
@@ -232,11 +239,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
         setPieceView()
         diaryCollectionView.delegate = self
         diaryCollectionView.dataSource = self
+        pieceCollectionView.delegate = self
+        pieceCollectionView.dataSource = self
+        loadImagesFromRealm()
+        print("viewdidload")
     }
     
     // FIXME: - Stackview 정리하기
     func configUI() {
-        [mainStackView, pieceLabelStackView, diaryLabelStackView, scrollView].forEach {
+        [mainStackView, pieceCountStackView, diaryCountStackView, scrollView, loadingIndicator].forEach {
             view.addSubview($0)
         }
         
@@ -245,24 +256,24 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         
         [pieceLabel, pieceCountLabel].forEach {
-            pieceLabelStackView.addArrangedSubview($0)
+            pieceCountStackView.addArrangedSubview($0)
         }
         
         [diaryLabel, diaryCountLabel].forEach {
-            diaryLabelStackView.addArrangedSubview($0)
+            diaryCountStackView.addArrangedSubview($0)
         }
         
         scrollView.addSubview(contentView)
         
         [diaryMenuLabel, addDiaryButton].forEach {
-            diaryStackView.addArrangedSubview($0)
+            diaryMenuStackView.addArrangedSubview($0)
         }
         
         [pieceMenuLabel, addPieceButton].forEach {
-            pieceStackView.addArrangedSubview($0)
+            pieceMenuStackView.addArrangedSubview($0)
         }
         
-        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
+        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
 
@@ -276,14 +287,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(36)
         }
         
-        pieceLabelStackView.snp.makeConstraints { 
+        pieceCountStackView.snp.makeConstraints { 
             $0.top.equalTo(statusLabel.snp.bottom).offset(16)
             $0.left.equalToSuperview().offset(20)
         }
         
-        diaryLabelStackView.snp.makeConstraints { 
+        diaryCountStackView.snp.makeConstraints { 
             $0.top.equalTo(statusLabel.snp.bottom).offset(16)
-            $0.left.equalTo(pieceLabelStackView.snp.right).offset(20)
+            $0.left.equalTo(pieceCountStackView.snp.right).offset(20)
         }
         
         timeCapsuleLabel.snp.makeConstraints { 
@@ -309,23 +320,23 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(28)
         }
         
-        diaryStackView.snp.makeConstraints { 
+        diaryMenuStackView.snp.makeConstraints { 
             $0.top.equalTo(timeCapsuleImageView.snp.bottom).offset(60)
             $0.left.equalToSuperview().offset(20)
         }
         
         emptyDiaryLabel.snp.makeConstraints { 
-            $0.top.equalTo(diaryStackView.snp.bottom).offset(20)
+            $0.top.equalTo(diaryMenuStackView.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(108)
         }
         
         diaryCollectionView.snp.makeConstraints { 
-            $0.top.equalTo(diaryStackView.snp.bottom).offset(20)
+            $0.top.equalTo(diaryMenuStackView.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
-            $0.height.equalTo(108)
+            $0.height.equalTo((view.frame.width / 5 - 2) * 1.35)
         }
         
         moreDiaryButton.snp.makeConstraints { 
@@ -337,20 +348,21 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(28)
         }
         
-        pieceStackView.snp.makeConstraints { 
+        pieceMenuStackView.snp.makeConstraints { 
             $0.top.equalTo(diaryCollectionView.snp.bottom).offset(60)
             $0.left.equalToSuperview().offset(20)
         }
         
         emptyPieceLabel.snp.makeConstraints {
-            $0.top.equalTo(pieceStackView.snp.bottom).offset(20)
+            $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(180)
         }
         
+        // FIXME: - cell size 정한 후 height 수정하기
         pieceCollectionView.snp.makeConstraints {
-            $0.top.equalTo(pieceStackView.snp.bottom).offset(20)
+            $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(180)
@@ -362,7 +374,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         
         scrollView.snp.makeConstraints { 
-            $0.top.equalTo(pieceLabelStackView.snp.bottom).offset(30)
+            $0.top.equalTo(pieceCountStackView.snp.bottom).offset(30)
             $0.left.right.bottom.equalToSuperview()
         }
         
@@ -371,6 +383,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.top.left.right.bottom.equalToSuperview()
             $0.width.equalTo(scrollView.snp.width)
             $0.height.equalTo(1080)    // 스크롤 가능 높이 조절하기 > 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기
+        }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
+            $0.width.height.equalTo(200) // 원하는 크기로 설정
         }
     }
     
@@ -396,12 +413,71 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func setPieceView() {
-        // 등록된 추억 조각이 있는 경우
-        emptyPieceLabel.isHidden = true
-        
-        // 등록된 추억 조각이 없는 경우
-        //pieceCollectionView.isHidden = true
+//        guard let pieceCount = imageMemories?.count else { return }
+        if imageMemories?.count != 0 {
+            // 등록된 추억 조각이 있는 경우
+            emptyPieceLabel.isHidden = true
+        } else {
+            // 등록된 추억 조각이 없는 경우
+            pieceCollectionView.isHidden = true
+        }
+        print("추억 조각 갯수 = \(imageMemories?.count)")
     }
+    
+    func loadImagesFromRealm() {
+        imageMemories = RealmManager.shared.loadImageMemories()
+//        for imageMemory in imageMemories! {
+//            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
+//        }
+        pieceCollectionView.reloadData()
+    }
+    func loadDataFromFirebase() {
+        loadingIndicator.startAnimating()
+        firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
+            guard let self = self else { return }
+            if error == .none {
+                var counter = 0
+                for diaryName in diaryList {
+                    if diaryName != "Account" {
+                        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { [weak self] diaryInfoList, error in
+                            guard let self = self else { return }
+                            if error == .none, let diaryInfo = diaryInfoList.first {
+                                firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
+                                    guard let self = self else { return }
+                                    print(imageList)
+                                    if error == .none {
+                                        self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: diaryInfo.createTime, ratio: "square", description: diaryInfo.description))
+                                        counter += 1
+                                        if counter == diaryList.count - 1 {
+                                            DispatchQueue.main.async {
+                                                self.updateUI()
+                                            }
+                                        }
+                                    }
+                                }
+                                DispatchQueue.main.async{
+                                
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            self.loadingIndicator.stopAnimating()
+        }
+    }
+
+    func updateUI() {
+        DispatchQueue.main.async{
+            self.diaryCountLabel.text = "\(self.diaryDataList.count)권"
+            self.diaryCollectionView.reloadData()
+            self.loadingIndicator.stopAnimating()
+        }
+
+    }
+    
+    
+    
     
     @objc func didTapAddButton() {
         let homeMenuViewController = HomeMenuViewController()
@@ -428,7 +504,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapMoreDiaryButton() {
-        navigationController?.pushViewController(MoreDiaryViewController(), animated: true)
+        let moreDiaryVC = MoreDiaryViewController()
+        print(diaryDataList)
+        moreDiaryVC.diaryList = diaryDataList
+        navigationController?.pushViewController(moreDiaryVC, animated: true)
+        
     }
     
     @objc func didTapAddPieceButton() {
@@ -443,7 +523,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == diaryCollectionView {
-            navigationController?.pushViewController(DetailViewController(), animated: true)
+            if indexPath.row < diaryDataList.count {
+                let detailVC = DetailViewController()
+                detailVC.diaryData = diaryDataList[indexPath.row]
+                navigationController?.pushViewController(detailVC, animated: true)
+            }
         } else {
             //추억 조각 상세 페이지로 이동
         }
@@ -451,38 +535,49 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == diaryCollectionView {
-            return 5
+            return diaryDataList.count
         } else {
-            guard let pieceCount = imageMemories?.count else { return 0 }
-            print("Number of items in section: \(pieceCount)")
-            return pieceCount
+//            guard let pieceCount = imageMemories?.count else { return 0 }
+//            print("Number of items in section: \(pieceCount)")
+//            return pieceCount
+            return pieceImageList.count
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == diaryCollectionView {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryCollectionViewCell.identifier, for: indexPath) as? DiaryCollectionViewCell else { return UICollectionViewCell() }
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryCollectionViewCell.identifier, for: indexPath) as? DiaryCollectionViewCell else {
+                return UICollectionViewCell() }
+            cell.titleLabel.text = diaryDataList[indexPath.row].diaryName
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
+            cell.pieceImageView.image = pieceImageList[indexPath.row]
             return cell
+//            guard let imageMemory = imageMemories?[indexPath.item] else { return UICollectionViewCell() }
+//            let image = cell.getPieceImage(with: imageMemory)
+//            cell.pieceImageView.image = image
+//            return cell
         }
-        
-        
-        //titleLabel.text = indexPath.row의 title
-        //cell.imageView.image = imageList[indexPath.row]
     }
 }
 
-//extension HomeViewController: UICollectionViewDelegateFlowLayout {
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let cellWidth = (view.frame.width / 5) - 2 // (view.frame.width / 3) - 2 > 3등분 후에 옆 간격(2)만큼 빼주기
-//        return CGSize(width: cellWidth, height: collectionView.frame.height)
-//    }
-//    
-//    //셀 간 옆 간격
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-//        return 2.0
-//    }
-//}
+extension HomeViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == diaryCollectionView {
+            let width = (view.frame.width / 5) - 2
+            return CGSize(width: width, height: width * 1.35)
+        } else {
+            let image = pieceImageList[indexPath.row]
+            guard let image = image else { return CGSize() }
+            let width = image.size.width
+            return CGSize(width: width, height: collectionView.frame.height)
+//            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return CGSize() }
+//            guard let imageMemory = imageMemories?[indexPath.item] else { return CGSize() }
+//            let image = cell.getPieceImage(with: imageMemory)
+//            let width = image.size.width
+//            return CGSize(width: width, height: collectionView.frame.height)
+        }
+    }
+}
 

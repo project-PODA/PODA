@@ -14,8 +14,7 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
     static let identifier = "PieceCollectionViewCell"
     
     let pieceImageView = UIImageView().then {
-        $0.image = UIImage(named: "example")
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleAspectFit
     }
     
     override init(frame: CGRect) {
@@ -28,8 +27,8 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
     }
     
     func configUI() {
-        // backgroundColor = Palette.podaBlack.getColor()
-        
+        backgroundColor = Palette.podaBlack.getColor()
+
         addSubview(pieceImageView)
         
         pieceImageView.snp.makeConstraints { 
@@ -37,7 +36,21 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
         }
     }
     
-    func configure(with imageMemory: ImageMemory) -> UIImage {
+//    func configure(with imageMemory: ImageMemory) {
+//        
+//        guard let imagePath = imageMemory.imagePath else { return }
+//        print("Image Path: \(imagePath)")
+//        
+//        if let image = UIImage(contentsOfFile: imagePath) {
+//            pieceImageView.image = image
+//        } else {
+//            print("이미지 경로 없음: \(imagePath)")
+//        }
+//        
+//    }
+    
+        func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
+            
         // 이미지 로드 및 설정
         guard let imagePath = imageMemory.imagePath else { return UIImage() }
         print("Image Path: \(imagePath)")
