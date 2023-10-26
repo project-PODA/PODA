@@ -10,11 +10,14 @@ import UIKit
 
 class PhotoAccessHelper {
     static func requestPhotoLibraryAccess(presenter: UIViewController, completionHandler: @escaping (Bool) -> ()) {
-        let status = PHPhotoLibrary.authorizationStatus()
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         
         switch status {
         case .authorized:
-            // 이미 권한이 허용된 경우
+            // 이미 전체 권한이 허용된 경우
+            completionHandler(true)
+        case .limited:
+            // 일부 사진에만 접근 가능한 경우
             completionHandler(true)
         case .denied, .restricted:
             // 권한이 거부되었거나 제한된 경우
@@ -24,9 +27,9 @@ class PhotoAccessHelper {
             completionHandler(false)
         case .notDetermined:
             // 아직 권한을 요청하지 않은 경우
-            PHPhotoLibrary.requestAuthorization { (newStatus) in
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { (newStatus) in
                 DispatchQueue.main.async {
-                    if newStatus == .authorized {
+                    if newStatus == .authorized || newStatus == .limited {
                         completionHandler(true)
                     } else {
                         showAlertToSettings(presenter: presenter)
@@ -34,7 +37,7 @@ class PhotoAccessHelper {
                     }
                 }
             }
-        default:
+        @unknown default:
             completionHandler(false)
         }
     }
