@@ -182,18 +182,20 @@ class PieceViewController: BaseViewController, UIConfigurable {
     
     func showSaveConfirmationAlert() {
         let alertController = UIAlertController(title: "저장하시겠습니까?", message: nil, preferredStyle: .alert)
-        
+
         let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            
-            
-            guard let selectedImage = self?.imageView.image, let selectedDate = self?.datePickerButton.title(for: .normal) else {
-                self?.showAlert(title: "주의!", message: "이미지와 날짜가 모두 입력 되어야만 저장할 수 있습니다.")
+            guard let self = self else { return }
+
+            guard let selectedImage = self.imageView.image,
+                  let selectedDateString = self.datePickerButton.title(for: .normal),
+                  let selectedDate = Date(dateString: selectedDateString, format: "yyyy. MM. dd") else {
+                      
+                self.showAlert(title: "주의!", message: "이미지와 날짜가 모두 입력되어야만 저장할 수 있습니다.")
                 return
             }
-            
-            self?.saveImageToRealm(image: selectedImage, date: Date(dateString: selectedDate, format: "yyyy. MM. dd"))
-            
-            self?.navigationController?.popViewController(animated: true)
+
+            self.saveImageToRealm(image: selectedImage, date: selectedDate)
+            self.navigationController?.popViewController(animated: true)
         }
         
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
