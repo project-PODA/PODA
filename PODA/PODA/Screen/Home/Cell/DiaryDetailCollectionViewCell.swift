@@ -14,7 +14,7 @@ class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
     static let identifier = "DiaryDetailCollectionViewCell"
     
     // FIXME: - 다이어리 커버 (첫번째 페이지로 설정) 불러오기
-    private let gradientImageView = UIImageView().then {
+     lazy var gradientImageView = UIImageView().then {
         let gradientLayer = CAGradientLayer()
         let width = (UIScreen.main.bounds.width - 40) * 2 / 3
         let height = ((UIScreen.main.bounds.height * 5 / 7) - 12) / 2
@@ -30,7 +30,7 @@ class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
     }
     
     // FIXME: - 다이어리 제목 불러오기
-    private let titleLabel = UILabel().then {
+    lazy var titleLabel = UILabel().then {
         $0.setUpLabel(title: "나홀로\n인생네컷\n모음", podaFont: .head1) // 다이어리 제목
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 3
@@ -38,7 +38,7 @@ class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
     }
     
     // FIXME: - 다이어리 생성 날짜 불러오기
-    private let dateLabel = UILabel().then {
+    lazy var dateLabel = UILabel().then {
         $0.setUpLabel(title: "2023.09.21", podaFont: .subhead2) // 생성 날짜
         $0.textColor = Palette.podaGray3.getColor()
     }

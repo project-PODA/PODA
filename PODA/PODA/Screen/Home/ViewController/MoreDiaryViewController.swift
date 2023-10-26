@@ -11,6 +11,8 @@ import SnapKit
 
 class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
+    var diaryList : [DiaryData] = []
+    
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()

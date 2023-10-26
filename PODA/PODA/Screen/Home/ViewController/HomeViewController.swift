@@ -9,13 +9,21 @@ import UIKit
 import Then
 import SnapKit
 import RealmSwift
+import Foundation
+
+//UI에 보여질 데이터순.
+struct DiaryData{
+    var diaryName: String
+    var diaryImageList: [Data]
+    var createDate: String
+}
 
 class HomeViewController: BaseViewController, UIConfigurable {
     
     var pieceImageList = [UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3"), UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3")]
     
     var imageMemories: Results<ImageMemory>?
-    
+    var diaryDataList: [DiaryData] = []
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
         $0.textColor = Palette.podaWhite.getColor()
@@ -60,7 +68,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - 추억 다이어리 갯수 불러오기
     private let diaryCountLabel = UILabel().then {
-        $0.setUpLabel(title: "20권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
+        $0.setUpLabel(title: "0권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -82,6 +90,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    private let firebaseDBManager = FirestorageDBManager()
+    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -89,8 +99,16 @@ class HomeViewController: BaseViewController, UIConfigurable {
             guard let self = self else {return}
         }
         loadImagesFromRealm()
+        loadDataFromFirebase()
         print("viewwillappear")
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        diaryDataList = []
+        
+    }
+
     
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
@@ -403,6 +421,38 @@ class HomeViewController: BaseViewController, UIConfigurable {
 //        }
         pieceCollectionView.reloadData()
     }
+    func loadDataFromFirebase() {
+        var diaryNameList: [String] = []
+        var imageDataList: [Data] = []
+        var createdTimeList: [String] = []
+        
+        firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
+            guard let self = self else { return }
+            if error == .none {
+                firebaseDBManager.getDiaryData(diaryNameList: diaryList){ [weak self] diaryInfoList, Error in
+                    guard let self = self else {return}
+                    if error == .none {
+                        for diaryInfo in diaryInfoList {
+                            if diaryInfo.diaryName != "Account" {
+                                diaryNameList.append(diaryInfo.diaryName)
+                                createdTimeList.append(diaryInfo.createTime)
+                                firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
+                                    guard let self = self else {return}
+                                    imageDataList = imageList
+                                    diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageDataList, createDate: diaryInfo.createTime))
+                                    DispatchQueue.main.async {
+                                        self.diaryCountLabel.text = String(self.diaryDataList.count) + "권"
+                                        self.diaryCollectionView.reloadData()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     
     @objc func didTapAddButton() {
         let homeMenuViewController = HomeMenuViewController()
@@ -429,7 +479,10 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapMoreDiaryButton() {
+        let moreDiaryVC = MoreDiaryViewController()
+        moreDiaryVC.diaryList = diaryDataList
         navigationController?.pushViewController(MoreDiaryViewController(), animated: true)
+        
     }
     
     @objc func didTapAddPieceButton() {
@@ -452,7 +505,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == diaryCollectionView {
-            return 5
+            return diaryDataList.count
         } else {
 //            guard let pieceCount = imageMemories?.count else { return 0 }
 //            print("Number of items in section: \(pieceCount)")
@@ -463,7 +516,9 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == diaryCollectionView {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryCollectionViewCell.identifier, for: indexPath) as? DiaryCollectionViewCell else { return UICollectionViewCell() }
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryCollectionViewCell.identifier, for: indexPath) as? DiaryCollectionViewCell else {
+                return UICollectionViewCell() }
+            cell.titleLabel.text = diaryDataList[indexPath.row].diaryName
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
