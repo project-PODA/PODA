@@ -56,19 +56,19 @@ class InfoViewController: BaseViewController, UIConfigurable {
     func sendEmail() {
         // App Version.
         guard let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else { return }
-
+        
         // mail 을 연동해서 보낼 수 있는가를 체크.
         if MFMailComposeViewController.canSendMail() {
             let mailComposeVC = MFMailComposeViewController()
             mailComposeVC.mailComposeDelegate = self
             mailComposeVC.setToRecipients(["poda_official@naver.com"])
             mailComposeVC.setSubject("PODA 문의 사항")
-            mailComposeVC.setMessageBody("문의 사항을 상세히 입력해주세요. \n\n App Version: \(appVersion) \n Device: \(UIDevice.iPhoneModel) \n OS: \(UIDevice.iOSVersion)", isHTML: false)
+            mailComposeVC.setMessageBody("오류사항 및 문의사항을 세세히 입력해주세요.\n(필요하다면 스크린샷도 함께 첨부해주세요.) \n\n App Version: \(appVersion) \n Device: \(UIDevice.iPhoneModel) \n OS: \(UIDevice.iOSVersion)", isHTML: false)
             mailComposeVC.modalPresentationStyle = .overFullScreen
             present(mailComposeVC, animated: true, completion: nil)
         } else {
             // mail 이 계정과 연동되지 않은 경우.
-            let mailErrorAlert = UIAlertController(title: "메일 전송 실패", message: "이메일 설정을 확인하고 다시 시도해주세요.", preferredStyle: .alert)
+            let mailErrorAlert = UIAlertController(title: "메일 전송 실패", message: "이메일 설정을 확인하고 다시 시도해주세요.\n('설정'앱>Mail>계정>계정추가)", preferredStyle: .alert)
             let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in }
             mailErrorAlert.addAction(confirmAction)
             present(mailErrorAlert, animated: true, completion: nil)
@@ -156,10 +156,10 @@ extension InfoViewController: MFMailComposeViewControllerDelegate {
 
 // MARK: - UIDevice Extension.
 extension UIDevice {
-// 🔥 iOS Version
+    // iOS Version
     static let iOSVersion = "\(current.systemName) \(current.systemVersion)"
-
-// 🔥 iPhone Model
+    
+    // iPhone Model
     private static var hardwareString: String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -171,8 +171,6 @@ extension UIDevice {
         return model
     }
 
-    /// Referenced the following URL.
-    /// [List of iOS and iPadOS devices](https://en.wikipedia.org/wiki/List_of_iOS_and_iPadOS_devices)
     private static var modelDictionary: [String: String] {
         return [
             "i386": "Simulator",   // 32 bit
@@ -206,7 +204,15 @@ extension UIDevice {
             "iPhone14,5": "iPhone 13",
             "iPhone14,2": "iPhone 13 Pro",
             "iPhone14,3": "iPhone 13 Pro Max",
-            "iPhone14,6": "iPhone SE 3nd generation"
+            "iPhone14,6": "iPhone SE 3nd generation",
+            "iPhone14,7": "iPhone 14",
+            "iPhone14,8": "iPhone 14 Plus",
+            "iPhone15,2": "iPhone 14 Pro",
+            "iPhone15,3": "iPhone 14 Pro Max",
+            "iPhone15,4": "iPhone 15",
+            "iPhone15,5": "iPhone 15 Plus",
+            "iPhone16,1": "iPhone 15 Pro",
+            "iPhone16,2": "iPhone 15 Pro Max"
         ]
     }
 
