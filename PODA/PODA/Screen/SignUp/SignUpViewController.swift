@@ -20,7 +20,13 @@ class SignUpViewController: BaseViewController {
     private var firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let authManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let fireStoreDB = FirestorageDBManager()
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+
+    
+    private lazy var backButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+    }
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -59,6 +65,7 @@ class SignUpViewController: BaseViewController {
         $0.borderStyle = .none
         $0.backgroundColor = Palette.podaGray1.getColor()
         $0.layer.cornerRadius = 5
+        $0.keyboardType = .emailAddress
     }
     
     
@@ -259,7 +266,8 @@ class SignUpViewController: BaseViewController {
     
     
     private func setupUI() {
-        
+        view.addSubview(backButton)
+
         view.addSubview(titleLabel)
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -270,9 +278,14 @@ class SignUpViewController: BaseViewController {
         
         scrollView.contentInsetAdjustmentBehavior = .never
         
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.height.equalTo(36)
+        }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
+            make.top.equalTo(backButton.snp.bottom).offset(30)
             make.leading.equalTo(view.snp.leading).offset(20)
         }
         
@@ -411,12 +424,28 @@ class SignUpViewController: BaseViewController {
             make.top.equalTo(scrollView.snp.bottom).offset(20)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
+        
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
+        }
+    }
+    
+    func updateSignUpButtonAppearance() {
+        if authCodeSuccess && emailAuthSuccess && passwordAuthSuccess {
+            signUpButton.backgroundColor = Palette.podaBlue.getColor()
+            signUpButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        } else {
+            signUpButton.setUpButton(title: "가입하기", podaFont: .button1, cornerRadius: 22)
+            signUpButton.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
+            signUpButton.layer.borderColor = Palette.podaBlue.getColor().cgColor
+            signUpButton.layer.borderWidth = 1
         }
     }
 
+    
+    @objc func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
+    }
     
     @objc private func clearEmailField(_ sender: UIButton) {
         emailTextField.text = ""
@@ -429,8 +458,19 @@ class SignUpViewController: BaseViewController {
     
     @objc private func emailTextFieldDidChange(_ textField: UITextField) {
         guard let email = textField.text else { return }
-        emailErrorLabel.isHidden = isValidEmail(email)
+        let isValid = isValidEmail(email)
+        emailErrorLabel.isHidden = isValid
+        
+        if isValid {
+            emailSendButton.backgroundColor = Palette.podaBlue.getColor()
+        } else {
+            emailSendButton.backgroundColor = Palette.podaGray4.getColor()
+            verifyCodeButton.backgroundColor = Palette.podaGray4.getColor()
+        }
     }
+    
+    
+    
     
     @objc private func togglePasswordVisibility(_ sender: UIButton) {
         passwordTextField.isSecureTextEntry.toggle()
@@ -489,6 +529,7 @@ class SignUpViewController: BaseViewController {
             confirmPasswordErrorLabel.isHidden = false
             confirmPasswordErrorLabel.text = "비밀번호가 일치합니다."
             confirmPasswordErrorLabel.textColor = Palette.podaBlue.getColor()
+            updateSignUpButtonAppearance()
         } else{
             confirmPasswordErrorLabel.text = "비밀번호가 일치하지 않습니다."
             confirmPasswordErrorLabel.textColor = Palette.podaRed.getColor()
@@ -496,7 +537,7 @@ class SignUpViewController: BaseViewController {
         
     }
     @objc private func nextButtonTap() {
-
+        
         if authCodeSuccess && emailAuthSuccess && passwordAuthSuccess {
             let setProfileVC = SetProfileViewController()
             setProfileVC.email = emailTextField.text!.lowercased()
@@ -506,10 +547,11 @@ class SignUpViewController: BaseViewController {
             showAlert(title: "에러", message: "빠뜨린 정보를 확인해주세요.")
         }
     }
+    
     //메일 인증 보내기
     @objc private func sendAuthUserCode() {
         guard let _ = emailTextField.text  else {return}
-
+        
         loadingIndicator.startAnimating()
         setComponentDisable(false)
         //어드민계정으로 접속후 이메일에 중복된 값이 있는지 확인
@@ -517,13 +559,13 @@ class SignUpViewController: BaseViewController {
             guard let self = self else {return}
             
             fireStoreDB.emailCheck(email: emailTextField.text!.lowercased()){[weak self] error in
-            guard let self = self else {return}
+                guard let self = self else {return}
                 //로그인 못하는 상태라면 -> 유저정보가 없다면 다시 비활성화 된 버튼들을 활성화시킴
                 if error == .none{
                     showAlert(title: "에러", message: "유저 정보가 존재합니다. 다른 계정으로 가입해주세요.")
                     emailSendButton.isEnabled = true
                     verifyCodeButton.isEnabled = true
-
+                    
                 } else {
                     smtpManager.sendAuth(userEmail: emailTextField.text!, logoImage: UIImage(named: "logo_poda")?.pngData()!){ [weak self] (authCode, success) in
                         guard let self = self else {return}
@@ -533,6 +575,8 @@ class SignUpViewController: BaseViewController {
                                 self.emailErrorLabel.isHidden = false
                                 self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
                                 self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
+                                self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
+                                self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
                             }
                         }
                     }
@@ -545,7 +589,9 @@ class SignUpViewController: BaseViewController {
             }
         }
     }
-    //메일 인증 
+    
+    
+    //메일 인증
     @objc private func checkAuthUserCode() {
         guard let _ = verificationCodeTextField.text else { return }
         
@@ -554,24 +600,32 @@ class SignUpViewController: BaseViewController {
         verificationCodeErrorLabel.isHidden = false
         if success {
             verificationCodeErrorLabel.textColor = Palette.podaBlue.getColor()
-            verificationCodeErrorLabel.text = "인증이 완료되었습니다.."
+            verificationCodeErrorLabel.text = "인증이 완료되었습니다."
             authCodeSuccess = true
             
             //인증버튼 누르면 더이상 disable
-            verifyCodeButton.isEnabled = false
-            verifyCodeButton.setTitleColor(Palette.podaRed.getColor(), for: .disabled)
-            
-            //인증버튼 누르면 더이상 disable
+            verifyCodeButton.backgroundColor = Palette.podaGray4.getColor()
+            emailSendButton.backgroundColor = Palette.podaGray4.getColor()
+            verifyCodeButton.setTitle("인증완료", for: .normal)
+            verificationCodeTextField.backgroundColor = Palette.podaGray2.getColor()
+            emailTextField.backgroundColor = Palette.podaGray2.getColor()
+            verificationCodeDeleteButton.isHidden = true
             emailSendButton.isEnabled = false
-            emailSendButton.setTitleColor(Palette.podaRed.getColor(), for: .disabled)
+            verifyCodeButton.isEnabled = false
+            emailTextField.isEnabled = false
+            verificationCodeTextField.isEnabled = false
+            emailDeleteButton.isHidden = true
+
+
             
         } else {
             verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
             verificationCodeErrorLabel.text = "인증에 실패했습니다. 다시 확인해주세요."
         }
+        
     }
     
-
+    
     
     
     //💥deinit 추가!! dismiss추가
