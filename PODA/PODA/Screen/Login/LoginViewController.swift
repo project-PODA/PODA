@@ -85,8 +85,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
     
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
-    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
@@ -195,7 +195,6 @@ class LoginViewController: BaseViewController, UIConfigurable {
         
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
         }
     }
     

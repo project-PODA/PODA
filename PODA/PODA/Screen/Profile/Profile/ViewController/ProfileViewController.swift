@@ -44,7 +44,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         $0.layer.borderWidth = 1
     }
     
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
+    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, type: .lineSpinFadeLoader, color: Palette.podaWhite.getColor())
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -121,10 +121,8 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         }
         
         loadingIndicator.snp.makeConstraints{ make in
-            make.top.equalTo(profileImageView.snp.top)
-            make.width.equalTo(profileImageView.snp.width)
-            make.height.equalTo(profileImageView.snp.height)
-            make.centerX.equalTo(profileImageView.snp.centerX)
+            make.width.height.equalTo(50)
+            make.center.equalTo(profileImageView)
         }
         
         cameraButton.snp.makeConstraints { make in
