@@ -27,6 +27,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     var imageMemories: Results<ImageMemory>?
     var diaryDataList: [DiaryData] = []
+    private var randomDiaryIndex = 0
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
         $0.textColor = Palette.podaWhite.getColor()
@@ -99,7 +100,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword){ [weak self] error in
-            guard let self = self else {return}
+            guard let _ = self else {return}
         }
         loadImagesFromRealm()
         loadDataFromFirebase()
@@ -437,19 +438,17 @@ class HomeViewController: BaseViewController, UIConfigurable {
                             if error == .none, let diaryInfo = diaryInfoList.first {
                                 firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
                                     guard let self = self else { return }
-                                    print(imageList)
                                     if error == .none {
-                                        self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: diaryInfo.createTime, ratio: "square", description: diaryInfo.description))
+                                        self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: Date.updateTime(dateTime: diaryInfo.createTime).replacingOccurrences(of: "-", with: "."), ratio: "square", description: diaryInfo.description))
                                         counter += 1
                                         if counter == diaryList.count - 1 {
+                                            self.diaryDataList.sort { $0.createDate > $1.createDate }
+                                            
                                             DispatchQueue.main.async {
                                                 self.updateUI()
                                             }
                                         }
                                     }
-                                }
-                                DispatchQueue.main.async {
-                                    
                                 }
                             }
                         }
@@ -463,9 +462,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
         DispatchQueue.main.async {
             self.diaryCountLabel.text = "\(self.diaryDataList.count)권"
             self.diaryCollectionView.reloadData()
+            
+            if !self.diaryDataList.isEmpty{
+                self.emptyTimeCapsuleLabel.isHidden = false
+                self.timeCapsuleImageView.isHidden = false
+                self.randomDiaryIndex = Int.random(in: 0..<self.diaryDataList.count)
+                self.timeCapsuleImageView.image = UIImage(data: self.diaryDataList[self.randomDiaryIndex].diaryImageList[0])
+            }
         }
     }
-    
     @objc func didTapAddButton() {
         let homeMenuViewController = HomeMenuViewController()
         homeMenuViewController.modalPresentationStyle = .overFullScreen
@@ -483,7 +488,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapCapsuleImage() {
-        navigationController?.pushViewController(DetailViewController(), animated: true)
+        let detailVC = DetailViewController()
+        detailVC.diaryData = diaryDataList[randomDiaryIndex]
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     @objc func didTapAddDiaryButton() {
@@ -492,10 +499,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapMoreDiaryButton() {
         let moreDiaryVC = MoreDiaryViewController()
-        print(diaryDataList)
         moreDiaryVC.diaryList = diaryDataList
         navigationController?.pushViewController(moreDiaryVC, animated: true)
-        
     }
     
     @objc func didTapAddPieceButton() {
