@@ -146,7 +146,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         let textCount = textField.text?.count ?? 0
         titleCountLabel.text = "\(textCount)자 / 14자"
         if textCount > 14 {
-            titleCountLabel.text = "\(textCount - 1)자 / 14자"
+            titleCountLabel.text = "14자 / 14자"
             textField.text = String(textField.text!.prefix(14))
             return
         }
@@ -157,7 +157,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         let textCount = textView.text.count
         contentCountLabel.text = "\(textCount)자 / 100자"
         if textCount > 100 {
-            titleCountLabel.text = "100자 / 100자"
+            contentCountLabel.text = "100자 / 100자"
             textView.text = String(textView.text.prefix(100))
             return
         }
