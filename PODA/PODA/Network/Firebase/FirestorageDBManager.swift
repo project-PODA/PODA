@@ -28,7 +28,6 @@ class FirestorageDBManager {
             description: description,
             frameRate: frameRate.toString(),
             diaryDetail: DiaryDetail(
-                totalPage: pageDataList.count,
                 pageInfo : pageDataList
             )
         )

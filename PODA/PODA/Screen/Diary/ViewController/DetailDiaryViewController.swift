@@ -13,6 +13,9 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
     // MARK: - Properties
     
+    var ratio: Ratio?
+    var pageInfo: [PageInfo]?
+    
     private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "뒤로", rightButtonTitle: "저장").then {
         $0.leftButton.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
         $0.rightButton.addTarget(self, action: #selector(touchUpSaveButton), for: .touchUpInside)

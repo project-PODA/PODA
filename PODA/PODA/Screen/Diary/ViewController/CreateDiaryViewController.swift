@@ -173,8 +173,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpNextButton() {
-        let viewController = DetailDiaryViewController()
-        navigationController?.pushViewController(viewController, animated: true)
+        let diaryImage = diaryView.transfromToImage()
+        let detailDiaryViewController = DetailDiaryViewController()
+        detailDiaryViewController.ratio = ratio
+        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage?.pngData() ?? Data(), backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
+        navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
     
     @objc private func touchUpBackgroundButton() {
