@@ -82,6 +82,8 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
         setActions()
+        hideKeyboardWhenTappedAround()
+        nicknameTextField.enableHideKeyboardOnReturn()
         nicknameTextField.delegate = self
         
     }
