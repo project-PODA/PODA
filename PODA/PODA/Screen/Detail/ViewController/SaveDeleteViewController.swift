@@ -42,12 +42,12 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     var diaryName: String? //나중에 은서님 페이지에 이름 넘겨줄것..
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
     }
-
+    
     func configUI() {
         let navigationBarStackView = UIStackView(arrangedSubviews: [backButton, dateLabel, addButton])
         navigationBarStackView.axis = .horizontal
@@ -61,28 +61,28 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         
         [navigationBarStackView, imageView, buttonStackView].forEach(view.addSubview)
         
-        backButton.snp.makeConstraints { 
+        backButton.snp.makeConstraints {
             $0.width.height.equalTo(30)
         }
         
-        addButton.snp.makeConstraints { 
+        addButton.snp.makeConstraints {
             $0.width.height.equalTo(30)
         }
         
-        navigationBarStackView.snp.makeConstraints { 
+        navigationBarStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
         }
         
-        imageView.snp.makeConstraints { 
+        imageView.snp.makeConstraints {
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
             $0.left.right.equalToSuperview()
             //$0.height.equalTo(512)
             $0.height.equalTo(view.frame.width * 1.25)
         }
         
-        buttonStackView.snp.makeConstraints { 
+        buttonStackView.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(72)
             $0.left.equalToSuperview().offset(40)
             $0.right.equalToSuperview().offset(-40)
@@ -99,10 +99,51 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapSaveButton() {
         // 저장되었습니다 토스트 메세지 띄우기 & 앨범에 이미지 추가
+        if let image = imageView.image {
+            UIImageWriteToSavedPhotosAlbum(image, self, #selector(savedImage), nil)
+        }
     }
     
     @objc func didTapDeleteButton() {
         // 삭제되었습니다 토스트 메세지 띄우기 & 삭제하고 데이터 저장
     }
     
+    @objc func savedImage(image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeMutableRawPointer?) {
+        if let error = error {
+            NSLog("Failed to save image. Error = \(error.localizedDescription)")
+            //                권한 허용 안함 상태일 때 설정에서 변경하라고 띄워주기
+            //                if isPermissionDenied, let vc = viewController {
+            //                    Dialog.presentPhotoPermission(vc)
+            //        }
+        } else {
+            // 토스트 메세지 띄우기
+            showToastMessage("성공적으로 저장되었습니다!", withDuration: 2.0, delay: 2.0)
+        }
+    }
+    
+    func showToastMessage(_ message : String, withDuration: Double, delay: Double) {
+        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
+        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        toastLabel.textColor = UIColor.white
+        toastLabel.font = UIFont.systemFont(ofSize: 14.0)
+        toastLabel.textAlignment = .center
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 16.0
+        toastLabel.clipsToBounds  =  true
+        
+        view.addSubview(toastLabel)
+        
+//        toastLabel.snp.makeConstraints {
+//            $0.center.equalToSuperview()
+//        }
+        
+        UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
+    }
 }
+
+    

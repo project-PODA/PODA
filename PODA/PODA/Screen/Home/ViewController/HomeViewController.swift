@@ -550,7 +550,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             cell.pieceImageView.image = pieceImageList[indexPath.row]
             return cell
 //            guard let imageMemory = imageMemories?[indexPath.item] else { return UICollectionViewCell() }
-//            let image = cell.configure(with: imageMemory)
+//            let image = cell.getPieceImage(with: imageMemory)
 //            cell.pieceImageView.image = image
 //            return cell
         }
@@ -569,7 +569,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: width, height: collectionView.frame.height)
 //            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return CGSize() }
 //            guard let imageMemory = imageMemories?[indexPath.item] else { return CGSize() }
-//            let image = cell.configure(with: imageMemory)
+//            let image = cell.getPieceImage(with: imageMemory)
 //            let width = image.size.width
 //            return CGSize(width: width, height: collectionView.frame.height)
         }
