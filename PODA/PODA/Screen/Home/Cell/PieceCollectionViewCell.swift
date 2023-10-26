@@ -28,6 +28,7 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     func configUI() {
         backgroundColor = Palette.podaBlack.getColor()
+        backgroundColor = .red
 
         addSubview(pieceImageView)
         

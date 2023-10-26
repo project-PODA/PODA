@@ -18,7 +18,6 @@ struct DiaryData{
     var createDate: String
     var ratio: String
     var description: String
-    
 }
 
 class HomeViewController: BaseViewController, UIConfigurable {
@@ -102,6 +101,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             guard let self = self else {return}
         }
         loadImagesFromRealm()
+        setPieceView()
         loadDataFromFirebase()
         print("viewwillappear")
     }
@@ -111,8 +111,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         diaryDataList = []
         
     }
-    
-    
+
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
@@ -226,11 +225,13 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaBlack.getColor()
         $0.showsHorizontalScrollIndicator = false
         $0.register(PieceCollectionViewCell.self, forCellWithReuseIdentifier: "PieceCollectionViewCell")
+        $0.backgroundColor = .green
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
+        loadImagesFromRealm()
         configUI()
         setTimeCapsuleView()
         setDiaryView()
@@ -239,7 +240,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         diaryCollectionView.dataSource = self
         pieceCollectionView.delegate = self
         pieceCollectionView.dataSource = self
-        loadImagesFromRealm()
         print("viewdidload")
     }
     
@@ -406,15 +406,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func setPieceView() {
-        //        guard let pieceCount = imageMemories?.count else { return }
-        if imageMemories?.count != 0 {
+        guard let pieceCount = imageMemories?.count else { return }
+        if pieceCount != 0 {
             // 등록된 추억 조각이 있는 경우
             emptyPieceLabel.isHidden = true
         } else {
             // 등록된 추억 조각이 없는 경우
             pieceCollectionView.isHidden = true
         }
-        print("추억 조각 갯수 = \(imageMemories?.count)")
+        print("추억 조각 갯수 = \(pieceCount)")
     }
     
     func loadImagesFromRealm() {
@@ -437,7 +437,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
                             if error == .none, let diaryInfo = diaryInfoList.first {
                                 firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
                                     guard let self = self else { return }
-                                    print(imageList)
+                                    //print(imageList)
                                     if error == .none {
                                         self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: diaryInfo.createTime, ratio: "square", description: diaryInfo.description))
                                         counter += 1
@@ -492,7 +492,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapMoreDiaryButton() {
         let moreDiaryVC = MoreDiaryViewController()
-        print(diaryDataList)
+        //print(diaryDataList)
         moreDiaryVC.diaryList = diaryDataList
         navigationController?.pushViewController(moreDiaryVC, animated: true)
         
