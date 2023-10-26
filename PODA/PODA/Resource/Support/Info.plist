@@ -2,8 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>&quot;PODA&quot; 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string></string>
+	<string>&quot;PODA&quot; 앱에서 다이어리 꾸미기, 나의 추억조각 등록, 등록된 사진들의 편집기능 이용을 위해 사진 라이브러리에 접근하도록 허용합니다.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.922261089465-li6ugadq36djvvllegk42q665gjlsboa</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Black.otf</string>

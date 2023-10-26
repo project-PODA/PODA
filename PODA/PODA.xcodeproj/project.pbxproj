@@ -26,6 +26,8 @@
 		2794D7AE2AE01C9700B999EC /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794D7AD2AE01C9700B999EC /* RealmManager.swift */; };
 		2794D7B02AE0216000B999EC /* TestPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794D7AF2AE0216000B999EC /* TestPageViewController.swift */; };
 		27986DDE2AE125B900D27C84 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 27986DDD2AE125B900D27C84 /* RealmSwift */; };
+		27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */; };
+		27AA45822AEA400D0051C365 /* CameraAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */; };
 		27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652A2ADD21B800B6E211 /* PieceViewController.swift */; };
 		27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652F2ADD237600B6E211 /* PieceViewModel.swift */; };
 		27DB5D0D2AE2532900489318 /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */; };
@@ -140,6 +142,8 @@
 		2794D7AB2ADFFDD900B999EC /* PieceImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceImageModel.swift; sourceTree = "<group>"; };
 		2794D7AD2AE01C9700B999EC /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		2794D7AF2AE0216000B999EC /* TestPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPageViewController.swift; sourceTree = "<group>"; };
+		27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAccessHelper.swift; sourceTree = "<group>"; };
+		27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAccessHelper.swift; sourceTree = "<group>"; };
 		27D2652A2ADD21B800B6E211 /* PieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewController.swift; sourceTree = "<group>"; };
 		27D2652F2ADD237600B6E211 /* PieceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewModel.swift; sourceTree = "<group>"; };
 		5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
@@ -362,6 +366,8 @@
 			children = (
 				2794D7AB2ADFFDD900B999EC /* PieceImageModel.swift */,
 				2794D7AD2AE01C9700B999EC /* RealmManager.swift */,
+				27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */,
+				27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -947,6 +953,7 @@
 				E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */,
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				2794D7AE2AE01C9700B999EC /* RealmManager.swift in Sources */,
+				27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */,
 				2794D7B02AE0216000B999EC /* TestPageViewController.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
@@ -961,6 +968,7 @@
 				D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */,
 				26A7D49B2AE63F6D00810D63 /* PieceCollectionViewCell.swift in Sources */,
 				5F54EC002ADFFFFD00331E59 /* FirebaseError + Enum.swift in Sources */,
+				27AA45822AEA400D0051C365 /* CameraAccessHelper.swift in Sources */,
 				5FD54B432AD912D60092D75B /* ConstMargin + Enum.swift in Sources */,
 				5F5447CD2AE6356300365DB7 /* SMTPError + Enum.swift in Sources */,
 				D8F46ADC2AE7E34800C8FDF4 /* NoticeCell.swift in Sources */,
