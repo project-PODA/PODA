@@ -49,7 +49,7 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
 //        
 //    }
     
-        func configure(with imageMemory: ImageMemory) -> UIImage {
+        func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
             
         // 이미지 로드 및 설정
         guard let imagePath = imageMemory.imagePath else { return UIImage() }
