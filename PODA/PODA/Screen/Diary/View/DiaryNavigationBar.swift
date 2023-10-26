@@ -20,8 +20,8 @@ class DiaryNavigationBar: UIView {
     
     init(leftButtonTitle: String, rightButtonTitle: String) {
         super.init(frame: .zero)
-        leftButton.setUpButton(title: leftButtonTitle, podaFont: .subhead2)
-        rightButton.setUpButton(title: rightButtonTitle, podaFont: .subhead2)
+        leftButton.setUpButton(title: leftButtonTitle, podaFont: .subhead3)
+        rightButton.setUpButton(title: rightButtonTitle, podaFont: .subhead3)
         
         [leftButton, rightButton].forEach {
             $0.tintColor = Palette.podaWhite.getColor()

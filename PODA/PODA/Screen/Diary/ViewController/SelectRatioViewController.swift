@@ -9,9 +9,13 @@ import UIKit
 import SnapKit
 import Then
 
-enum Ratio {
+enum Ratio: String {
     case square
     case rectangle
+    
+    func toString() -> String {
+        return self.rawValue
+    }
 }
 
 class SelectRatioViewController: BaseViewController, UIConfigurable {
