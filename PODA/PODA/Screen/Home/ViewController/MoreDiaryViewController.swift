@@ -11,6 +11,8 @@ import SnapKit
 
 class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
+    var diaryList : [DiaryData] = []
+    
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
@@ -64,19 +66,24 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
 
 extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return diaryList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryDetailCollectionViewCell.identifier, for: indexPath) as? DiaryDetailCollectionViewCell else { return UICollectionViewCell() }
         
-        //titleLabel.text = indexPath.row의 title
-        //cell.imageView.image = imageList[indexPath.row]
+        cell.titleLabel.text = diaryList[indexPath.row].diaryName
+        cell.gradientImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
+        cell.dateLabel.text = diaryList[indexPath.row].createDate
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        navigationController?.pushViewController(SaveDeleteViewController(), animated: true)
+        let saveDeleteVC = SaveDeleteViewController()
+        saveDeleteVC.dateLabel.text = diaryList[indexPath.row].createDate
+        saveDeleteVC.diaryName = diaryList[indexPath.row].diaryName
+        saveDeleteVC.imageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
+        navigationController?.pushViewController(saveDeleteVC, animated: true)
     }
 }

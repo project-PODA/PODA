@@ -13,7 +13,7 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     static let identifier = "DiaryCollectionViewCell"
     
-    private let titleLabel = UILabel().then { 
+    lazy var titleLabel = UILabel().then { 
         $0.setUpLabel(title: "나홀로\n인생네컷\n모음", podaFont: .subhead3)
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 3
