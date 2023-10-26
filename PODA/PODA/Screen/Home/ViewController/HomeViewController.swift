@@ -99,8 +99,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword){ [weak self] error in
-            guard let _ = self else {return}
+        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
+            guard let _ = self else { return }
         }
         loadImagesFromRealm()
         loadDataFromFirebase()
@@ -463,7 +463,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             self.diaryCountLabel.text = "\(self.diaryDataList.count)권"
             self.diaryCollectionView.reloadData()
             
-            if !self.diaryDataList.isEmpty{
+            if !self.diaryDataList.isEmpty {
                 self.emptyTimeCapsuleLabel.isHidden = false
                 self.timeCapsuleImageView.isHidden = false
                 self.randomDiaryIndex = Int.random(in: 0..<self.diaryDataList.count)
