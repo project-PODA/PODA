@@ -11,8 +11,8 @@ class DetailViewController: BaseViewController, UIConfigurable {
     
     var viewTranslation = CGPoint(x: 0, y: 0)
     var viewVelocity = CGPoint(x: 0, y: 0)
-    
-    private let backgroundImageView = UIImageView().then {
+    var diaryData : DiaryData?
+    lazy var backgroundImageView = UIImageView().then {
         $0.image = UIImage(named: "image_background2") // 저장된 이미지 불러오기
     }
     
@@ -52,7 +52,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
 //        $0.layer.addSublayer(gradientLayer)
         
         let pageCountLabel = UILabel()
-        pageCountLabel.setUpLabel(title: "05", podaFont: .display2) // 다이어리 페이지 수 가져오기
+        pageCountLabel.setUpLabel(title: "1", podaFont: .display2) // 다이어리 페이지 수 가져오기
         pageCountLabel.textColor = Palette.podaWhite.getColor()
         $0.addSubview(pageCountLabel)
         pageCountLabel.snp.makeConstraints { 
@@ -91,6 +91,12 @@ class DetailViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
         addSwipeGesture()
+        setupComp()
+    }
+    private func setupComp() {
+        backgroundImageView.image = UIImage(data: diaryData!.diaryImageList[0])
+        dateLabel.text = diaryData?.createDate
+        contentLabel.text = diaryData?.description
     }
     
     func configUI() {
@@ -152,7 +158,11 @@ class DetailViewController: BaseViewController, UIConfigurable {
     
     @objc func scrollView(_ sender: UISwipeGestureRecognizer) {
         if sender.direction == .left {
-            navigationController?.pushViewController(SaveDeleteViewController(), animated: true)
+            let saveDeleteVC = SaveDeleteViewController()
+            saveDeleteVC.dateLabel.text = diaryData?.createDate
+            saveDeleteVC.diaryName = diaryData?.diaryName
+            saveDeleteVC.imageView.image = UIImage(data: diaryData!.diaryImageList[0])
+            navigationController?.pushViewController(saveDeleteVC, animated: true)
         }
     }
 }

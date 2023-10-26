@@ -15,7 +15,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
-    private let dateLabel = UILabel().then {
+    lazy var dateLabel = UILabel().then {
         $0.setUpLabel(title: "2023.09.06", podaFont: .body1)
         $0.textColor = Palette.podaGray3.getColor()
     }
@@ -26,7 +26,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
-    private let imageView = UIImageView().then {
+    lazy var imageView = UIImageView().then {
         $0.image = UIImage(named: "example") // 저장된 이미지 보여주기
     }
     
@@ -41,6 +41,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.titleLabel?.textColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
+    var diaryName: String? //나중에 은서님 페이지에 이름 넘겨줄것..
 
     override func viewDidLoad() {
         super.viewDidLoad()

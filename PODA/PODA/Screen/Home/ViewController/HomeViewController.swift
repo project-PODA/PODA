@@ -16,6 +16,9 @@ struct DiaryData{
     var diaryName: String
     var diaryImageList: [Data]
     var createDate: String
+    var ratio: String
+    var description: String
+    
 }
 
 class HomeViewController: BaseViewController, UIConfigurable {
@@ -205,6 +208,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapMorePieceButton), for: .touchUpInside)
     }
     
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+    
     private let emptyPieceLabel = UILabel().then {
         $0.setUpLabel(title: "아직 추억조각이 없어요\n생성하기를 통해 만들어보세요 :)", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
@@ -242,7 +247,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - Stackview 정리하기
     func configUI() {
-        [mainStackView, pieceCountStackView, diaryCountStackView, scrollView].forEach {
+        [mainStackView, pieceCountStackView, diaryCountStackView, scrollView, loadingIndicator].forEach {
             view.addSubview($0)
         }
         
@@ -379,6 +384,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.width.equalTo(scrollView.snp.width)
             $0.height.equalTo(1080)    // 스크롤 가능 높이 조절하기 > 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기
         }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
+            $0.width.height.equalTo(200) // 원하는 크기로 설정
+        }
     }
     
     // FIXME: - 데이터 받아와서 조건 달기
@@ -422,27 +432,26 @@ class HomeViewController: BaseViewController, UIConfigurable {
         pieceCollectionView.reloadData()
     }
     func loadDataFromFirebase() {
-        var diaryNameList: [String] = []
-        var imageDataList: [Data] = []
-        var createdTimeList: [String] = []
-        
+        loadingIndicator.startAnimating()
         firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
             guard let self = self else { return }
             if error == .none {
-                firebaseDBManager.getDiaryData(diaryNameList: diaryList){ [weak self] diaryInfoList, Error in
-                    guard let self = self else {return}
-                    if error == .none {
-                        for diaryInfo in diaryInfoList {
-                            if diaryInfo.diaryName != "Account" {
-                                diaryNameList.append(diaryInfo.diaryName)
-                                createdTimeList.append(diaryInfo.createTime)
+                var counter = 0
+                for diaryName in diaryList {
+                    if diaryName != "Account" {
+                        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { [weak self] diaryInfoList, error in
+                            guard let self = self else { return }
+                            if error == .none, let diaryInfo = diaryInfoList.first {
                                 firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
-                                    guard let self = self else {return}
-                                    imageDataList = imageList
-                                    diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageDataList, createDate: diaryInfo.createTime))
-                                    DispatchQueue.main.async {
-                                        self.diaryCountLabel.text = String(self.diaryDataList.count) + "권"
-                                        self.diaryCollectionView.reloadData()
+                                    guard let self = self else { return }
+                                    if error == .none {
+                                        self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: diaryInfo.createTime, ratio: "square", description: diaryInfo.description))
+                                        counter += 1
+                                        if counter == diaryList.count - 1 {
+                                            DispatchQueue.main.async {
+                                                self.updateUI()
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -452,6 +461,17 @@ class HomeViewController: BaseViewController, UIConfigurable {
             }
         }
     }
+
+    func updateUI() {
+        DispatchQueue.main.async{
+            self.diaryCountLabel.text = "\(self.diaryDataList.count)권"
+            self.diaryCollectionView.reloadData()
+            self.loadingIndicator.stopAnimating()
+        }
+
+    }
+    
+    
     
     
     @objc func didTapAddButton() {
@@ -480,8 +500,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapMoreDiaryButton() {
         let moreDiaryVC = MoreDiaryViewController()
+        print(diaryDataList)
         moreDiaryVC.diaryList = diaryDataList
-        navigationController?.pushViewController(MoreDiaryViewController(), animated: true)
+        navigationController?.pushViewController(moreDiaryVC, animated: true)
         
     }
     
@@ -497,7 +518,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == diaryCollectionView {
-            navigationController?.pushViewController(DetailViewController(), animated: true)
+            if indexPath.row < diaryDataList.count {
+                let detailVC = DetailViewController()
+                detailVC.diaryData = diaryDataList[indexPath.row]
+                navigationController?.pushViewController(detailVC, animated: true)
+            }
         } else {
             //추억 조각 상세 페이지로 이동
         }
