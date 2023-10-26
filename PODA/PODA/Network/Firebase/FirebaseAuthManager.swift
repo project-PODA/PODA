@@ -17,11 +17,17 @@ class FireAuthManager {
     }
     
     func userLogin(email: String, password: String, completion: @escaping (FireAuthError) -> Void) {
+        if let currentUserUID = Auth.auth().currentUser?.uid, !currentUserUID.isEmpty {
+            completion(.none)
+            return
+        }
+        
         DispatchQueue.global(qos: .userInteractive).async{
             Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                 if let errCode = error as NSError?{
                     Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                     completion(.error(errCode.code, errCode.localizedDescription))
+                    
                 } else {
                     completion(.none)
                 }
@@ -53,14 +59,33 @@ class FireAuthManager {
             }
         }
     }
-    
+
     func deleteEmail(completion: @escaping (FireAuthError) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).async{
+        DispatchQueue.global(qos: .userInteractive).async {
             if let currentUser = Auth.auth().currentUser {
                 currentUser.delete { error in
-                    if let err = error as NSError? {
-                        Logger.writeLog(.error, message: "[\(err.code)] : \(err.localizedDescription)")
-                        completion(.error(err.code, err.localizedDescription))
+                    if let errCode = error as NSError? {
+                        if errCode.code == 17014 {
+                            Logger.writeLog(.error, message: "[\(FireAuthError.retryLogin)] : \(FireAuthError.retryLogin.description)")
+                            self.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { error in
+                                if error == .none {
+                                    self.deleteEmail { error in
+                                        if error == .none {
+                                            completion(.none)
+                                        } else {
+                                            Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
+                                            completion(.unknown)
+                                        }
+                                    }
+                                } else {
+                                    Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
+                                    completion(error)
+                                }
+                            }
+                        } else {
+                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                            completion(.error(errCode.code, errCode.localizedDescription))
+                        }
                     } else {
                         completion(.none)
                     }
@@ -71,6 +96,8 @@ class FireAuthManager {
             }
         }
     }
+
+    
     
     func deleteAccount(completion: @escaping (FireAuthError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
