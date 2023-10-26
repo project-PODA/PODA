@@ -95,6 +95,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
     }
     private func setupComp() {
         backgroundImageView.image = UIImage(data: diaryData!.diaryImageList[0])
+        titleLabel.text = diaryData?.diaryName
         dateLabel.text = diaryData?.createDate
         contentLabel.text = diaryData?.description
     }

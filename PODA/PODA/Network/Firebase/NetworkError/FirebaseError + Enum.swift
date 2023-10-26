@@ -87,6 +87,7 @@ enum FireAuthError: Equatable {
     case error(Int, String)
     case unavailableUUID
     case logoutFailed
+    case retryLogin
     case none
     var description: String {
         switch self {
@@ -96,6 +97,8 @@ enum FireAuthError: Equatable {
                 return "[\(errCode)]: \(message)"
             case .unavailableUUID:
                 return "[FireAuth]: 사용자의 UUID를 확인할 수 없습니다."
+            case .retryLogin:
+                return "세션이 완료되었습니다. 다시 로그인합니다.."
             case .logoutFailed:
                 return "로그아웃에 실패했습니다."
             case .none:
@@ -110,6 +113,8 @@ enum FireAuthError: Equatable {
                 return 10001
             case .logoutFailed:
                 return 10002
+            case .retryLogin:
+                return 10003
             case .none:
                 return 0
             default:
@@ -117,3 +122,5 @@ enum FireAuthError: Equatable {
         }
     }
 }
+
+
