@@ -20,8 +20,8 @@ class SignUpViewController: BaseViewController {
     private var firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let authManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let fireStoreDB = FirestorageDBManager()
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
-    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
@@ -424,9 +424,9 @@ class SignUpViewController: BaseViewController {
             make.top.equalTo(scrollView.snp.bottom).offset(20)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
+        
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
         }
     }
     

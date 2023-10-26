@@ -47,7 +47,7 @@ class LeaveViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didSignOutButton), for: .touchUpInside)
     }
     
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
+    private lazy var loadingIndicator = CustomLoadingIndicator()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,7 +90,6 @@ class LeaveViewController: BaseViewController, UIConfigurable {
         
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
         }
     }
     

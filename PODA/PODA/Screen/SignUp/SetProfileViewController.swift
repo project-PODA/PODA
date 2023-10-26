@@ -76,8 +76,8 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         $0.layer.borderWidth = 1
     }
     
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
-    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
@@ -149,7 +149,6 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
         }
     }
     
