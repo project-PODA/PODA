@@ -9,29 +9,29 @@ import Photos
 import UIKit
 
 class PhotoAccessHelper {
-    static func requestPhotoLibraryAccess(presenter: UIViewController) {
+    static func requestPhotoLibraryAccess(presenter: UIViewController, completionHandler: @escaping (Bool) -> ()) {
         let status = PHPhotoLibrary.authorizationStatus()
         
         switch status {
         case .authorized:
             // 이미 권한이 허용된 경우
-            break
+            completionHandler(true)
         case .denied, .restricted:
             // 권한이 거부되었거나 제한된 경우
-            // 사용자에게 설정 앱으로 이동하여 권한을 변경하도록 요청
             showAlertToSettings(presenter: presenter)
+            completionHandler(false)
         case .notDetermined:
             // 아직 권한을 요청하지 않은 경우
             PHPhotoLibrary.requestAuthorization { (newStatus) in
                 if newStatus == .authorized {
-                    // 사용자가 권한을 허용한 경우
+                    completionHandler(true)
                 } else {
-                    // 사용자가 권한을 거부한 경우
-                    // 사용자에게 설정 앱으로 이동하여 권한을 변경하도록 요청
                     showAlertToSettings(presenter: presenter)
+                    completionHandler(false)
                 }
             }
         default:
+            completionHandler(false)
             break
         }
     }
