@@ -14,20 +14,21 @@ class CameraAccessHelper {
         
         switch status {
         case .authorized:
-            // 이미 권한이 허용된 경우
             completionHandler(true)
         case .denied, .restricted:
-            // 권한이 거부되었거나 제한된 경우
-            showAlertToSettings(presenter: presenter)
+            DispatchQueue.main.async {
+                showAlertToSettings(presenter: presenter)
+            }
             completionHandler(false)
         case .notDetermined:
-            // 아직 권한을 요청하지 않은 경우
-            AVCaptureDevice.requestAccess(for: .video) { (granted) in
-                if granted {
-                    completionHandler(true)
-                } else {
-                    showAlertToSettings(presenter: presenter)
-                    completionHandler(false)
+            AVCaptureDevice.requestAccess(for: .video) { (isAuthorized) in
+                DispatchQueue.main.async {
+                    if isAuthorized {
+                        completionHandler(true)
+                    } else {
+                        showAlertToSettings(presenter: presenter)
+                        completionHandler(false)
+                    }
                 }
             }
         default:

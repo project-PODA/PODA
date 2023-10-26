@@ -22,8 +22,8 @@ class PhotoAccessHelper {
             completionHandler(false)
         case .notDetermined:
             // 아직 권한을 요청하지 않은 경우
-            PHPhotoLibrary.requestAuthorization { (newStatus) in
-                if newStatus == .authorized {
+            PHPhotoLibrary.requestAuthorization { (isAuthorized) in
+                if isAuthorized == .authorized {
                     completionHandler(true)
                 } else {
                     showAlertToSettings(presenter: presenter)
