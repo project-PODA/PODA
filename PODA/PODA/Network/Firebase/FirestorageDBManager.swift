@@ -12,7 +12,7 @@ import FirebaseStorage
 class FirestorageDBManager {
     private let db = Firestore.firestore()
     
-    func createDiary(deviceName: String , pageDataList: [PageInfo], title: String, description: String, frameRate: Ratio, backgroundColor: String,completion: @escaping (FireStorageDBError) -> Void) {
+    func createDiary(deviceName: String, pageDataList: [PageInfo], title: String, description: String, frameRate: Ratio, completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -48,6 +48,7 @@ class FirestorageDBManager {
             }
         }
     }
+    
     func emailCheck(email: String, completion: @escaping (FireStorageDBError) -> Void) {
         guard let _ = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")

@@ -15,7 +15,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     // MARK: - Properties
     
     var viewModel: CreateDiaryViewModel!
-    var ratio: Ratio!
+    var ratio: Ratio?
+    var diaryName: String?
     
     private var currentTextPosition: CGPoint?
     
@@ -176,6 +177,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         let diaryImage = diaryView.transfromToImage()
         let detailDiaryViewController = DetailDiaryViewController()
         detailDiaryViewController.ratio = ratio
+        detailDiaryViewController.diaryName = diaryName
         detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage?.pngData() ?? Data(), backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
         navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
