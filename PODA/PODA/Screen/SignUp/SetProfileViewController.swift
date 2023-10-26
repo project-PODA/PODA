@@ -76,8 +76,8 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         $0.layer.borderWidth = 1
     }
     
-    private lazy var loadingIndicator = NVActivityIndicatorView(frame: .zero, color: .gray)
-    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
@@ -90,7 +90,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         cameraButton.addTarget(self, action: #selector(openGallery), for: .touchUpInside)
         clearButton.addTarget(self, action: #selector(clearTextField), for: .touchUpInside)
         signUpButton.addTarget(self, action: #selector(navigateToCompleteSignUp), for: .touchUpInside)
-
+        nicknameTextField.addTarget(self, action: #selector(textFieldDidChangeSelection(_:)), for: .editingChanged)
     }
     
     
@@ -149,7 +149,22 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
+        }
+    }
+    
+    func updateSignUpButtonAppearance() {
+        if let nickname = nicknameTextField.text, !nickname.isEmpty {
+            // 프로필 이름이 설정 완료
+            signUpButton.backgroundColor = Palette.podaBlue.getColor()
+            signUpButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+            signUpButton.layer.borderWidth = 0
+        } else {
+            // 프로필 이름 비어있을 때
+            signUpButton.setUpButton(title: "가입 완료", podaFont: .button1, cornerRadius: 22)
+            signUpButton.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
+            signUpButton.backgroundColor = Palette.podaWhite.getColor()
+            signUpButton.layer.borderColor = Palette.podaBlue.getColor().cgColor
+            signUpButton.layer.borderWidth = 1
         }
     }
     
@@ -218,5 +233,9 @@ extension SetProfileViewController: UITextFieldDelegate {
             return isWithinLimit
         }
         return true
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        updateSignUpButtonAppearance()
     }
 }
