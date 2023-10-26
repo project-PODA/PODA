@@ -156,7 +156,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
 
             if error == .none {
                 print("다이어리 성공")
-                firebaseImageManager.createDiaryImage(diaryName: titleLabel.text!, pageImage: pageInfo[0].imageData) { error in
+                firebaseImageManager.createDiaryImage(diaryName: titleTextField.text!, pageImage: pageInfo[0].imageData) { error in
                     if error == .none {
                         print("다이어리 이미지 생성 성공")
                         self.navigationController?.pushViewController(BaseTabbarController(), animated: true)

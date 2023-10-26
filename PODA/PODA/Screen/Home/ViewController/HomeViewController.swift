@@ -444,6 +444,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
                             if error == .none, let diaryInfo = diaryInfoList.first {
                                 firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
                                     guard let self = self else { return }
+                                    print(imageList)
                                     if error == .none {
                                         self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: diaryInfo.createTime, ratio: "square", description: diaryInfo.description))
                                         counter += 1
@@ -454,11 +455,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
                                         }
                                     }
                                 }
+                                DispatchQueue.main.async{
+                                
+                                }
                             }
                         }
                     }
                 }
             }
+            self.loadingIndicator.stopAnimating()
         }
     }
 
