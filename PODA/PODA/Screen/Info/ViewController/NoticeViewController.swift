@@ -86,7 +86,6 @@ class NoticeViewController: BaseViewController, UIConfigurable {
         }
         
         tableView.backgroundColor = .clear
-        //        tableView.separatorStyle = .none
     }
     
     
@@ -118,22 +117,9 @@ extension NoticeViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension NoticeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let defaultHeight: CGFloat = 84
-//        if selectedIndex == indexPath {
-//            if let cell = tableView.cellForRow(at: indexPath) as? NoticeCell {
-//                return defaultHeight + cell.contentLabelHeight()
-//            }
-//            return 200
-//        }
-        return defaultHeight
+
+        return 84
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        if selectedIndex == indexPath {
-//            selectedIndex = nil
-//        } else {
-//            selectedIndex = indexPath
-//        }
-//        tableView.reloadData()
-//    }
+
 }
