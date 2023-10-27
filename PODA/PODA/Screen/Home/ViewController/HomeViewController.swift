@@ -26,6 +26,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     var imageMemories: Results<ImageMemory>?
     var diaryDataList: [DiaryData] = []
+    private var randomDiaryIndex = 0
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
         $0.textColor = Palette.podaWhite.getColor()
@@ -70,7 +71,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - 추억 다이어리 갯수 불러오기
     private let diaryCountLabel = UILabel().then {
-        $0.setUpLabel(title: "0권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
+        //$0.setUpLabel(title: "0권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -97,8 +98,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword){ [weak self] error in
-            guard let self = self else {return}
+        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
+            guard let _ = self else { return }
         }
         loadImagesFromRealm()
         setPieceView()
@@ -109,7 +110,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         diaryDataList = []
-        
     }
 
     private let emptyTimeCapsuleLabel = UILabel().then {
@@ -122,6 +122,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
+    private let timeCapsuleImageShadowView = UIImageView().then {
+        $0.backgroundColor = .clear
+        $0.layer.cornerRadius = 20
+        $0.layer.shadowRadius = 10
+        $0.layer.shadowColor = Palette.podaWhite.getColor().cgColor
+        $0.layer.shadowOpacity = 0.8
+    }
+    
     // FIXME: - 랜덤한 추억 다이어리 커버 불러오기
     private let timeCapsuleImageView = UIImageView().then {
         $0.backgroundColor = Palette.podaGray6.getColor()
@@ -129,6 +137,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.layer.shadowRadius = 10
         $0.layer.shadowColor = Palette.podaWhite.getColor().cgColor
         $0.layer.shadowOpacity = 0.8
+        $0.clipsToBounds = true
         // $0.image = 랜덤 추억 다이어리 커버
     }
     
@@ -225,7 +234,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaBlack.getColor()
         $0.showsHorizontalScrollIndicator = false
         $0.register(PieceCollectionViewCell.self, forCellWithReuseIdentifier: "PieceCollectionViewCell")
-        $0.backgroundColor = .green
+        //$0.backgroundColor = .green
     }
     
     override func viewDidLoad() {
@@ -271,7 +280,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             pieceMenuStackView.addArrangedSubview($0)
         }
         
-        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
+        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, timeCapsuleImageShadowView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
         
@@ -308,6 +317,13 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         
         timeCapsuleImageView.snp.makeConstraints {
+            $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.height.equalTo(416)
+        }
+        
+        timeCapsuleImageShadowView.snp.makeConstraints {
             $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(40)
             $0.right.equalToSuperview().offset(-40)
@@ -403,6 +419,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         
         // 생성된 다이어리가 없는 경우
         //diaryCollectionView.isHidden = true
+        //timeCapsuleImageShadowView.isHidden = true
     }
     
     func setPieceView() {
@@ -439,17 +456,16 @@ class HomeViewController: BaseViewController, UIConfigurable {
                                     guard let self = self else { return }
                                     //print(imageList)
                                     if error == .none {
-                                        self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: diaryInfo.createTime, ratio: "square", description: diaryInfo.description))
+                                        self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: Date.updateTime(dateTime: diaryInfo.createTime).replacingOccurrences(of: "-", with: "."), ratio: "square", description: diaryInfo.description))
                                         counter += 1
                                         if counter == diaryList.count - 1 {
+                                            self.diaryDataList.sort { $0.createDate > $1.createDate }
+                                            
                                             DispatchQueue.main.async {
                                                 self.updateUI()
                                             }
                                         }
                                     }
-                                }
-                                DispatchQueue.main.async {
-                                    
                                 }
                             }
                         }
@@ -461,8 +477,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     func updateUI() {
         DispatchQueue.main.async {
-            self.diaryCountLabel.text = "\(self.diaryDataList.count)권"
+            self.diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
             self.diaryCollectionView.reloadData()
+            
+            if !self.diaryDataList.isEmpty {
+                self.emptyTimeCapsuleLabel.isHidden = false
+                self.timeCapsuleImageView.isHidden = false
+                self.randomDiaryIndex = Int.random(in: 0..<self.diaryDataList.count)
+                self.timeCapsuleImageView.image = UIImage(data: self.diaryDataList[self.randomDiaryIndex].diaryImageList[0])
+            }
         }
     }
     
@@ -483,7 +506,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapCapsuleImage() {
-        navigationController?.pushViewController(DetailViewController(), animated: true)
+        let detailVC = DetailViewController()
+        detailVC.diaryData = diaryDataList[randomDiaryIndex]
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     @objc func didTapAddDiaryButton() {
@@ -495,7 +520,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         //print(diaryDataList)
         moreDiaryVC.diaryList = diaryDataList
         navigationController?.pushViewController(moreDiaryVC, animated: true)
-        
     }
     
     @objc func didTapAddPieceButton() {
@@ -524,10 +548,10 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         if collectionView == diaryCollectionView {
             return diaryDataList.count
         } else {
-            guard let pieceCount = imageMemories?.count else { return 0 }
-            print("Number of items in section: \(pieceCount)")
-            return pieceCount
-            //            return pieceImageList.count
+//            guard let pieceCount = imageMemories?.count else { return 0 }
+//            print("Number of items in section: \(pieceCount)")
+//            return pieceCount
+                        return pieceImageList.count
         }
     }
     
@@ -539,12 +563,12 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
-            //            cell.pieceImageView.image = pieceImageList[indexPath.row]
-            //            return cell
-            guard let imageMemory = imageMemories?[indexPath.item] else { return UICollectionViewCell() }
-            let image = cell.getPieceImage(with: imageMemory)
-            cell.pieceImageView.image = image
-            return cell
+//            guard let imageMemory = imageMemories?[indexPath.item] else { return UICollectionViewCell() }
+//            let image = cell.getPieceImage(with: imageMemory)
+//            cell.pieceImageView.image = image
+//            return cell
+                        cell.pieceImageView.image = pieceImageList[indexPath.row]
+                        return cell
         }
     }
 }
@@ -555,15 +579,16 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             let width = (view.frame.width / 5) - 2
             return CGSize(width: width, height: width * 1.35)
         } else {
-            //            let image = pieceImageList[indexPath.row]
-            //            guard let image = image else { return CGSize() }
-            //            let width = image.size.width
-            //            return CGSize(width: width, height: collectionView.frame.height)
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return CGSize() }
-            guard let imageMemory = imageMemories?[indexPath.item] else { return CGSize() }
-            let image = cell.getPieceImage(with: imageMemory)
-            let width = image.size.width
-            return CGSize(width: width, height: collectionView.frame.height)
+//            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return CGSize() }
+//            guard let imageMemory = imageMemories?[indexPath.item] else { return CGSize() }
+//            let image = cell.getPieceImage(with: imageMemory)
+            //let width = image.size.width
+            //print("이 이미지의 사이즈는 \(width)")
+//            return CGSize(width: 150, height: collectionView.frame.height)
+                        let image = pieceImageList[indexPath.row]
+                        guard let image = image else { return CGSize() }
+                        let width = image.size.width
+                        return CGSize(width: width, height: collectionView.frame.height)
         }
     }
 }

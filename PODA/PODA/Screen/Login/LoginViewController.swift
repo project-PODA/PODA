@@ -283,8 +283,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 navigationController!.pushViewController(tabBarController, animated: true)
                 
                 UserDefaultManager.isUserLoggedIn = true
-                UserDefaultManager.userEmail = email
-                UserDefaultManager.userPassword = password
+                UserDefaultManager.userEmail = email.lowercased()
+                UserDefaultManager.userPassword = password.lowercased()
                 
             } else {
                 showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")

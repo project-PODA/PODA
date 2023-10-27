@@ -287,44 +287,35 @@ class FirestorageDBManager {
             return
         }
         
-        DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
-            guard let self = self else {return}
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let self = self else { return }
             let collectionRef = db.collection(currentUserUID)
+            let documentRef = collectionRef.document("account")
             
-            collectionRef.getDocuments { (querySnapshot, error) in
-                if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
-                    completion("", .error(errCode.code, errCode.localizedDescription))
-                    return
-                }else{
-                    if let document = querySnapshot {
-                        for doc in document.documents {
-                            let data = doc.data()
-                            if let diaryInfoDataString = data["accountInfo"] as? String {
-                                if let userInfo = UserInfo.fromJson(jsonString: diaryInfoDataString, model: UserInfo.self) {
-                                    let nickname = userInfo.userNickname
-                                    completion(nickname, .none)
-                                    return
-                                } else {
-                                    completion("", .error(FireStorageDBError.decodingError.code, FireStorageDBError.decodingError.description))
-                                    Logger.writeLog(.error, message: FireStorageDBError.decodingError.description)
-                                    return
-                                }
-                            } else {
-                                completion("", .error(FireStorageDBError.fieldEmpty.code, FireStorageDBError.fieldEmpty.description))
-                                Logger.writeLog(.error, message: FireStorageDBError.fieldEmpty.description)
-                                return
-                            }
+            documentRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    let data = document.data()
+                    
+                    if let diaryInfoDataString = data?["accountInfo"] as? String {
+                        if let userInfo = UserInfo.fromJson(jsonString: diaryInfoDataString, model: UserInfo.self) {
+                            let nickname = userInfo.userNickname
+                            completion(nickname, .none)
+                        } else {
+                            completion("", .error(FireStorageDBError.decodingError.code, FireStorageDBError.decodingError.description))
+                            Logger.writeLog(.error, message: FireStorageDBError.decodingError.description)
                         }
                     } else {
-                        Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
-                        completion("", .error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
-                        return
+                        completion("", .error(FireStorageDBError.fieldEmpty.code, FireStorageDBError.fieldEmpty.description))
+                        Logger.writeLog(.error, message: FireStorageDBError.fieldEmpty.description)
                     }
+                } else {
+                    completion("", .error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
+                    Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
                 }
             }
         }
     }
+
     func deleteUserMail (completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
