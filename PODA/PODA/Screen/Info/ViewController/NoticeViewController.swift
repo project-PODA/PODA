@@ -41,9 +41,9 @@ class NoticeViewController: BaseViewController, UIConfigurable {
         setupTabBarAppearance()
         
         view.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.left.right.bottom.equalToSuperview()
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.left.right.bottom.equalToSuperview()
         }
     }
     
