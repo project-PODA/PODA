@@ -9,6 +9,9 @@ import UIKit
 
 class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
+    private let firebaseDBManager = FirestorageDBManager()
+    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
+    
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
@@ -119,7 +122,30 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapDeleteButton() {
-        // 삭제되었습니다 토스트 메세지 띄우기 & 삭제하고 데이터 저장
+        print("이미지 삭제")
+        let alert = UIAlertController(title: "정말 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
+        let confirmAction = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
+            guard let self else { return }
+            guard let diaryName else { return }
+            firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
+                if error == .none {
+                    // 삭제되었습니다 토스트 메세지 띄우고 다이어리 이미지 여러장인 경우
+                    self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
+                    // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
+                    self.firebaseDBManager.deleteDiaryAll { error in
+                        
+                    }
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alert.addAction(confirmAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true, completion: nil)
     }
     
 //    @objc func savedImage(image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeMutableRawPointer?) {
@@ -138,28 +164,22 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     @objc func savedImage(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         // 여기에 이미지가 성공적으로 저장되었거나, 실패했을 때의 처리를 작성합니다.
         if let error = error {
-            print("사진 저장중 오류 발생: \(error)")
+            NSLog("Failed to save image. Error = \(error.localizedDescription)")
         } else {
-            showToastMessage("성공적으로 저장되었습니다!", withDuration: 2.0, delay: 2.0)
+            showToastMessage("성공적으로 저장되었습니다!", withDuration: 0.8, delay: 0.8)
         }
     }
     
-    func showToastMessage(_ message : String, withDuration: Double, delay: Double) {
-        let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
-        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        toastLabel.textColor = UIColor.white
-        toastLabel.font = UIFont.systemFont(ofSize: 14.0)
+    func showToastMessage(_ message: String, withDuration: Double, delay: Double) {
+        let toastLabel = UILabel(frame: CGRect(x: self.imageView.center.x - 82, y: self.imageView.center.y - 18, width: 164, height: 36))
+        toastLabel.setUpLabel(title: message, podaFont: .caption)
+        toastLabel.textColor = Palette.podaWhite.getColor()
         toastLabel.textAlignment = .center
-        toastLabel.text = message
-        toastLabel.alpha = 1.0
-        toastLabel.layer.cornerRadius = 16.0
-        toastLabel.clipsToBounds  =  true
+        toastLabel.backgroundColor = Palette.podaBlack.getColor().withAlphaComponent(0.7)
+        toastLabel.layer.cornerRadius = 7.0
+        toastLabel.clipsToBounds = true
         
         view.addSubview(toastLabel)
-        
-//        toastLabel.snp.makeConstraints {
-//            $0.center.equalToSuperview()
-//        }
         
         UIView.animate(withDuration: withDuration, delay: delay, options: .curveEaseOut, animations: {
             toastLabel.alpha = 0.0

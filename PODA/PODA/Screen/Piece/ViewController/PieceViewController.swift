@@ -333,6 +333,7 @@ extension PieceViewController: PHPickerViewControllerDelegate {
             if let error = error {
                 print("이미지 로딩 중 오류: \(error.localizedDescription)")
             } else if let selectedImage = object as? UIImage {
+                print("선택된 이미지의 너비 \(selectedImage.size.width)")
                 DispatchQueue.main.async {
                     self?.imageView.image = selectedImage
                     self?.updateUIForImageAvailability(hasImage: true)

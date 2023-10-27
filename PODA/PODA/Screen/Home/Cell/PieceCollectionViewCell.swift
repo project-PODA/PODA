@@ -28,13 +28,14 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     func configUI() {
         backgroundColor = Palette.podaBlack.getColor()
-
+        
         addSubview(pieceImageView)
         
         pieceImageView.snp.makeConstraints { 
             $0.top.bottom.left.right.equalToSuperview()
         }
     }
+}
     
 //    func configure(with imageMemory: ImageMemory) {
 //        
@@ -49,21 +50,21 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
 //        
 //    }
     
-        func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
-            
-        // 이미지 로드 및 설정
-        guard let imagePath = imageMemory.imagePath else { return UIImage() }
-        print("Image Path: \(imagePath)")
-        
-        guard let pieceImage = UIImage(contentsOfFile: imagePath) else { return UIImage() }
-        return pieceImage
-        
+//        func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
+//            
+//        // 이미지 로드 및 설정
+//        guard let imagePath = imageMemory.imagePath else { return UIImage() }
+//        //print("Image Path: \(imagePath)")
+//        
+//        guard let pieceImage = UIImage(contentsOfFile: imagePath) else { return UIImage() }
+//        return pieceImage
+//        
 //        // 추억 날짜 설정
 //        if let memoryDate = imageMemory.memoryDate {
 //            let dateFormatter = DateFormatter()
 //            dateFormatter.dateFormat = "yyyy. MM. dd"
 //            dateLabel.text = dateFormatter.string(from: memoryDate)
 //        }
-    }
-}
+
+
 
