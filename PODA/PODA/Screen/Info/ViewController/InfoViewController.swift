@@ -28,15 +28,22 @@ class InfoViewController: BaseViewController, UIConfigurable {
     }
     
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(true)
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        self.tabBarController?.tabBar.isHidden = false
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(false)
+        }
     }
     
     
     func configUI() {
-        self.tabBarController?.tabBar.isHidden = true
         
         let backButton = UIBarButtonItem(image: UIImage(named: "icon_back")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(didTapBackButton))
         self.navigationItem.leftBarButtonItem = backButton
@@ -133,8 +140,6 @@ extension InfoViewController: UITableViewDelegate {
 }
 
 
-
-
 // MARK: - MFMailComposeViewControllerDelegate
 extension InfoViewController: MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
@@ -170,7 +175,7 @@ extension UIDevice {
         }
         return model
     }
-
+    
     private static var modelDictionary: [String: String] {
         return [
             "i386": "Simulator",   // 32 bit
@@ -215,7 +220,7 @@ extension UIDevice {
             "iPhone16,2": "iPhone 15 Pro Max"
         ]
     }
-
+    
     static var iPhoneModel: String {
         return modelDictionary[hardwareString] ?? "Unknown iPhone - \(hardwareString)"
     }

@@ -59,6 +59,8 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
+  
+    
     private func getFirebaseData(){
         loadingIndicator.startAnimating()
         fireImageManager.getProfileImage { [weak self] (error, image) in
