@@ -9,9 +9,11 @@ import UIKit
 
 class DetailViewController: BaseViewController, UIConfigurable {
     
-    var viewTranslation = CGPoint(x: 0, y: 0)
-    var viewVelocity = CGPoint(x: 0, y: 0)
+//    var viewTranslation = CGPoint(x: 0, y: 0)
+//    var viewVelocity = CGPoint(x: 0, y: 0)
+    
     var diaryData : DiaryData?
+    
     lazy var backgroundImageView = UIImageView().then {
         $0.image = UIImage(named: "image_background2") // 저장된 이미지 불러오기
     }
@@ -165,20 +167,5 @@ class DetailViewController: BaseViewController, UIConfigurable {
             saveDeleteVC.imageView.image = UIImage(data: diaryData!.diaryImageList[0])
             navigationController?.pushViewController(saveDeleteVC, animated: true)
         }
-    }
-}
-
-extension UIButton {
-    func alignTextBelow(spacing: CGFloat) {
-        guard let image = self.imageView?.image,
-              let titleLabel = self.titleLabel,
-              let titleText = titleLabel.text else { return }
-        
-        let titleSize = titleText.size(withAttributes: [
-            NSAttributedString.Key.font: titleLabel.font as Any
-        ])
-        
-        imageEdgeInsets = UIEdgeInsets(top: -(titleSize.height + spacing), left: 0, bottom: 0, right: -titleSize.width)
-        titleEdgeInsets = UIEdgeInsets(top: spacing, left: -image.size.width, bottom: -image.size.height, right: 0)
     }
 }

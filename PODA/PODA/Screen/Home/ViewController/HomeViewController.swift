@@ -25,8 +25,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
     var pieceImageList = [UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3"), UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3")]
     
     var imageMemories: Results<ImageMemory>?
+
     var diaryDataList: [DiaryData] = []
-    private var randomDiaryIndex = 0
+    
+    //private var randomDiaryIndex = 0
+    private var randomPieceIndex = 0
+    
+    private var timeCapsuleImageViewWidth = 0.0
+    
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
         $0.textColor = Palette.podaWhite.getColor()
@@ -69,9 +75,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray3.getColor()
     }
     
-    // FIXME: - 추억 다이어리 갯수 불러오기
     private let diaryCountLabel = UILabel().then {
-        //$0.setUpLabel(title: "0권", podaFont: .subhead4)   // 다이어리 갯수 불러오기
+        $0.setUpLabel(title: "0권", podaFont: .subhead4)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -103,6 +108,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         loadImagesFromRealm()
         setPieceView()
+        updateTimeCapsuleView()
         loadDataFromFirebase()
         print("viewwillappear")
     }
@@ -126,19 +132,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = .clear
         $0.layer.cornerRadius = 20
         $0.layer.shadowRadius = 10
-        $0.layer.shadowColor = Palette.podaWhite.getColor().cgColor
         $0.layer.shadowOpacity = 0.8
+        $0.layer.shadowColor = Palette.podaWhite.getColor().cgColor
     }
     
-    // FIXME: - 랜덤한 추억 다이어리 커버 불러오기
     private let timeCapsuleImageView = UIImageView().then {
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.layer.cornerRadius = 20
-        $0.layer.shadowRadius = 10
-        $0.layer.shadowColor = Palette.podaWhite.getColor().cgColor
-        $0.layer.shadowOpacity = 0.8
+        $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
-        // $0.image = 랜덤 추억 다이어리 커버
     }
     
     private let diaryMenuLabel = UILabel().then {
@@ -234,13 +236,13 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaBlack.getColor()
         $0.showsHorizontalScrollIndicator = false
         $0.register(PieceCollectionViewCell.self, forCellWithReuseIdentifier: "PieceCollectionViewCell")
-        //$0.backgroundColor = .green
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
         loadImagesFromRealm()
+        updateTimeCapsuleView()
         configUI()
         setTimeCapsuleView()
         setDiaryView()
@@ -249,12 +251,13 @@ class HomeViewController: BaseViewController, UIConfigurable {
         diaryCollectionView.dataSource = self
         pieceCollectionView.delegate = self
         pieceCollectionView.dataSource = self
+        print(imageMemories)
         print("viewdidload")
     }
     
     // FIXME: - Stackview 정리하기
     func configUI() {
-        [mainStackView, pieceCountStackView, diaryCountStackView, scrollView].forEach {
+        [mainStackView, diaryCountStackView, pieceCountStackView, scrollView].forEach {
             view.addSubview($0)
         }
         
@@ -262,12 +265,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
             mainStackView.addArrangedSubview($0)
         }
         
-        [pieceLabel, pieceCountLabel].forEach {
-            pieceCountStackView.addArrangedSubview($0)
-        }
-        
         [diaryLabel, diaryCountLabel].forEach {
             diaryCountStackView.addArrangedSubview($0)
+        }
+        
+        [pieceLabel, pieceCountLabel].forEach {
+            pieceCountStackView.addArrangedSubview($0)
         }
         
         scrollView.addSubview(contentView)
@@ -280,9 +283,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
             pieceMenuStackView.addArrangedSubview($0)
         }
         
-        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, timeCapsuleImageShadowView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
+        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageShadowView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
+        
+        timeCapsuleImageShadowView.addSubview(timeCapsuleImageView)
         
         mainStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(7)
@@ -294,14 +299,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(36)
         }
         
-        pieceCountStackView.snp.makeConstraints {
+        diaryCountStackView.snp.makeConstraints {
             $0.top.equalTo(statusLabel.snp.bottom).offset(16)
             $0.left.equalToSuperview().offset(20)
         }
         
-        diaryCountStackView.snp.makeConstraints {
+        pieceCountStackView.snp.makeConstraints {
             $0.top.equalTo(statusLabel.snp.bottom).offset(16)
-            $0.left.equalTo(pieceCountStackView.snp.right).offset(20)
+            $0.left.equalTo(diaryCountStackView.snp.right).offset(20)
         }
         
         timeCapsuleLabel.snp.makeConstraints {
@@ -316,18 +321,18 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(416)
         }
         
-        timeCapsuleImageView.snp.makeConstraints {
-            $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
-            $0.left.equalToSuperview().offset(40)
-            $0.right.equalToSuperview().offset(-40)
-            $0.height.equalTo(416)
-        }
-        
         timeCapsuleImageShadowView.snp.makeConstraints {
             $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(40)
             $0.right.equalToSuperview().offset(-40)
+            $0.centerX.equalToSuperview()
             $0.height.equalTo(416)
+//            $0.width.equalTo(150)
+//            $0.width.equalTo(timeCapsuleImageViewWidth)
+        }
+        
+        timeCapsuleImageView.snp.makeConstraints {
+            $0.top.bottom.left.right.equalToSuperview()
         }
         
         addDiaryButton.snp.makeConstraints {
@@ -400,36 +405,30 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    // FIXME: - 데이터 받아와서 조건 달기
     func setTimeCapsuleView() {
-        // 생성된 다이어리가 있는 경우
-        // emptyTimeCapsuleLabel.isHidden = true
-        
-        // 생성된 다이어리가 없는 경우
-        timeCapsuleImageView.isHidden = true
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
-        timeCapsuleImageView.addGestureRecognizer(tapGesture)
-        timeCapsuleImageView.isUserInteractionEnabled = true
+        guard let pieceCount = imageMemories?.count else { return }
+        if pieceCount != 0 {
+            emptyTimeCapsuleLabel.isHidden = true  // 등록된 추억 조각이 있는 경우
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
+            timeCapsuleImageShadowView.addGestureRecognizer(tapGesture)
+            timeCapsuleImageShadowView.isUserInteractionEnabled = true
+        } else {
+            timeCapsuleImageShadowView.isHidden = true  // 등록된 추억 조각이 없는 경우
+        }
     }
     
+    // FIXME: - 다이어리 데이터 0개 일 때 실행시켜주기
     func setDiaryView() {
-        // 생성된 다이어리가 있는 경우
-        emptyDiaryLabel.isHidden = true
-        
-        // 생성된 다이어리가 없는 경우
-        //diaryCollectionView.isHidden = true
-        //timeCapsuleImageShadowView.isHidden = true
+        emptyDiaryLabel.isHidden = false
+        diaryCollectionView.isHidden = true
     }
     
     func setPieceView() {
         guard let pieceCount = imageMemories?.count else { return }
         if pieceCount != 0 {
-            // 등록된 추억 조각이 있는 경우
-            emptyPieceLabel.isHidden = true
+            emptyPieceLabel.isHidden = true  // 등록된 추억 조각이 있는 경우
         } else {
-            // 등록된 추억 조각이 없는 경우
-            pieceCollectionView.isHidden = true
+            pieceCollectionView.isHidden = true  // 등록된 추억 조각이 없는 경우
         }
         print("추억 조각 갯수 = \(pieceCount)")
     }
@@ -464,6 +463,10 @@ class HomeViewController: BaseViewController, UIConfigurable {
                                             DispatchQueue.main.async {
                                                 self.updateUI()
                                             }
+                                        } else if counter == 0 {
+                                            DispatchQueue.main.async {
+                                                self.diaryCollectionView.isHidden = true
+                                            }
                                         }
                                     }
                                 }
@@ -476,17 +479,45 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func updateUI() {
-        DispatchQueue.main.async {
             self.diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
+            self.emptyDiaryLabel.isHidden = true
+            self.diaryCollectionView.isHidden = false
             self.diaryCollectionView.reloadData()
             
-            if !self.diaryDataList.isEmpty {
-                self.emptyTimeCapsuleLabel.isHidden = false
-                self.timeCapsuleImageView.isHidden = false
-                self.randomDiaryIndex = Int.random(in: 0..<self.diaryDataList.count)
-                self.timeCapsuleImageView.image = UIImage(data: self.diaryDataList[self.randomDiaryIndex].diaryImageList[0])
-            }
-        }
+//            if !self.diaryDataList.isEmpty {
+//                self.emptyTimeCapsuleLabel.isHidden = true
+//                self.timeCapsuleImageShadowView.isHidden = false
+//                self.randomDiaryIndex = Int.random(in: 0..<self.diaryDataList.count)
+//                self.timeCapsuleImageView.image = UIImage(data: self.diaryDataList[self.randomDiaryIndex].diaryImageList[0])
+//            }
+    }
+    
+   // FIXME: - 랜덤 이미지 표시 주기 하루에 한번으로 가능한지 확인하기, 메인 스레드에서 해야하는지..?
+    func updateTimeCapsuleView() {
+//        DispatchQueue.main.async {
+//            guard let pieceCount = self.imageMemories?.count else { return }
+//        if pieceCount != 0 {
+//            self.randomPieceIndex = Int.random(in: 0..<pieceCount)
+//            guard let imageMemory = self.imageMemories?[self.randomPieceIndex] else { return }
+//            self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
+//            self.pieceCountLabel.text = "\(pieceCount)개"
+//        }
+            
+            let randomPieceIndex = Int.random(in: 0..<self.pieceImageList.count)
+            guard let randomImage = self.pieceImageList[randomPieceIndex] else { return }
+            self.timeCapsuleImageView.image = randomImage
+            //self.timeCapsuleImageViewWidth = randomImage.size.width
+            self.pieceCountLabel.text = "\(pieceImageList.count)개"
+//            }
+    }
+    
+    func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
+        // 이미지 로드 및 설정
+        guard let imagePath = imageMemory.imagePath else { return UIImage() }
+        //print("Image Path: \(imagePath)")
+        
+        guard let pieceImage = UIImage(contentsOfFile: imagePath) else { return UIImage() }
+        return pieceImage
     }
     
     @objc func didTapAddButton() {
@@ -505,10 +536,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    // FIXME: - 클릭한 추억 조각 상세페이지로 이동
     @objc func didTapCapsuleImage() {
-        let detailVC = DetailViewController()
-        detailVC.diaryData = diaryDataList[randomDiaryIndex]
-        navigationController?.pushViewController(detailVC, animated: true)
+        print("타임캡슐 이미지 클릭")
+//        let detailVC = DetailViewController()
+//        detailVC.diaryData = diaryDataList[randomDiaryIndex]
+//        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     @objc func didTapAddDiaryButton() {
@@ -551,7 +584,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
 //            guard let pieceCount = imageMemories?.count else { return 0 }
 //            print("Number of items in section: \(pieceCount)")
 //            return pieceCount
-                        return pieceImageList.count
+            return pieceImageList.count
         }
     }
     
@@ -564,11 +597,11 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
 //            guard let imageMemory = imageMemories?[indexPath.item] else { return UICollectionViewCell() }
-//            let image = cell.getPieceImage(with: imageMemory)
+//            let image = getPieceImage(with: imageMemory)
 //            cell.pieceImageView.image = image
 //            return cell
-                        cell.pieceImageView.image = pieceImageList[indexPath.row]
-                        return cell
+            cell.pieceImageView.image = pieceImageList[indexPath.row]
+            return cell
         }
     }
 }
@@ -581,14 +614,15 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
         } else {
 //            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return CGSize() }
 //            guard let imageMemory = imageMemories?[indexPath.item] else { return CGSize() }
-//            let image = cell.getPieceImage(with: imageMemory)
-            //let width = image.size.width
-            //print("이 이미지의 사이즈는 \(width)")
-//            return CGSize(width: 150, height: collectionView.frame.height)
-                        let image = pieceImageList[indexPath.row]
-                        guard let image = image else { return CGSize() }
-                        let width = image.size.width
-                        return CGSize(width: width, height: collectionView.frame.height)
+//            let image = getPieceImage(with: imageMemory)
+//            let width = image.size.width
+//            print("이 이미지의 사이즈는 \(width)")
+            let width = (view.frame.width / 2.5) - 32
+            return CGSize(width: width, height: collectionView.frame.height)
+//                        let image = pieceImageList[indexPath.row]
+//                        guard let image = image else { return CGSize() }
+//                        let width = image.size.width
+//                        return CGSize(width: width, height: collectionView.frame.height)
         }
     }
 }
