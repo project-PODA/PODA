@@ -84,23 +84,23 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
         
         view.addSubview(buttonStackView)
         
-        qrButton.snp.makeConstraints { 
+        qrButton.snp.makeConstraints {
             $0.width.height.equalTo(96)
         }
         
-        addDiaryButton.snp.makeConstraints { 
+        addDiaryButton.snp.makeConstraints {
             $0.width.height.equalTo(96)
         }
         
-        addPieceButton.snp.makeConstraints { 
+        addPieceButton.snp.makeConstraints {
             $0.width.height.equalTo(96)
         }
         
-        closeButton.snp.makeConstraints { 
+        closeButton.snp.makeConstraints {
             $0.width.height.equalTo(56)
         }
         
-        buttonStackView.snp.makeConstraints { 
+        buttonStackView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }
@@ -122,13 +122,17 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
 
 extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
-    // FIXME: - 카메라 권한 설정
     @objc func didTapQrButton() {
-        // 카메라 On
-        let camera = UIImagePickerController()
-        camera.delegate = self
-        camera.sourceType = .camera
-        camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? []
-        present(camera, animated: true)
+        CameraAccessHelper.requestCameraAccess(presenter: self) { [weak self] isAuthorized in
+            DispatchQueue.main.async {
+                if isAuthorized {
+                    let camera = UIImagePickerController()
+                    camera.delegate = self
+                    camera.sourceType = .camera
+                    camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? []
+                    self?.present(camera, animated: true)
+                }
+            }
+        }
     }
 }

@@ -13,6 +13,13 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
     // MARK: - Properties
     
+    var ratio: Ratio!
+    var pageInfo: [PageInfo]!
+    var diaryName : String?
+    
+    private let firebaseDBManager = FirestorageDBManager()
+    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
+    
     private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "뒤로", rightButtonTitle: "저장").then {
         $0.leftButton.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
         $0.rightButton.addTarget(self, action: #selector(touchUpSaveButton), for: .touchUpInside)
@@ -100,7 +107,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         
         titleTextField.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(20)
+            $0.leading.trailing.equalToSuperview().inset(20)
         }
         
         underLine.snp.makeConstraints {
@@ -139,7 +146,28 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func touchUpSaveButton() {
-        
+        firebaseDBManager.createDiary(
+            deviceName: UIDevice.current.name,
+            pageDataList: pageInfo, title: titleTextField.text!,
+            description: contentTextView.text,
+            frameRate: ratio) { [weak self] error in
+                
+            guard let self = self else { return }
+
+            if error == .none {
+                print("다이어리 성공")
+                firebaseImageManager.createDiaryImage(diaryName: titleTextField.text!, pageImage: pageInfo[0].imageData) { error in
+                    if error == .none {
+                        print("다이어리 이미지 생성 성공")
+                        self.navigationController?.pushViewController(BaseTabbarController(), animated: true)
+                    } else {
+                        print("다이어리 이미지 생성 실패")
+                    }
+                }
+            } else {
+                print("다이어리 성공 실패")
+            }
+        }
     }
     
     @objc func titleTextDidChange(_ textField: UITextField) {

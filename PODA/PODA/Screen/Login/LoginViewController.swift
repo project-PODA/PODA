@@ -8,6 +8,9 @@
 import UIKit
 import Then
 import NVActivityIndicatorView
+import GoogleSignIn
+import Firebase
+import FirebaseAuth
 
 class LoginViewController: BaseViewController, UIConfigurable {
     
@@ -197,6 +200,55 @@ class LoginViewController: BaseViewController, UIConfigurable {
     
     @objc private func googleButtonTapped() {
         print("google")
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+            print("Firebase clientID를 가져오지 못했습니다.")
+            return
+        }
+        
+        let config = GIDConfiguration(clientID: clientID)
+        
+        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
+            
+            if let error = error {
+                print("로그인 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let user = user else { return }
+            
+            let userId = user.userID ?? ""
+            let idToken = user.authentication.idToken ?? ""
+            let fullName = user.profile?.name ?? ""
+            let email = user.profile?.email ?? ""
+            
+            print("""
+                    로그인 성공
+                    사용자 ID: \(userId)
+                    ID 토큰: \(idToken)
+                    사용자 이름: \(fullName)
+                    이메일 주소: \(email)
+                    """)
+            
+            let authentication = user.authentication
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                                  accessToken: authentication.accessToken)
+                Auth.auth().signIn(with: credential) { (authResult, error) in
+                    if let error = error {
+                        print("파이어베이스 인증 실패: \(error.localizedDescription)")
+                        return
+                    }
+                    print("파이어베이스 인증 성공")
+                }
+            
+            DispatchQueue.main.async { [weak self] in
+                let tabBarController = BaseTabbarController()
+                self?.navigationController?.pushViewController(tabBarController, animated: true)
+                
+                UserDefaultManager.isUserLoggedIn = true
+                UserDefaultManager.userEmail = email
+                //                UserDefaultManager.userPassword = password
+            }
+        }
     }
     
     @objc private func appleButtonTapped() {
@@ -231,8 +283,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 navigationController!.pushViewController(tabBarController, animated: true)
                 
                 UserDefaultManager.isUserLoggedIn = true
-                UserDefaultManager.userEmail = email
-                UserDefaultManager.userPassword = password
+                UserDefaultManager.userEmail = email.lowercased()
+                UserDefaultManager.userPassword = password.lowercased()
                 
             } else {
                 showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
