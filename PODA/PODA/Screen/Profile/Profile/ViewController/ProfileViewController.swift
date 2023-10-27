@@ -19,6 +19,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
         $0.image = UIImage(named: "image_profile")
+        $0.contentMode = .scaleAspectFill
     }
     
     private let cameraButton = UIButton().then {
