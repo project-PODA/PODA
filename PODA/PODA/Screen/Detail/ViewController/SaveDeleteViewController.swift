@@ -100,10 +100,24 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         // 선택된 Ratio의 만들기 페이지로 이동
     }
     
+//    @objc func didTapSaveButton() {
+//        // 저장되었습니다 토스트 메세지 띄우기 & 앨범에 이미지 추가
+//        if let image = imageView.image {
+//            UIImageWriteToSavedPhotosAlbum(image, self, #selector(savedImage), nil)
+//        }
+//    }
+    
     @objc func didTapSaveButton() {
-        // 저장되었습니다 토스트 메세지 띄우기 & 앨범에 이미지 추가
-        if let image = imageView.image {
-            UIImageWriteToSavedPhotosAlbum(image, self, #selector(savedImage), nil)
+        // 앨범 권한을 먼저 체크하고 요청
+        PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { (isAuthorized) in
+            if isAuthorized {
+                // 권한이 허용되면 이미지를 앨범에 저장
+                if let image = self.imageView.image {
+                    UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.savedImage(_:didFinishSavingWithError:contextInfo:)), nil)
+                }
+            } else {
+                // 권한이 거부되었을 경우 처리
+            }
         }
     }
     
@@ -134,7 +148,21 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         present(alert, animated: true, completion: nil)
     }
     
-    @objc func savedImage(image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeMutableRawPointer?) {
+//    @objc func savedImage(image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeMutableRawPointer?) {
+//        if let error = error {
+//            NSLog("Failed to save image. Error = \(error.localizedDescription)")
+//            //                권한 허용 안함 상태일 때 설정에서 변경하라고 띄워주기
+//            //                if isPermissionDenied, let vc = viewController {
+//            //                    Dialog.presentPhotoPermission(vc)
+//            //        }
+//        } else {
+//            // 토스트 메세지 띄우기
+//            showToastMessage("성공적으로 저장되었습니다!", withDuration: 2.0, delay: 2.0)
+//        }
+//    }
+    
+    @objc func savedImage(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        // 여기에 이미지가 성공적으로 저장되었거나, 실패했을 때의 처리를 작성합니다.
         if let error = error {
             NSLog("Failed to save image. Error = \(error.localizedDescription)")
         } else {
