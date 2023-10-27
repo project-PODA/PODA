@@ -87,7 +87,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
         $0.setUpLabel(title: "다이어리 내용 어쩌구 저쩌구 여기부턴 한글더미 국민의 모든 자유와 권리는 국가안전보장·질서유지 또는 공공복리를 위하여 필요한 경우에 한하여 어쩌구.", podaFont: .body2) // 저장된 내용 불러오기
         $0.lineBreakMode = .byCharWrapping
         $0.textColor = Palette.podaWhite.getColor()
-        $0.numberOfLines = 3
+        $0.numberOfLines = 4
     }
     
     override func viewDidLoad() {
