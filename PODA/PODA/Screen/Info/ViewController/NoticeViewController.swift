@@ -22,7 +22,16 @@ class NoticeViewController: BaseViewController, UIConfigurable {
     
     private let dbManager = FirestorageDBManager()
     
-    // MARK: - Lifecycle Methods
+    // MARK: - Lifecycle Methods    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(true)
+        }
+        getNotices()
+
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
@@ -30,10 +39,7 @@ class NoticeViewController: BaseViewController, UIConfigurable {
         tableView.delegate = self
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        getNotices()
-    }
+
     
     // MARK: - configUI
     func configUI() {
