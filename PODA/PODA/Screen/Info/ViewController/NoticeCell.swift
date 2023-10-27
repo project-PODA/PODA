@@ -1,3 +1,10 @@
+//
+//  NoticeViewController.swift
+//  PODA
+//
+//  Created by FUTURE on 2023/10/24.
+//
+
 // MARK: - Import Statements
 import UIKit
 import SnapKit
@@ -26,7 +33,6 @@ class NoticeCell: UITableViewCell {
         $0.font = .podaFont(.body2)
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 0
-        $0.lineBreakMode = .byCharWrapping
     }
 
     // MARK: - Initializers

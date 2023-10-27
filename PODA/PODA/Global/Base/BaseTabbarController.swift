@@ -95,6 +95,26 @@ class BaseTabbarController: UITabBarController {
         profileContainerView.addGestureRecognizer(profileTapGesture)
     }
     
+    func setCustomTabbarHidden(_ hidden: Bool, animated: Bool = true) {
+        if animated {
+            UIView.transition(with: customTabbarView, duration: 0.3, options: .transitionCrossDissolve) {
+                self.customTabbarView.isHidden = hidden
+            }
+        } else {
+            customTabbarView.isHidden = hidden
+        }
+    }
+    
+    
+    @objc private func didTapInfoButton() {
+        let infoVC = InfoViewController()
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(true)
+        }
+        self.navigationController?.pushViewController(infoVC, animated: true)
+    }
+    
+    
     @objc private func homeTapped() {
         self.selectedIndex = 0
         updateTabbarImages()

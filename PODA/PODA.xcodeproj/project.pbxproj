@@ -88,6 +88,7 @@
 		5FEC85C12AE14E0F000E5D4C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85C02AE14E0F000E5D4C /* FirebaseFirestore */; };
 		5FEC85C32AE14E0F000E5D4C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85C22AE14E0F000E5D4C /* FirebaseStorage */; };
 		5FEC85C72AE156B0000E5D4C /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEC85C62AE156B0000E5D4C /* UserInfo.swift */; };
+		D81320A12AEC2FB70032F487 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81320A02AEC2FB70032F487 /* UIImage.swift */; };
 		D870C78A2AEA19A80066A61E /* CustomLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C7892AEA19A80066A61E /* CustomLoadingIndicator.swift */; };
 		D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7762ADD478400FFB3F7 /* LoginViewController.swift */; };
 		D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */; };
@@ -196,6 +197,7 @@
 		5FE44D402AE93B1900DB3EB1 /* NoticeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeInfo.swift; sourceTree = "<group>"; };
 		5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DiaryInfo.md; sourceTree = "<group>"; };
 		5FEC85C62AE156B0000E5D4C /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		D81320A02AEC2FB70032F487 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		D870C7892AEA19A80066A61E /* CustomLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLoadingIndicator.swift; sourceTree = "<group>"; };
 		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
@@ -568,6 +570,7 @@
 				1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */,
 				5F54EBF52ADFFE8600331E59 /* Encodable + Extension.swift */,
 				5F54EBF72ADFFEA700331E59 /* Decodable + Extension.swift */,
+				D81320A02AEC2FB70032F487 /* UIImage.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -985,6 +988,7 @@
 				E20C9AEA2AE4209300BA5754 /* StickerCollectionViewCell.swift in Sources */,
 				D8F46ADA2AE7E0EA00C8FDF4 /* NoticeViewController.swift in Sources */,
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
+				D81320A12AEC2FB70032F487 /* UIImage.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
 				5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */,
@@ -1165,11 +1169,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 다이어리 꾸미기, 나의 추억조각 등록, 등록된 사진들의 편집기능 이용을 위해 사진 라이브러리에 접근하도록 허용합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 추억 다이어리 꾸미기, 나의 추억 조각 등록 및 저장, 프로필 기능 이용을 위해 사진 라이브러리 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1194,11 +1199,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 다이어리 꾸미기, 나의 추억조각 등록, 등록된 사진들의 편집기능 이용을 위해 사진 라이브러리에 접근하도록 허용합니다.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 추억 다이어리 꾸미기, 나의 추억 조각 등록 및 저장, 프로필 기능 이용을 위해 사진 라이브러리 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
