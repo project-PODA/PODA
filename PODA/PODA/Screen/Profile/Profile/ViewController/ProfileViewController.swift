@@ -15,6 +15,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     private let profileImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 105
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
@@ -182,14 +183,26 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             print("Update 성공")
         }
     }
-    @objc private func didLogoutButton(){
-        fireAuthManager.userLogOut(){ [weak self] error in
-            guard let self = self else {return}
-            if error == .none {
-                moveToHome()
+    
+    @objc private func didLogoutButton() {
+        let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            self.fireAuthManager.userLogOut() { error in
+                if error == .none {
+                    self.moveToHome()
+                }
             }
         }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(logoutAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
+
 
     @objc private func didTapInfoButton() {
         let infoVC = InfoViewController()
