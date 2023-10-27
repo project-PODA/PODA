@@ -17,7 +17,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
     lazy var backgroundImageView = UIImageView().then {
         $0.image = UIImage(named: "image_background2") // 저장된 이미지 불러오기
     }
-    
+
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
@@ -28,6 +28,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 28, weight: .light)
         let image = UIImage(systemName: "chevron.left", withConfiguration: imageConfig)
         $0.image = image
+        $0.contentMode = .scaleAspectFill
         $0.tintColor = Palette.podaWhite.getColor()
     }
 
@@ -95,11 +96,13 @@ class DetailViewController: BaseViewController, UIConfigurable {
         addSwipeGesture()
         setupComp()
     }
+    
     private func setupComp() {
-        backgroundImageView.image = UIImage(data: diaryData!.diaryImageList[0])
-        titleLabel.text = diaryData?.diaryName
-        dateLabel.text = diaryData?.createDate
-        contentLabel.text = diaryData?.description
+        guard let diaryData = diaryData else { return }
+        backgroundImageView.image = UIImage(data: diaryData.diaryImageList[0])
+        titleLabel.text = diaryData.diaryName
+        dateLabel.text = diaryData.createDate
+        contentLabel.text = diaryData.description
     }
     
     func configUI() {
@@ -143,7 +146,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
         }
         
         contentLabel.snp.makeConstraints { 
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-44)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-52)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
         }
@@ -165,6 +168,8 @@ class DetailViewController: BaseViewController, UIConfigurable {
             saveDeleteVC.dateLabel.text = diaryData?.createDate
             saveDeleteVC.diaryName = diaryData?.diaryName
             saveDeleteVC.imageView.image = UIImage(data: diaryData!.diaryImageList[0])
+            saveDeleteVC.isDiaryImage = false
+            saveDeleteVC.editButton.isHidden = true
             navigationController?.pushViewController(saveDeleteVC, animated: true)
         }
     }

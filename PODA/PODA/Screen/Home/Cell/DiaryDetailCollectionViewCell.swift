@@ -32,6 +32,8 @@ class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
     // FIXME: - 다이어리 제목 불러오기
     lazy var titleLabel = UILabel().then {
         $0.setUpLabel(title: "나홀로\n인생네컷\n모음", podaFont: .head1) // 다이어리 제목
+        let width = self.bounds.width
+        $0.preferredMaxLayoutWidth = width - 14
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 3
         $0.textAlignment = .left
@@ -65,8 +67,10 @@ class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
         }
         
         titleLabel.snp.makeConstraints { 
-            $0.left.equalTo(16)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-120)
             $0.bottom.equalToSuperview().offset(-40)
+            $0.height.equalTo(bounds.height / 3)
         }
         
         dateLabel.snp.makeConstraints { 

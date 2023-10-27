@@ -49,6 +49,7 @@ class RealmManager {
         do {
             try realm.write {
                 realm.delete(imageMemory)
+                print("Realm에서 이미지 메모리 삭제 성공")
             }
         } catch {
             print("Realm에서 이미지 메모리 삭제 실패: \(error.localizedDescription)")
