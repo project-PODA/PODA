@@ -217,10 +217,16 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.originalImage] as? UIImage {
-            profileImageView.image = selectedImage
+            
+            // 이미지 크기 조정
+            let newSize = CGSize(width: 300, height: 300 * selectedImage.size.height / selectedImage.size.width)
+            let resizedImage = selectedImage.resized(to: newSize)
+            
+            profileImageView.image = resizedImage
             loadingIndicator.startAnimating()
             setComponentDisable(false)
-            fireImageManager.updateProfileImage(imageData: selectedImage.jpegData(compressionQuality: 0.5)!) { [weak self] (error) in
+            
+            fireImageManager.updateProfileImage(imageData: resizedImage!.jpegData(compressionQuality: 0.5)!) { [weak self] (error) in
                 guard let self = self else { return }
                 DispatchQueue.main.async{ [weak self]  in
                     if error == .none {
@@ -233,6 +239,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
         dismiss(animated: true, completion: nil)
     }
+
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
