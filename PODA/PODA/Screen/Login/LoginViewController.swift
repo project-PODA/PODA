@@ -44,28 +44,29 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let eyeButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_eye"), for: .normal)
         $0.tintColor = .gray
+        $0.contentMode = .scaleAspectFit
     }
     
     private let passwordLineView = UIView().then {
         $0.backgroundColor = Palette.podaBlue.getColor()
     }
     
-    private lazy var googleIconButton = UIButton().then {
-        $0.setImage(UIImage(named: "icon_google"), for:.normal)
-        $0.setImage(UIImage(named: "icon_google"), for:.highlighted)
-        $0.layer.cornerRadius = 36
-        $0.clipsToBounds = true
-        $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
-    }
-    
-    private lazy var appleIconButton = UIButton().then {
-        $0.setImage(UIImage(named: "icon_apple"), for:.normal)
-        $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
-        $0.layer.cornerRadius = 36
-        $0.clipsToBounds = true
-        $0.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
-    }
-    
+//    private lazy var googleIconButton = UIButton().then {
+//        $0.setImage(UIImage(named: "icon_google"), for:.normal)
+//        $0.setImage(UIImage(named: "icon_google"), for:.highlighted)
+//        $0.layer.cornerRadius = 36
+//        $0.clipsToBounds = true
+//        $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
+//    }
+//
+//    private lazy var appleIconButton = UIButton().then {
+//        $0.setImage(UIImage(named: "icon_apple"), for:.normal)
+//        $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
+//        $0.layer.cornerRadius = 36
+//        $0.clipsToBounds = true
+//        $0.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
+//    }
+//
     private let loginButton = UIButton().then {
         $0.setUpButton(title: "로그인", podaFont: .button1, cornerRadius: 22)
         $0.backgroundColor = Palette.podaBlue.getColor()
@@ -109,7 +110,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         let subviews: [UIView] = [
             logoImageView, emailLabel, passwordLabel, emailTextField,
             emailLineView, passwordTextField, passwordLineView, eyeButton,
-            loginButton, googleIconButton, appleIconButton, askLabel, signUpButton, loadingIndicator
+            loginButton, askLabel, signUpButton, loadingIndicator
         ]
         
         subviews.forEach { view.addSubview($0) }
@@ -169,17 +170,17 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.height.equalTo(44)
         }
         
-        googleIconButton.snp.makeConstraints { make in
-            make.top.equalTo(loginButton.snp.bottom).offset(20)
-            make.size.equalTo(CGSize(width: 72, height: 72))
-            make.right.equalTo(view.snp.centerX).offset(-8)
-        }
-        
-        appleIconButton.snp.makeConstraints { make in
-            make.top.equalTo(googleIconButton)
-            make.size.equalTo(googleIconButton)
-            make.left.equalTo(view.snp.centerX).offset(8)
-        }
+//        googleIconButton.snp.makeConstraints { make in
+//            make.top.equalTo(loginButton.snp.bottom).offset(20)
+//            make.size.equalTo(CGSize(width: 72, height: 72))
+//            make.right.equalTo(view.snp.centerX).offset(-8)
+//        }
+//
+//        appleIconButton.snp.makeConstraints { make in
+//            make.top.equalTo(googleIconButton)
+//            make.size.equalTo(googleIconButton)
+//            make.left.equalTo(view.snp.centerX).offset(8)
+//        }
         
         askLabel.snp.makeConstraints { make in
             make.bottom.equalTo(signUpButton.snp.top).offset(-8)
@@ -259,7 +260,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
     @objc private func eyeButtonTapped() {
         passwordTextField.isSecureTextEntry.toggle()
         
-        let imageName = passwordTextField.isSecureTextEntry ? "icon-eye" : "icon-eye.filled"
+        let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
         let image = UIImage(named: imageName)
         eyeButton.setImage(image, for: .normal)
     }
@@ -301,8 +302,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
         emailTextField.isEnabled = enabled
         passwordTextField.isEnabled = enabled
         eyeButton.isEnabled = enabled
-        googleIconButton.isEnabled = enabled
-        appleIconButton.isEnabled = enabled
+//        googleIconButton.isEnabled = enabled
+//        appleIconButton.isEnabled = enabled
         loginButton.isEnabled = enabled
         signUpButton.isEnabled = enabled
     }
