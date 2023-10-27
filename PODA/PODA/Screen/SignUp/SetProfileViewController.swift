@@ -9,6 +9,7 @@ import UIKit
 import Then
 import SnapKit
 import NVActivityIndicatorView
+import PhotosUI
 
 class SetProfileViewController: BaseViewController, UIConfigurable {
     
@@ -170,12 +171,26 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    @objc private func openGallery() {
-        let picker = UIImagePickerController().then {
-            $0.delegate = self
-            $0.sourceType = .photoLibrary
+//    @objc private func openGallery() {
+//        let picker = UIImagePickerController().then {
+//            $0.delegate = self
+//            $0.sourceType = .photoLibrary
+//        }
+//        self.present(picker, animated: true, completion: nil)
+//    }
+    
+    @objc func openGallery() {
+        PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { [weak self] isAuthorized in
+            DispatchQueue.main.async {
+                if isAuthorized {
+                    var configuration = PHPickerConfiguration()
+                    configuration.filter = .images
+                    let picker = PHPickerViewController(configuration: configuration)
+                    picker.delegate = self
+                    self?.present(picker, animated: true, completion: nil)
+                }
+            }
         }
-        self.present(picker, animated: true, completion: nil)
     }
     
     @objc private func clearTextField() {
@@ -239,5 +254,27 @@ extension SetProfileViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         updateSignUpButtonAppearance()
+    }
+}
+
+extension SetProfileViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        dismiss(animated: true, completion: nil)
+        
+        guard !results.isEmpty else {
+            return
+        }
+        
+        let selectedResult = results[0]
+        
+        selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
+            if let error = error {
+                print("이미지 로딩 중 오류: \(error.localizedDescription)")
+            } else if let selectedImage = object as? UIImage {
+                DispatchQueue.main.async {
+                    self?.profileImageView.image = selectedImage
+                }
+            }
+        }
     }
 }
