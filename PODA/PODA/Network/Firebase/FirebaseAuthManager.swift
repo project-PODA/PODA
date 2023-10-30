@@ -17,11 +17,6 @@ class FireAuthManager {
     }
     
     func userLogin(email: String, password: String, completion: @escaping (FireAuthError) -> Void) {
-        if let currentUserUID = Auth.auth().currentUser?.uid, !currentUserUID.isEmpty {
-            completion(.none)
-            return
-        }
-        
         DispatchQueue.global(qos: .userInteractive).async{
             Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
                 if let errCode = error as NSError?{
@@ -61,43 +56,28 @@ class FireAuthManager {
     }
 
     func deleteEmail(completion: @escaping (FireAuthError) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).async {
-            if let currentUser = Auth.auth().currentUser {
-                currentUser.delete { error in
-                    if let errCode = error as NSError? {
-                        if errCode.code == 17014 {
-                            Logger.writeLog(.error, message: "[\(FireAuthError.retryLogin)] : \(FireAuthError.retryLogin.description)")
-                            self.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { error in
-                                if error == .none {
-                                    self.deleteEmail { error in
-                                        if error == .none {
-                                            completion(.none)
-                                        } else {
-                                            Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
-                                            completion(.unknown)
-                                        }
-                                    }
-                                } else {
-                                    Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
-                                    completion(error)
-                                }
-                            }
-                        } else {
+        
+        if let currentUser = Auth.auth().currentUser {
+            let userEmail = UserDefaultManager.userEmail
+            let userPassword = UserDefaultManager.userPassword
+            let credential = EmailAuthProvider.credential(withEmail: userEmail, password: userPassword)
+            currentUser.reauthenticate(with: credential) { authDataResult, reauthError in
+                if let reauthErrCode = reauthError as NSError? {
+                    Logger.writeLog(.error, message: "[\(reauthErrCode.code)] : \(reauthErrCode.localizedDescription)")
+                    completion(.error(reauthErrCode.code, reauthErrCode.localizedDescription))
+                } else {
+                    currentUser.delete { deleteError in
+                        if let errCode = deleteError as NSError? {
                             Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                             completion(.error(errCode.code, errCode.localizedDescription))
+                        } else {
+                            completion(.none)
                         }
-                    } else {
-                        completion(.none)
                     }
                 }
-            } else {
-                Logger.writeLog(.error, message: "유저 계정 삭제 중 문제 발생")
-                completion(.unknown)
             }
         }
     }
-
-    
     
     func deleteAccount(completion: @escaping (FireAuthError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {

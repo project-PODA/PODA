@@ -174,7 +174,8 @@ class FireStorageImageManager {
             let imageReference = storageReference.child("\(currentUserUID)/images/\(diaryName)")
             
             imageReference.listAll { (result, error) in
-                if let _ = error {
+                if let errCode = error as NSError?{
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                     completion(.unknown)
                     return
                 }
@@ -211,6 +212,7 @@ class FireStorageImageManager {
 
             imageReference.getData(maxSize: 10 * 1024 * 1024) { data, error in
                 if let errCode = error as NSError?  {
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                     completion(.error(errCode.code, error!.localizedDescription), nil)
                 } else {
                     if let imageData = data {
@@ -269,8 +271,13 @@ class FireStorageImageManager {
                 completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
             } else {
                 topLevelFolderRef.delete { error in
-                    if let error = error {
-                        completion(.none)//여기서 에러떨어지는 이유가 몰겠네
+                    if let errCode = error as NSError?{
+                        if errCode.code == -13010 {
+                            completion(.none) //이미 삭제된 폴더의 경우 정상결과로 보고 계속 진행
+                        } else {
+                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
+                        }
                     } else {
                         completion(.none)
                     }

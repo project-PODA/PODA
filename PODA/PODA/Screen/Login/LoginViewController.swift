@@ -285,7 +285,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 
                 UserDefaultManager.isUserLoggedIn = true
                 UserDefaultManager.userEmail = email.lowercased()
-                UserDefaultManager.userPassword = password.lowercased()
+                UserDefaultManager.userPassword = password
                 
             } else {
                 showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
