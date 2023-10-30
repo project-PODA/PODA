@@ -21,7 +21,7 @@ struct Logger {
         let logType: OSLogType
         var logMessage = ""
         var emoji = ""
-
+        
         switch level {
         case .debug :
             logType = .debug
@@ -47,7 +47,9 @@ struct Logger {
         }
         
         if level == .error || level == .fatal {
+            #if DEBUG
             saveLog(logMessage)
+            #endif
         }
         
         os_log("%@", log: log, type: logType, logMessage)
@@ -64,7 +66,7 @@ struct Logger {
                     if FileManager.default.fileExists(atPath: fileURL.path) {
                         let fileHandle = try FileHandle(forWritingTo: fileURL)
                         fileHandle.seekToEndOfFile()
-
+                        
                         if let data = logMessage.data(using: .utf8) {
                             fileHandle.write(data)
                             fileHandle.closeFile()
