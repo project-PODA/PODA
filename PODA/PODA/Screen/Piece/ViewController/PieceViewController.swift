@@ -187,7 +187,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
               let selectedDateString = self.datePickerButton.title(for: .normal),
               let selectedDate = Date(dateString: selectedDateString, format: "yyyy. MM. dd") else {
             
-            let failAlertController = UIAlertController(title: "주의!", message: "이미지와 날짜가 모두 입력되어야만 저장할 수 있습니다.", preferredStyle: .alert)
+            let failAlertController = UIAlertController(title: "알림", message: "이미지와 추억 날짜를 모두 설정해주세요.", preferredStyle: .alert)
             let confirmAction = UIAlertAction(title: "확인", style: .default, handler: nil)
             failAlertController.addAction(confirmAction)
             present(failAlertController, animated: true, completion: nil)
