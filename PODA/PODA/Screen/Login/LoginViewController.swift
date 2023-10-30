@@ -44,28 +44,29 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let eyeButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_eye"), for: .normal)
         $0.tintColor = .gray
+        $0.contentMode = .scaleAspectFit
     }
     
     private let passwordLineView = UIView().then {
         $0.backgroundColor = Palette.podaBlue.getColor()
     }
     
-    private lazy var googleIconButton = UIButton().then {
-        $0.setImage(UIImage(named: "icon_google"), for:.normal)
-        $0.setImage(UIImage(named: "icon_google"), for:.highlighted)
-        $0.layer.cornerRadius = 36
-        $0.clipsToBounds = true
-        $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
-    }
-    
-    private lazy var appleIconButton = UIButton().then {
-        $0.setImage(UIImage(named: "icon_apple"), for:.normal)
-        $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
-        $0.layer.cornerRadius = 36
-        $0.clipsToBounds = true
-        $0.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
-    }
-    
+//    private lazy var googleIconButton = UIButton().then {
+//        $0.setImage(UIImage(named: "icon_google"), for:.normal)
+//        $0.setImage(UIImage(named: "icon_google"), for:.highlighted)
+//        $0.layer.cornerRadius = 36
+//        $0.clipsToBounds = true
+//        $0.addTarget(self, action: #selector(googleButtonTapped), for: .touchUpInside)
+//    }
+//
+//    private lazy var appleIconButton = UIButton().then {
+//        $0.setImage(UIImage(named: "icon_apple"), for:.normal)
+//        $0.setImage(UIImage(named: "icon_apple"), for:.highlighted)
+//        $0.layer.cornerRadius = 36
+//        $0.clipsToBounds = true
+//        $0.addTarget(self, action: #selector(appleButtonTapped), for: .touchUpInside)
+//    }
+//
     private let loginButton = UIButton().then {
         $0.setUpButton(title: "로그인", podaFont: .button1, cornerRadius: 22)
         $0.backgroundColor = Palette.podaBlue.getColor()
@@ -86,6 +87,16 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
+    
+    #if DEBUG
+    private lazy var debugButton = UIButton().then {
+        $0.setUpButton(title: "랜덤가입", podaFont: .button1, cornerRadius: 22)
+        $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
+        $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
+        $0.layer.borderWidth = 1
+        $0.addTarget(self, action: #selector(touchDebugButton), for: .touchUpInside)
+    }
+    #endif
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -109,7 +120,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
         let subviews: [UIView] = [
             logoImageView, emailLabel, passwordLabel, emailTextField,
             emailLineView, passwordTextField, passwordLineView, eyeButton,
-            loginButton, googleIconButton, appleIconButton, askLabel, signUpButton, loadingIndicator
+            loginButton, askLabel, signUpButton, loadingIndicator
         ]
         
         subviews.forEach { view.addSubview($0) }
@@ -169,17 +180,17 @@ class LoginViewController: BaseViewController, UIConfigurable {
             make.height.equalTo(44)
         }
         
-        googleIconButton.snp.makeConstraints { make in
-            make.top.equalTo(loginButton.snp.bottom).offset(20)
-            make.size.equalTo(CGSize(width: 72, height: 72))
-            make.right.equalTo(view.snp.centerX).offset(-8)
-        }
-        
-        appleIconButton.snp.makeConstraints { make in
-            make.top.equalTo(googleIconButton)
-            make.size.equalTo(googleIconButton)
-            make.left.equalTo(view.snp.centerX).offset(8)
-        }
+//        googleIconButton.snp.makeConstraints { make in
+//            make.top.equalTo(loginButton.snp.bottom).offset(20)
+//            make.size.equalTo(CGSize(width: 72, height: 72))
+//            make.right.equalTo(view.snp.centerX).offset(-8)
+//        }
+//
+//        appleIconButton.snp.makeConstraints { make in
+//            make.top.equalTo(googleIconButton)
+//            make.size.equalTo(googleIconButton)
+//            make.left.equalTo(view.snp.centerX).offset(8)
+//        }
         
         askLabel.snp.makeConstraints { make in
             make.bottom.equalTo(signUpButton.snp.top).offset(-8)
@@ -196,6 +207,16 @@ class LoginViewController: BaseViewController, UIConfigurable {
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        
+        #if DEBUG
+        view.addSubview(debugButton)
+        debugButton.snp.makeConstraints { make in
+            make.centerX.equalTo(loginButton)
+            make.top.equalTo(loginButton.snp.bottom).offset(10)
+            make.height.equalTo(loginButton)
+            make.width.equalTo(loginButton)
+        }
+        #endif
     }
     
     @objc private func googleButtonTapped() {
@@ -255,11 +276,41 @@ class LoginViewController: BaseViewController, UIConfigurable {
         print("apple")
     }
     
+    #if DEBUG
+    @objc private func touchDebugButton() {
+        let originalString = "test@naver.com"
+        let randomPart = originalString.randomString(length: 8)
+        let userEmail = originalString.replacingOccurrences(of: "test", with: randomPart)
+        let userPasswrod = "Poda1!"
+        loadingIndicator.startAnimating()
+        fireAuthManager.signUpUser(email: userEmail, password: userPasswrod, profileImage: UIImage(named: "image_profile")?.pngData(), nickName: "랜덤계정") { [weak self] error in
+            guard let self = self else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {return}
+                if error == .none {
+                    print("랜덤계정 생성 성공! 로그인 진입중..")
+                    UserDefaultManager.isUserLoggedIn = true
+                    UserDefaultManager.userEmail = userEmail.lowercased()
+                    UserDefaultManager.userPassword = userPasswrod
+                    DispatchQueue.main.async {
+                        let tabBarController = BaseTabbarController()
+                        self.navigationController!.pushViewController(tabBarController, animated: true)
+                        self.loadingIndicator.stopAnimating()
+                    }
+                } else {
+                    showAlert(title: "에러", message: error.description)
+                }
+                loadingIndicator.stopAnimating()
+            }
+        }
+    }
+    #endif
+    
     
     @objc private func eyeButtonTapped() {
         passwordTextField.isSecureTextEntry.toggle()
         
-        let imageName = passwordTextField.isSecureTextEntry ? "icon-eye" : "icon-eye.filled"
+        let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
         let image = UIImage(named: imageName)
         eyeButton.setImage(image, for: .normal)
     }
@@ -284,7 +335,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 
                 UserDefaultManager.isUserLoggedIn = true
                 UserDefaultManager.userEmail = email.lowercased()
-                UserDefaultManager.userPassword = password.lowercased()
+                UserDefaultManager.userPassword = password
                 
             } else {
                 showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
@@ -301,8 +352,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
         emailTextField.isEnabled = enabled
         passwordTextField.isEnabled = enabled
         eyeButton.isEnabled = enabled
-        googleIconButton.isEnabled = enabled
-        appleIconButton.isEnabled = enabled
+//        googleIconButton.isEnabled = enabled
+//        appleIconButton.isEnabled = enabled
         loginButton.isEnabled = enabled
         signUpButton.isEnabled = enabled
     }

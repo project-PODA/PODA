@@ -82,6 +82,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        
     }
     
     init(viewModel: CreateDiaryViewModel, ratio: Ratio) {
@@ -174,7 +175,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         let detailDiaryViewController = DetailDiaryViewController()
         detailDiaryViewController.ratio = ratio
         detailDiaryViewController.diaryName = diaryName
-        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage?.jpegData(compressionQuality: 0.5) ?? Data(), backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
+        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage?.pngData() ?? Data(), backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
         navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
     

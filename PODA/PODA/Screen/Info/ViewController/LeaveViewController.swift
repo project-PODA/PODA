@@ -54,6 +54,13 @@ class LeaveViewController: BaseViewController, UIConfigurable {
         configUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(true)
+        }
+    }
+    
     func configUI() {
         self.navigationItem.title = "탈퇴하기"
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "icon_back")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(didTapBackButton))

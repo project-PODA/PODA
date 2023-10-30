@@ -15,6 +15,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
         
     // MARK: UIComponents
     
+    var isComeFromSaveDeleteVC = false
+    
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         $0.setUpButton(title: "뒤로", podaFont: .subhead3)
@@ -140,7 +142,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     
     func setGesture() {
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
-        imageView.isUserInteractionEnabled = true
+        //imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(imageTapGesture)
     }
     
@@ -193,8 +195,11 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 self.showAlert(title: "주의!", message: "이미지와 날짜가 모두 입력되어야만 저장할 수 있습니다.")
                 return
             }
-
-            self.saveImageToRealm(image: selectedImage, date: selectedDate)
+            if !isComeFromSaveDeleteVC {
+                self.saveImageToRealm(image: selectedImage, date: selectedDate)
+            } else {
+                // 날짜만 변경하는 메서드
+            }
             self.navigationController?.popViewController(animated: true)
         }
         

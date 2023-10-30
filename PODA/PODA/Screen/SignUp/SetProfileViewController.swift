@@ -205,7 +205,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func navigateToCompleteSignUp() {
-        guard let _ = nicknameTextField.text, let imageData = profileImageView.image?.jpegData(compressionQuality: 0.5) else {
+        guard let _ = nicknameTextField.text, let imageData = profileImageView.image?.pngData() else {
             showAlert(title: "에러", message: "데이터가 올바르지 않습니다. 확인해주세요.")
             return
         }

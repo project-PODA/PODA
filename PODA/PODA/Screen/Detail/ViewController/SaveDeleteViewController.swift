@@ -6,11 +6,16 @@
 //
 
 import UIKit
+import RealmSwift
 
 class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
     private let firebaseDBManager = FirestorageDBManager()
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
+    
+    var isDiaryImage = true
+    var imageMemories: Results<ImageMemory>?
+    var indexPath = 0
     
     private let backButton = UIButton().then {
         $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
@@ -23,10 +28,16 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray3.getColor()
     }
     
-    private let addButton = UIButton().then {
+    lazy var addButton = UIButton().then {
         $0.setImage(UIImage(systemName: "plus"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+    }
+    
+    lazy var editButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_editCalendar"), for: .normal)
+        $0.tintColor = Palette.podaWhite.getColor()
+        $0.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
     }
     
     lazy var imageView = UIImageView().then {
@@ -49,10 +60,11 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        print(navigationController?.viewControllers)
     }
     
     func configUI() {
-        let navigationBarStackView = UIStackView(arrangedSubviews: [backButton, dateLabel, addButton])
+        let navigationBarStackView = UIStackView(arrangedSubviews: [backButton, dateLabel, addButton, editButton])
         navigationBarStackView.axis = .horizontal
         navigationBarStackView.alignment = .center
         navigationBarStackView.distribution = .equalSpacing
@@ -69,6 +81,10 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         }
         
         addButton.snp.makeConstraints {
+            $0.width.height.equalTo(30)
+        }
+        
+        editButton.snp.makeConstraints {
             $0.width.height.equalTo(30)
         }
         
@@ -100,12 +116,15 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         // 선택된 Ratio의 만들기 페이지로 이동
     }
     
-//    @objc func didTapSaveButton() {
-//        // 저장되었습니다 토스트 메세지 띄우기 & 앨범에 이미지 추가
-//        if let image = imageView.image {
-//            UIImageWriteToSavedPhotosAlbum(image, self, #selector(savedImage), nil)
-//        }
-//    }
+    @objc func didTapEditButton() {
+        let pieceVC = PieceViewController()
+        pieceVC.vectorIconImage.isHidden = true
+        pieceVC.addToGalleryButton.isHidden = true
+        pieceVC.imageView.isUserInteractionEnabled = false
+        pieceVC.isComeFromSaveDeleteVC = true
+        pieceVC.imageView.image = imageView.image
+        navigationController?.pushViewController(pieceVC, animated: true)
+    }
     
     @objc func didTapSaveButton() {
         // 앨범 권한을 먼저 체크하고 요청
@@ -115,8 +134,6 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
                 if let image = self.imageView.image {
                     UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.savedImage(_:didFinishSavingWithError:contextInfo:)), nil)
                 }
-            } else {
-                // 권한이 거부되었을 경우 처리
             }
         }
     }
@@ -126,17 +143,25 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         let alert = UIAlertController(title: "정말 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
             guard let self else { return }
-            guard let diaryName else { return }
-            firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
-                if error == .none {
-                    // 삭제되었습니다 토스트 메세지 띄우고 다이어리 이미지 여러장인 경우
-                    self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
-                    // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
-                    self.firebaseDBManager.deleteDiaryAll { error in
-                        
+            print(indexPath)
+            if isDiaryImage {
+                guard let diaryName else { return }
+                firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
+                    if error == .none {
+                        // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
+                        // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
+                        // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
+                        self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
+                            
+                        }
+                        self.getBackToHome()
                     }
-                    self.navigationController?.popToRootViewController(animated: true)
                 }
+            } else {
+                imageMemories = RealmManager.shared.loadImageMemories()
+                guard let imageMemory = self.imageMemories?[indexPath] else { return }
+                RealmManager.shared.deleteImageMemory(imageMemory)
+                self.getBackToHome()
             }
         }
         
@@ -145,28 +170,23 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         alert.addAction(confirmAction)
         alert.addAction(cancelAction)
         
-        present(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
-//    @objc func savedImage(image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeMutableRawPointer?) {
-//        if let error = error {
-//            NSLog("Failed to save image. Error = \(error.localizedDescription)")
-//            //                권한 허용 안함 상태일 때 설정에서 변경하라고 띄워주기
-//            //                if isPermissionDenied, let vc = viewController {
-//            //                    Dialog.presentPhotoPermission(vc)
-//            //        }
-//        } else {
-//            // 토스트 메세지 띄우기
-//            showToastMessage("성공적으로 저장되었습니다!", withDuration: 2.0, delay: 2.0)
-//        }
-//    }
-    
     @objc func savedImage(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        // 여기에 이미지가 성공적으로 저장되었거나, 실패했을 때의 처리를 작성합니다.
         if let error = error {
             NSLog("Failed to save image. Error = \(error.localizedDescription)")
         } else {
             showToastMessage("성공적으로 저장되었습니다!", withDuration: 0.8, delay: 0.8)
+        }
+    }
+    
+    func getBackToHome() {
+        guard let viewControllerStack = self.navigationController?.viewControllers else { return }
+        for viewController in viewControllerStack {
+            if let homeVC = viewController as? BaseTabbarController {
+                self.navigationController?.popToViewController(homeVC, animated: true)
+            }
         }
     }
     
@@ -189,4 +209,4 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
 }
 
-    
+

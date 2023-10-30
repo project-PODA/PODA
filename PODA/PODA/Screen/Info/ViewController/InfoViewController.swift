@@ -9,10 +9,11 @@ import UIKit
 import SnapKit
 import MessageUI
 import Then
+import FirebaseAuth
+
 
 class InfoViewController: BaseViewController, UIConfigurable {
-    
-    
+
     private let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.register(InfoCell.self, forCellReuseIdentifier: "infoCell")
         $0.backgroundColor = .clear
@@ -28,15 +29,22 @@ class InfoViewController: BaseViewController, UIConfigurable {
     }
     
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(true)
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-        self.tabBarController?.tabBar.isHidden = false
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(false)
+        }
     }
     
     
     func configUI() {
-        self.tabBarController?.tabBar.isHidden = true
         
         let backButton = UIBarButtonItem(image: UIImage(named: "icon_back")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(didTapBackButton))
         self.navigationItem.leftBarButtonItem = backButton
@@ -57,13 +65,16 @@ class InfoViewController: BaseViewController, UIConfigurable {
         // App Version.
         guard let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else { return }
         
+        // User ID
+        let userID = Auth.auth().currentUser?.uid ?? "Unknown"
+
         // mail 을 연동해서 보낼 수 있는가를 체크.
         if MFMailComposeViewController.canSendMail() {
             let mailComposeVC = MFMailComposeViewController()
             mailComposeVC.mailComposeDelegate = self
             mailComposeVC.setToRecipients(["poda_official@naver.com"])
             mailComposeVC.setSubject("PODA 문의 사항")
-            mailComposeVC.setMessageBody("오류사항 및 문의사항을 세세히 입력해주세요.\n(필요하다면 스크린샷도 함께 첨부해주세요.) \n\n App Version: \(appVersion) \n Device: \(UIDevice.iPhoneModel) \n OS: \(UIDevice.iOSVersion)", isHTML: false)
+            mailComposeVC.setMessageBody("오류사항 및 문의사항을 세세히 입력해주세요.\n(필요하다면 스크린샷도 함께 첨부해주세요.) \n\n App Version: \(appVersion) \n Device: \(UIDevice.iPhoneModel) \n OS: \(UIDevice.iOSVersion) \n UserID: \(userID)", isHTML: false)
             mailComposeVC.modalPresentationStyle = .overFullScreen
             present(mailComposeVC, animated: true, completion: nil)
         } else {
@@ -74,6 +85,7 @@ class InfoViewController: BaseViewController, UIConfigurable {
             present(mailErrorAlert, animated: true, completion: nil)
         }
     }
+
     
     @objc func didTapBackButton() {
         self.navigationController?.popViewController(animated: true)
@@ -133,8 +145,6 @@ extension InfoViewController: UITableViewDelegate {
 }
 
 
-
-
 // MARK: - MFMailComposeViewControllerDelegate
 extension InfoViewController: MFMailComposeViewControllerDelegate {
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
@@ -170,7 +180,7 @@ extension UIDevice {
         }
         return model
     }
-
+    
     private static var modelDictionary: [String: String] {
         return [
             "i386": "Simulator",   // 32 bit
@@ -215,7 +225,7 @@ extension UIDevice {
             "iPhone16,2": "iPhone 15 Pro Max"
         ]
     }
-
+    
     static var iPhoneModel: String {
         return modelDictionary[hardwareString] ?? "Unknown iPhone - \(hardwareString)"
     }

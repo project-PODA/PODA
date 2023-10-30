@@ -15,10 +15,12 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     private let profileImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 105
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
         $0.image = UIImage(named: "image_profile")
+        $0.contentMode = .scaleAspectFill
     }
     
     private let cameraButton = UIButton().then {
@@ -57,6 +59,8 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
+  
+    
     private func getFirebaseData(){
         loadingIndicator.startAnimating()
         fireImageManager.getProfileImage { [weak self] (error, image) in
@@ -181,14 +185,30 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             print("Update 성공")
         }
     }
-    @objc private func didLogoutButton(){
-        fireAuthManager.userLogOut(){ [weak self] error in
-            guard let self = self else {return}
-            if error == .none {
-                moveToHome()
+    
+    @objc private func didLogoutButton() {
+        let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            self.fireAuthManager.userLogOut() { error in
+                if error == .none {
+                    UserDefaultManager.isUserLoggedIn = false
+                    UserDefaultManager.userEmail = ""
+                    UserDefaultManager.userPassword = ""
+                    self.moveToHome()
+                    
+                }
             }
         }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(logoutAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
+
 
     @objc private func didTapInfoButton() {
         let infoVC = InfoViewController()
@@ -201,10 +221,16 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.originalImage] as? UIImage {
-            profileImageView.image = selectedImage
+            
+            // 이미지 크기 조정
+            let newSize = CGSize(width: 300, height: 300 * selectedImage.size.height / selectedImage.size.width)
+            let resizedImage = selectedImage.resized(to: newSize)
+            
+            profileImageView.image = resizedImage
             loadingIndicator.startAnimating()
             setComponentDisable(false)
-            fireImageManager.updateProfileImage(imageData: selectedImage.jpegData(compressionQuality: 0.5)!) { [weak self] (error) in
+            
+            fireImageManager.createProfileImage(imageData: resizedImage!.pngData()!) { [weak self] (error) in
                 guard let self = self else { return }
                 DispatchQueue.main.async{ [weak self]  in
                     if error == .none {
@@ -217,6 +243,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
         dismiss(animated: true, completion: nil)
     }
+
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)

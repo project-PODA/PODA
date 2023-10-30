@@ -13,8 +13,10 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     static let identifier = "DiaryCollectionViewCell"
     
-    lazy var titleLabel = UILabel().then { 
-        $0.setUpLabel(title: "나홀로\n인생네컷\n모음", podaFont: .subhead3)
+    lazy var titleLabel = UILabel().then {
+        let width = self.bounds.width
+        $0.preferredMaxLayoutWidth = width - 14
+        $0.setUpLabel(title: "나홀로인생네컷모음", podaFont: .subhead3)
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 3
         $0.textAlignment = .left
@@ -44,7 +46,8 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
         }
         
         titleLabel.snp.makeConstraints { 
-            $0.left.equalTo(8)
+            $0.left.equalToSuperview().offset(7)
+            $0.right.equalToSuperview().offset(-7)
             $0.bottom.equalToSuperview().offset(-6)
         }
         
