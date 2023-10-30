@@ -194,7 +194,11 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             guard let self = self else { return }
             self.fireAuthManager.userLogOut() { error in
                 if error == .none {
+                    UserDefaultManager.isUserLoggedIn = false
+                    UserDefaultManager.userEmail = ""
+                    UserDefaultManager.userPassword = ""
                     self.moveToHome()
+                    
                 }
             }
         }
@@ -226,7 +230,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
             loadingIndicator.startAnimating()
             setComponentDisable(false)
             
-            fireImageManager.updateProfileImage(imageData: resizedImage!.jpegData(compressionQuality: 0.5)!) { [weak self] (error) in
+            fireImageManager.createProfileImage(imageData: resizedImage!.pngData()!) { [weak self] (error) in
                 guard let self = self else { return }
                 DispatchQueue.main.async{ [weak self]  in
                     if error == .none {

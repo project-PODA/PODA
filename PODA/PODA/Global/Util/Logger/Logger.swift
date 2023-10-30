@@ -17,7 +17,7 @@ enum LogLevel {
 
 struct Logger {
     private static let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "gjonegg")
-    static func writeLog(_ level: LogLevel, message: String, isNeededStackTraceInfo : Bool = false, line : Int = #line, fileName : String = #file) {
+    static func writeLog(_ level: LogLevel, message: String, isNeededStackTraceInfo : Bool = true, line : Int = #line, fileName : String = #file) {
         let logType: OSLogType
         var logMessage = ""
         var emoji = ""
