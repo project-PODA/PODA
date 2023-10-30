@@ -40,7 +40,7 @@ class FirestorageDBManager {
             
             documentRef.setData(["diaryInfo" : diaryInfo.toJson()]) { error in
                 if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, errCode.localizedDescription))
                 }else{
                     completion(.none)
@@ -60,7 +60,7 @@ class FirestorageDBManager {
         DispatchQueue.global(qos:.userInteractive).async{
             query.getDocuments() { (querySnapshot, error) in
                 if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, "Error getting documents"))
                     return
                 } else {
@@ -118,7 +118,7 @@ class FirestorageDBManager {
             
             collectionRef.getDocuments { (querySnapshot, error) in
                 if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion([], .error(errCode.code, errCode.localizedDescription))
                 }else{
                     var documentNames = [String]()
@@ -152,7 +152,7 @@ class FirestorageDBManager {
                 
                 documentRef.getDocument { (document, error) in
                     if let errCode = error as NSError? {
-                        Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                        Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                         completion([], .error(errCode.code, errCode.localizedDescription))
                         dispatchGroup.leave()
                         return
@@ -194,7 +194,7 @@ class FirestorageDBManager {
             let documentRef = collectionRef.document(diaryName)
             documentRef.delete { error in
                 if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, errCode.localizedDescription))
                     return
                 }  else {
@@ -226,7 +226,7 @@ class FirestorageDBManager {
 
                     docRef.setData(["accountInfo" : model.toJson()]) { error in
                         if let errCode = error as NSError?{
-                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                             completion(.error(errCode.code, errCode.localizedDescription))
                             return
                         } else {
@@ -257,7 +257,7 @@ class FirestorageDBManager {
             
             collectionRef.getDocuments { (querySnapshot, error) in
                 if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, errCode.localizedDescription))
                     return
                 }
@@ -267,9 +267,9 @@ class FirestorageDBManager {
                     dispatchGroup.enter()
                     if self.isDiaryPath(refDocPath: document.reference.path, accountPath: currentUserUID + "/account") {
                         document.reference.delete { error in
-                            if let error = error {
-                                completion(.unknown)
-                                Logger.writeLog(.error, message: (error.localizedDescription))
+                            if let errCode = error as NSError?{
+                                completion(.error(errCode.code, errCode.localizedDescription))
+                                Logger.writeLog(.error, message: (errCode.description))
                             }
                             dispatchGroup.leave()
                         }
@@ -330,7 +330,7 @@ class FirestorageDBManager {
             
             userCollection.document(currentUserUID).delete { error in
                 if let errCode = error as NSError?{
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, errCode.localizedDescription))
                     return
                     
@@ -353,8 +353,8 @@ class FirestorageDBManager {
 
         db.collection(collection).getDocuments { (snapshot, error) in
             if let errCode = error as NSError?{
-                Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
-                completion(.error(errCode.code, errCode.localizedDescription))
+                Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
+                completion(.error(errCode.code, errCode.description))
                 return
             } else {
                 guard let snapshot = snapshot else {
@@ -366,7 +366,7 @@ class FirestorageDBManager {
                 }
                 batch.commit { (batchError) in
                     if let batchErrCode = batchError as NSError? {
-                        Logger.writeLog(.error, message: "[\(batchErrCode.code)] : \(batchErrCode.localizedDescription)")
+                        Logger.writeLog(.error, message: "[\(batchErrCode.description)] : \(batchErrCode.description)")
                         completion(.error(batchErrCode.code, batchErrCode.localizedDescription))
                         return
                     } else {

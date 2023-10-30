@@ -146,32 +146,35 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func touchUpSaveButton() {
-        firebaseDBManager.createDiary(
-            deviceName: UIDevice.current.name,
-            pageDataList: pageInfo, title: titleTextField.text!,
-            description: contentTextView.text,
-            frameRate: ratio) { [weak self] error in
-                
-            guard let self = self else { return }
+        if let title = titleTextField.text, title.isEmpty || contentTextView.text == "내용을 입력하세요." {
+            showAlert()
+        } else {
+            firebaseDBManager.createDiary(
+                deviceName: UIDevice.current.name,
+                pageDataList: pageInfo, title: titleTextField.text!,
+                description: contentTextView.text,
+                frameRate: ratio) { [weak self] error in
+                    
+                guard let self = self else { return }
 
-            if error == .none {
-                print("다이어리 성공")
-                firebaseImageManager.createDiaryImage(diaryName: titleTextField.text!, pageImage: pageInfo[0].imageData) { error in
-                    if error == .none {
-                        print("다이어리 이미지 생성 성공")
-                        guard let viewControllerStack = self.navigationController?.viewControllers else { return }
-                        for viewController in viewControllerStack {
-                            if let homeVC = viewController as? BaseTabbarController {
-                                self.navigationController?.popToViewController(homeVC, animated: true)
-                                //self.navigationController?.pushViewController(BaseTabbarController(), animated: true)
+                if error == .none {
+                    print("다이어리 성공")
+                    firebaseImageManager.createDiaryImage(diaryName: titleTextField.text!, pageImage: pageInfo[0].imageData) { error in
+                        if error == .none, let viewControllers = self.navigationController?.viewControllers {
+                            print("다이어리 이미지 생성 성공")
+                            for viewController in viewControllers {
+                                if viewController is BaseTabbarController {
+                                    self.navigationController?.popToViewController(viewController, animated: true)
+                                    break
+                                }
                             }
+                        } else {
+                            print("다이어리 이미지 생성 실패")
                         }
-                    } else {
-                        print("다이어리 이미지 생성 실패")
                     }
+                } else {
+                    print("다이어리 성공 실패")
                 }
-            } else {
-                print("다이어리 성공 실패")
             }
         }
     }
@@ -199,6 +202,14 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
     // MARK: - Custom Method
     
+    private func showAlert() {
+        let alertController = UIAlertController(title: "알림", message: "제목과 내용을 모두 적어주세요.", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .cancel)
+        
+        alertController.addAction(okAction)
+        
+        present(alertController, animated: true)
+    }
 }
 
 // MARK: - UITextViewDelegate

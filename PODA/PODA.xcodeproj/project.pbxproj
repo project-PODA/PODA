@@ -32,7 +32,6 @@
 		27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652F2ADD237600B6E211 /* PieceViewModel.swift */; };
 		27DB5D0D2AE2532900489318 /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */; };
 		27DB5D102AE2544100489318 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D0F2AE2544100489318 /* SwiftSMTP */; };
-		27DB5D132AE2554600489318 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D122AE2554600489318 /* GoogleSignIn */; };
 		5F2B1CCF2ADCD08E00DAA9C8 /* Pretendard-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */; };
 		5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC72ADCD08D00DAA9C8 /* Pretendard-Black.otf */; };
 		5F2B1CD12ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 5F2B1CC82ADCD08E00DAA9C8 /* Pretendard-ExtraLight.otf */; };
@@ -82,6 +81,7 @@
 		5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B532AD915790092D75B /* ProfileViewController.swift */; };
 		5FD54B582AD915EE0092D75B /* BaseTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */; };
 		5FE44D412AE93B1900DB3EB1 /* NoticeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE44D402AE93B1900DB3EB1 /* NoticeInfo.swift */; };
+		5FE92C612AEF752200DDD34F /* String + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE92C602AEF752200DDD34F /* String + Extension.swift */; };
 		5FEC85BB2AE14E0F000E5D4C /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85BA2AE14E0F000E5D4C /* FirebaseAnalytics */; };
 		5FEC85BD2AE14E0F000E5D4C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85BC2AE14E0F000E5D4C /* FirebaseAuth */; };
 		5FEC85BF2AE14E0F000E5D4C /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85BE2AE14E0F000E5D4C /* FirebaseDatabase */; };
@@ -195,6 +195,7 @@
 		5FD54B532AD915790092D75B /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTabbarController.swift; sourceTree = "<group>"; };
 		5FE44D402AE93B1900DB3EB1 /* NoticeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeInfo.swift; sourceTree = "<group>"; };
+		5FE92C602AEF752200DDD34F /* String + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extension.swift"; sourceTree = "<group>"; };
 		5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DiaryInfo.md; sourceTree = "<group>"; };
 		5FEC85C62AE156B0000E5D4C /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		D81320A02AEC2FB70032F487 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
@@ -237,7 +238,6 @@
 			files = (
 				5FEC85BF2AE14E0F000E5D4C /* FirebaseDatabase in Frameworks */,
 				27986DDE2AE125B900D27C84 /* RealmSwift in Frameworks */,
-				27DB5D132AE2554600489318 /* GoogleSignIn in Frameworks */,
 				27DB5D102AE2544100489318 /* SwiftSMTP in Frameworks */,
 				27DB5D0D2AE2532900489318 /* NVActivityIndicatorView in Frameworks */,
 				5FEC85BD2AE14E0F000E5D4C /* FirebaseAuth in Frameworks */,
@@ -571,6 +571,7 @@
 				5F54EBF52ADFFE8600331E59 /* Encodable + Extension.swift */,
 				5F54EBF72ADFFEA700331E59 /* Decodable + Extension.swift */,
 				D81320A02AEC2FB70032F487 /* UIImage.swift */,
+				5FE92C602AEF752200DDD34F /* String + Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -862,7 +863,6 @@
 				5FEC85C22AE14E0F000E5D4C /* FirebaseStorage */,
 				27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */,
 				27DB5D0F2AE2544100489318 /* SwiftSMTP */,
-				27DB5D122AE2554600489318 /* GoogleSignIn */,
 			);
 			productName = PODA;
 			productReference = 276985852AD8E20B00A5100D /* PODA.app */;
@@ -899,7 +899,6 @@
 				5FEC85B92AE14E0F000E5D4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				27DB5D0B2AE2532900489318 /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
 				27DB5D0E2AE2544100489318 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
-				27DB5D112AE2554600489318 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 276985862AD8E20B00A5100D /* Products */;
 			projectDirPath = "";
@@ -1024,6 +1023,7 @@
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
 				26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */,
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
+				5FE92C612AEF752200DDD34F /* String + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
 				26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */,
 				5F54EBF82ADFFEA700331E59 /* Decodable + Extension.swift in Sources */,
@@ -1172,9 +1172,10 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 추억 다이어리 꾸미기, 나의 추억 조각 등록 및 저장, 프로필 기능 이용을 위해 사진 라이브러리 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1182,9 +1183,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = poda;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1202,9 +1206,10 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 추억 다이어리 꾸미기, 나의 추억 조각 등록 및 저장, 프로필 기능 이용을 위해 사진 라이브러리 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1212,9 +1217,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = poda;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -1266,14 +1274,6 @@
 				minimumVersion = 6.0.0;
 			};
 		};
-		27DB5D112AE2554600489318 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.2.4;
-			};
-		};
 		5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -1315,11 +1315,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 27DB5D0E2AE2544100489318 /* XCRemoteSwiftPackageReference "Swift-SMTP" */;
 			productName = SwiftSMTP;
-		};
-		27DB5D122AE2554600489318 /* GoogleSignIn */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 27DB5D112AE2554600489318 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
-			productName = GoogleSignIn;
 		};
 		5FD54B082AD90AE00092D75B /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

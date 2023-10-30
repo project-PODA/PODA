@@ -35,11 +35,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.backgroundColor = Palette.podaGray4.getColor()
     }
     
-    private let pageLabel = UILabel().then {
-        $0.setUpLabel(title: "페이지 목록", podaFont: .subhead2)
-        $0.textColor = Palette.podaWhite.getColor()
-    }
-    
     private lazy var backgroundButton = UIButton().then {
         $0.configuration = getButtonConfiguration(title: "배경", iconName: "icon_background")
         $0.addTarget(self, action: #selector(touchUpBackgroundButton), for: .touchUpInside)
@@ -87,6 +82,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        
     }
     
     init(viewModel: CreateDiaryViewModel, ratio: Ratio) {
@@ -179,7 +175,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         let detailDiaryViewController = DetailDiaryViewController()
         detailDiaryViewController.ratio = ratio
         detailDiaryViewController.diaryName = diaryName
-        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage?.jpegData(compressionQuality: 0.5) ?? Data(), backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
+        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage?.pngData() ?? Data(), backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
         navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
     

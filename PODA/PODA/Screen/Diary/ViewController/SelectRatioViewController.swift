@@ -66,8 +66,6 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
     // MARK: - InitUI
     
     func configUI() {
-        navigationController?.navigationBar.isHidden = true
-        
         [squareButton, rectangleButton].forEach {
             ratioStackView.addArrangedSubview($0)
         }
@@ -108,8 +106,12 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func touchUpNextButton() {
-        let viewController = CreateDiaryViewController(viewModel: CreateDiaryViewModel(), ratio: ratio ?? .square)
-        navigationController?.pushViewController(viewController, animated: true)
+        if let ratio = ratio {
+            let viewController = CreateDiaryViewController(viewModel: CreateDiaryViewModel(), ratio: ratio)
+            navigationController?.pushViewController(viewController, animated: true)
+        } else {
+            showAlert()
+        }
     }
     
     @objc private func touchUpSquareButton() {
@@ -129,4 +131,13 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
     }
     
     // MARK: - Custom Method
+    
+    private func showAlert() {
+        let alertController = UIAlertController(title: "알림", message: "템플릿을 골라주세요.", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .cancel)
+        
+        alertController.addAction(okAction)
+        
+        present(alertController, animated: true)
+    }
 }

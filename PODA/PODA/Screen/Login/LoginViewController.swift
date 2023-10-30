@@ -8,7 +8,6 @@
 import UIKit
 import Then
 import NVActivityIndicatorView
-import GoogleSignIn
 import Firebase
 import FirebaseAuth
 
@@ -87,6 +86,16 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
+    
+    #if DEBUG
+    private lazy var debugButton = UIButton().then {
+        $0.setUpButton(title: "랜덤가입", podaFont: .button1, cornerRadius: 22)
+        $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
+        $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
+        $0.layer.borderWidth = 1
+        $0.addTarget(self, action: #selector(touchDebugButton), for: .touchUpInside)
+    }
+    #endif
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -197,64 +206,104 @@ class LoginViewController: BaseViewController, UIConfigurable {
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        
+        #if DEBUG
+        view.addSubview(debugButton)
+        debugButton.snp.makeConstraints { make in
+            make.centerX.equalTo(loginButton)
+            make.top.equalTo(loginButton.snp.bottom).offset(10)
+            make.height.equalTo(loginButton)
+            make.width.equalTo(loginButton)
+        }
+        #endif
     }
     
-    @objc private func googleButtonTapped() {
-        print("google")
-        guard let clientID = FirebaseApp.app()?.options.clientID else {
-            print("Firebase clientID를 가져오지 못했습니다.")
-            return
-        }
-        
-        let config = GIDConfiguration(clientID: clientID)
-        
-        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
-            
-            if let error = error {
-                print("로그인 실패: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let user = user else { return }
-            
-            let userId = user.userID ?? ""
-            let idToken = user.authentication.idToken ?? ""
-            let fullName = user.profile?.name ?? ""
-            let email = user.profile?.email ?? ""
-            
-            print("""
-                    로그인 성공
-                    사용자 ID: \(userId)
-                    ID 토큰: \(idToken)
-                    사용자 이름: \(fullName)
-                    이메일 주소: \(email)
-                    """)
-            
-            let authentication = user.authentication
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                                  accessToken: authentication.accessToken)
-                Auth.auth().signIn(with: credential) { (authResult, error) in
-                    if let error = error {
-                        print("파이어베이스 인증 실패: \(error.localizedDescription)")
-                        return
-                    }
-                    print("파이어베이스 인증 성공")
-                }
-            
+//    @objc private func googleButtonTapped() {
+//        print("google")
+//        guard let clientID = FirebaseApp.app()?.options.clientID else {
+//            print("Firebase clientID를 가져오지 못했습니다.")
+//            return
+//        }
+//        
+//        let config = GIDConfiguration(clientID: clientID)
+//        
+//        GIDSignIn.sharedInstance.signIn(with: config, presenting: self) { user, error in
+//            
+//            if let error = error {
+//                print("로그인 실패: \(error.localizedDescription)")
+//                return
+//            }
+//            
+//            guard let user = user else { return }
+//            
+//            let userId = user.userID ?? ""
+//            let idToken = user.authentication.idToken ?? ""
+//            let fullName = user.profile?.name ?? ""
+//            let email = user.profile?.email ?? ""
+//            
+//            print("""
+//                    로그인 성공
+//                    사용자 ID: \(userId)
+//                    ID 토큰: \(idToken)
+//                    사용자 이름: \(fullName)
+//                    이메일 주소: \(email)
+//                    """)
+//            
+//            let authentication = user.authentication
+//            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+//                                                                  accessToken: authentication.accessToken)
+//                Auth.auth().signIn(with: credential) { (authResult, error) in
+//                    if let error = error {
+//                        print("파이어베이스 인증 실패: \(error.localizedDescription)")
+//                        return
+//                    }
+//                    print("파이어베이스 인증 성공")
+//                }
+//            
+//            DispatchQueue.main.async { [weak self] in
+//                let tabBarController = BaseTabbarController()
+//                self?.navigationController?.pushViewController(tabBarController, animated: true)
+//                
+//                UserDefaultManager.isUserLoggedIn = true
+//                UserDefaultManager.userEmail = email
+//                //                UserDefaultManager.userPassword = password
+//            }
+//        }
+//    }
+//    
+//    @objc private func appleButtonTapped() {
+//        print("apple")
+//    }
+    
+    #if DEBUG
+    @objc private func touchDebugButton() {
+        let originalString = "test@naver.com"
+        let randomPart = originalString.randomString(length: 8)
+        let userEmail = originalString.replacingOccurrences(of: "test", with: randomPart)
+        let userPasswrod = "Poda1!"
+        loadingIndicator.startAnimating()
+        fireAuthManager.signUpUser(email: userEmail, password: userPasswrod, profileImage: UIImage(named: "image_profile")?.pngData(), nickName: "랜덤계정") { [weak self] error in
+            guard let self = self else { return }
             DispatchQueue.main.async { [weak self] in
-                let tabBarController = BaseTabbarController()
-                self?.navigationController?.pushViewController(tabBarController, animated: true)
-                
-                UserDefaultManager.isUserLoggedIn = true
-                UserDefaultManager.userEmail = email
-                //                UserDefaultManager.userPassword = password
+                guard let self = self else {return}
+                if error == .none {
+                    print("랜덤계정 생성 성공! 로그인 진입중..")
+                    UserDefaultManager.isUserLoggedIn = true
+                    UserDefaultManager.userEmail = userEmail.lowercased()
+                    UserDefaultManager.userPassword = userPasswrod
+                    DispatchQueue.main.async {
+                        let tabBarController = BaseTabbarController()
+                        self.navigationController!.pushViewController(tabBarController, animated: true)
+                        self.loadingIndicator.stopAnimating()
+                    }
+                } else {
+                    showAlert(title: "에러", message: error.description)
+                }
+                loadingIndicator.stopAnimating()
             }
         }
     }
-    
-    @objc private func appleButtonTapped() {
-        print("apple")
-    }
+    #endif
     
     
     @objc private func eyeButtonTapped() {
@@ -285,7 +334,7 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 
                 UserDefaultManager.isUserLoggedIn = true
                 UserDefaultManager.userEmail = email.lowercased()
-                UserDefaultManager.userPassword = password.lowercased()
+                UserDefaultManager.userPassword = password
                 
             } else {
                 showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")

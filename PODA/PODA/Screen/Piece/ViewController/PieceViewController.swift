@@ -183,19 +183,24 @@ class PieceViewController: BaseViewController, UIConfigurable {
     }
     
     func showSaveConfirmationAlert() {
+        guard let selectedImage = self.imageView.image,
+              let selectedDateString = self.datePickerButton.title(for: .normal),
+              let selectedDate = Date(dateString: selectedDateString, format: "yyyy. MM. dd") else {
+            
+            let failAlertController = UIAlertController(title: "알림", message: "이미지와 추억 날짜를 모두 설정해주세요.", preferredStyle: .alert)
+            let confirmAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+            failAlertController.addAction(confirmAction)
+            present(failAlertController, animated: true, completion: nil)
+            
+            return
+        }
+        
         let alertController = UIAlertController(title: "저장하시겠습니까?", message: nil, preferredStyle: .alert)
 
         let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
             guard let self = self else { return }
 
-            guard let selectedImage = self.imageView.image,
-                  let selectedDateString = self.datePickerButton.title(for: .normal),
-                  let selectedDate = Date(dateString: selectedDateString, format: "yyyy. MM. dd") else {
-                      
-                self.showAlert(title: "주의!", message: "이미지와 날짜가 모두 입력되어야만 저장할 수 있습니다.")
-                return
-            }
-            if !isComeFromSaveDeleteVC {
+            if !self.isComeFromSaveDeleteVC {
                 self.saveImageToRealm(image: selectedImage, date: selectedDate)
             } else {
                 // 날짜만 변경하는 메서드
@@ -203,12 +208,12 @@ class PieceViewController: BaseViewController, UIConfigurable {
             print("pieceVC pop 될거야")
             self.navigationController?.popViewController(animated: true)
         }
-        
+
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        
+
         alertController.addAction(confirmAction)
         alertController.addAction(cancelAction)
-        
+
         present(alertController, animated: true, completion: nil)
     }
     
@@ -270,58 +275,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         present(alertController, animated: true, completion: nil)
     }
 }
-
-// MARK: - 앨범 접근 권한
-
-//extension PieceViewController {
-//    func requestPhotoLibraryAccess() {
-//        let status = PHPhotoLibrary.authorizationStatus()
-//        
-//        switch status {
-//        case .authorized:
-//            // 이미 권한이 허용된 경우
-//            break
-//        case .denied, .restricted:
-//            // 권한이 거부되었거나 제한된 경우
-//            // 사용자에게 설정 앱으로 이동하여 권한을 변경하도록 요청
-//            showAlertToSettings()
-//        case .notDetermined:
-//            // 아직 권한을 요청하지 않은 경우
-//            PHPhotoLibrary.requestAuthorization { [weak self] (newStatus) in
-//                if newStatus == .authorized {
-//                    // 사용자가 권한을 허용한 경우
-//                } else {
-//                    // 사용자가 권한을 거부한 경우
-//                    // 사용자에게 설정 앱으로 이동하여 권한을 변경하도록 요청
-//                    self?.showAlertToSettings()
-//                }
-//            }
-//        default:
-//            break
-//        }
-//    }
-//    
-//    func showAlertToSettings() {
-//        let alertController = UIAlertController(
-//            title: "앨범 접근 권한이 필요합니다",
-//            message: "앨범 접근을 허용하려면 설정에서 권한을 변경해주세요.",
-//            preferredStyle: .alert
-//        )
-//        
-//        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { (action) in
-//            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-//                UIApplication.shared.open(settingsURL, options: [:], completionHandler: nil)
-//            }
-//        }
-//        
-//        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-//        
-//        alertController.addAction(settingsAction)
-//        alertController.addAction(cancelAction)
-//        
-//        present(alertController, animated: true, completion: nil)
-//    }
-//}
 
 // MARK: - PHPickerViewControllerDelegate
 
