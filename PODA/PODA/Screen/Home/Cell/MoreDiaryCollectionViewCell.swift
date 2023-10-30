@@ -1,5 +1,5 @@
 //
-//  DiaryDetailCollectionViewCell.swift
+//  MoreDiaryCollectionViewCell.swift
 //  PODA
 //
 //  Created by 랑 on 2023/10/20.
@@ -9,11 +9,10 @@ import UIKit
 import Then
 import SnapKit
 
-class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
+class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
-    static let identifier = "DiaryDetailCollectionViewCell"
+    static let identifier = "MoreDiaryCollectionViewCell"
     
-    // FIXME: - 다이어리 커버 (첫번째 페이지로 설정) 불러오기
      lazy var gradientImageView = UIImageView().then {
         let gradientLayer = CAGradientLayer()
         let width = (UIScreen.main.bounds.width - 40) * 2 / 3
@@ -25,23 +24,18 @@ class DiaryDetailCollectionViewCell: UICollectionViewCell, UIConfigurable {
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         gradientLayer.locations = [0.0 ,1.0]
         $0.layer.addSublayer(gradientLayer)
-        $0.image = UIImage(named: "example") // 다이어리 커버
         $0.contentMode = .scaleAspectFill
     }
     
-    // FIXME: - 다이어리 제목 불러오기
     lazy var titleLabel = UILabel().then {
-        $0.setUpLabel(title: "나홀로\n인생네컷\n모음", podaFont: .head1) // 다이어리 제목
         let width = self.bounds.width
         $0.preferredMaxLayoutWidth = width - 14
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 3
         $0.textAlignment = .left
     }
-    
-    // FIXME: - 다이어리 생성 날짜 불러오기
+
     lazy var dateLabel = UILabel().then {
-        $0.setUpLabel(title: "2023.09.21", podaFont: .subhead2) // 생성 날짜
         $0.textColor = Palette.podaGray3.getColor()
     }
     

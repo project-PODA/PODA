@@ -203,6 +203,7 @@ class FirestorageDBManager {
             }
         }
     }
+    
     func updateNickname(updateName: String, completion: @escaping(FireStorageImageError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")

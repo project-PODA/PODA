@@ -205,6 +205,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
             } else {
                 // 날짜만 변경하는 메서드
             }
+            print("pieceVC pop 될거야")
             self.navigationController?.popViewController(animated: true)
         }
 

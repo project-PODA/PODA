@@ -16,7 +16,6 @@ class DiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     lazy var titleLabel = UILabel().then {
         let width = self.bounds.width
         $0.preferredMaxLayoutWidth = width - 14
-        $0.setUpLabel(title: "나홀로인생네컷모음", podaFont: .subhead3)
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 3
         $0.textAlignment = .left

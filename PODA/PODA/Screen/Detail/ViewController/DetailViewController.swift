@@ -14,13 +14,35 @@ class DetailViewController: BaseViewController, UIConfigurable {
     
     var diaryData : DiaryData?
     
-    lazy var backgroundImageView = UIImageView().then {
-        $0.image = UIImage(named: "image_background2") // 저장된 이미지 불러오기
+    // FIXME: - 1. 블러? 그라데이션? 2. 가능하다면 : 표지의 속지 배경색을 그라데이션 색상으로, 불가능하다면 : 검정색으로 그라데이션
+    lazy var diaryCoverView = UIImageView().then {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        gradientLayer.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
+                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+        gradientLayer.locations = [0.0 ,1.0]
+        $0.layer.addSublayer(gradientLayer)
+        $0.contentMode = .scaleAspectFill
+        
+//        let blurEffectView = UIVisualEffectView().then {
+//            $0.effect = UIBlurEffect(style: .systemUltraThinMaterialLight)
+//        }
+//        $0.addSubview(blurEffectView)
+//        
+//        blurEffectView.snp.makeConstraints {
+//            $0.top.bottom.left.right.equalToSuperview()
+//        }
     }
 
+    // FIXME: - 하얀 배경일 때 shadowOpacity = 1.0?
     private let backButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
-        $0.tintColor = Palette.podaWhite.getColor()
+        $0.setImage(UIImage(named: "icon_back"), for: .normal)
+        $0.layer.shadowOffset = CGSize(width: 1, height: 1)
+        $0.layer.shadowOpacity = 1.0
+        $0.layer.shadowRadius = 7
+        $0.layer.shadowColor = Palette.podaBlack.getColor().cgColor
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
@@ -28,31 +50,25 @@ class DetailViewController: BaseViewController, UIConfigurable {
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 28, weight: .light)
         let image = UIImage(systemName: "chevron.left", withConfiguration: imageConfig)
         $0.image = image
-        $0.contentMode = .scaleAspectFill
         $0.tintColor = Palette.podaWhite.getColor()
+        $0.addShadowToImageView()
     }
 
     private let scrollLabel = UILabel().then {
         $0.setUpLabel(title: "scroll to open diary", podaFont: .body2)
         $0.textColor = Palette.podaWhite.getColor()
+        $0.addShadowToLabel()
         $0.sizeToFit()  // scrollLabel.bounds.width 알기 위해 필요
         $0.transform = CGAffineTransform(rotationAngle: -.pi / 2)
     }
     
+    // FIXME: - 다이어리 페이지 추가 기능 구현하고 나면 다이어리 페이지 수 가져와야 함
     private let pageCountimageView = UIImageView().then {
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 60, weight: .ultraLight)
         let image = UIImage(systemName: "square", withConfiguration: imageConfig)
         $0.image = image
         $0.tintColor = Palette.podaWhite.getColor()
-        
-//        let gradientLayer = CAGradientLayer()
-//        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width , height: UIScreen.main.bounds.height)
-//        gradientLayer.colors = [UIColor(red: 1, green: 0.541, blue: 0.541, alpha: 1).cgColor,
-//                                UIColor(red: 0, green: 0, blue: 0, alpha: 0).cgColor]
-//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
-//        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-//        gradientLayer.locations = [0.0 ,1.0]
-//        $0.layer.addSublayer(gradientLayer)
+        $0.addShadowToImageView()
         
         let pageCountLabel = UILabel()
         pageCountLabel.setUpLabel(title: "1", podaFont: .display2) // 다이어리 페이지 수 가져오기
@@ -74,20 +90,20 @@ class DetailViewController: BaseViewController, UIConfigurable {
     }
     
     private let titleLabel = UILabel().then {
-        $0.setUpLabel(title: "석진이랑 인생네컷 모음", podaFont: .display3) // 저장된 title 불러오기
         $0.textColor = Palette.podaWhite.getColor()
+        $0.addShadowToLabel()
     }
     
     private let dateLabel = UILabel().then {
-        $0.setUpLabel(title: "2023.09.12", podaFont: .head1) // 저장된 날짜 불러오기
         $0.textColor = Palette.podaWhite.getColor()
+        $0.addShadowToLabel()
     }
     
     private let contentLabel = UILabel().then {
-        $0.setUpLabel(title: "다이어리 내용 어쩌구 저쩌구 여기부턴 한글더미 국민의 모든 자유와 권리는 국가안전보장·질서유지 또는 공공복리를 위하여 필요한 경우에 한하여 어쩌구.", podaFont: .body2) // 저장된 내용 불러오기
         $0.lineBreakMode = .byCharWrapping
         $0.textColor = Palette.podaWhite.getColor()
-        $0.numberOfLines = 3
+        $0.numberOfLines = 4
+        $0.addShadowToLabel()
     }
     
     override func viewDidLoad() {
@@ -99,18 +115,18 @@ class DetailViewController: BaseViewController, UIConfigurable {
     
     private func setupComp() {
         guard let diaryData = diaryData else { return }
-        backgroundImageView.image = UIImage(data: diaryData.diaryImageList[0])
-        titleLabel.text = diaryData.diaryName
-        dateLabel.text = diaryData.createDate
-        contentLabel.text = diaryData.description
+        diaryCoverView.image = UIImage(data: diaryData.diaryImageList[0])
+        titleLabel.setUpLabel(title: diaryData.diaryName, podaFont: .display3)
+        dateLabel.setUpLabel(title: diaryData.createDate, podaFont: .head1)
+        contentLabel.setUpLabel(title: diaryData.description, podaFont: .body2)
     }
     
     func configUI() {
-        [backgroundImageView, backButton, scrollLabel, scrollImageView, pageCountimageView, titleLabel, dateLabel, contentLabel].forEach {
+        [diaryCoverView, backButton, scrollLabel, scrollImageView, pageCountimageView, titleLabel, dateLabel, contentLabel].forEach {
             view.addSubview($0)
         }
         
-        backgroundImageView.snp.makeConstraints { 
+        diaryCoverView.snp.makeConstraints { 
             $0.top.bottom.left.right.equalToSuperview()
         }
         
@@ -168,9 +184,19 @@ class DetailViewController: BaseViewController, UIConfigurable {
             saveDeleteVC.dateLabel.text = diaryData?.createDate
             saveDeleteVC.diaryName = diaryData?.diaryName
             saveDeleteVC.imageView.image = UIImage(data: diaryData!.diaryImageList[0])
-            saveDeleteVC.isDiaryImage = false
+            saveDeleteVC.isDiaryImage = true
             saveDeleteVC.editButton.isHidden = true
             navigationController?.pushViewController(saveDeleteVC, animated: true)
         }
+    }
+}
+
+// FIXME: - extension 파일 추가?
+extension UIImageView {
+    func addShadowToImageView() {
+        self.layer.shadowOffset = CGSize(width: 1, height: 1)
+        self.layer.shadowOpacity = 0.5
+        self.layer.shadowRadius = 7
+        self.layer.shadowColor = Palette.podaBlack.getColor().cgColor
     }
 }
