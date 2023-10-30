@@ -87,6 +87,16 @@ class LoginViewController: BaseViewController, UIConfigurable {
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
+    
+    #if DEBUG
+    private lazy var debugButton = UIButton().then {
+        $0.setUpButton(title: "랜덤가입", podaFont: .button1, cornerRadius: 22)
+        $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
+        $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
+        $0.layer.borderWidth = 1
+        $0.addTarget(self, action: #selector(touchDebugButton), for: .touchUpInside)
+    }
+    #endif
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -197,6 +207,16 @@ class LoginViewController: BaseViewController, UIConfigurable {
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+        
+        #if DEBUG
+        view.addSubview(debugButton)
+        debugButton.snp.makeConstraints { make in
+            make.centerX.equalTo(loginButton)
+            make.top.equalTo(loginButton.snp.bottom).offset(10)
+            make.height.equalTo(loginButton)
+            make.width.equalTo(loginButton)
+        }
+        #endif
     }
     
     @objc private func googleButtonTapped() {
@@ -255,6 +275,36 @@ class LoginViewController: BaseViewController, UIConfigurable {
     @objc private func appleButtonTapped() {
         print("apple")
     }
+    
+    #if DEBUG
+    @objc private func touchDebugButton() {
+        let originalString = "test@naver.com"
+        let randomPart = originalString.randomString(length: 8)
+        let userEmail = originalString.replacingOccurrences(of: "test", with: randomPart)
+        let userPasswrod = "Poda1!"
+        loadingIndicator.startAnimating()
+        fireAuthManager.signUpUser(email: userEmail, password: userPasswrod, profileImage: UIImage(named: "image_profile")?.pngData(), nickName: "랜덤계정") { [weak self] error in
+            guard let self = self else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {return}
+                if error == .none {
+                    print("랜덤계정 생성 성공! 로그인 진입중..")
+                    UserDefaultManager.isUserLoggedIn = true
+                    UserDefaultManager.userEmail = userEmail.lowercased()
+                    UserDefaultManager.userPassword = userPasswrod
+                    DispatchQueue.main.async {
+                        let tabBarController = BaseTabbarController()
+                        self.navigationController!.pushViewController(tabBarController, animated: true)
+                        self.loadingIndicator.stopAnimating()
+                    }
+                } else {
+                    showAlert(title: "에러", message: error.description)
+                }
+                loadingIndicator.stopAnimating()
+            }
+        }
+    }
+    #endif
     
     
     @objc private func eyeButtonTapped() {

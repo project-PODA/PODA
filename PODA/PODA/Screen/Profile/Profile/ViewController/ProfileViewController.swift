@@ -194,7 +194,11 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             guard let self = self else { return }
             self.fireAuthManager.userLogOut() { error in
                 if error == .none {
+                    UserDefaultManager.isUserLoggedIn = false
+                    UserDefaultManager.userEmail = ""
+                    UserDefaultManager.userPassword = ""
                     self.moveToHome()
+                    
                 }
             }
         }

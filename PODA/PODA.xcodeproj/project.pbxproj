@@ -82,6 +82,7 @@
 		5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B532AD915790092D75B /* ProfileViewController.swift */; };
 		5FD54B582AD915EE0092D75B /* BaseTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */; };
 		5FE44D412AE93B1900DB3EB1 /* NoticeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE44D402AE93B1900DB3EB1 /* NoticeInfo.swift */; };
+		5FE92C612AEF752200DDD34F /* String + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE92C602AEF752200DDD34F /* String + Extension.swift */; };
 		5FEC85BB2AE14E0F000E5D4C /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85BA2AE14E0F000E5D4C /* FirebaseAnalytics */; };
 		5FEC85BD2AE14E0F000E5D4C /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85BC2AE14E0F000E5D4C /* FirebaseAuth */; };
 		5FEC85BF2AE14E0F000E5D4C /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85BE2AE14E0F000E5D4C /* FirebaseDatabase */; };
@@ -195,6 +196,7 @@
 		5FD54B532AD915790092D75B /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		5FD54B572AD915EE0092D75B /* BaseTabbarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTabbarController.swift; sourceTree = "<group>"; };
 		5FE44D402AE93B1900DB3EB1 /* NoticeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeInfo.swift; sourceTree = "<group>"; };
+		5FE92C602AEF752200DDD34F /* String + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extension.swift"; sourceTree = "<group>"; };
 		5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DiaryInfo.md; sourceTree = "<group>"; };
 		5FEC85C62AE156B0000E5D4C /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		D81320A02AEC2FB70032F487 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
@@ -571,6 +573,7 @@
 				5F54EBF52ADFFE8600331E59 /* Encodable + Extension.swift */,
 				5F54EBF72ADFFEA700331E59 /* Decodable + Extension.swift */,
 				D81320A02AEC2FB70032F487 /* UIImage.swift */,
+				5FE92C602AEF752200DDD34F /* String + Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1024,6 +1027,7 @@
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
 				26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */,
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
+				5FE92C612AEF752200DDD34F /* String + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
 				26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */,
 				5F54EBF82ADFFEA700331E59 /* Decodable + Extension.swift in Sources */,
