@@ -16,10 +16,10 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     var isDiaryImage = true
     var imageMemories: Results<ImageMemory>?
     var indexPath = 0
+    var diaryName: String? //나중에 은서님 페이지에 이름 넘겨줄것..
     
     private let backButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
-        $0.tintColor = Palette.podaWhite.getColor()
+        $0.setImage(UIImage(named: "icon_back"), for: .normal)
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
     
@@ -41,7 +41,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     lazy var imageView = UIImageView().then {
-        $0.image = UIImage(named: "example") // 저장된 이미지 보여주기
+        $0.contentMode = .scaleAspectFit
     }
     
     private let saveButton = UIButton().then {
@@ -55,7 +55,6 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.titleLabel?.textColor = Palette.podaWhite.getColor()
         $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    // warning - lazy var 로 해결?
     }
-    var diaryName: String? //나중에 은서님 페이지에 이름 넘겨줄것..
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -143,7 +142,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         let alert = UIAlertController(title: "정말 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
             guard let self else { return }
-            print(indexPath)
+            print(isDiaryImage)
             if isDiaryImage {
                 guard let diaryName else { return }
                 firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in

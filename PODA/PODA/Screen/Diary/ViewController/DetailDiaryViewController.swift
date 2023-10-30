@@ -159,7 +159,13 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
                 firebaseImageManager.createDiaryImage(diaryName: titleTextField.text!, pageImage: pageInfo[0].imageData) { error in
                     if error == .none {
                         print("다이어리 이미지 생성 성공")
-                        self.navigationController?.pushViewController(BaseTabbarController(), animated: true)
+                        guard let viewControllerStack = self.navigationController?.viewControllers else { return }
+                        for viewController in viewControllerStack {
+                            if let homeVC = viewController as? BaseTabbarController {
+                                self.navigationController?.popToViewController(homeVC, animated: true)
+                                //self.navigationController?.pushViewController(BaseTabbarController(), animated: true)
+                            }
+                        }
                     } else {
                         print("다이어리 이미지 생성 실패")
                     }

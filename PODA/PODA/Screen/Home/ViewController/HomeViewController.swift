@@ -22,16 +22,11 @@ struct DiaryData{
 
 class HomeViewController: BaseViewController, UIConfigurable {
     
-    var pieceImageList = [UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3"), UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3")]
+//    var pieceImageList = [UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3"), UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3")]
     
-    var imageMemories: Results<ImageMemory>?
-    
-    var diaryDataList: [DiaryData] = []
-    
-    //private var randomDiaryIndex = 0
+    private var imageMemories: Results<ImageMemory>?
+    private var diaryDataList: [DiaryData] = []
     private var randomPieceIndex = 0
-    
-    private var timeCapsuleImageViewWidth = 0.0
     
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
@@ -58,9 +53,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray3.getColor()
     }
     
-    // FIXME: - 추억 조각 갯수 불러오기
     private let pieceCountLabel = UILabel().then {
-        $0.setUpLabel(title: "0개", podaFont: .subhead4)  // 조각 갯수 불러오기
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -76,7 +69,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let diaryCountLabel = UILabel().then {
-        $0.setUpLabel(title: "0권", podaFont: .subhead4)
         $0.textColor = Palette.podaWhite.getColor()
     }
     
@@ -101,23 +93,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private let firebaseDBManager = FirestorageDBManager()
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
-            guard let _ = self else { return }
-        }
-        loadImagesFromRealm()
-        setPieceView()
-        updateTimeCapsuleView()
-        loadDataFromFirebase()
-        print("viewwillappear")
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        diaryDataList = []
-    }
-    
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
@@ -134,6 +109,10 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
+    private let pieceDateLabel = UILabel().then {
+        $0.textColor = Palette.podaWhite.getColor()
+    }
+
     private let diaryMenuLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리", podaFont: .head1)
         $0.textColor = Palette.podaGray1.getColor()
@@ -231,19 +210,27 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.isNavigationBarHidden = true
-        loadImagesFromRealm()
-        updateTimeCapsuleView()
+        //navigationController?.isNavigationBarHidden = true
         configUI()
-        setTimeCapsuleView()
-        setDiaryView()
-        setPieceView()
-        diaryCollectionView.delegate = self
-        diaryCollectionView.dataSource = self
-        pieceCollectionView.delegate = self
-        pieceCollectionView.dataSource = self
-        print(imageMemories)
+        setCollectionView()
         print("viewdidload")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
+            guard let _ = self else { return }
+        }
+        loadPieceDataFromRealm()
+        loadDiaryDataFromFirebase()
+        print(self.navigationController?.viewControllers)
+        print(imageMemories)
+        print("viewwillappear")
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        diaryDataList = []
     }
     
     // FIXME: - Stackview 정리하기
@@ -277,6 +264,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
+        
+        timeCapsuleImageView.addSubview(pieceDateLabel)
         
         mainStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(7)
@@ -316,8 +305,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-40)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(416)
-            //            $0.width.equalTo(150)
-            //            $0.width.equalTo(timeCapsuleImageViewWidth)
+        }
+        
+    // FIXME: - 랜덤한 위치에 띄우기
+        pieceDateLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().offset(-80)
         }
         
         addDiaryButton.snp.makeConstraints {
@@ -390,49 +383,75 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    func setTimeCapsuleView() {
-        guard let pieceCount = imageMemories?.count else { return }
-        if pieceCount != 0 {
-            emptyTimeCapsuleLabel.isHidden = true  // 등록된 추억 조각이 있는 경우
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
-            timeCapsuleImageView.addGestureRecognizer(tapGesture)
-            timeCapsuleImageView.isUserInteractionEnabled = true
-        } else {
-            timeCapsuleImageView.isHidden = true  // 등록된 추억 조각이 없는 경우
-        }
+    func setCollectionView() {
+        diaryCollectionView.delegate = self
+        diaryCollectionView.dataSource = self
+        pieceCollectionView.delegate = self
+        pieceCollectionView.dataSource = self
     }
     
-    // FIXME: - 다이어리 데이터 0개 일 때 실행시켜주기
-    func setDiaryView() {
-        emptyDiaryLabel.isHidden = false
-        diaryCollectionView.isHidden = true
-    }
-    
-    func setPieceView() {
-        guard let pieceCount = imageMemories?.count else { return }
-        if pieceCount != 0 {
-            emptyPieceLabel.isHidden = true  // 등록된 추억 조각이 있는 경우
-            pieceCollectionView.isHidden = false
-        } else {
-            emptyPieceLabel.isHidden = false
-            pieceCollectionView.isHidden = true  // 등록된 추억 조각이 없는 경우
-        }
-        print("추억 조각 갯수 = \(pieceCount)")
-    }
-    
-    func loadImagesFromRealm() {
+    // FIXME: - memories > piece로 통일?
+    // FIXME: - 랜덤 이미지 표시 주기 하루에 한번으로 가능한지 확인하기
+    func loadPieceDataFromRealm() {
         imageMemories = RealmManager.shared.loadImageMemories()
         //        for imageMemory in imageMemories! {
         //            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
         //        }
-        pieceCollectionView.reloadData()
+        guard let pieceCount = imageMemories?.count else { return }
+        print("추억 조각 갯수 = \(pieceCount)")
+        self.pieceCountLabel.setUpLabel(title: "\(pieceCount)개", podaFont: .subhead4)
+        if pieceCount != 0 {
+            // 등록된 추억 조각이 있는 경우
+            // 타임캡슐 뷰 업데이트
+            emptyTimeCapsuleLabel.isHidden = true
+            timeCapsuleImageView.isHidden = false
+            
+            self.randomPieceIndex = Int.random(in: 0..<pieceCount)
+            
+            guard let imageMemory = self.imageMemories?[self.randomPieceIndex] else { return }
+            self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
+            self.pieceDateLabel.setUpLabel(title: self.getPieceDate(with: imageMemory), podaFont: .subhead2)
+            
+            //            pieceImageList 더미데이터 사용하는 경우
+            //            let randomPieceIndex = Int.random(in: 0..<self.pieceImageList.count)
+            //            guard let randomImage = self.pieceImageList[randomPieceIndex] else { return }
+            //            self.timeCapsuleImageView.image = randomImage
+            //            self.pieceCountLabel.text = "\(pieceImageList.count)개"
+                        
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
+            timeCapsuleImageView.addGestureRecognizer(tapGesture)
+            timeCapsuleImageView.isUserInteractionEnabled = true
+            
+            // 추억 조각들 뷰 업데이트
+            emptyPieceLabel.isHidden = true
+            pieceCollectionView.isHidden = false
+            
+            pieceCollectionView.reloadData()
+        } else {
+            // 등록된 추억 조각이 없는 경우
+            emptyTimeCapsuleLabel.isHidden = false
+            timeCapsuleImageView.isHidden = true
+            emptyPieceLabel.isHidden = false
+            pieceCollectionView.isHidden = true
+        }
     }
     
-    func loadDataFromFirebase() {
+    // FIXME: - diaryCountLabel 한번만 설정하도록
+    func loadDiaryDataFromFirebase() {
         firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
             guard let self = self else { return }
             if error == .none {
+                // FIXME: - counter 변수 확인
+                print("diaryList: \(diaryList)")
                 var counter = 0
+                if diaryList.count == 1 {
+                    //account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
+                    DispatchQueue.main.async {
+                        self.emptyDiaryLabel.isHidden = false
+                        self.diaryCollectionView.isHidden = true
+                        self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+                    }
+                }
                 for diaryName in diaryList {
                     if diaryName != "account" {
                         firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { [weak self] diaryInfoList, error in
@@ -446,11 +465,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
                                         counter += 1
                                         if counter == diaryList.count - 1 {
                                             self.diaryDataList.sort { $0.createDate > $1.createDate }
-                                            self.updateUI()
-                                        } else if counter == 0 {  // Account라는 document 하나 있음
                                             DispatchQueue.main.async {
-                                                self.emptyDiaryLabel.isHidden = false
-                                                self.diaryCollectionView.isHidden = true
+                                                self.diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
+                                                self.emptyDiaryLabel.isHidden = true
+                                                self.diaryCollectionView.isHidden = false
+                                                self.diaryCollectionView.reloadData()
                                             }
                                         }
                                     }
@@ -463,59 +482,41 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    
-    func updateUI() {
-        DispatchQueue.main.async {
-            self.diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
-            self.emptyDiaryLabel.isHidden = true
-            self.diaryCollectionView.isHidden = false
-            self.diaryCollectionView.reloadData()
-        }
-        
-        //            if !self.diaryDataList.isEmpty {
-        //                self.emptyTimeCapsuleLabel.isHidden = true
-        //                self.timeCapsuleImageShadowView.isHidden = false
-        //                self.randomDiaryIndex = Int.random(in: 0..<self.diaryDataList.count)
-        //                self.timeCapsuleImageView.image = UIImage(data: self.diaryDataList[self.randomDiaryIndex].diaryImageList[0])
-        //            }
-    }
-    
-    // FIXME: - 랜덤 이미지 표시 주기 하루에 한번으로 가능한지 확인하기
-    func updateTimeCapsuleView() {
-        //DispatchQueue.main.async {
-        guard let pieceCount = self.imageMemories?.count else { return }
-        if pieceCount != 0 {
-            self.randomPieceIndex = Int.random(in: 0..<pieceCount)
-            guard let imageMemory = self.imageMemories?[self.randomPieceIndex] else { return }
-            self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
-            self.pieceCountLabel.text = "\(pieceCount)개"
-            //}
-            
-            //            let randomPieceIndex = Int.random(in: 0..<self.pieceImageList.count)
-            //            guard let randomImage = self.pieceImageList[randomPieceIndex] else { return }
-            //            self.timeCapsuleImageView.image = randomImage
-            //            //self.timeCapsuleImageViewWidth = randomImage.size.width
-            //            self.pieceCountLabel.text = "\(pieceImageList.count)개"
-        }
-    }
-    
     func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
-        // 이미지 로드 및 설정
         guard let imagePath = imageMemory.imagePath else { return UIImage() }
-        //print("Image Path: \(imagePath)")
-        
         guard let pieceImage = UIImage(contentsOfFile: imagePath) else { return UIImage() }
         return pieceImage
     }
     
-    func getPieceImageDate(with imageMemory: ImageMemory) -> String {
-        if let memoryDate = imageMemory.memoryDate {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy. MM. dd"
-            return dateFormatter.string(from: memoryDate)
-        } else {
-            return ""
-        }
+    func getPieceDate(with imageMemory: ImageMemory) -> String {
+        guard let memoryDate = imageMemory.memoryDate else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy. MM. dd"
+        return dateFormatter.string(from: memoryDate)
+    }
+    
+    // FIXME: - MoreDiaryVC, DetailVC에서 사용됨
+    func goToDiarySaveDeleteVC(_ index: Int) {
+        guard let imageMemory = self.imageMemories?[index] else { return }
+        let saveDeleteVC = SaveDeleteViewController()
+        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
+        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
+        saveDeleteVC.indexPath = index
+        saveDeleteVC.addButton.isHidden = true
+        saveDeleteVC.isDiaryImage = false
+        navigationController?.pushViewController(saveDeleteVC, animated: true)
+    }
+    
+    // FIXME: - Bind 함수로 정리하기
+    func goToPieceSaveDeleteVC(_ index: Int) {
+        guard let imageMemory = self.imageMemories?[index] else { return }
+        let saveDeleteVC = SaveDeleteViewController()
+        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
+        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
+        saveDeleteVC.indexPath = index
+        saveDeleteVC.addButton.isHidden = true
+        saveDeleteVC.isDiaryImage = false
+        navigationController?.pushViewController(saveDeleteVC, animated: true)
     }
     
     @objc func didTapAddButton() {
@@ -524,35 +525,42 @@ class HomeViewController: BaseViewController, UIConfigurable {
         present(homeMenuViewController, animated: true)
         
         homeMenuViewController.touchedDiary = {
-            homeMenuViewController.dismiss(animated: true)
+            self.dismiss(animated: true)
             self.navigationController?.pushViewController(SelectRatioViewController(), animated: true)
         }
         
         homeMenuViewController.touchedPiece = {
-            homeMenuViewController.dismiss(animated: true)
+            self.dismiss(animated: true)
             self.navigationController?.pushViewController(PieceViewController(), animated: true)
         }
     }
     
-    // FIXME: - 클릭한 추억 조각 상세페이지로 이동
     @objc func didTapCapsuleImage() {
-        print("타임캡슐 이미지 클릭")
-//        let detailVC = DetailViewController()
-//        detailVC.diaryData = diaryDataList[randomDiaryIndex]
-//        navigationController?.pushViewController(detailVC, animated: true)
+        goToPieceSaveDeleteVC(randomPieceIndex)
     }
     
     @objc func didTapAddDiaryButton() {
         navigationController?.pushViewController(SelectRatioViewController(), animated: true)
     }
     
+    // FIXME: - Bind 함수로 정리하기
     @objc func didTapMoreDiaryButton() {
         let moreDiaryVC = MoreDiaryViewController()
-        //print(diaryDataList)
-        moreDiaryVC.diaryList = diaryDataList
+        print(diaryDataList)
+        if diaryDataList.isEmpty {
+            moreDiaryVC.emptyMoreDiaryLabel.isHidden = false
+            moreDiaryVC.moreDiaryCollectionView.isHidden = true
+            moreDiaryVC.deleteButton.isHidden = true
+        } else {
+            moreDiaryVC.emptyMoreDiaryLabel.isHidden = true
+            moreDiaryVC.moreDiaryCollectionView.isHidden = false
+            moreDiaryVC.deleteButton.isHidden = false
+            moreDiaryVC.diaryList = diaryDataList
+        }
         navigationController?.pushViewController(moreDiaryVC, animated: true)
     }
     
+    // FIXME: - Bind 함수로 정리하기
     @objc func didTapAddPieceButton() {
         let pieceVC = PieceViewController()
         pieceVC.imageView.isUserInteractionEnabled = true
@@ -573,14 +581,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 navigationController?.pushViewController(detailVC, animated: true)
             }
         } else {
-            guard let imageMemory = self.imageMemories?[indexPath.row] else { return }
-            let saveDeleteVC = SaveDeleteViewController()
-            saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
-            saveDeleteVC.dateLabel.text = getPieceImageDate(with: imageMemory)
-            saveDeleteVC.indexPath = indexPath.row
-            saveDeleteVC.addButton.isHidden = true
-            saveDeleteVC.isDiaryImage = false
-            navigationController?.pushViewController(saveDeleteVC, animated: true)
+            goToPieceSaveDeleteVC(indexPath.row)
         }
     }
     
@@ -599,7 +600,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         if collectionView == diaryCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryCollectionViewCell.identifier, for: indexPath) as? DiaryCollectionViewCell else {
                 return UICollectionViewCell() }
-            cell.titleLabel.text = diaryDataList[indexPath.row].diaryName
+            cell.titleLabel.setUpLabel(title: diaryDataList[indexPath.row].diaryName, podaFont: .subhead3)
+            print("test\(indexPath.row): \(diaryDataList[indexPath.row].diaryName)")
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
