@@ -149,9 +149,12 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         if let title = titleTextField.text, title.isEmpty || contentTextView.text == "내용을 입력하세요." {
             showAlert()
         } else {
+            var pageData = pageInfo!
+            pageData[0].imageData = Data()
+            
             firebaseDBManager.createDiary(
                 deviceName: UIDevice.current.name,
-                pageDataList: pageInfo, title: titleTextField.text!,
+                pageDataList: pageData, title: titleTextField.text!,
                 description: contentTextView.text,
                 frameRate: ratio) { [weak self] error in
                     
