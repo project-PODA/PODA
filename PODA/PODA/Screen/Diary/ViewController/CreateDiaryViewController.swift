@@ -192,6 +192,14 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         selectBackgroundColorView.changedCustomColor = { color in
             self.diaryView.backgroundColor = color
         }
+        
+        selectBackgroundColorView.touchedCustomColorButton = { colorPicker in
+            self.present(colorPicker, animated: true)
+        }
+        
+        selectBackgroundColorView.finishedCustomColor = {
+            self.dismiss(animated: true)
+        }
     }
     
     @objc private func touchUpGalleryButton() {
@@ -361,8 +369,9 @@ extension CreateDiaryViewController: UITextViewDelegate {
             textView.textColor = color
         }
         
-        selectTextColorView.touchedCustomColorButton = {
+        selectTextColorView.touchedCustomColorButton = { colorPicker in
             textView.resignFirstResponder()
+            self.present(colorPicker, animated: true)
         }
         
         selectTextColorView.changedCustomColor = { color in
@@ -371,6 +380,11 @@ extension CreateDiaryViewController: UITextViewDelegate {
         
         selectTextColorView.touchedFont = { font in
             textView.font = font
+        }
+        
+        selectTextColorView.finishedCustomColor = {
+            textView.becomeFirstResponder()
+            self.dismiss(animated: true)
         }
     }
     

@@ -20,7 +20,8 @@ class ColorPaletteView: UIView {
     
     var touchedColor: ((_ color: UIColor) -> ())?
     var changedCustomColor: ((_ color: UIColor) -> ())?
-    var touchedCustomColorButton: (() -> ())?
+    var touchedCustomColorButton: ((_ colorPicker: UIColorPickerViewController) -> ())?
+    var finishedCustomColor: (() -> ())?
     
     var touchedFont: ((_ font: UIFont) -> ())?
     
@@ -35,12 +36,14 @@ class ColorPaletteView: UIView {
     ]
     private var colorList: [UIColor] = [.red, .orange, .yellow, .green, .blue, .purple, .cyan, .magenta]
     
+    private lazy var colorPicker = UIColorPickerViewController().then {
+        $0.delegate = self
+    }
     
-    private let colorPicker = UIColorPickerViewController()
-    
-    private lazy var customColorButton = UIColorWell().then {
+    private lazy var customColorButton = UIButton().then {
+        $0.frame.size = CGSize(width: 37, height: 37)
+        $0.setImage(UIImage(named: "icon_colorPicker"), for: .normal)
         $0.addTarget(self, action: #selector(touchUpCustomColorButton), for: .touchUpInside)
-        $0.addTarget(self, action: #selector(colorChanged), for: .valueChanged)
     }
     
     private let fontFlowLayout = UICollectionViewFlowLayout().then {
@@ -60,6 +63,7 @@ class ColorPaletteView: UIView {
     private let colorStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.distribution = .fill
+        $0.alignment = .center
         $0.spacing = 10
     }
     
@@ -96,11 +100,15 @@ class ColorPaletteView: UIView {
             stackView.addArrangedSubview($0)
         }
         
-        customColorButton.snp.makeConstraints {
-            $0.width.height.equalTo(40)
+        addSubview(stackView)
+        
+        colorCollectionView.snp.makeConstraints {
+            $0.height.equalTo(40)
         }
         
-        addSubview(stackView)
+        customColorButton.snp.makeConstraints {
+            $0.width.height.equalTo(38)
+        }
         
         stackView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(20)
@@ -123,11 +131,7 @@ class ColorPaletteView: UIView {
     //MARK: - @objc
     
     @objc private func touchUpCustomColorButton() {
-        touchedCustomColorButton?()
-    }
-    
-    @objc private func colorChanged() {
-        changedCustomColor?(customColorButton.selectedColor ?? UIColor())
+        touchedCustomColorButton?(colorPicker)
     }
     
     // MARK: - Custom Method
@@ -192,5 +196,15 @@ extension ColorPaletteView: UICollectionViewDelegate {
         } else {
             touchedFont?(fontList[indexPath.item].font)
         }
+    }
+}
+
+extension ColorPaletteView: UIColorPickerViewControllerDelegate {
+    func colorPickerViewController(_ viewController: UIColorPickerViewController, didSelect color: UIColor, continuously: Bool) {
+        changedCustomColor?(color)
+    }
+    
+    func colorPickerViewControllerDidFinish(_ viewController: UIColorPickerViewController) {
+        finishedCustomColor?()
     }
 }
