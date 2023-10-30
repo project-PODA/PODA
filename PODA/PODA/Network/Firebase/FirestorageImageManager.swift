@@ -41,7 +41,7 @@ class FireStorageImageManager {
                 
                 imageReference.putData(pageImage, metadata: metadata) { (metadata, error) in
                     if let errCode = error as NSError?{
-                        completion(.error(errCode.code, errCode.localizedDescription))
+                        completion(.error(errCode.code, errCode.description))
                         Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                     } else {
                         completion(.none)
@@ -64,20 +64,19 @@ class FireStorageImageManager {
              if let error = error {
                  if let errorCode = StorageErrorCode(rawValue: error._code) {
                      if errorCode == .objectNotFound {
+                         Logger.writeLog(.error, message: "Object not found: \(error.localizedDescription)")
                          completion(.unknown, 0)
-                         print("0")
                      } else {
+                         Logger.writeLog(.error, message: "Unexpected Storage error: \(error.localizedDescription)")
                          completion(.unknown, 0)
-                         print("0")
                      }
                  } else {
+                     Logger.writeLog(.error, message: "Unknown error occurred: \(error.localizedDescription)")
                      completion(.unknown, 0)
-                     print("0")
                  }
              } else {
                  let count = result?.items.count
                  completion(.none, count!)
-                 print(count!)
              }
          }
         
@@ -98,7 +97,7 @@ class FireStorageImageManager {
             
             imageReference.listAll { (result, error) in
                 if let errCode = error as NSError? {
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, errCode.localizedDescription),[])
                     return
                 }
@@ -154,7 +153,7 @@ class FireStorageImageManager {
             imageReference.putData(imageData, metadata: metadata) { (metadata, error) in
                 if let errCode = error as NSError?{
                     completion(.error(errCode.code, errCode.localizedDescription))
-                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                 } else {
                     completion(.none)
                 }
@@ -174,7 +173,8 @@ class FireStorageImageManager {
             let imageReference = storageReference.child("\(currentUserUID)/images/\(diaryName)")
             
             imageReference.listAll { (result, error) in
-                if let _ = error {
+                if let errCode = error as NSError?{
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.unknown)
                     return
                 }
@@ -185,7 +185,7 @@ class FireStorageImageManager {
                     item.delete { error in
                         if let errCode = error as NSError?{
                             completion(.error(errCode.code, errCode.localizedDescription))
-                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                         }
                         dispatchGroup.leave()
                     }
@@ -211,6 +211,7 @@ class FireStorageImageManager {
 
             imageReference.getData(maxSize: 10 * 1024 * 1024) { data, error in
                 if let errCode = error as NSError?  {
+                    Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, error!.localizedDescription), nil)
                 } else {
                     if let imageData = data {
@@ -230,8 +231,8 @@ class FireStorageImageManager {
                 for item in result!.items {
                     dispatchGroup.enter()
                     item.delete { error in
-                        if let error = error {
-                            print("Error deleting file: \(error.localizedDescription)")
+                        if let errCode = error as NSError? {
+                            print("Error deleting file: \(errCode.localizedDescription)")
                         } else {
                             print("File deleted successfully.")
                         }
@@ -269,31 +270,17 @@ class FireStorageImageManager {
                 completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
             } else {
                 topLevelFolderRef.delete { error in
-                    if let error = error {
-                        completion(.none)//여기서 에러떨어지는 이유가 몰겠네
+                    if let errCode = error as NSError?{
+                        if errCode.code == FireStorageImageError.noFoundFile.code {
+                            completion(.none) //이미 삭제된 폴더의 경우 정상결과로 보고 계속 진행
+                        } else {
+                            Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
+                            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
+                        }
                     } else {
                         completion(.none)
                     }
                 }
-            }
-        }
-
-    }
-
-    func updateProfileImage(imageData: Data, completion: @escaping(FireStorageImageError) -> Void) {
-        guard let currentUserUID = Auth.auth().currentUser?.uid else {
-            Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
-            completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description))
-            return
-        }
-        
-        let imageReference = storageReference.child("\(currentUserUID)/profile/profileImage")
-
-        imageReference.putData(imageData) { metadata, error in
-            if let err = error as NSError? {
-                completion(.error(err.code, err.localizedDescription))
-            } else {
-                completion(.none)
             }
         }
     }

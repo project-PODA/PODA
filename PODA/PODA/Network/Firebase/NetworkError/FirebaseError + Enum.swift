@@ -55,6 +55,7 @@ enum FireStorageImageError: Equatable {
     case unknown
     case error(Int, String)
     case unavailableUUID
+    case noFoundFile
     case none
     var description: String {
         switch self {
@@ -64,6 +65,8 @@ enum FireStorageImageError: Equatable {
                 return "[\(errCode)] : \(message)"
             case .unavailableUUID:
                 return "[FireStorage]: 사용자의 UUID를 확인할 수 없습니다."
+            case .noFoundFile:
+                return "파일/폴더를 찾을수 없거나 이미 삭제되었습니다."
             case .none:
                 return "none"
         }
@@ -74,6 +77,8 @@ enum FireStorageImageError: Equatable {
                 return 9999
             case .unavailableUUID:
                 return 10001
+            case .noFoundFile:
+                return -13010
             case .none:
                 return 0
             default:
