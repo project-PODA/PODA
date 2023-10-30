@@ -133,7 +133,7 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
     // MARK: - Custom Method
     
     private func showAlert() {
-        let alertController = UIAlertController(title: "알림", message: "프레임을 골라주세요.", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "알림", message: "템플릿을 골라주세요.", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "확인", style: .cancel)
         
         alertController.addAction(okAction)
