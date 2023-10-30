@@ -47,7 +47,9 @@ struct Logger {
         }
         
         if level == .error || level == .fatal {
+            #if DEBUG
             saveLog(logMessage)
+            #endif
         }
         
         os_log("%@", log: log, type: logType, logMessage)
