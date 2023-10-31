@@ -263,7 +263,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         
         let selectAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
             let selectedDate = datePicker.date
-            let formattedDate = selectedDate.GetCurrentTime(Dataforamt: "yyyy. MM. dd")
+            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy. MM. dd")
             self?.datePickerButton.setTitle(formattedDate, for: .normal)
         }
         

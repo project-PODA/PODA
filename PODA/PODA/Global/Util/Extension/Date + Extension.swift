@@ -18,12 +18,13 @@ extension Date {
         }
     }
     
-    func GetCurrentTime(Dataforamt: String = "yyyy-MM-dd HH:mm:ss") -> String {
+    func getCurrentTime(Dataforamt: String = "yyyy-MM-dd HH:mm:ss") -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = Dataforamt
         let dateString = formatter.string(from: self)
         return dateString
     }
+    
     static func updateTime(dateTime: String, dateFormat: String = "yyyy-MM-dd HH:mm:ss", outputFormat: String = "yyyy-MM-dd") -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = dateFormat

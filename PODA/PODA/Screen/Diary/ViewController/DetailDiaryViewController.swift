@@ -13,6 +13,8 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
     // MARK: - Properties
     
+    static let createDiaryNotificationName = NSNotification.Name("createDiary")
+    
     var ratio: Ratio!
     var pageInfo: [PageInfo]!
     var diaryName : String?
@@ -162,11 +164,22 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
 
                 if error == .none {
                     print("다이어리 성공")
-                    firebaseImageManager.createDiaryImage(diaryName: titleTextField.text!, pageImage: pageInfo[0].imageData) { error in
+                    let diaryName = titleTextField.text ?? ""
+                    let imageData = pageInfo[0].imageData
+                    firebaseImageManager.createDiaryImage(diaryName: diaryName, pageImage: imageData) { error in
                         if error == .none, let viewControllers = self.navigationController?.viewControllers {
                             print("다이어리 이미지 생성 성공")
                             for viewController in viewControllers {
                                 if viewController is BaseTabbarController {
+                                    NotificationCenter.default.post(
+                                        name: DetailDiaryViewController.createDiaryNotificationName,
+                                        object: DiaryData(
+                                            diaryName: diaryName,
+                                            diaryImageList: [imageData],
+                                            createDate: Date().getCurrentTime(),
+                                            ratio: self.ratio.toString(),
+                                            description: self.contentTextView.text))
+                                    
                                     self.navigationController?.popToViewController(viewController, animated: true)
                                     break
                                 }
@@ -184,9 +197,9 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
     @objc func titleTextDidChange(_ textField: UITextField) {
         let textCount = textField.text?.count ?? 0
-        titleCountLabel.text = "\(textCount)자 / 14자"
-        if textCount > 14 {
-            titleCountLabel.text = "14자 / 14자"
+        titleCountLabel.text = "\(textCount)자 / 12자"
+        if textCount > 12 {
+            titleCountLabel.text = "12자 / 12자"
             textField.text = String(textField.text!.prefix(14))
             return
         }
