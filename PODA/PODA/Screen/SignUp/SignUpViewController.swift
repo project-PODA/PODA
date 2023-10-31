@@ -170,7 +170,7 @@ class SignUpViewController: BaseViewController {
     }()
     
     
-    private let confirmPasswordErrorLabel = UILabel().then {
+    private let passwordConfirmationErrorLabel = UILabel().then {
         $0.textColor = Palette.podaRed.getColor()
         $0.isHidden = true
         $0.setUpLabel(title: "비밀번호가 일치하지 않습니다.", podaFont: .caption)
@@ -271,7 +271,7 @@ class SignUpViewController: BaseViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, verificationCodeErrorLabel, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, confirmPasswordErrorLabel,loadingIndicator].forEach { contentView.addSubview($0) }
+        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, verificationCodeErrorLabel, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, passwordConfirmationErrorLabel,loadingIndicator].forEach { contentView.addSubview($0) }
         view.addSubview(signUpButton)
         
         
@@ -291,7 +291,7 @@ class SignUpViewController: BaseViewController {
         scrollView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
             make.leading.trailing.equalTo(view)
-            make.bottom.equalTo(passwordConfirmationTextField.snp.bottom)
+            make.bottom.equalTo(passwordConfirmationErrorLabel.snp.bottom)
         }
         
         contentView.snp.makeConstraints { make in
@@ -402,7 +402,6 @@ class SignUpViewController: BaseViewController {
             make.right.equalToSuperview().offset(-20)
             make.top.equalTo(passwordConfirmationLabel.snp.bottom).offset(10)
             make.height.equalTo(emailTextField)
-            make.bottom.equalTo(contentView.snp.bottom)
         }
         
         confirmPasswordEyeButton.snp.makeConstraints { make in
@@ -411,9 +410,10 @@ class SignUpViewController: BaseViewController {
             make.width.height.equalTo(24)
         }
         
-        confirmPasswordErrorLabel.snp.makeConstraints { make in
+        passwordConfirmationErrorLabel.snp.makeConstraints { make in
             make.top.equalTo(passwordConfirmationTextField.snp.bottom).offset(4)
             make.left.equalTo(emailLabel)
+            make.bottom.equalTo(contentView.snp.bottom)
         }
         
         signUpButton.snp.makeConstraints { make in
@@ -523,15 +523,15 @@ class SignUpViewController: BaseViewController {
     @objc private func passwordConfirmationTextFieldDidChange(_ textField: UITextField) {
         guard let originalPassword = passwordTextField.text,
               let confirmPassword = textField.text else { return }
-        confirmPasswordErrorLabel.isHidden = originalPassword == confirmPassword
-        if confirmPasswordErrorLabel.isHidden {
-            confirmPasswordErrorLabel.isHidden = false
-            confirmPasswordErrorLabel.text = "비밀번호가 일치합니다."
-            confirmPasswordErrorLabel.textColor = Palette.podaBlue.getColor()
+        passwordConfirmationErrorLabel.isHidden = originalPassword == confirmPassword
+        if passwordConfirmationErrorLabel.isHidden {
+            passwordConfirmationErrorLabel.isHidden = false
+            passwordConfirmationErrorLabel.text = "비밀번호가 일치합니다."
+            passwordConfirmationErrorLabel.textColor = Palette.podaBlue.getColor()
             updateSignUpButtonAppearance()
         } else{
-            confirmPasswordErrorLabel.text = "비밀번호가 일치하지 않습니다."
-            confirmPasswordErrorLabel.textColor = Palette.podaRed.getColor()
+            passwordConfirmationErrorLabel.text = "비밀번호가 일치하지 않습니다."
+            passwordConfirmationErrorLabel.textColor = Palette.podaRed.getColor()
         }
         
     }
@@ -553,6 +553,7 @@ class SignUpViewController: BaseViewController {
     
     //메일 인증 보내기
     @objc private func sendAuthUserCode() {
+        
         guard let _ = emailTextField.text  else {return}
         
         loadingIndicator.startAnimating()
@@ -576,10 +577,15 @@ class SignUpViewController: BaseViewController {
                             userAuthCode = authCode
                             DispatchQueue.main.async{
                                 self.emailErrorLabel.isHidden = false
-                                self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
-                                self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
-                                self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
-                                self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
+                                               self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
+                                               self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
+                                               
+                                               self.verificationCodeErrorLabel.isHidden = false
+                                               self.verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
+                                               self.verificationCodeErrorLabel.text = "입력 완료 후 인증하기 버튼을 눌러주세요."
+                                               
+                                               self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
+                                               self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
                             }
                         }
                     }
