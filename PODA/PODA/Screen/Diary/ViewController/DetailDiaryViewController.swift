@@ -44,7 +44,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     private let titleCountLabel = UILabel().then {
-        $0.setUpLabel(title: "0자 / 14자", podaFont: .caption)
+        $0.setUpLabel(title: "0자 / 12자", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
     }
     
@@ -200,7 +200,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         titleCountLabel.text = "\(textCount)자 / 12자"
         if textCount > 12 {
             titleCountLabel.text = "12자 / 12자"
-            textField.text = String(textField.text!.prefix(14))
+            textField.text = String(textField.text!.prefix(12))
             return
         }
     }

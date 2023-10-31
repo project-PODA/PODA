@@ -16,14 +16,14 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     private let firebaseDBManager = FirestorageDBManager()
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
-    private let backButton = UIButton().then {
+    private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
-        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
     
-    let deleteButton = UIButton().then {
+    lazy var deleteButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_trash"), for: .normal)
-        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    
     }
     
     let emptyMoreDiaryLabel = UILabel().then {

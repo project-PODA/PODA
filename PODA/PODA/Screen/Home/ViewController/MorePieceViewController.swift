@@ -11,13 +11,14 @@ import SnapKit
 
 class MorePieceViewController: BaseViewController, UIConfigurable {
     
+    // FIXME: - 빈 배경에 추억 조각 뭉텅이 흩뿌리기
     private let backgroundImageView = UIImageView().then {
-        $0.image = UIImage(named: "image_background") // 저장된 이미지 불러오기
+        $0.image = UIImage(named: "image_background")
     }
     
-    private let backButton = UIButton().then {
+    private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
-        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)   
     }
     
     private let translucentView = UIView().then {
