@@ -12,6 +12,10 @@ import SnapKit
 class AgreeTermsViewController: BaseViewController, UIConfigurable {
     var setProfileVC: SetProfileViewController?
 
+    private lazy var backButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+    }
     
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 2
@@ -73,10 +77,16 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
     }
     
     func configUI() {
-        [titleLabel, nextButton, allAgreeLabel, termsOfUseLabel, privacyPolicyLabel, allAgreeButton, termsOfUseButton, privacyPolicyButton].forEach { view.addSubview($0) }
+        [backButton, titleLabel, nextButton, allAgreeLabel, termsOfUseLabel, privacyPolicyLabel, allAgreeButton, termsOfUseButton, privacyPolicyButton].forEach { view.addSubview($0) }
+        
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.height.equalTo(36)
+        }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
+            make.top.equalTo(backButton.snp.bottom).offset(30)
             make.leading.equalTo(view.snp.leading).offset(20)
         }
         
@@ -118,6 +128,10 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
             make.right.equalToSuperview().offset(-40)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
+    }
+    
+    @objc func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
     }
     
     
