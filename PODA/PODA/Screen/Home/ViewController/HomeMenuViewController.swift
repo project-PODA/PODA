@@ -14,9 +14,9 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     var touchedDiary: (() -> Void)?
     var touchedPiece: (() -> Void)?
     
-    private let qrButton = UIButton().then {
+    private lazy var qrButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_qr"), for: .normal)
-        $0.addTarget(self, action: #selector(didTapQrButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapQrButton), for: .touchUpInside)
     }
     
     private let qrLabel = UILabel().then {
@@ -24,7 +24,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let addDiaryButton = UIButton().then {
+    private lazy var addDiaryButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_diary"), for: .normal)
         $0.addTarget(self, action: #selector(didTapAddDiaryButton), for: .touchUpInside)
     }
@@ -34,7 +34,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let addPieceButton = UIButton().then {
+    private lazy var addPieceButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_piece"), for: .normal)
         $0.addTarget(self, action: #selector(didTapAddPieceButton), for: .touchUpInside)
     }
@@ -44,7 +44,7 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let closeButton = UIButton().then {
+    private lazy var closeButton = UIButton().then {
         $0.backgroundColor = Palette.podaBlue.getColor()
         $0.layer.cornerRadius = 28
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 24)

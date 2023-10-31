@@ -37,13 +37,13 @@ class DetailViewController: BaseViewController, UIConfigurable {
     }
 
     // FIXME: - 하얀 배경일 때 shadowOpacity = 1.0?
-    private let backButton = UIButton().then {
+    private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
         $0.layer.shadowOffset = CGSize(width: 1, height: 1)
         $0.layer.shadowOpacity = 1.0
         $0.layer.shadowRadius = 7
         $0.layer.shadowColor = Palette.podaBlack.getColor().cgColor
-        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    
     }
     
     private let scrollImageView = UIImageView().then {

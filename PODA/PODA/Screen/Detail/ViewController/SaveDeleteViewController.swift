@@ -18,9 +18,9 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     var indexPath = 0
     var diaryName: String? //나중에 은서님 페이지에 이름 넘겨줄것..
     
-    private let backButton = UIButton().then {
+    private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
-        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
     
     lazy var dateLabel = UILabel().then {
@@ -31,7 +31,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     lazy var addButton = UIButton().then {
         $0.setImage(UIImage(systemName: "plus"), for: .normal)
         $0.tintColor = Palette.podaWhite.getColor()
-        $0.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
     }
     
     lazy var editButton = UIButton().then {
@@ -44,16 +44,16 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.contentMode = .scaleAspectFit
     }
     
-    private let saveButton = UIButton().then {
+    private lazy var saveButton = UIButton().then {
         $0.setUpButton(title: "save", podaFont: .head1)
         $0.titleLabel?.textColor = Palette.podaWhite.getColor()
-        $0.addTarget(self, action: #selector(didTapSaveButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapSaveButton), for: .touchUpInside)
     }
     
-    private let deleteButton = UIButton().then {
+    private lazy var deleteButton = UIButton().then {
         $0.setUpButton(title: "delete", podaFont: .head1)
         $0.titleLabel?.textColor = Palette.podaWhite.getColor()
-        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    // warning - lazy var 로 해결?
+        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    
     }
     
     override func viewDidLoad() {

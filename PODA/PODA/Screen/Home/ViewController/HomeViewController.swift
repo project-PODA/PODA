@@ -33,7 +33,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let addButton = UIButton().then {
+    private lazy var addButton = UIButton().then {
         $0.backgroundColor = Palette.podaGray5.getColor()
         $0.layer.cornerRadius = 13
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 20)
@@ -118,7 +118,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray1.getColor()
     }
     
-    private let addDiaryButton = UIButton().then {
+    private lazy var addDiaryButton = UIButton().then {
         $0.backgroundColor = Palette.podaGray5.getColor()
         $0.layer.cornerRadius = 8
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 16)
@@ -134,7 +134,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.spacing = 8
     }
     
-    private let moreDiaryButton = UIButton().then{
+    private lazy var moreDiaryButton = UIButton().then{
         $0.setUpButton(title: "더보기", podaFont: .subhead1)
         $0.titleLabel?.textColor = Palette.podaGray2.getColor()
         $0.addTarget(self, action: #selector(didTapMoreDiaryButton), for: .touchUpInside)
@@ -151,7 +151,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     // FIXME: - 최신순으로 등록되도록
-    private let diaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
+    private lazy var diaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 8.0
@@ -159,6 +159,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaBlack.getColor()
         $0.showsHorizontalScrollIndicator = false  // 스크롤바 없애기
         $0.register(DiaryCollectionViewCell.self, forCellWithReuseIdentifier: "DiaryCollectionViewCell")
+        $0.delegate = self
+        $0.dataSource = self
     }
     
     private let pieceMenuLabel = UILabel().then {
@@ -166,7 +168,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray1.getColor()
     }
     
-    private let addPieceButton = UIButton().then {
+    private lazy var addPieceButton = UIButton().then {
         $0.backgroundColor = Palette.podaGray5.getColor()
         $0.layer.cornerRadius = 8
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 16)
@@ -182,7 +184,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.spacing = 8
     }
     
-    private let morePieceButton = UIButton().then{
+    private lazy var morePieceButton = UIButton().then{
         $0.setUpButton(title: "더보기", podaFont: .subhead1)
         $0.titleLabel?.textColor = Palette.podaGray2.getColor()
         $0.addTarget(self, action: #selector(didTapMorePieceButton), for: .touchUpInside)
@@ -198,7 +200,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
-    private let pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
+    private lazy var pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 16.0
@@ -206,13 +208,17 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaBlack.getColor()
         $0.showsHorizontalScrollIndicator = false
         $0.register(PieceCollectionViewCell.self, forCellWithReuseIdentifier: "PieceCollectionViewCell")
+        $0.delegate = self
+        $0.dataSource = self
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         //navigationController?.isNavigationBarHidden = true
         configUI()
-        setCollectionView()
+        //setCollectionView()
+        loadDiaryDataFromFirebase()
+        registerNotification()
         print("viewdidload")
     }
     
@@ -222,15 +228,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
             guard let _ = self else { return }
         }
         loadPieceDataFromRealm()
-        loadDiaryDataFromFirebase()
+        print("diaryDataList: \(diaryDataList)")
+        updateUI()
         print(self.navigationController?.viewControllers)
         print(imageMemories)
         print("viewwillappear")
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        diaryDataList = []
     }
     
     // FIXME: - Stackview 정리하기
@@ -383,11 +385,17 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    func setCollectionView() {
-        diaryCollectionView.delegate = self
-        diaryCollectionView.dataSource = self
-        pieceCollectionView.delegate = self
-        pieceCollectionView.dataSource = self
+    func updateUI() {
+        if diaryDataList.isEmpty {
+            self.emptyDiaryLabel.isHidden = false
+            self.diaryCollectionView.isHidden = true
+            self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+        } else {
+            self.diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
+            self.emptyDiaryLabel.isHidden = true
+            self.diaryCollectionView.isHidden = false
+            self.diaryCollectionView.reloadData()
+        }
     }
     
     // FIXME: - memories > piece로 통일?
@@ -517,6 +525,16 @@ class HomeViewController: BaseViewController, UIConfigurable {
         saveDeleteVC.addButton.isHidden = true
         saveDeleteVC.isDiaryImage = false
         navigationController?.pushViewController(saveDeleteVC, animated: true)
+    }
+    
+    func registerNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: DetailDiaryViewController.createDiaryNotificationName, object: nil)
+    }
+    
+    @objc func handleNotification(_ notification:NSNotification) {
+        if let diaryData = notification.object as? DiaryData {
+            self.diaryDataList.append(diaryData)
+        }
     }
     
     @objc func didTapAddButton() {
