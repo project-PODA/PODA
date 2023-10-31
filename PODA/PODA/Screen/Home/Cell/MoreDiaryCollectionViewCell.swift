@@ -16,7 +16,7 @@ class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
      lazy var gradientImageView = UIImageView().then {
         let gradientLayer = CAGradientLayer()
         let width = (UIScreen.main.bounds.width - 40) * 2 / 3
-        let height = ((UIScreen.main.bounds.height * 5 / 7) - 12) / 2
+        let height = ((UIScreen.main.bounds.height * 4 / 5) - 12) / 2
         gradientLayer.frame = CGRect(x: 0, y: 0, width: width, height: height)
         gradientLayer.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
                                 Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]

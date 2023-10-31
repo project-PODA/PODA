@@ -117,7 +117,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
         guard let diaryData = diaryData else { return }
         diaryCoverView.image = UIImage(data: diaryData.diaryImageList[0])
         titleLabel.setUpLabel(title: diaryData.diaryName, podaFont: .display3)
-        dateLabel.setUpLabel(title: diaryData.createDate, podaFont: .head1)
+        dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryData.createDate), podaFont: .head1)
         contentLabel.setUpLabel(title: diaryData.description, podaFont: .body2)
     }
     
@@ -182,9 +182,8 @@ class DetailViewController: BaseViewController, UIConfigurable {
         if sender.direction == .left {
             let saveDeleteVC = SaveDeleteViewController()
             saveDeleteVC.diaryData = diaryData
-            saveDeleteVC.dateLabel.text = diaryData?.createDate
-            saveDeleteVC.diaryName = diaryData?.diaryName
-            saveDeleteVC.imageView.image = UIImage(data: diaryData!.diaryImageList[0])
+            saveDeleteVC.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryData?.createDate ?? ""), podaFont: .body1)
+            saveDeleteVC.imageView.image = UIImage(data: diaryData?.diaryImageList[0] ?? Data())
             saveDeleteVC.isDiaryImage = true
             saveDeleteVC.editButton.isHidden = true
             navigationController?.pushViewController(saveDeleteVC, animated: true)

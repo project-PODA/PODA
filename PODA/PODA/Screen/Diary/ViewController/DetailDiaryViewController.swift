@@ -178,7 +178,8 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
                                             diaryImageList: [imageData],
                                             createDate: Date().getCurrentTime(),
                                             ratio: self.ratio.toString(),
-                                            description: self.contentTextView.text))
+                                            description: self.contentTextView.text)
+                                    )
                                     
                                     self.navigationController?.popToViewController(viewController, animated: true)
                                     break
