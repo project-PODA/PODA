@@ -17,7 +17,7 @@ class BaseViewController: UIViewController {
         super.viewDidLoad()
         
         let className = String(describing: type(of: self))
-        if className == "LoginViewController" || className == "SignUpViewController" || className == "SetProfileViewController" {
+        if className == "LoginViewController" || className == "SignUpViewController" || className == "SetProfileViewController" || className == "AgreeTermsViewController" {
             view.backgroundColor = .white
         } else if className == "CompleteSignUpViewController" {
             view.backgroundColor = Palette.podaBlue.getColor()
