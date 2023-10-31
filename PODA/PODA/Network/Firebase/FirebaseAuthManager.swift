@@ -125,7 +125,7 @@ class FireAuthManager {
 
     func signUpUser(email: String, password: String, profileImage: Data?, nickName: String, completion: @escaping (FireAuthError) -> Void) {
         
-        let userInfo = UserInfo(createDate: Date().GetCurrentTime(), loginDate: "", isUsing: false, userNickname: nickName, email: email, followers: [], followings: [])
+        let userInfo = UserInfo(createDate: Date().getCurrentTime(), loginDate: "", isUsing: false, userNickname: nickName, email: email, followers: [], followings: [])
 
         DispatchQueue.global(qos: .userInteractive).async {
             self.createUser(email: email, password: password) { createUserError in

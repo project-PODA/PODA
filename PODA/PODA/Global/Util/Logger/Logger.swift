@@ -40,7 +40,7 @@ struct Logger {
             emoji = "🚫"
         }
         
-        logMessage = "[\(Date().GetCurrentTime())] : \(emoji) : \(message) -> \(fileName.split(separator: "/").last!) :\(line)\r\n"
+        logMessage = "[\(Date().getCurrentTime())] : \(emoji) : \(message) -> \(fileName.split(separator: "/").last!) :\(line)\r\n"
         
         if isNeededStackTraceInfo{
             logMessage += Thread.callStackSymbols.joined(separator: "\r\n")
@@ -58,7 +58,7 @@ struct Logger {
     private static func saveLog(_ logMessage: String) {
         DispatchQueue.global().async {
             if let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-                let currentTime = Date().GetCurrentTime(Dataforamt : "yyyy-MM-dd")
+                let currentTime = Date().getCurrentTime(Dataforamt : "yyyy-MM-dd")
                 let fileName = "error_log_\(currentTime).txt"
                 let fileURL = documentsDirectory.appendingPathComponent(fileName)
                 print(fileURL) // 경로 이걸로 확인

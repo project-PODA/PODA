@@ -22,7 +22,7 @@ class FirestorageDBManager {
         let diaryInfo = DiaryInfo(
             deviceName: deviceName,
             diaryName: title,
-            createTime: Date().GetCurrentTime(),
+            createTime: Date().getCurrentTime(),
             updateTime: "",
             diaryTitle: title,
             description: description,

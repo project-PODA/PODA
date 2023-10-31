@@ -176,7 +176,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
                                         object: DiaryData(
                                             diaryName: diaryName,
                                             diaryImageList: [imageData],
-                                            createDate: Date().GetCurrentTime(),
+                                            createDate: Date().getCurrentTime(),
                                             ratio: self.ratio.toString(),
                                             description: self.contentTextView.text))
                                     
