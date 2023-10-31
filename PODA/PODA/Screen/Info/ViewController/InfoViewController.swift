@@ -13,14 +13,15 @@ import FirebaseAuth
 
 
 class InfoViewController: BaseViewController, UIConfigurable {
-
+    
     private let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.register(InfoCell.self, forCellReuseIdentifier: "infoCell")
         $0.backgroundColor = .clear
     }
     
     
-    private let items: [String] = ["버전", "개인정보처리방침", "공지사항", "기능 추가 요청/오류 신고", "탈퇴하기"]
+    private let items: [String] = ["버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고", "탈퇴하기"]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,7 +68,7 @@ class InfoViewController: BaseViewController, UIConfigurable {
         
         // User ID
         let userID = Auth.auth().currentUser?.uid ?? "Unknown"
-
+        
         // mail 을 연동해서 보낼 수 있는가를 체크.
         if MFMailComposeViewController.canSendMail() {
             let mailComposeVC = MFMailComposeViewController()
@@ -79,13 +80,13 @@ class InfoViewController: BaseViewController, UIConfigurable {
             present(mailComposeVC, animated: true, completion: nil)
         } else {
             // mail 이 계정과 연동되지 않은 경우.
-            let mailErrorAlert = UIAlertController(title: "메일 전송 실패", message: "이메일 설정을 확인하고 다시 시도해주세요.\n('설정'앱>Mail>계정>계정추가)", preferredStyle: .alert)
+            let mailErrorAlert = UIAlertController(title: "설정", message: "이메일 설정을 확인하고 다시 시도해주세요.\n('설정'앱>Mail>계정>계정추가)\n\n문의 : poda_official@naver.com", preferredStyle: .alert)
             let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in }
             mailErrorAlert.addAction(confirmAction)
             present(mailErrorAlert, animated: true, completion: nil)
         }
     }
-
+    
     
     @objc func didTapBackButton() {
         self.navigationController?.popViewController(animated: true)
@@ -128,12 +129,16 @@ extension InfoViewController: UITableViewDelegate {
             if let url = URL(string: "https://poda-project.notion.site/bf5c40465131409297eb8d5217b0c441?pvs=4") {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
-        case 2: // 공지사항
+        case 2: // 서비스 이용 약관
+            if let url = URL(string: "https://real-future.notion.site/048a25f1b4304cb0ba28e75da9af5f33?pvs=4") {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        case 3: // 공지사항
             let noticeVC = NoticeViewController()
             self.navigationController?.pushViewController(noticeVC, animated: true)
-        case 3: // 기능 추가 요청/오류 신고
+        case 4: // 기능 추가 요청/오류 신고
             sendEmail()
-        case 4: // 탈퇴하기
+        case 5: // 탈퇴하기
             let leaveVC = LeaveViewController()
             self.navigationController?.pushViewController(leaveVC, animated: true)
         default:
