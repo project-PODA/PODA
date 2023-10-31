@@ -8,6 +8,8 @@
 import UIKit
 import Then
 import SnapKit
+import UniformTypeIdentifiers
+
 
 class HomeMenuViewController: BaseViewController, UIConfigurable {
     
@@ -129,7 +131,7 @@ extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigation
                     let camera = UIImagePickerController()
                     camera.delegate = self
                     camera.sourceType = .camera
-                    camera.mediaTypes = UIImagePickerController.availableMediaTypes(for: .camera) ?? []
+                    camera.mediaTypes = [UTType.image.identifier]
                     self?.present(camera, animated: true)
                 }
             }
