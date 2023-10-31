@@ -170,14 +170,14 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
     
     
     @objc func didTapTermsOfUseLabel() {
-        if let url = URL(string: "https://poda-project.notion.site/b15b7e5e03ac49de8415bb54e9edb907?pvs=4") {
+        if let url = URL(string: "https://poda-project.notion.site/f6e3b59ad589488c8079f184d11136a4?pvs=4") {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
     
     @objc func didTapPrivacyPolicyLabel() {
-        if let url = URL(string: "https://real-future.notion.site/fa50c11256fe42d988cb10851764313f?pvs=4") {
+        if let url = URL(string: "https://poda-project.notion.site/7f58cdb40f3348b8b486960f255b051e?pvs=4") {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
