@@ -183,12 +183,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //    }
     
     func saveImageToRealm(image: UIImage, date: Date?) {
-        guard let selectedDate = date else {
-            print("경고: 날짜 변환 실패")
-            return
-        }
-
-        RealmManager.shared.saveImageMemory(image: image, memoryDate: selectedDate)
+        RealmManager.shared.saveImageMemory(image: image, memoryDate: date)
     }
     
     func showSaveConfirmationAlert() {

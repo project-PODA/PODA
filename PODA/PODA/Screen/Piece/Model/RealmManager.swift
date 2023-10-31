@@ -53,6 +53,11 @@ class RealmManager {
             return
         }
         
+        guard let selectedDate = memoryDate else {
+            print("경고: 날짜 변환 실패")
+            return
+        }
+        
         let fileName = "\(UUID().uuidString).png"
         let filePath = documentDirectory.appendingPathComponent(fileName)
         
@@ -60,7 +65,7 @@ class RealmManager {
             try imageData.write(to: filePath)
             let imageMemory = ImageMemory()
             imageMemory.imagePath = fileName
-            imageMemory.memoryDate = memoryDate
+            imageMemory.memoryDate = selectedDate
             
             try realm.write {
                 realm.add(imageMemory)
