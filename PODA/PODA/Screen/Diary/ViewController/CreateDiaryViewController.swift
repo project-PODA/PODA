@@ -171,11 +171,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpNextButton() {
-        let diaryImage = diaryView.transfromToImage()
+        let diaryImage = diaryView.convertToPNGData()
         let detailDiaryViewController = DetailDiaryViewController()
         detailDiaryViewController.ratio = ratio
         detailDiaryViewController.diaryName = diaryName
-        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage?.pngData() ?? Data(), backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
+        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage!, backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
         navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
     

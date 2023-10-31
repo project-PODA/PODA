@@ -609,8 +609,6 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             let image = getPieceImage(with: imageMemory)
             cell.pieceImageView.image = image
             return cell
-//            cell.pieceImageView.image = pieceImageList[indexPath.row]
-//            return cell
         }
     }
 }

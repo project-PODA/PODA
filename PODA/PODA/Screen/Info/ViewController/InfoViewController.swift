@@ -126,11 +126,11 @@ extension InfoViewController: UITableViewDelegate {
         case 0: // 버전
             break
         case 1: // 개인정보처리방침
-            if let url = URL(string: "https://poda-project.notion.site/bf5c40465131409297eb8d5217b0c441?pvs=4") {
+            if let url = URL(string: "https://poda-project.notion.site/7f58cdb40f3348b8b486960f255b051e?pvs=4") {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         case 2: // 서비스 이용 약관
-            if let url = URL(string: "https://real-future.notion.site/048a25f1b4304cb0ba28e75da9af5f33?pvs=4") {
+            if let url = URL(string: "https://poda-project.notion.site/f6e3b59ad589488c8079f184d11136a4?pvs=4") {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         case 3: // 공지사항
