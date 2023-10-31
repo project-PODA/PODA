@@ -27,7 +27,7 @@ extension UIView {
     
     func convertToPNGData() -> Data? {
         let rendererFormat = UIGraphicsImageRendererFormat()
-        rendererFormat.scale = 3.0 
+        rendererFormat.scale = 0.0
 
         let renderer = UIGraphicsImageRenderer(size: bounds.size, format: rendererFormat)
         let image = renderer.image { context in
