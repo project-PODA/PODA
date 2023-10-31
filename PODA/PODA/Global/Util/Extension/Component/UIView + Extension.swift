@@ -14,7 +14,7 @@ extension UIView {
     }
     
     func transfromToImage() -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(.init(width: bounds.size.width, height: bounds.size.height), isOpaque, 0.5)
+        UIGraphicsBeginImageContextWithOptions(.init(width: bounds.size.width, height: bounds.size.height), isOpaque, 1.0)
         defer {
             UIGraphicsEndImageContext()
         }
@@ -23,5 +23,17 @@ extension UIView {
             return UIGraphicsGetImageFromCurrentImageContext()
         }
         return nil
+    }
+    
+    func convertToPNGData() -> Data? {
+        let rendererFormat = UIGraphicsImageRendererFormat()
+        rendererFormat.scale = 0.0
+
+        let renderer = UIGraphicsImageRenderer(size: bounds.size, format: rendererFormat)
+        let image = renderer.image { context in
+            context.cgContext.interpolationQuality = .high
+            layer.render(in: context.cgContext)
+        }
+        return image.pngData()
     }
 }
