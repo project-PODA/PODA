@@ -21,7 +21,7 @@ class SignUpViewController: BaseViewController {
     private let authManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let fireStoreDB = FirestorageDBManager()
     private lazy var loadingIndicator = CustomLoadingIndicator()
-
+    
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
@@ -267,7 +267,6 @@ class SignUpViewController: BaseViewController {
     
     private func setupUI() {
         view.addSubview(backButton)
-
         view.addSubview(titleLabel)
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -441,7 +440,7 @@ class SignUpViewController: BaseViewController {
             signUpButton.layer.borderWidth = 1
         }
     }
-
+    
     
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true)
@@ -536,17 +535,21 @@ class SignUpViewController: BaseViewController {
         }
         
     }
+    
     @objc private func nextButtonTap() {
-        
         if authCodeSuccess && emailAuthSuccess && passwordAuthSuccess {
+            let agreeTermsVC = AgreeTermsViewController()
             let setProfileVC = SetProfileViewController()
             setProfileVC.email = emailTextField.text!.lowercased()
             setProfileVC.password = passwordTextField.text!
-            self.navigationController?.pushViewController(setProfileVC, animated: true)
-        }else {
-            showAlert(title: "에러", message: "빠뜨린 정보를 확인해주세요.")
+            
+            agreeTermsVC.setProfileVC = setProfileVC
+            
+            self.navigationController?.pushViewController(agreeTermsVC, animated: true)
         }
     }
+
+    
     
     //메일 인증 보내기
     @objc private func sendAuthUserCode() {
@@ -615,18 +618,13 @@ class SignUpViewController: BaseViewController {
             emailTextField.isEnabled = false
             verificationCodeTextField.isEnabled = false
             emailDeleteButton.isHidden = true
-
-
+            
             
         } else {
             verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
             verificationCodeErrorLabel.text = "인증에 실패했습니다. 다시 확인해주세요."
         }
-        
     }
-    
-    
-    
     
     //💥deinit 추가!! dismiss추가
 }
