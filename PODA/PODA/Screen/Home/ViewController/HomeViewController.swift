@@ -11,7 +11,7 @@ import SnapKit
 import RealmSwift
 import Foundation
 
-//UI에 보여질 데이터순.
+// UI에 보여질 데이터순.
 struct DiaryData: Equatable {
     var diaryName: String
     var diaryImageList: [Data]
@@ -21,8 +21,6 @@ struct DiaryData: Equatable {
 }
 
 class HomeViewController: BaseViewController, UIConfigurable {
-    
-//    var pieceImageList = [UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3"), UIImage(named: "piece_example1"), UIImage(named: "piece_example2"), UIImage(named: "piece_example3")]
     
     private var imageMemories: Results<ImageMemory>?
     private var diaryDataList: [DiaryData] = []
@@ -43,11 +41,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
     }
     
-    private let mainStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-    }
-    
     private let pieceLabel = UILabel().then {
         $0.setUpLabel(title: "추억 조각", podaFont: .body1)
         $0.textColor = Palette.podaGray3.getColor()
@@ -57,12 +50,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let pieceCountStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.alignment = .leading
-        $0.spacing = 4
-    }
-    
     private let diaryLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리", podaFont: .body1)
         $0.textColor = Palette.podaGray3.getColor()
@@ -70,12 +57,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     private let diaryCountLabel = UILabel().then {
         $0.textColor = Palette.podaWhite.getColor()
-    }
-    
-    private let diaryCountStackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.alignment = .leading
-        $0.spacing = 4
     }
     
     private let scrollView = UIScrollView().then {
@@ -128,12 +109,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapAddDiaryButton), for: .touchUpInside)
     }
     
-    private let diaryMenuStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.spacing = 8
-    }
-    
     private lazy var moreDiaryButton = UIButton().then{
         $0.setUpButton(title: "더보기", podaFont: .subhead1)
         $0.titleLabel?.textColor = Palette.podaGray2.getColor()
@@ -178,12 +153,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapAddPieceButton), for: .touchUpInside)
     }
     
-    private let pieceMenuStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.spacing = 8
-    }
-    
     private lazy var morePieceButton = UIButton().then{
         $0.setUpButton(title: "더보기", podaFont: .subhead1)
         $0.titleLabel?.textColor = Palette.podaGray2.getColor()
@@ -214,11 +183,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //navigationController?.isNavigationBarHidden = true
         configUI()
         loadDiaryDataFromFirebase()
         registerNotification()
-        print("viewdidload")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -227,46 +194,49 @@ class HomeViewController: BaseViewController, UIConfigurable {
             guard let _ = self else { return }
         }
         loadPieceDataFromRealm()
-        print("viewwillappear")
-        print("diaryDataList: \(diaryDataList)")
         updateUI()
-        print(self.navigationController?.viewControllers)
-        //print(imageMemories)
     }
     
-    // FIXME: - Stackview 정리하기
     func configUI() {
+        let mainStackView = UIStackView(arrangedSubviews: [statusLabel, addButton]).then {
+            $0.axis = .horizontal
+            $0.alignment = .center
+        }
+        
+        let diaryCountStackView = UIStackView(arrangedSubviews: [diaryLabel, diaryCountLabel]).then {
+            $0.axis = .vertical
+            $0.alignment = .leading
+            $0.spacing = 4
+        }
+        
+        let pieceCountStackView = UIStackView(arrangedSubviews: [pieceLabel, pieceCountLabel]).then {
+            $0.axis = .vertical
+            $0.alignment = .leading
+            $0.spacing = 4
+        }
+        
+        let diaryMenuStackView = UIStackView(arrangedSubviews: [diaryMenuLabel, addDiaryButton]).then {
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.spacing = 8
+        }
+        
+        let pieceMenuStackView = UIStackView(arrangedSubviews: [pieceMenuLabel, addPieceButton]).then {
+            $0.axis = .horizontal
+            $0.alignment = .center
+            $0.spacing = 8
+        }
+        
         [mainStackView, diaryCountStackView, pieceCountStackView, scrollView].forEach {
             view.addSubview($0)
         }
         
-        [statusLabel, addButton].forEach {
-            mainStackView.addArrangedSubview($0)
-        }
-        
-        [diaryLabel, diaryCountLabel].forEach {
-            diaryCountStackView.addArrangedSubview($0)
-        }
-        
-        [pieceLabel, pieceCountLabel].forEach {
-            pieceCountStackView.addArrangedSubview($0)
-        }
-        
         scrollView.addSubview(contentView)
         
-        [diaryMenuLabel, addDiaryButton].forEach {
-            diaryMenuStackView.addArrangedSubview($0)
-        }
-        
-        [pieceMenuLabel, addPieceButton].forEach {
-            pieceMenuStackView.addArrangedSubview($0)
-        }
-        
-        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, pieceCollectionView].forEach {
+        // FIXME: - 추억 조각 더보기 드래그 기능 구현 후 morePieceButton 추가하기
+        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, pieceDateLabel, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, emptyPieceLabel, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
-        
-        timeCapsuleImageView.addSubview(pieceDateLabel)
         
         mainStackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(7)
@@ -299,7 +269,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-40)
             $0.height.equalTo(416)
         }
-        
+       
         timeCapsuleImageView.snp.makeConstraints {
             $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
             $0.left.equalToSuperview().offset(40)
@@ -308,10 +278,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(416)
         }
         
-    // FIXME: - 랜덤한 위치에 띄우기
         pieceDateLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-80)
+            $0.top.equalTo(timeCapsuleImageView.snp.bottom).offset(8)
         }
         
         addDiaryButton.snp.makeConstraints {
@@ -366,10 +335,10 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(180)
         }
         
-        morePieceButton.snp.makeConstraints {
-            $0.right.equalToSuperview().offset(-20)
-            $0.bottom.equalTo(pieceCollectionView.snp.top).offset(-16)
-        }
+//        morePieceButton.snp.makeConstraints {
+//            $0.right.equalToSuperview().offset(-20)
+//            $0.bottom.equalTo(pieceCollectionView.snp.top).offset(-16)
+//        }
         
         scrollView.snp.makeConstraints {
             $0.top.equalTo(pieceCountStackView.snp.bottom).offset(30)
@@ -385,16 +354,24 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func updateUI() {
-        print("updateUI 실행")
         if diaryDataList.isEmpty {
-            self.emptyDiaryLabel.isHidden = false
-            self.diaryCollectionView.isHidden = true
-            self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+            updateDiaryCollectionView(isEmpty: true)
         } else {
-            self.diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
-            self.emptyDiaryLabel.isHidden = true
-            self.diaryCollectionView.isHidden = false
-            self.diaryCollectionView.reloadData()
+            updateDiaryCollectionView(isEmpty: false)
+        }
+    }
+    
+    func updateDiaryCollectionView(isEmpty: Bool) {
+        if isEmpty {
+            emptyDiaryLabel.isHidden = false
+            diaryCollectionView.isHidden = true
+            diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+        } else {
+            diaryDataList.sort { $0.createDate > $1.createDate }
+            diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
+            emptyDiaryLabel.isHidden = true
+            diaryCollectionView.isHidden = false
+            diaryCollectionView.reloadData()
         }
     }
     
@@ -413,6 +390,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             // 타임캡슐 뷰 업데이트
             emptyTimeCapsuleLabel.isHidden = true
             timeCapsuleImageView.isHidden = false
+            pieceDateLabel.isHidden = false
             
             self.randomPieceIndex = Int.random(in: 0..<pieceCount)
             
@@ -433,6 +411,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             // 등록된 추억 조각이 없는 경우
             emptyTimeCapsuleLabel.isHidden = false
             timeCapsuleImageView.isHidden = true
+            pieceDateLabel.isHidden = true
             emptyPieceLabel.isHidden = false
             pieceCollectionView.isHidden = true
         }
@@ -447,11 +426,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
                 print("diaryList: \(diaryList)")
                 var counter = 0
                 if diaryList.count == 1 {
-                    //account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
+                    // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
                     DispatchQueue.main.async {
-                        self.emptyDiaryLabel.isHidden = false
-                        self.diaryCollectionView.isHidden = true
-                        self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+                        self.updateDiaryCollectionView(isEmpty: true)
                     }
                 }
                 for diaryName in diaryList {
@@ -461,17 +438,18 @@ class HomeViewController: BaseViewController, UIConfigurable {
                             if error == .none, let diaryInfo = diaryInfoList.first {
                                 firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
                                     guard let self = self else { return }
-                                    //print(imageList)
                                     if error == .none {
-                                        self.diaryDataList.append(DiaryData(diaryName: diaryInfo.diaryName, diaryImageList: imageList, createDate: Date.updateTime(dateTime: diaryInfo.createTime).replacingOccurrences(of: "-", with: "."), ratio: "square", description: diaryInfo.description))
+                                        self.diaryDataList.append(DiaryData(
+                                            diaryName: diaryInfo.diaryName,
+                                            diaryImageList: imageList,
+                                            createDate: diaryInfo.createTime,
+                                            ratio: diaryInfo.frameRate,
+                                            description: diaryInfo.description)
+                                        )
                                         counter += 1
                                         if counter == diaryList.count - 1 {
-                                            self.diaryDataList.sort { $0.createDate > $1.createDate }
                                             DispatchQueue.main.async {
-                                                self.diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
-                                                self.emptyDiaryLabel.isHidden = true
-                                                self.diaryCollectionView.isHidden = false
-                                                self.diaryCollectionView.reloadData()
+                                                self.updateDiaryCollectionView(isEmpty: false)
                                             }
                                         }
                                     }
@@ -493,28 +471,28 @@ class HomeViewController: BaseViewController, UIConfigurable {
     func getPieceDate(with imageMemory: ImageMemory) -> String {
         guard let memoryDate = imageMemory.memoryDate else { return "" }
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy. MM. dd"
+        dateFormatter.dateFormat = "yyyy.MM.dd"
         return dateFormatter.string(from: memoryDate)
     }
     
     // FIXME: - MoreDiaryVC, DetailVC에서 사용됨
     func goToDiarySaveDeleteVC(_ index: Int) {
-        guard let imageMemory = self.imageMemories?[index] else { return }
-        let saveDeleteVC = SaveDeleteViewController()
-        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
-        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
-        saveDeleteVC.indexPath = index
-        saveDeleteVC.addButton.isHidden = true
-        saveDeleteVC.isDiaryImage = false
-        navigationController?.pushViewController(saveDeleteVC, animated: true)
+//        guard let imageMemory = self.imageMemories?[index] else { return }
+//        let saveDeleteVC = SaveDeleteViewController()
+//        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
+//        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
+//        saveDeleteVC.indexPath = index
+//        saveDeleteVC.addButton.isHidden = true
+//        saveDeleteVC.isDiaryImage = false
+//        navigationController?.pushViewController(saveDeleteVC, animated: true)
     }
     
     // FIXME: - Bind 함수로 정리하기
     func goToPieceSaveDeleteVC(_ index: Int) {
         guard let imageMemory = self.imageMemories?[index] else { return }
         let saveDeleteVC = SaveDeleteViewController()
+        saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
-        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
         saveDeleteVC.indexPath = index
         saveDeleteVC.addButton.isHidden = true
         saveDeleteVC.isDiaryImage = false
@@ -534,12 +512,9 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     @objc func handleDeleteNotification(_ notification: NSNotification) {
         if let diaryData = notification.object as? DiaryData {
-            print("diaryData: \(diaryData)")
-            print("삭제 전 diaryDataList: \(diaryDataList)")
             if let targetIndex = self.diaryDataList.firstIndex(of: diaryData) {
                 self.diaryDataList.remove(at: targetIndex)
             }
-            print("삭제 후 diaryDataList: \(diaryDataList)")
         }
     }
     
@@ -570,7 +545,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     // FIXME: - Bind 함수로 정리하기
     @objc func didTapMoreDiaryButton() {
         let moreDiaryVC = MoreDiaryViewController()
-        print("다이어리 더보기 클릭 \(diaryDataList)")
         if diaryDataList.isEmpty {
             moreDiaryVC.emptyMoreDiaryLabel.isHidden = false
             moreDiaryVC.moreDiaryCollectionView.isHidden = true
@@ -625,7 +599,6 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryCollectionViewCell.identifier, for: indexPath) as? DiaryCollectionViewCell else {
                 return UICollectionViewCell() }
             cell.titleLabel.setUpLabel(title: diaryDataList[indexPath.row].diaryName, podaFont: .subhead3)
-            print("test\(indexPath.row): \(diaryDataList[indexPath.row].diaryName)")
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }

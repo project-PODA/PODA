@@ -33,29 +33,31 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
         $0.textAlignment = .center
     }
     
-    // FIXME: - UIScreen.main.bounds.height * 5 / 7 따로 빼서 상수로 정의해두기
-    let moreDiaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
+    // FIXME: - UIScreen.main.bounds.height * 4 / 5 따로 빼서 상수로 정의해두기
+    lazy var  moreDiaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         let width = (UIScreen.main.bounds.width - 40) * 2 / 3
-        let height = ((UIScreen.main.bounds.height * 5 / 7) - 12) / 2
+        let height = ((UIScreen.main.bounds.height * 4 / 5) - 12) / 2
         layout.itemSize = CGSize(width: width, height: height)
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 12.0  // 셀 옆 간격
         layout.minimumLineSpacing = 12.0  // 셀 위 아래 간격
         $0.collectionViewLayout = layout
         $0.backgroundColor = Palette.podaBlack.getColor()
+        $0.showsHorizontalScrollIndicator = false
         $0.register(MoreDiaryCollectionViewCell.self, forCellWithReuseIdentifier: "MoreDiaryCollectionViewCell")
+        $0.delegate = self
+        $0.dataSource = self
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        moreDiaryCollectionView.delegate = self
-        moreDiaryCollectionView.dataSource = self
     }
 
+    // FIXME: - 삭제 기능 구현하면 deleteButton 추가
     func configUI() {
-        [backButton, deleteButton, emptyMoreDiaryLabel, moreDiaryCollectionView].forEach {
+        [backButton, emptyMoreDiaryLabel, moreDiaryCollectionView].forEach {
             view.addSubview($0)
         }
         
@@ -65,11 +67,11 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(30)
         }
         
-        deleteButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.right.equalToSuperview().offset(-20)
-            $0.width.height.equalTo(30)
-        }
+//        deleteButton.snp.makeConstraints {
+//            $0.top.equalTo(view.safeAreaLayoutGuide)
+//            $0.right.equalToSuperview().offset(-20)
+//            $0.width.height.equalTo(30)
+//        }
         
         emptyMoreDiaryLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
@@ -79,7 +81,8 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
             $0.top.equalTo(backButton.snp.bottom).offset(12)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
-            $0.height.equalTo(UIScreen.main.bounds.height * 5 / 7)
+            $0.height.equalTo((view.frame.height * 4 / 5))
+            //$0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
@@ -141,15 +144,16 @@ extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewD
         
         cell.gradientImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
         cell.titleLabel.setUpLabel(title: diaryList[indexPath.row].diaryName, podaFont: .head1)
-        cell.dateLabel.setUpLabel(title: diaryList[indexPath.row].createDate, podaFont: .subhead2)
+        cell.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryList[indexPath.row].createDate), podaFont: .subhead2)
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let saveDeleteVC = SaveDeleteViewController()
-        saveDeleteVC.dateLabel.text = diaryList[indexPath.row].createDate
-        saveDeleteVC.diaryName = diaryList[indexPath.row].diaryName
+        saveDeleteVC.diaryData = diaryList[indexPath.row]
+        saveDeleteVC.dateLabel.text = Date.updateTime(dateTime: diaryList[indexPath.row].createDate)
+        //saveDeleteVC.diaryName = diaryList[indexPath.row].diaryName
         saveDeleteVC.imageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
         saveDeleteVC.isDiaryImage = true
         saveDeleteVC.editButton.isHidden = true
