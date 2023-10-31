@@ -181,6 +181,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
     @objc func scrollView(_ sender: UISwipeGestureRecognizer) {
         if sender.direction == .left {
             let saveDeleteVC = SaveDeleteViewController()
+            saveDeleteVC.diaryData = diaryData
             saveDeleteVC.dateLabel.text = diaryData?.createDate
             saveDeleteVC.diaryName = diaryData?.diaryName
             saveDeleteVC.imageView.image = UIImage(data: diaryData!.diaryImageList[0])

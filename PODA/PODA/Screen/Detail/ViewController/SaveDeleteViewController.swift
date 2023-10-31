@@ -10,13 +10,18 @@ import RealmSwift
 
 class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
+    static let deleteDiaryNotificationName = NSNotification.Name("deleteDiary")
+    
+    var diaryData : DiaryData?
+    var ratio: String?
+    
     private let firebaseDBManager = FirestorageDBManager()
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     var isDiaryImage = true
     var imageMemories: Results<ImageMemory>?
     var indexPath = 0
-    var diaryName: String? //나중에 은서님 페이지에 이름 넘겨줄것..
+    var diaryName: String? // 나중에 은서님 페이지에 이름 넘겨줄것.. 페이지 추가할 때?
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
@@ -24,7 +29,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     lazy var dateLabel = UILabel().then {
-        $0.setUpLabel(title: "2023.09.06", podaFont: .body1)
+        $0.setUpLabel(title: diaryData?.createDate ?? "", podaFont: .body1) 
         $0.textColor = Palette.podaGray3.getColor()
     }
     
@@ -40,7 +45,9 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
     }
     
+    // FIXME: - ! 수정
     lazy var imageView = UIImageView().then {
+        $0.image = UIImage(data: diaryData!.diaryImageList[0])
         $0.contentMode = .scaleAspectFit
     }
     
@@ -146,14 +153,29 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             if isDiaryImage {
                 guard let diaryName else { return }
                 firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
-                    if error == .none {
+                    if error == .none, let viewControllers = self.navigationController?.viewControllers {
                         // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
                         // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
-                        // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
+                        
+                        // deleteDiaryImage 후 다이어리 이미지 갯수 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
                         self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-                            
+                            for viewController in viewControllers {
+                                if let viewController = viewController as? BaseTabbarController {
+                                    NotificationCenter.default.post(
+                                        name: SaveDeleteViewController.deleteDiaryNotificationName,
+                                        object: DiaryData(
+                                            diaryName: diaryName,
+                                            diaryImageList: self.diaryData?.diaryImageList ?? [],
+                                            createDate: self.diaryData?.createDate ?? "",
+                                            ratio: self.diaryData?.ratio ?? "",
+                                            description: self.diaryData?.description ?? ""))
+                                    
+                                    self.navigationController?.popToViewController(viewController, animated: true)
+                                    break
+                                }
+                            }
                         }
-                        self.getBackToHome()
+                        // self.getBackToHome() > 이거 주석 안하면 updateUI이 handleDeleteNotification보다 먼저 실행돼서 삭제가 반영이 안됨
                     }
                 }
             } else {
@@ -181,10 +203,10 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     func getBackToHome() {
-        guard let viewControllerStack = self.navigationController?.viewControllers else { return }
-        for viewController in viewControllerStack {
-            if let homeVC = viewController as? BaseTabbarController {
-                self.navigationController?.popToViewController(homeVC, animated: true)
+        guard let viewControllers = self.navigationController?.viewControllers else { return }
+        for viewController in viewControllers {
+            if let viewController = viewController as? BaseTabbarController {
+                self.navigationController?.popToViewController(viewController, animated: true)
             }
         }
     }

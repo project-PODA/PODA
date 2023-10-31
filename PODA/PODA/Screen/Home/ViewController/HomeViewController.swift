@@ -12,7 +12,7 @@ import RealmSwift
 import Foundation
 
 //UI에 보여질 데이터순.
-struct DiaryData{
+struct DiaryData: Equatable {
     var diaryName: String
     var diaryImageList: [Data]
     var createDate: String
@@ -216,7 +216,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         //navigationController?.isNavigationBarHidden = true
         configUI()
-        //setCollectionView()
         loadDiaryDataFromFirebase()
         registerNotification()
         print("viewdidload")
@@ -228,11 +227,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
             guard let _ = self else { return }
         }
         loadPieceDataFromRealm()
+        print("viewwillappear")
         print("diaryDataList: \(diaryDataList)")
         updateUI()
         print(self.navigationController?.viewControllers)
-        print(imageMemories)
-        print("viewwillappear")
+        //print(imageMemories)
     }
     
     // FIXME: - Stackview 정리하기
@@ -386,6 +385,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func updateUI() {
+        print("updateUI 실행")
         if diaryDataList.isEmpty {
             self.emptyDiaryLabel.isHidden = false
             self.diaryCollectionView.isHidden = true
@@ -419,12 +419,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
             guard let imageMemory = self.imageMemories?[self.randomPieceIndex] else { return }
             self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
             self.pieceDateLabel.setUpLabel(title: self.getPieceDate(with: imageMemory), podaFont: .subhead2)
-            
-            //            pieceImageList 더미데이터 사용하는 경우
-            //            let randomPieceIndex = Int.random(in: 0..<self.pieceImageList.count)
-            //            guard let randomImage = self.pieceImageList[randomPieceIndex] else { return }
-            //            self.timeCapsuleImageView.image = randomImage
-            //            self.pieceCountLabel.text = "\(pieceImageList.count)개"
                         
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
             timeCapsuleImageView.addGestureRecognizer(tapGesture)
@@ -528,12 +522,24 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func registerNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: DetailDiaryViewController.createDiaryNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleCreateNotification), name: DetailDiaryViewController.createDiaryNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteNotification), name: SaveDeleteViewController.deleteDiaryNotificationName, object: nil)
     }
     
-    @objc func handleNotification(_ notification:NSNotification) {
+    @objc func handleCreateNotification(_ notification: NSNotification) {
         if let diaryData = notification.object as? DiaryData {
             self.diaryDataList.append(diaryData)
+        }
+    }
+    
+    @objc func handleDeleteNotification(_ notification: NSNotification) {
+        if let diaryData = notification.object as? DiaryData {
+            print("diaryData: \(diaryData)")
+            print("삭제 전 diaryDataList: \(diaryDataList)")
+            if let targetIndex = self.diaryDataList.firstIndex(of: diaryData) {
+                self.diaryDataList.remove(at: targetIndex)
+            }
+            print("삭제 후 diaryDataList: \(diaryDataList)")
         }
     }
     
@@ -564,7 +570,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     // FIXME: - Bind 함수로 정리하기
     @objc func didTapMoreDiaryButton() {
         let moreDiaryVC = MoreDiaryViewController()
-        print(diaryDataList)
+        print("다이어리 더보기 클릭 \(diaryDataList)")
         if diaryDataList.isEmpty {
             moreDiaryVC.emptyMoreDiaryLabel.isHidden = false
             moreDiaryVC.moreDiaryCollectionView.isHidden = true
