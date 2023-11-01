@@ -537,12 +537,19 @@ class HomeViewController: BaseViewController, UIConfigurable {
         homeMenuViewController.modalPresentationStyle = .overFullScreen
         present(homeMenuViewController, animated: true)
         
-        homeMenuViewController.touchedDiary = {
+        // FIXME: - 실기기 테스트 해보고 화면 전환 방식 변경
+        homeMenuViewController.didTapPiece = {
+            self.dismiss(animated: true)
+            self.present(QRViewController(), animated: true)
+            //self.navigationController?.pushViewController(QRViewController(), animated: true)
+        }
+        
+        homeMenuViewController.didTapDiary = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(SelectRatioViewController(), animated: true)
         }
         
-        homeMenuViewController.touchedPiece = {
+        homeMenuViewController.didTapPiece = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(PieceViewController(), animated: true)
         }
