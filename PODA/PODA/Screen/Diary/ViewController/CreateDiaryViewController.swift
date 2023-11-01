@@ -203,11 +203,15 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpGalleryButton() {
-        var configuration = PHPickerConfiguration()
-        configuration.filter = .images
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        present(picker, animated: true, completion: nil)
+        PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { (isAuthorized) in
+            if isAuthorized {
+                var configuration = PHPickerConfiguration()
+                configuration.filter = .images
+                let picker = PHPickerViewController(configuration: configuration)
+                picker.delegate = self
+                self.present(picker, animated: true, completion: nil)
+            }
+        }
     }
     
     @objc private func touchUpStickerButton() {
