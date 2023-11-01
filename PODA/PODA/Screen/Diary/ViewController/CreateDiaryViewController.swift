@@ -131,11 +131,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             switch ratio {
             case .square:
                 $0.top.equalTo(scrollView).offset(30)
-                $0.width.height.equalTo(393)
+                $0.width.height.equalTo(UIScreen.main.bounds.width)
             case .rectangle:
                 $0.top.equalTo(scrollView)
-                $0.width.equalTo(393)
-                $0.height.equalTo(524)
+                $0.width.equalTo(UIScreen.main.bounds.width)
+                $0.height.equalTo(UIScreen.main.bounds.width / 3 * 4)
             case .none:
                 $0.width.height.equalTo(393)
             }
