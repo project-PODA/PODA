@@ -56,9 +56,13 @@ class ColorPaletteView: UIView {
         $0.minimumInteritemSpacing = 5
     }
     
-    private lazy var fontCollectionView = UICollectionView(frame: .zero, collectionViewLayout: fontFlowLayout)
+    private lazy var fontCollectionView = UICollectionView(frame: .zero, collectionViewLayout: fontFlowLayout).then {
+        $0.showsHorizontalScrollIndicator = false
+    }
     
-    private lazy var colorCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorFlowLayout)
+    private lazy var colorCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorFlowLayout).then {
+        $0.showsHorizontalScrollIndicator = false
+    }
     
     private let colorStackView = UIStackView().then {
         $0.axis = .horizontal
