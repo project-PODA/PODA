@@ -39,9 +39,9 @@ class StickerViewController: BaseViewController, UIConfigurable {
     
     private let flowLayout = UICollectionViewFlowLayout().then {
         $0.scrollDirection = .vertical
-        $0.minimumLineSpacing = 30
-        $0.minimumInteritemSpacing = 30
-        let size = (UIScreen.main.bounds.width - 70) / 2
+        $0.minimumLineSpacing = 20
+        $0.minimumInteritemSpacing = 20
+        let size = (UIScreen.main.bounds.width - 80) / 2
         $0.itemSize = CGSize(width: size, height: size)
     }
     
@@ -82,8 +82,8 @@ class StickerViewController: BaseViewController, UIConfigurable {
 //        }
         
         collectionView.snp.makeConstraints {
-            $0.top.equalTo(cancelButton.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.top.equalTo(cancelButton.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview().inset(30)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
