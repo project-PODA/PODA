@@ -210,8 +210,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
                 let picker = PHPickerViewController(configuration: configuration)
                 picker.delegate = self
                 self.present(picker, animated: true, completion: nil)
-            } else {
-                
             }
         }
     }

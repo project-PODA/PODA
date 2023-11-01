@@ -165,10 +165,14 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     }
 
     @objc private func didTapCameraButton() {
-        let imagePickerController = UIImagePickerController()
-        imagePickerController.delegate = self
-        imagePickerController.sourceType = .photoLibrary
-        present(imagePickerController, animated: true, completion: nil)
+        PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { (isAuthorized) in
+            if isAuthorized {
+                let imagePickerController = UIImagePickerController()
+                imagePickerController.delegate = self
+                imagePickerController.sourceType = .photoLibrary
+                self.present(imagePickerController, animated: true, completion: nil)
+            }
+        }
     }
     
     @objc private func didnickNameButton() {
