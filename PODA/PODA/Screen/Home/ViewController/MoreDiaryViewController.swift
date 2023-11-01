@@ -36,9 +36,6 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     // FIXME: - UIScreen.main.bounds.height * 4 / 5 따로 빼서 상수로 정의해두기
     lazy var  moreDiaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
-        let width = (UIScreen.main.bounds.width - 40) * 2 / 3
-        let height = ((UIScreen.main.bounds.height * 4 / 5) - 12) / 2
-        layout.itemSize = CGSize(width: width, height: height)
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 12.0  // 셀 옆 간격
         layout.minimumLineSpacing = 12.0  // 셀 위 아래 간격
@@ -81,8 +78,7 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
             $0.top.equalTo(backButton.snp.bottom).offset(12)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
-            $0.height.equalTo((view.frame.height * 4 / 5))
-            //$0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-28)
         }
     }
     
@@ -134,6 +130,17 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     }
 }
 
+extension MoreDiaryViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let safeAreaTop: CGFloat = view.safeAreaInsets.top
+        let safeAreaBottom: CGFloat = view.safeAreaInsets.bottom
+        let totalHeight: CGFloat = view.frame.height
+        print(safeAreaTop, safeAreaBottom, totalHeight)
+        let height: CGFloat = ((totalHeight - safeAreaTop - safeAreaBottom - 30 - 12 - 28) - 12) / 2  // backButton.width = 30, collectionViewTopOffset = 12, collectionViewBottomOffset = 28, cellSpacing = 12
+        return CGSize(width: (view.frame.width - 40) * 2 / 3, height: height)
+    }
+}
+
 extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return diaryList.count
@@ -145,6 +152,11 @@ extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewD
         cell.gradientImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
         cell.titleLabel.setUpLabel(title: diaryList[indexPath.row].diaryName, podaFont: .head1)
         cell.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryList[indexPath.row].createDate), podaFont: .subhead2)
+        
+        cell.safeAreaTop = view.safeAreaInsets.top
+        cell.safeAreaBottom = view.safeAreaInsets.bottom
+        cell.totalHeight = view.frame.height
+        // print(safeAreaTop, safeAreaBottom, totalHeight)
         
         return cell
     }

@@ -276,6 +276,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-40)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(416)
+            //$0.height.lessThanOrEqualTo(416)
         }
         
         pieceDateLabel.snp.makeConstraints {
