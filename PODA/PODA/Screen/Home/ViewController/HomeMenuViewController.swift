@@ -8,13 +8,13 @@
 import UIKit
 import Then
 import SnapKit
-import UniformTypeIdentifiers
-
+//import UniformTypeIdentifiers
 
 class HomeMenuViewController: BaseViewController, UIConfigurable {
     
-    var touchedDiary: (() -> Void)?
-    var touchedPiece: (() -> Void)?
+    var didTapQR:(() -> Void)?
+    var didTapDiary: (() -> Void)?
+    var didTapPiece: (() -> Void)?
     
     private lazy var qrButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_qr"), for: .normal)
@@ -108,13 +108,13 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddDiaryButton() {
-        guard let touchedDiary else { return }
-        touchedDiary()
+        guard let didTapDiary else { return }
+        didTapDiary()
     }
     
     @objc func didTapAddPieceButton() {
-        guard let touchedPiece else { return }
-        touchedPiece()
+        guard let didTapPiece else { return }
+        didTapPiece()
     }
     
     @objc func didTapCloseButton() {
@@ -128,11 +128,13 @@ extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigation
         CameraAccessHelper.requestCameraAccess(presenter: self) { [weak self] isAuthorized in
             DispatchQueue.main.async {
                 if isAuthorized {
-                    let camera = UIImagePickerController()
-                    camera.delegate = self
-                    camera.sourceType = .camera
-                    camera.mediaTypes = [UTType.image.identifier]
-                    self?.present(camera, animated: true)
+                    guard let touchedQR = self?.didTapQR else { return }
+                    touchedQR()
+//                    let camera = UIImagePickerController()
+//                    camera.delegate = self
+//                    camera.sourceType = .camera
+//                    camera.mediaTypes = [UTType.image.identifier]
+//                    self?.present(camera, animated: true)
                 }
             }
         }

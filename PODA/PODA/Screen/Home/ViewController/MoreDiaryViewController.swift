@@ -33,7 +33,6 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
         $0.textAlignment = .center
     }
     
-    // FIXME: - UIScreen.main.bounds.height * 4 / 5 따로 빼서 상수로 정의해두기
     lazy var  moreDiaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -130,14 +129,24 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     }
 }
 
+// FIXME: - UIScreen.main.bounds.height * 2 / 3 따로 빼서 상수로 정의해두기
 extension MoreDiaryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoreDiaryCollectionViewCell.identifier, for: indexPath) as? MoreDiaryCollectionViewCell else { return CGSize() }
+        
+        let width = (view.frame.width - 40) * 2 / 3
         let safeAreaTop: CGFloat = view.safeAreaInsets.top
         let safeAreaBottom: CGFloat = view.safeAreaInsets.bottom
         let totalHeight: CGFloat = view.frame.height
-        print(safeAreaTop, safeAreaBottom, totalHeight)
         let height: CGFloat = ((totalHeight - safeAreaTop - safeAreaBottom - 30 - 12 - 28) - 12) / 2  // backButton.width = 30, collectionViewTopOffset = 12, collectionViewBottomOffset = 28, cellSpacing = 12
-        return CGSize(width: (view.frame.width - 40) * 2 / 3, height: height)
+        
+        cell.gradientWidth = width
+        cell.gradientHeight = height    // 이렇게 넘겨주는건 보통 index마다 셀마다 사이즈가 다를 때 해줌. 이렇게 같을 때에는 이게 효율적인가 싶다..
+        cell.updateGradientLayer()
+        
+        print("delegate \(totalHeight), \(safeAreaTop), \(safeAreaBottom)")
+        
+        return CGSize(width: width, height: height)
     }
 }
 
@@ -152,11 +161,6 @@ extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewD
         cell.gradientImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
         cell.titleLabel.setUpLabel(title: diaryList[indexPath.row].diaryName, podaFont: .head1)
         cell.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryList[indexPath.row].createDate), podaFont: .subhead2)
-        
-        cell.safeAreaTop = view.safeAreaInsets.top
-        cell.safeAreaBottom = view.safeAreaInsets.bottom
-        cell.totalHeight = view.frame.height
-        // print(safeAreaTop, safeAreaBottom, totalHeight)
         
         return cell
     }

@@ -127,11 +127,11 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             print(safeAreaTop, safeAreaBottom, totalHeight)
            
             if diaryData?.ratio == "square" {
-                let imageViewHeight: CGFloat = view.frame.width
+                let imageViewHeight: CGFloat = UIScreen.main.bounds.width
                 $0.top.equalTo(imageView.snp.bottom).offset((totalHeight - safeAreaTop - safeAreaBottom - imageViewHeight - 30 - 24) / 3)
                 
             } else {
-                let imageViewHeight: CGFloat = view.frame.width * 4 / 3
+                let imageViewHeight: CGFloat = UIScreen.main.bounds.width * 4 / 3
                 $0.top.equalTo(imageView.snp.bottom).offset((totalHeight - safeAreaTop - safeAreaBottom - imageViewHeight - 30 - 24 ) / 3)
             }
         }
