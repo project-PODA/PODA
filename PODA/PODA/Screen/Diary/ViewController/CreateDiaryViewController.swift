@@ -135,7 +135,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             case .rectangle:
                 $0.top.equalTo(scrollView)
                 $0.width.equalTo(UIScreen.main.bounds.width)
-                $0.height.equalTo(UIScreen.main.bounds.width + 120)
+                $0.height.equalTo(UIScreen.main.bounds.width / 3 * 4)
             case .none:
                 $0.width.height.equalTo(393)
             }
