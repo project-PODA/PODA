@@ -85,7 +85,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let timeCapsuleImageView = UIImageView().then {
-        $0.layer.cornerRadius = 20
         $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
     }
@@ -538,7 +537,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         present(homeMenuViewController, animated: true)
         
         // FIXME: - 실기기 테스트 해보고 화면 전환 방식 변경
-        homeMenuViewController.didTapPiece = {
+        homeMenuViewController.didTapQR = {
             self.dismiss(animated: true)
             self.present(QRViewController(), animated: true)
             //self.navigationController?.pushViewController(QRViewController(), animated: true)

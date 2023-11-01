@@ -140,11 +140,11 @@ extension MoreDiaryViewController: UICollectionViewDelegateFlowLayout {
         let totalHeight: CGFloat = view.frame.height
         let height: CGFloat = ((totalHeight - safeAreaTop - safeAreaBottom - 30 - 12 - 28) - 12) / 2  // backButton.width = 30, collectionViewTopOffset = 12, collectionViewBottomOffset = 28, cellSpacing = 12
         
-        cell.gradientWidth = width
-        cell.gradientHeight = height    // 이렇게 넘겨주는건 보통 index마다 셀마다 사이즈가 다를 때 해줌. 이렇게 같을 때에는 이게 효율적인가 싶다..
-        cell.updateGradientLayer()
-        
-        print("delegate \(totalHeight), \(safeAreaTop), \(safeAreaBottom)")
+//        cell.gradientWidth = width
+//        cell.gradientHeight = height    // 이렇게 넘겨주는건 보통 index마다 셀마다 사이즈가 다를 때 해줌. 이렇게 같을 때에는 이게 효율적인가 싶다..
+//        cell.updateGradientLayer()
+//        
+//        print("delegate \(totalHeight), \(safeAreaTop), \(safeAreaBottom)")
         
         return CGSize(width: width, height: height)
     }
@@ -158,7 +158,7 @@ extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoreDiaryCollectionViewCell.identifier, for: indexPath) as? MoreDiaryCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.gradientImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
+        cell.diaryCoverImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
         cell.titleLabel.setUpLabel(title: diaryList[indexPath.row].diaryName, podaFont: .head1)
         cell.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryList[indexPath.row].createDate), podaFont: .subhead2)
         

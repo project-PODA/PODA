@@ -1173,7 +1173,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6A4DKMQA22;
+				DEVELOPMENT_TEAM = 784WC23TU5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
@@ -1189,7 +1189,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = poda;
+				PRODUCT_BUNDLE_IDENTIFIER = com.poda.project;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1207,7 +1207,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6A4DKMQA22;
+				DEVELOPMENT_TEAM = 784WC23TU5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
@@ -1223,7 +1223,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = poda;
+				PRODUCT_BUNDLE_IDENTIFIER = com.poda.project;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
