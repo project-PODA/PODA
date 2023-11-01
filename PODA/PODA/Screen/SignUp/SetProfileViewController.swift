@@ -18,6 +18,11 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
     private var firebaseAuth = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
     
+    private lazy var backButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+    }
+    
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 2
         let paragraphStyle = NSMutableParagraphStyle()
@@ -101,10 +106,16 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         nicknameTextField.rightView = clearButton
         nicknameTextField.rightViewMode = .whileEditing
         
-        [titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, descriptionLabel, signUpButton,loadingIndicator].forEach { view.addSubview($0) }
+        [backButton, titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, descriptionLabel, signUpButton,loadingIndicator].forEach { view.addSubview($0) }
+        
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.height.equalTo(36)
+        }
         
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
+            make.top.equalTo(backButton.snp.bottom).offset(30)
             make.leading.equalTo(view.snp.leading).offset(20)
         }
         
@@ -153,6 +164,10 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         loadingIndicator.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+    }
+    
+    @objc func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
     }
     
     func updateSignUpButtonAppearance() {

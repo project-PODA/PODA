@@ -170,7 +170,7 @@ class SignUpViewController: BaseViewController {
     }()
     
     
-    private let confirmPasswordErrorLabel = UILabel().then {
+    private let passwordConfirmationErrorLabel = UILabel().then {
         $0.textColor = Palette.podaRed.getColor()
         $0.isHidden = true
         $0.setUpLabel(title: "비밀번호가 일치하지 않습니다.", podaFont: .caption)
@@ -271,7 +271,7 @@ class SignUpViewController: BaseViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, verificationCodeErrorLabel, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, confirmPasswordErrorLabel,loadingIndicator].forEach { contentView.addSubview($0) }
+        [emailLabel, emailTextField, emailDeleteButton, emailErrorLabel, emailSendButton, verificationCodeLabel, verificationCodeDetailLabel, verificationCodeTextField, verificationCodeDeleteButton, verifyCodeButton, verificationCodeErrorLabel, passwordLabel, passwordTextField, passwordDetailLabel, passwordEyeButton, passwordErrorLabel, passwordConfirmationLabel, passwordConfirmationTextField, confirmPasswordEyeButton, passwordConfirmationErrorLabel,loadingIndicator].forEach { contentView.addSubview($0) }
         view.addSubview(signUpButton)
         
         
@@ -283,145 +283,145 @@ class SignUpViewController: BaseViewController {
             $0.width.height.equalTo(36)
         }
         
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(backButton.snp.bottom).offset(30)
-            make.leading.equalTo(view.snp.leading).offset(20)
+        titleLabel.snp.makeConstraints { 
+            $0.top.equalTo(backButton.snp.bottom).offset(30)
+            $0.leading.equalTo(view.snp.leading).offset(20)
         }
         
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.leading.trailing.equalTo(view)
-            make.bottom.equalTo(passwordConfirmationTextField.snp.bottom)
+        scrollView.snp.makeConstraints { 
+            $0.top.equalTo(titleLabel.snp.bottom).offset(20)
+            $0.leading.trailing.equalTo(view)
+            $0.bottom.equalTo(passwordConfirmationErrorLabel.snp.bottom)
         }
         
-        contentView.snp.makeConstraints { make in
-            make.top.bottom.leading.trailing.equalTo(scrollView.contentLayoutGuide)
-            make.width.equalTo(scrollView.frameLayoutGuide)
+        contentView.snp.makeConstraints { 
+            $0.top.bottom.leading.trailing.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
         }
         
-        emailLabel.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(20)
-            make.top.equalTo(contentView.snp.top).offset(30)
+        emailLabel.snp.makeConstraints { 
+            $0.left.equalToSuperview().offset(20)
+            $0.top.equalTo(contentView.snp.top).offset(30)
         }
         
-        emailTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalTo(emailSendButton.snp.left).offset(-5)
-            make.top.equalTo(emailLabel.snp.bottom).offset(10)
-            make.height.equalTo(40)
+        emailTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalTo(emailSendButton.snp.left).offset(-5)
+            $0.top.equalTo(emailLabel.snp.bottom).offset(10)
+            $0.height.equalTo(40)
         }
         
-        emailDeleteButton.snp.makeConstraints { make in
-            make.right.equalTo(emailSendButton.snp.left).offset(-5)
-            make.centerY.equalTo(emailTextField)
-            make.width.height.equalTo(36)
+        emailDeleteButton.snp.makeConstraints { 
+            $0.right.equalTo(emailSendButton.snp.left).offset(-5)
+            $0.centerY.equalTo(emailTextField)
+            $0.width.height.equalTo(36)
         }
         
-        emailErrorLabel.snp.makeConstraints { make in
-            make.top.equalTo(emailTextField.snp.bottom).offset(4)
-            make.left.equalTo(emailLabel)
+        emailErrorLabel.snp.makeConstraints { 
+            $0.top.equalTo(emailTextField.snp.bottom).offset(4)
+            $0.left.equalTo(emailLabel)
         }
         
-        emailSendButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.centerY.equalTo(emailTextField)
-            make.width.equalTo(80)
-            make.height.equalTo(emailTextField)
+        emailSendButton.snp.makeConstraints { 
+            $0.right.equalToSuperview().offset(-20)
+            $0.centerY.equalTo(emailTextField)
+            $0.width.equalTo(80)
+            $0.height.equalTo(emailTextField)
         }
         
-        verificationCodeLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(emailTextField.snp.bottom).offset(50)
+        verificationCodeLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(emailTextField.snp.bottom).offset(50)
         }
         
-        verificationCodeDetailLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(verificationCodeLabel.snp.bottom).offset(4)
+        verificationCodeDetailLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(verificationCodeLabel.snp.bottom).offset(4)
         }
         
-        verificationCodeTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalTo(verifyCodeButton.snp.left).offset(-4)
-            make.top.equalTo(verificationCodeDetailLabel.snp.bottom).offset(10)
-            make.height.equalTo(emailTextField)
+        verificationCodeTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalTo(verifyCodeButton.snp.left).offset(-4)
+            $0.top.equalTo(verificationCodeDetailLabel.snp.bottom).offset(10)
+            $0.height.equalTo(emailTextField)
         }
         
-        verificationCodeDeleteButton.snp.makeConstraints { make in
-            make.right.equalTo(verifyCodeButton.snp.left).offset(-5)
-            make.centerY.equalTo(verificationCodeTextField)
-            make.width.height.equalTo(36)
+        verificationCodeDeleteButton.snp.makeConstraints { 
+            $0.right.equalTo(verifyCodeButton.snp.left).offset(-5)
+            $0.centerY.equalTo(verificationCodeTextField)
+            $0.width.height.equalTo(36)
         }
         
-        verifyCodeButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.centerY.equalTo(verificationCodeTextField)
-            make.width.equalTo(80)
-            make.height.equalTo(emailTextField)
+        verifyCodeButton.snp.makeConstraints { 
+            $0.right.equalToSuperview().offset(-20)
+            $0.centerY.equalTo(verificationCodeTextField)
+            $0.width.equalTo(80)
+            $0.height.equalTo(emailTextField)
         }
         
-        verificationCodeErrorLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(verificationCodeTextField.snp.bottom).offset(4)
+        verificationCodeErrorLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(verificationCodeTextField.snp.bottom).offset(4)
         }
         
-        passwordLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(verificationCodeTextField.snp.bottom).offset(50)
+        passwordLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(verificationCodeTextField.snp.bottom).offset(50)
         }
         
-        passwordDetailLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(passwordLabel.snp.bottom).offset(4)
+        passwordDetailLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(passwordLabel.snp.bottom).offset(4)
         }
         
-        passwordTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalToSuperview().offset(-20)
-            make.top.equalTo(passwordDetailLabel.snp.bottom).offset(10)
-            make.height.equalTo(emailTextField)
+        passwordTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalToSuperview().offset(-20)
+            $0.top.equalTo(passwordDetailLabel.snp.bottom).offset(10)
+            $0.height.equalTo(emailTextField)
         }
         
-        passwordEyeButton.snp.makeConstraints { make in
-            make.right.equalTo(passwordTextField).offset(-5)
-            make.centerY.equalTo(passwordTextField)
-            make.width.height.equalTo(24)
+        passwordEyeButton.snp.makeConstraints { 
+            $0.right.equalTo(passwordTextField).offset(-5)
+            $0.centerY.equalTo(passwordTextField)
+            $0.width.height.equalTo(24)
         }
         
-        passwordErrorLabel.snp.makeConstraints { make in
-            make.top.equalTo(passwordTextField.snp.bottom).offset(4)
-            make.left.equalTo(emailLabel)
+        passwordErrorLabel.snp.makeConstraints { 
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(4)
+            $0.left.equalTo(emailLabel)
         }
         
-        passwordConfirmationLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(passwordTextField.snp.bottom).offset(50)
+        passwordConfirmationLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(50)
         }
         
-        passwordConfirmationTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalToSuperview().offset(-20)
-            make.top.equalTo(passwordConfirmationLabel.snp.bottom).offset(10)
-            make.height.equalTo(emailTextField)
-            make.bottom.equalTo(contentView.snp.bottom)
+        passwordConfirmationTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalToSuperview().offset(-20)
+            $0.top.equalTo(passwordConfirmationLabel.snp.bottom).offset(10)
+            $0.height.equalTo(emailTextField)
         }
         
-        confirmPasswordEyeButton.snp.makeConstraints { make in
-            make.right.equalTo(passwordConfirmationTextField).offset(-5)
-            make.centerY.equalTo(passwordConfirmationTextField)
-            make.width.height.equalTo(24)
+        confirmPasswordEyeButton.snp.makeConstraints { 
+            $0.right.equalTo(passwordConfirmationTextField).offset(-5)
+            $0.centerY.equalTo(passwordConfirmationTextField)
+            $0.width.height.equalTo(24)
         }
         
-        confirmPasswordErrorLabel.snp.makeConstraints { make in
-            make.top.equalTo(passwordConfirmationTextField.snp.bottom).offset(4)
-            make.left.equalTo(emailLabel)
+        passwordConfirmationErrorLabel.snp.makeConstraints { 
+            $0.top.equalTo(passwordConfirmationTextField.snp.bottom).offset(4)
+            $0.left.equalTo(emailLabel)
+            $0.bottom.equalTo(contentView.snp.bottom)
         }
         
-        signUpButton.snp.makeConstraints { make in
-            make.height.equalTo(44)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().offset(-40)
-            make.top.equalTo(scrollView.snp.bottom).offset(20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+        signUpButton.snp.makeConstraints { 
+            $0.height.equalTo(44)
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.top.equalTo(scrollView.snp.bottom).offset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
         
         loadingIndicator.snp.makeConstraints {
@@ -523,15 +523,15 @@ class SignUpViewController: BaseViewController {
     @objc private func passwordConfirmationTextFieldDidChange(_ textField: UITextField) {
         guard let originalPassword = passwordTextField.text,
               let confirmPassword = textField.text else { return }
-        confirmPasswordErrorLabel.isHidden = originalPassword == confirmPassword
-        if confirmPasswordErrorLabel.isHidden {
-            confirmPasswordErrorLabel.isHidden = false
-            confirmPasswordErrorLabel.text = "비밀번호가 일치합니다."
-            confirmPasswordErrorLabel.textColor = Palette.podaBlue.getColor()
+        passwordConfirmationErrorLabel.isHidden = originalPassword == confirmPassword
+        if passwordConfirmationErrorLabel.isHidden {
+            passwordConfirmationErrorLabel.isHidden = false
+            passwordConfirmationErrorLabel.text = "비밀번호가 일치합니다."
+            passwordConfirmationErrorLabel.textColor = Palette.podaBlue.getColor()
             updateSignUpButtonAppearance()
         } else{
-            confirmPasswordErrorLabel.text = "비밀번호가 일치하지 않습니다."
-            confirmPasswordErrorLabel.textColor = Palette.podaRed.getColor()
+            passwordConfirmationErrorLabel.text = "비밀번호가 일치하지 않습니다."
+            passwordConfirmationErrorLabel.textColor = Palette.podaRed.getColor()
         }
         
     }
@@ -553,6 +553,7 @@ class SignUpViewController: BaseViewController {
     
     //메일 인증 보내기
     @objc private func sendAuthUserCode() {
+        
         guard let _ = emailTextField.text  else {return}
         
         loadingIndicator.startAnimating()
@@ -576,10 +577,15 @@ class SignUpViewController: BaseViewController {
                             userAuthCode = authCode
                             DispatchQueue.main.async{
                                 self.emailErrorLabel.isHidden = false
-                                self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
-                                self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
-                                self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
-                                self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
+                                               self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
+                                               self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
+                                               
+                                               self.verificationCodeErrorLabel.isHidden = false
+                                               self.verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
+                                               self.verificationCodeErrorLabel.text = "입력 완료 후 인증하기 버튼을 눌러주세요."
+                                               
+                                               self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
+                                               self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
                             }
                         }
                     }
