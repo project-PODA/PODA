@@ -11,7 +11,11 @@ import SnapKit
 
 class AgreeTermsViewController: BaseViewController, UIConfigurable {
     var setProfileVC: SetProfileViewController?
-
+    
+    private lazy var backButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+    }
     
     private let titleLabel = UILabel().then {
         $0.numberOfLines = 2
@@ -73,51 +77,61 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
     }
     
     func configUI() {
-        [titleLabel, nextButton, allAgreeLabel, termsOfUseLabel, privacyPolicyLabel, allAgreeButton, termsOfUseButton, privacyPolicyButton].forEach { view.addSubview($0) }
+        [backButton, titleLabel, nextButton, allAgreeLabel, termsOfUseLabel, privacyPolicyLabel, allAgreeButton, termsOfUseButton, privacyPolicyButton].forEach { view.addSubview($0) }
         
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(30)
-            make.leading.equalTo(view.snp.leading).offset(20)
+        backButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.height.equalTo(36)
+        }
+        
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(backButton.snp.bottom).offset(30)
+            $0.leading.equalTo(view.snp.leading).offset(20)
         }
         
         
-        allAgreeLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(titleLabel.snp.bottom).offset(80)
-            make.leading.equalTo(titleLabel)
+        allAgreeLabel.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(80)
+            $0.leading.equalTo(titleLabel)
         }
         
-        allAgreeButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(allAgreeLabel)
-            make.trailing.equalTo(view.snp.trailing).offset(-20)
+        allAgreeButton.snp.makeConstraints {
+            $0.centerY.equalTo(allAgreeLabel)
+            $0.trailing.equalTo(view.snp.trailing).offset(-20)
         }
         
-        termsOfUseLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(allAgreeLabel.snp.bottom).offset(16)
-            make.leading.equalTo(titleLabel)
+        termsOfUseLabel.snp.makeConstraints {
+            $0.top.equalTo(allAgreeLabel.snp.bottom).offset(16)
+            $0.leading.equalTo(titleLabel)
             
         }
         
-        termsOfUseButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(termsOfUseLabel)
-            make.trailing.equalTo(allAgreeButton)
+        termsOfUseButton.snp.makeConstraints {
+            $0.centerY.equalTo(termsOfUseLabel)
+            $0.trailing.equalTo(allAgreeButton)
         }
         
-        privacyPolicyLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(termsOfUseLabel.snp.bottom).offset(16)
-            make.leading.equalTo(titleLabel)
+        privacyPolicyLabel.snp.makeConstraints {
+            $0.top.equalTo(termsOfUseLabel.snp.bottom).offset(16)
+            $0.leading.equalTo(titleLabel)
         }
         
-        privacyPolicyButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(privacyPolicyLabel)
-            make.trailing.equalTo(allAgreeButton)
+        privacyPolicyButton.snp.makeConstraints {
+            $0.centerY.equalTo(privacyPolicyLabel)
+            $0.trailing.equalTo(allAgreeButton)
         }
         
-        nextButton.snp.makeConstraints { make in
-            make.height.equalTo(44)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().offset(-40)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+        nextButton.snp.makeConstraints {
+            $0.height.equalTo(44)
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
+    }
+    
+    @objc func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
     }
     
     

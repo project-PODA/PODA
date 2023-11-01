@@ -21,7 +21,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     var isDiaryImage = true
     var imageMemories: Results<ImageMemory>?
     var indexPath = 0
-    var diaryName: String? // 나중에 은서님 페이지에 이름 넘겨줄것.. 페이지 추가할 때?
+    //var diaryName: String? // 나중에 은서님 페이지에 이름 넘겨줄것.. (페이지 추가할 때?)
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
@@ -29,13 +29,14 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     lazy var dateLabel = UILabel().then {
-        $0.setUpLabel(title: diaryData?.createDate ?? "", podaFont: .body1) 
         $0.textColor = Palette.podaGray3.getColor()
     }
     
+    // FIXME: - 페이지 추가 기능 구현 시 tintColor podaWhite로
     lazy var addButton = UIButton().then {
         $0.setImage(UIImage(systemName: "plus"), for: .normal)
-        $0.tintColor = Palette.podaWhite.getColor()
+        //$0.tintColor = Palette.podaWhite.getColor()
+        $0.tintColor = Palette.podaBlack.getColor()
         $0.addTarget(self, action: #selector(didTapAddButton), for: .touchUpInside)
     }
     
@@ -45,9 +46,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
     }
     
-    // FIXME: - ! 수정
     lazy var imageView = UIImageView().then {
-        $0.image = UIImage(data: diaryData!.diaryImageList[0])
         $0.contentMode = .scaleAspectFit
     }
     
@@ -66,7 +65,6 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        print(navigationController?.viewControllers)
     }
     
     func configUI() {
@@ -78,7 +76,8 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         let buttonStackView = UIStackView(arrangedSubviews: [saveButton, deleteButton])
         buttonStackView.axis = .horizontal
         buttonStackView.alignment = .center
-        buttonStackView.distribution = .fillProportionally
+        buttonStackView.spacing = 128
+        buttonStackView.distribution = .equalCentering
         
         [navigationBarStackView, imageView, buttonStackView].forEach(view.addSubview)
         
@@ -100,17 +99,24 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-20)
         }
         
+        // FIXME: - 기종 상관 없이 width 393 고정?
         imageView.snp.makeConstraints {
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
-            $0.left.right.equalToSuperview()
+            //$0.left.right.equalToSuperview()
             //$0.height.equalTo(512)
-            $0.height.equalTo(view.frame.width * 1.25)
+            //$0.height.equalTo(view.frame.width * 1.25)
+            
+            if diaryData?.ratio == "square" {
+                $0.width.height.equalTo(393)
+            } else {
+                $0.width.equalTo(393)
+                $0.height.equalTo(524)
+            }
         }
         
         buttonStackView.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(72)
-            $0.left.equalToSuperview().offset(40)
-            $0.right.equalToSuperview().offset(-40)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-88)
+            $0.centerX.equalToSuperview()
         }
     }
     
@@ -151,7 +157,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             guard let self else { return }
             print(isDiaryImage)
             if isDiaryImage {
-                guard let diaryName else { return }
+                guard let diaryName = diaryData?.diaryName else { return }
                 firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
                     if error == .none, let viewControllers = self.navigationController?.viewControllers {
                         // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
@@ -168,8 +174,8 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
                                             diaryImageList: self.diaryData?.diaryImageList ?? [],
                                             createDate: self.diaryData?.createDate ?? "",
                                             ratio: self.diaryData?.ratio ?? "",
-                                            description: self.diaryData?.description ?? ""))
-                                    
+                                            description: self.diaryData?.description ?? "")
+                                    )
                                     self.navigationController?.popToViewController(viewController, animated: true)
                                     break
                                 }
