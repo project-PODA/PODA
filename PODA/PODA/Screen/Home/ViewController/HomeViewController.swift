@@ -464,9 +464,22 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
-        guard let imagePath = imageMemory.imagePath else { return UIImage() }
-        guard let pieceImage = UIImage(contentsOfFile: imagePath) else { return UIImage() }
-        return pieceImage
+        guard let fileName = imageMemory.imagePath,
+              let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
+            return UIImage()
+        }
+        
+        let filePath = documentDirectory.appendingPathComponent(fileName).path
+        
+        do {
+            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+            if let image = UIImage(data: data) {
+                return image
+            }
+        } catch {
+            print("이미지 로딩 실패: \(error.localizedDescription)")
+        }
+        return UIImage()
     }
     
     func getPieceDate(with imageMemory: ImageMemory) -> String {
