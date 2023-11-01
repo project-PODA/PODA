@@ -121,8 +121,6 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     //
     //    }
      
-    
-    
     func configUI() {
         
         
@@ -179,7 +177,6 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             self.buttonStackView.snp.remakeConstraints {
                 $0.centerX.equalToSuperview()
                 $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
-
             }
         }
     }
