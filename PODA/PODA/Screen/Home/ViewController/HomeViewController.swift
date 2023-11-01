@@ -9,7 +9,8 @@ import UIKit
 import Then
 import SnapKit
 import RealmSwift
-import Foundation
+import NVActivityIndicatorView
+
 
 // UI에 보여질 데이터순.
 struct DiaryData: Equatable {
@@ -25,6 +26,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private var imageMemories: Results<ImageMemory>?
     private var diaryDataList: [DiaryData] = []
     private var randomPieceIndex = 0
+    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
     
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
@@ -189,6 +192,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.bringSubviewToFront(loadingIndicator)
+
         firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
             guard let _ = self else { return }
         }
@@ -226,7 +231,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.spacing = 8
         }
         
-        [mainStackView, diaryCountStackView, pieceCountStackView, scrollView].forEach {
+        [loadingIndicator, mainStackView, diaryCountStackView, pieceCountStackView, scrollView].forEach {
             view.addSubview($0)
         }
         
@@ -235,6 +240,10 @@ class HomeViewController: BaseViewController, UIConfigurable {
         // FIXME: - 추억 조각 더보기 드래그 기능 구현 후 morePieceButton 추가하기
         [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, pieceDateLabel, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, emptyPieceLabel, pieceCollectionView].forEach {
             contentView.addSubview($0)
+        }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
         mainStackView.snp.makeConstraints {
@@ -419,8 +428,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - diaryCountLabel 한번만 설정하도록
     func loadDiaryDataFromFirebase() {
+        loadingIndicator.startAnimating()
+
         firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
             guard let self = self else { return }
+            
             if error == .none {
                 // FIXME: - counter 변수 확인
                 print("diaryList: \(diaryList)")
@@ -450,6 +462,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
                                         if counter == diaryList.count - 1 {
                                             DispatchQueue.main.async {
                                                 self.updateDiaryCollectionView(isEmpty: false)
+                                                self.loadingIndicator.stopAnimating()
                                             }
                                         }
                                     }
