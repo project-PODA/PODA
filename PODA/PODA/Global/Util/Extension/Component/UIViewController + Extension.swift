@@ -28,10 +28,12 @@ extension UIViewController {
     func showAlert(title: String?, message: String?, buttonTitle: String = "OK", completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: buttonTitle, style: .default) { _ in
+            completion?()
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
+
     
     func showAlertWithTextField(title: String, message: String, placeholder: String, completion: @escaping (String?) -> Void)  {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)

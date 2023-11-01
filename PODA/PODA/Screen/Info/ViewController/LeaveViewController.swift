@@ -105,25 +105,29 @@ class LeaveViewController: BaseViewController, UIConfigurable {
             guard let self = self else {return}
             if let text = text {
                 if text == "동의합니다" {
-                   loadingIndicator.startAnimating()
-                   fireAuthManager.deleteAccount{ [weak self] error in
-                       guard let self = self else {return}
-                       DispatchQueue.main.async{ [weak self] in
-                           guard let self = self else{return}
-                           if error == .none {
-                               loadingIndicator.stopAnimating()
-                               moveToHome()
-                           } else {
-                               showAlert(title: "에러", message: "탈퇴에 문제가 발생했습니다. 고객센터에 연락해주세요.")
-                           }
-                       }
-                   }
+                    loadingIndicator.startAnimating()
+                    fireAuthManager.deleteAccount{ [weak self] error in
+                        guard let self = self else {return}
+                        DispatchQueue.main.async{ [weak self] in
+                            guard let self = self else{return}
+                            loadingIndicator.stopAnimating()
+                            if error == .none {
+                                self.showAlert(title: "알림", message: "계정 삭제가 완료되었습니다.") {
+                                    self.moveToHome()
+                                }
+                            } else {
+                                self.showAlert(title: "에러", message: "탈퇴에 문제가 발생했습니다. 고객센터에 연락해주세요.")
+                            }
+                        }
+                    }
                 } else {
-                    showAlert(title: "에러", message: "\"동의합니다\"를 입력해주세요")
+                    self.showAlert(title: "에러", message: "\"동의합니다\"를 입력해주세요")
                 }
             }
         }
     }
+
+
     
     @objc func didTapBackButton() {
         self.navigationController?.popViewController(animated: true)
