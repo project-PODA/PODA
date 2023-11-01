@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import SnapKit
 
 class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
@@ -102,24 +103,40 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         // FIXME: - 기종 상관 없이 width 393 고정?
         imageView.snp.makeConstraints {
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
-            //$0.left.right.equalToSuperview()
-            //$0.height.equalTo(512)
-            //$0.height.equalTo(view.frame.width * 1.25)
             
             if diaryData?.ratio == "square" {
-                $0.width.height.equalTo(393)
+                //$0.width.height.equalTo(393)
+                $0.width.height.equalTo(view.frame.width)
+                
             } else {
-                $0.width.equalTo(393)
-                $0.height.equalTo(524)
+                //$0.width.equalTo(393)
+                //$0.height.equalTo(524)
+                $0.width.equalTo(view.frame.width)
+                $0.height.equalTo(view.frame.width * 4 / 3)
             }
         }
-        
+       
+        // FIXME: - imageView 와 safeArea 중간에 위치하도록
         buttonStackView.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-88)
             $0.centerX.equalToSuperview()
+            
+            let safeAreaTop: CGFloat = view.safeAreaInsets.top
+            let safeAreaBottom: CGFloat = view.safeAreaInsets.bottom
+            let totalHeight: CGFloat = view.frame.height
+            
+            print(safeAreaTop, safeAreaBottom, totalHeight)
+           
+            if diaryData?.ratio == "square" {
+                let imageViewHeight: CGFloat = view.frame.width
+                $0.top.equalTo(imageView.snp.bottom).offset((totalHeight - safeAreaTop - safeAreaBottom - imageViewHeight - 30 - 24) / 3)
+                
+            } else {
+                let imageViewHeight: CGFloat = view.frame.width * 4 / 3
+                $0.top.equalTo(imageView.snp.bottom).offset((totalHeight - safeAreaTop - safeAreaBottom - imageViewHeight - 30 - 24 ) / 3)
+            }
         }
     }
-    
+                                                            
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }

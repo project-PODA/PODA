@@ -12,19 +12,34 @@ import SnapKit
 class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     static let identifier = "MoreDiaryCollectionViewCell"
+    var safeAreaTop: CGFloat = 0
+    var safeAreaBottom: CGFloat = 0
+    var totalHeight: CGFloat = 0
     
      lazy var gradientImageView = UIImageView().then {
-        let gradientLayer = CAGradientLayer()
-        let width = (UIScreen.main.bounds.width - 40) * 2 / 3
-        let height = ((UIScreen.main.bounds.height * 4 / 5) - 12) / 2
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: width, height: height)
-        gradientLayer.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
-                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-        gradientLayer.locations = [0.0 ,1.0]
-        $0.layer.addSublayer(gradientLayer)
+//        let gradientLayer = CAGradientLayer()
+//        let width = (UIScreen.main.bounds.width - 40) * 2 / 3
+//         let safeAreaTop: CGFloat = moreDiaryVC.view.safeAreaInsets.top
+//         let safeAreaBottom: CGFloat = moreDiaryVC.view.safeAreaInsets.bottom
+//         let totalHeight: CGFloat = moreDiaryVC.view.frame.height
+//         let height: CGFloat = ((totalHeight - 30 - safeAreaTop - safeAreaBottom - 12 - 28) - 12) / 2
+//        //let height = ((UIScreen.main.bounds.height * 4 / 5) - 12) / 2
+//        gradientLayer.frame = CGRect(x: 0, y: 0, width: width, height: height)
+//        gradientLayer.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
+//                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
+//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
+//        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+//        gradientLayer.locations = [0.0 ,1.0]
+//        $0.layer.addSublayer(gradientLayer)
         $0.contentMode = .scaleAspectFill
+    }
+    
+    private let gradientLayer = CAGradientLayer().then {
+        $0.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
+                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
+        $0.startPoint = CGPoint(x: 0.5, y: 0.25)
+        $0.endPoint = CGPoint(x: 0.5, y: 1.0)
+        $0.locations = [0.0 ,1.0]
     }
     
     lazy var titleLabel = UILabel().then {
@@ -41,11 +56,20 @@ class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        updateGradientLayer()
         configUI()
+        print(safeAreaTop, safeAreaBottom, totalHeight)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func updateGradientLayer() {
+        let width = (UIScreen.main.bounds.width - 40) * 2 / 3
+        let height: CGFloat = ((totalHeight - 30 - safeAreaTop - safeAreaBottom - 12 - 28) - 12) / 2
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        gradientImageView.layer.addSublayer(gradientLayer)
     }
     
     func configUI() {
