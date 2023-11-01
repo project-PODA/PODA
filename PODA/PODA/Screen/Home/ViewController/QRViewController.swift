@@ -10,70 +10,39 @@ import Then
 import SnapKit
 import AVFoundation
 
-//Thread 1: "*** -[AVCaptureMetadataOutput setMetadataObjectTypes:] Unsupported type found (org.iso.QRCode) - use -availableMetadataObjectTypes"
-
-class QRViewController: BaseViewController, UIConfigurable {
-
+class QRViewController: BaseViewController {
+    
     private var videoPreviewLayer = AVCaptureVideoPreviewLayer()
     private var captureSession = AVCaptureSession()
     private var cameraDevice: AVCaptureDevice?
     
-    private let qrCodeView = UIView().then {
+    // FIXME: - QR 테두리 cornerRadius 줘 말아.. 어차피 링크로 엄청 빠르게 연결돼서 안 보이긴 함
+    private var qrCodeView = UIView().then {
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
-        $0.layer.borderColor = UIColor.green.cgColor
         $0.layer.borderWidth = 2
+        //        $0.layer.cornerRadius = 5
+        //        $0.clipsToBounds = true
     }
     
-    private lazy var UrlTextView = UITextView().then {
-        $0.font = UIFont.podaFont(.caption)
-        $0.textColor = Palette.podaWhite.getColor()
-        $0.backgroundColor = Palette.podaBlue.getColor()
-        $0.isEditable = false
-        $0.isScrollEnabled = false
-        $0.dataDetectorTypes = .link
-        $0.textAlignment = .center
-        $0.delegate = self
+    private lazy var backButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_back"), for: .normal)
+        $0.layer.shadowOffset = CGSize(width: 1, height: 1)
+        $0.layer.shadowOpacity = 1.0
+        $0.layer.shadowRadius = 7
+        $0.layer.shadowColor = Palette.podaBlack.getColor().cgColor
+        $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
-    
-    private let UrlLabel = UILabel().then {
-        $0.textColor = .black
-        $0.backgroundColor = Palette.podaBlue.getColor()
-        $0.font = UIFont.systemFont(ofSize: 50)
-    }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configUI()
-    }
-    
-    func configUI() {
         initCameraDevice()
         initCameraInputData()
         initCameraOutputData()
         displayPreview()
-        initQRCodeFrameView()
-    }
-
-    private func initQRCodeFrameView() {
-        view.addSubview(qrCodeView)
-        view.addSubview(UrlLabel)
-        view.bringSubviewToFront(qrCodeView)
-        view.bringSubviewToFront(UrlLabel)
-        
-//        qrCodeView.snp.makeConstraints {
-//            $0.center.equalToSuperview()
-//            $0.width.height.equalTo(320)
-//        }
-        
-        UrlLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
     }
     
-    // FIXME: - let captureDevice = AVCaptureDevice.default(for: AVMediaType.video) 이렇게 수정해보기
     private func initCameraDevice() {
-        guard let captureDevice = AVCaptureDevice.default(for: .video) else { // (.builtInWideAngleCamera, for: .video, position: .back) else {
+        guard let captureDevice = AVCaptureDevice.default(for: .video) else {
             print("Failed to get the camera device")
             return
         }
@@ -84,7 +53,7 @@ class QRViewController: BaseViewController, UIConfigurable {
         if let cameraDevice = self.cameraDevice {
             do {
                 let input = try AVCaptureDeviceInput(device: cameraDevice)
-                captureSession.addInput(input)    //if captureSession.canAddInput(input) { captureSession.addInput(input) }
+                captureSession.addInput(input)
             } catch {
                 print(error.localizedDescription)
                 return
@@ -94,12 +63,10 @@ class QRViewController: BaseViewController, UIConfigurable {
     
     private func initCameraOutputData() {
         let output = AVCaptureMetadataOutput()
-        captureSession.addOutput(output)            //if captureSession.canAddOutput(captureMetadataOutput) { captureSession.addOutput(captureMetadataOutput) }
-            
-        // Output 데이터가 들어왔을 때, 처리할 Delegate 설정
-        // Camera로 들어오는 데이터 타입이 QR코드 임을 명시
+        captureSession.addOutput(output)
+        
         output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-        output.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]                 // captureMetadataOutput.availableMetadataObjectTypes
+        output.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
     }
     
     private func displayPreview() {
@@ -108,59 +75,59 @@ class QRViewController: BaseViewController, UIConfigurable {
         DispatchQueue.main.async {
             self.videoPreviewLayer.frame = self.view.layer.bounds
             self.view.layer.addSublayer(self.videoPreviewLayer)
-        }
             
-        // startRunning을 실행시켜야 화면이 보이게 됩니다.
+            [self.backButton, self.qrCodeView].forEach {
+                self.view.addSubview($0)
+            }
+            [self.backButton, self.qrCodeView].forEach {
+                self.view.bringSubviewToFront($0)
+            }
+            
+            self.backButton.snp.makeConstraints {
+                $0.top.equalTo(self.view.safeAreaLayoutGuide)
+                $0.left.equalToSuperview().offset(20)
+                $0.width.height.equalTo(30)
+            }
+        }
+        
         DispatchQueue.global(qos: .userInitiated).async {
             self.captureSession.startRunning()
         }
     }
+    
+    @objc func didTapBackButton() {
+        dismiss(animated: true)
+    }
 }
 
 extension QRViewController: AVCaptureMetadataOutputObjectsDelegate {
-    // MetaData가 들어올 때마다 실행되는 메소드
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         if metadataObjects.count == 0 {
             self.qrCodeView.transform = CGAffineTransform(scaleX: 0, y: 0)
             return
-        } else {
-            // MetaData을 사람이 읽을 수 있는 Data로 캐스팅
-            guard let metaDataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject else {
-                print("Fail to cast MetaData as AVMetadataMachineReadableCodeObject")
-                return
-            }
-            // QR 데이터인 경우
-            if metaDataObj.type == .qr {
-                // MetaData을 캡쳐한 직접적인 화면을 가져온다.
-                guard let qrCodeObject = videoPreviewLayer.transformedMetadataObject(for: metaDataObj) else { return }
-                // 가져온 QR Code 화면을 캡쳐한 위치를 넣어준다.
+        }
+        
+        guard let metaDataObj = metadataObjects[0] as? AVMetadataMachineReadableCodeObject else {
+            print("Fail to cast MetaData as AVMetadataMachineReadableCodeObject")
+            return
+        }
+        
+        if metaDataObj.type == .qr {
+            guard let qrCodeObject = videoPreviewLayer.transformedMetadataObject(for: metaDataObj) else { return }
+            DispatchQueue.main.async {
                 self.qrCodeView.frame = qrCodeObject.bounds
-                // 작은 곳에서 커지게 애니메이션
                 UIView.animate(withDuration: 0.5) {
                     self.qrCodeView.transform = CGAffineTransform(scaleX: 1, y: 1)
                 }
-                
-                // 여기서 직접적으로 가져온 QR Code 데이터를 해독한다.
-                guard let qrCodeStringData = metaDataObj.stringValue else { return }
-                //if qrCodeStringData.hasPrefix("http://") || qrCodeStringData.hasPrefix("https://") {
-                //UrlTextView.text = qrCodeStringData
-                //UrlLabel.setUpLabel(title: qrCodeStringData, podaFont: .caption)
-                UrlLabel.text = qrCodeStringData
-                UrlLabel.isHidden = false
-                UrlLabel.isHighlighted = true
-                print(qrCodeStringData)
-                //}
+            }
+            
+            guard let qrCodeStringData = metaDataObj.stringValue else { return }
+            if qrCodeStringData.hasPrefix("http://") || qrCodeStringData.hasPrefix("https://") {
+                if let url = URL(string: qrCodeStringData) {
+                    UIApplication.shared.open(url, options: [:])
+                    dismiss(animated: true)
+                }
             }
         }
-    }
-}
-
-    // https://m.site.naver.com/1f14g
-
-extension QRViewController: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        //let webViewController = WebViewController(URL)
-        //present(webViewController, animated: true, completion: nil)
-        return false
     }
 }

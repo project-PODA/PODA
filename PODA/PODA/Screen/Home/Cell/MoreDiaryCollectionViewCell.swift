@@ -13,34 +13,13 @@ class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     static let identifier = "MoreDiaryCollectionViewCell"
     
-    var gradientHeight: CGFloat = 0
-    var gradientWidth: CGFloat = 0
-    
     lazy var diaryCoverImageView = UIImageView().then {
-//        let gradientLayer = CAGradientLayer()
-//        let width = (UIScreen.main.bounds.width - 40) * 2 / 3  // 기기에 따라서 가변적으로 정하고 싶으면 UIScreen 이용
-//        let height = ((UIScreen.main.bounds.height * 4 / 5) - 12) / 2
-//        gradientLayer.frame = CGRect(x: 0, y: 0, width: width, height: height)
-//        gradientLayer.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
-//                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
-//        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
-//        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-//        gradientLayer.locations = [0.0 ,1.0]
-//        $0.layer.addSublayer(gradientLayer)
         $0.contentMode = .scaleAspectFill
     }
     
     private let gradientImageView = UIImageView().then {
         $0.image = UIImage(named: "image_gradientView")
         $0.contentMode = .scaleAspectFill
-    }
-    
-    private let gradientLayer = CAGradientLayer().then {
-        $0.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
-                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
-        $0.startPoint = CGPoint(x: 0.5, y: 0.25)
-        $0.endPoint = CGPoint(x: 0.5, y: 1.0)
-        $0.locations = [0.0 ,1.0]
     }
     
     lazy var titleLabel = UILabel().then {
@@ -91,21 +70,6 @@ class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-12)
         }
-    }
-    
-    func updateGradientLayer() {
-        print("\(gradientWidth), \(gradientHeight)")
-        let width = gradientWidth
-        let height = gradientHeight // ((view.frame - 12) / 2  // cell은 view.frame이 아니라 contentView.frame or self.frame or 그냥 frame
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: width, height: height)
-        gradientLayer.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
-                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-        gradientLayer.locations = [0.0 ,1.0]
-        //gradientImageView.layer.addSublayer(gradientLayer)
-        layer.addSublayer(gradientLayer)
-        print("updateGradientLayer 실행")
     }
 }
 

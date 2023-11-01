@@ -129,23 +129,15 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     }
 }
 
-// FIXME: - UIScreen.main.bounds.height * 2 / 3 따로 빼서 상수로 정의해두기
+
 extension MoreDiaryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoreDiaryCollectionViewCell.identifier, for: indexPath) as? MoreDiaryCollectionViewCell else { return CGSize() }
-        
         let width = (view.frame.width - 40) * 2 / 3
         let safeAreaTop: CGFloat = view.safeAreaInsets.top
         let safeAreaBottom: CGFloat = view.safeAreaInsets.bottom
         let totalHeight: CGFloat = view.frame.height
+        
         let height: CGFloat = ((totalHeight - safeAreaTop - safeAreaBottom - 30 - 12 - 28) - 12) / 2  // backButton.width = 30, collectionViewTopOffset = 12, collectionViewBottomOffset = 28, cellSpacing = 12
-        
-//        cell.gradientWidth = width
-//        cell.gradientHeight = height    // 이렇게 넘겨주는건 보통 index마다 셀마다 사이즈가 다를 때 해줌. 이렇게 같을 때에는 이게 효율적인가 싶다..
-//        cell.updateGradientLayer()
-//        
-//        print("delegate \(totalHeight), \(safeAreaTop), \(safeAreaBottom)")
-        
         return CGSize(width: width, height: height)
     }
 }

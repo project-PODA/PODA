@@ -23,8 +23,12 @@ struct DiaryData: Equatable {
 
 class HomeViewController: BaseViewController, UIConfigurable {
     
-    private var imageMemories: Results<ImageMemory>?
+    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    private let firebaseDBManager = FirestorageDBManager()
+    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     private var diaryDataList: [DiaryData] = []
+    
+    private var imageMemories: Results<ImageMemory>?
     private var randomPieceIndex = 0
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
@@ -72,10 +76,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.setUpLabel(title: "오늘의 타임캡슐", podaFont: .head1)
         $0.textColor = Palette.podaGray1.getColor()
     }
-    
-    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
@@ -127,7 +127,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
-    // FIXME: - 최신순으로 등록되도록
     private lazy var diaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -193,7 +192,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.bringSubviewToFront(loadingIndicator)
-
         firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
             guard let _ = self else { return }
         }
@@ -284,7 +282,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-40)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(416)
-            //$0.height.lessThanOrEqualTo(416)
         }
         
         pieceDateLabel.snp.makeConstraints {
@@ -545,23 +542,24 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddButton() {
-        let homeMenuViewController = HomeMenuViewController()
-        homeMenuViewController.modalPresentationStyle = .overFullScreen
-        present(homeMenuViewController, animated: true)
+        let homeMenuVC = HomeMenuViewController()
+        homeMenuVC.modalPresentationStyle = .overFullScreen
+        present(homeMenuVC, animated: true)
         
         // FIXME: - 실기기 테스트 해보고 화면 전환 방식 변경
-        homeMenuViewController.didTapQR = {
+        homeMenuVC.didTapQR = {
             self.dismiss(animated: true)
-            self.present(QRViewController(), animated: true)
-            //self.navigationController?.pushViewController(QRViewController(), animated: true)
+            let qrVC = QRViewController()
+            qrVC.modalPresentationStyle = .overFullScreen
+            self.present(qrVC, animated: true)
         }
         
-        homeMenuViewController.didTapDiary = {
+        homeMenuVC.didTapDiary = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(SelectRatioViewController(), animated: true)
         }
         
-        homeMenuViewController.didTapPiece = {
+        homeMenuVC.didTapPiece = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(PieceViewController(), animated: true)
         }
@@ -623,7 +621,6 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             guard let pieceCount = imageMemories?.count else { return 0 }
             print("Number of items in section: \(pieceCount)")
             return pieceCount
-//            return pieceImageList.count
         }
     }
     
@@ -649,17 +646,8 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             let width = (view.frame.width / 5) - 2
             return CGSize(width: width, height: width * 1.35)
         } else {
-//            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return CGSize() }
-//            guard let imageMemory = imageMemories?[indexPath.item] else { return CGSize() }
-//            let image = getPieceImage(with: imageMemory)
-//            let width = image.size.width
-//            print("이 이미지의 사이즈는 \(width)")
             let width = (view.frame.width / 2.5) - 32
             return CGSize(width: width, height: collectionView.frame.height)
-//                        let image = pieceImageList[indexPath.row]
-//                        guard let image = image else { return CGSize() }
-//                        let width = image.size.width
-//                        return CGSize(width: width, height: collectionView.frame.height)
         }
     }
 }
