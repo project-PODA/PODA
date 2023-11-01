@@ -119,39 +119,39 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         
         [profileImageView, cameraButton, usernameLabel, nickNameEditButton, logoutButton, loadingIndicator].forEach { view.addSubview($0) }
         
-        profileImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
-            make.width.height.equalTo(210)
+        profileImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
+            $0.width.height.equalTo(210)
         }
         
-        loadingIndicator.snp.makeConstraints{ make in
-            make.width.height.equalTo(50)
-            make.center.equalTo(profileImageView)
+        loadingIndicator.snp.makeConstraints{
+            $0.width.height.equalTo(50)
+            $0.center.equalTo(profileImageView)
         }
         
-        cameraButton.snp.makeConstraints { make in
-            make.bottom.right.equalTo(profileImageView).offset(-8)
-            make.width.height.equalTo(44)
+        cameraButton.snp.makeConstraints {
+            $0.bottom.right.equalTo(profileImageView).offset(-8)
+            $0.width.height.equalTo(44)
         }
         
-        usernameLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(profileImageView.snp.bottom).offset(24)
+        usernameLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(profileImageView.snp.bottom).offset(24)
         }
         
-        nickNameEditButton.snp.makeConstraints { make in
-            make.top.equalTo(usernameLabel.snp.bottom).offset(16)
-            make.width.equalTo(100)
-            make.height.equalTo(44)
-            make.centerX.equalToSuperview()
+        nickNameEditButton.snp.makeConstraints {
+            $0.top.equalTo(usernameLabel.snp.bottom).offset(16)
+            $0.width.equalTo(100)
+            $0.height.equalTo(44)
+            $0.centerX.equalToSuperview()
         }
         
         logoutButton.snp.makeConstraints { make in
-            make.height.equalTo(44)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().offset(-40)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-120)
+            $0.height.equalTo(44)
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-120)
         }
     }
     

@@ -283,145 +283,145 @@ class SignUpViewController: BaseViewController {
             $0.width.height.equalTo(36)
         }
         
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(backButton.snp.bottom).offset(30)
-            make.leading.equalTo(view.snp.leading).offset(20)
+        titleLabel.snp.makeConstraints { 
+            $0.top.equalTo(backButton.snp.bottom).offset(30)
+            $0.leading.equalTo(view.snp.leading).offset(20)
         }
         
-        scrollView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.leading.trailing.equalTo(view)
-            make.bottom.equalTo(passwordConfirmationErrorLabel.snp.bottom)
+        scrollView.snp.makeConstraints { 
+            $0.top.equalTo(titleLabel.snp.bottom).offset(20)
+            $0.leading.trailing.equalTo(view)
+            $0.bottom.equalTo(passwordConfirmationErrorLabel.snp.bottom)
         }
         
-        contentView.snp.makeConstraints { make in
-            make.top.bottom.leading.trailing.equalTo(scrollView.contentLayoutGuide)
-            make.width.equalTo(scrollView.frameLayoutGuide)
+        contentView.snp.makeConstraints { 
+            $0.top.bottom.leading.trailing.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
         }
         
-        emailLabel.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(20)
-            make.top.equalTo(contentView.snp.top).offset(30)
+        emailLabel.snp.makeConstraints { 
+            $0.left.equalToSuperview().offset(20)
+            $0.top.equalTo(contentView.snp.top).offset(30)
         }
         
-        emailTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalTo(emailSendButton.snp.left).offset(-5)
-            make.top.equalTo(emailLabel.snp.bottom).offset(10)
-            make.height.equalTo(40)
+        emailTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalTo(emailSendButton.snp.left).offset(-5)
+            $0.top.equalTo(emailLabel.snp.bottom).offset(10)
+            $0.height.equalTo(40)
         }
         
-        emailDeleteButton.snp.makeConstraints { make in
-            make.right.equalTo(emailSendButton.snp.left).offset(-5)
-            make.centerY.equalTo(emailTextField)
-            make.width.height.equalTo(36)
+        emailDeleteButton.snp.makeConstraints { 
+            $0.right.equalTo(emailSendButton.snp.left).offset(-5)
+            $0.centerY.equalTo(emailTextField)
+            $0.width.height.equalTo(36)
         }
         
-        emailErrorLabel.snp.makeConstraints { make in
-            make.top.equalTo(emailTextField.snp.bottom).offset(4)
-            make.left.equalTo(emailLabel)
+        emailErrorLabel.snp.makeConstraints { 
+            $0.top.equalTo(emailTextField.snp.bottom).offset(4)
+            $0.left.equalTo(emailLabel)
         }
         
-        emailSendButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.centerY.equalTo(emailTextField)
-            make.width.equalTo(80)
-            make.height.equalTo(emailTextField)
+        emailSendButton.snp.makeConstraints { 
+            $0.right.equalToSuperview().offset(-20)
+            $0.centerY.equalTo(emailTextField)
+            $0.width.equalTo(80)
+            $0.height.equalTo(emailTextField)
         }
         
-        verificationCodeLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(emailTextField.snp.bottom).offset(50)
+        verificationCodeLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(emailTextField.snp.bottom).offset(50)
         }
         
-        verificationCodeDetailLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(verificationCodeLabel.snp.bottom).offset(4)
+        verificationCodeDetailLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(verificationCodeLabel.snp.bottom).offset(4)
         }
         
-        verificationCodeTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalTo(verifyCodeButton.snp.left).offset(-4)
-            make.top.equalTo(verificationCodeDetailLabel.snp.bottom).offset(10)
-            make.height.equalTo(emailTextField)
+        verificationCodeTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalTo(verifyCodeButton.snp.left).offset(-4)
+            $0.top.equalTo(verificationCodeDetailLabel.snp.bottom).offset(10)
+            $0.height.equalTo(emailTextField)
         }
         
-        verificationCodeDeleteButton.snp.makeConstraints { make in
-            make.right.equalTo(verifyCodeButton.snp.left).offset(-5)
-            make.centerY.equalTo(verificationCodeTextField)
-            make.width.height.equalTo(36)
+        verificationCodeDeleteButton.snp.makeConstraints { 
+            $0.right.equalTo(verifyCodeButton.snp.left).offset(-5)
+            $0.centerY.equalTo(verificationCodeTextField)
+            $0.width.height.equalTo(36)
         }
         
-        verifyCodeButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.centerY.equalTo(verificationCodeTextField)
-            make.width.equalTo(80)
-            make.height.equalTo(emailTextField)
+        verifyCodeButton.snp.makeConstraints { 
+            $0.right.equalToSuperview().offset(-20)
+            $0.centerY.equalTo(verificationCodeTextField)
+            $0.width.equalTo(80)
+            $0.height.equalTo(emailTextField)
         }
         
-        verificationCodeErrorLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(verificationCodeTextField.snp.bottom).offset(4)
+        verificationCodeErrorLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(verificationCodeTextField.snp.bottom).offset(4)
         }
         
-        passwordLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(verificationCodeTextField.snp.bottom).offset(50)
+        passwordLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(verificationCodeTextField.snp.bottom).offset(50)
         }
         
-        passwordDetailLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(passwordLabel.snp.bottom).offset(4)
+        passwordDetailLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(passwordLabel.snp.bottom).offset(4)
         }
         
-        passwordTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalToSuperview().offset(-20)
-            make.top.equalTo(passwordDetailLabel.snp.bottom).offset(10)
-            make.height.equalTo(emailTextField)
+        passwordTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalToSuperview().offset(-20)
+            $0.top.equalTo(passwordDetailLabel.snp.bottom).offset(10)
+            $0.height.equalTo(emailTextField)
         }
         
-        passwordEyeButton.snp.makeConstraints { make in
-            make.right.equalTo(passwordTextField).offset(-5)
-            make.centerY.equalTo(passwordTextField)
-            make.width.height.equalTo(24)
+        passwordEyeButton.snp.makeConstraints { 
+            $0.right.equalTo(passwordTextField).offset(-5)
+            $0.centerY.equalTo(passwordTextField)
+            $0.width.height.equalTo(24)
         }
         
-        passwordErrorLabel.snp.makeConstraints { make in
-            make.top.equalTo(passwordTextField.snp.bottom).offset(4)
-            make.left.equalTo(emailLabel)
+        passwordErrorLabel.snp.makeConstraints { 
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(4)
+            $0.left.equalTo(emailLabel)
         }
         
-        passwordConfirmationLabel.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.top.equalTo(passwordTextField.snp.bottom).offset(50)
+        passwordConfirmationLabel.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.top.equalTo(passwordTextField.snp.bottom).offset(50)
         }
         
-        passwordConfirmationTextField.snp.makeConstraints { make in
-            make.left.equalTo(emailLabel)
-            make.right.equalToSuperview().offset(-20)
-            make.top.equalTo(passwordConfirmationLabel.snp.bottom).offset(10)
-            make.height.equalTo(emailTextField)
+        passwordConfirmationTextField.snp.makeConstraints { 
+            $0.left.equalTo(emailLabel)
+            $0.right.equalToSuperview().offset(-20)
+            $0.top.equalTo(passwordConfirmationLabel.snp.bottom).offset(10)
+            $0.height.equalTo(emailTextField)
         }
         
-        confirmPasswordEyeButton.snp.makeConstraints { make in
-            make.right.equalTo(passwordConfirmationTextField).offset(-5)
-            make.centerY.equalTo(passwordConfirmationTextField)
-            make.width.height.equalTo(24)
+        confirmPasswordEyeButton.snp.makeConstraints { 
+            $0.right.equalTo(passwordConfirmationTextField).offset(-5)
+            $0.centerY.equalTo(passwordConfirmationTextField)
+            $0.width.height.equalTo(24)
         }
         
-        passwordConfirmationErrorLabel.snp.makeConstraints { make in
-            make.top.equalTo(passwordConfirmationTextField.snp.bottom).offset(4)
-            make.left.equalTo(emailLabel)
-            make.bottom.equalTo(contentView.snp.bottom)
+        passwordConfirmationErrorLabel.snp.makeConstraints { 
+            $0.top.equalTo(passwordConfirmationTextField.snp.bottom).offset(4)
+            $0.left.equalTo(emailLabel)
+            $0.bottom.equalTo(contentView.snp.bottom)
         }
         
-        signUpButton.snp.makeConstraints { make in
-            make.height.equalTo(44)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().offset(-40)
-            make.top.equalTo(scrollView.snp.bottom).offset(20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+        signUpButton.snp.makeConstraints { 
+            $0.height.equalTo(44)
+            $0.left.equalToSuperview().offset(40)
+            $0.right.equalToSuperview().offset(-40)
+            $0.top.equalTo(scrollView.snp.bottom).offset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
         }
         
         loadingIndicator.snp.makeConstraints {
