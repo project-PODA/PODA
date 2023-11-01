@@ -147,7 +147,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             $0.centerX.equalToSuperview()
         }
         
-        logoutButton.snp.makeConstraints { make in
+        logoutButton.snp.makeConstraints { 
             $0.height.equalTo(44)
             $0.left.equalToSuperview().offset(40)
             $0.right.equalToSuperview().offset(-40)
