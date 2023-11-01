@@ -101,11 +101,12 @@ class LoginViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
         setupActions()
-        setupTextFields()
         hideKeyboardWhenTappedAround()
         emailTextField.enableHideKeyboardOnReturn()
         passwordTextField.enableHideKeyboardOnReturn()
     }
+    
+    
     
     
     private func setupActions() {
@@ -358,17 +359,5 @@ class LoginViewController: BaseViewController, UIConfigurable {
     }
 }
 
-extension LoginViewController: UITextFieldDelegate {
-    
-    func setupTextFields() {
-        
-        emailTextField.setUpTextField(delegate: self)
-        passwordTextField.setUpTextField(delegate: self)
-        
-        // 왼쪽 패딩값 제거
-        emailTextField.leftView = nil
-        emailTextField.leftViewMode = .never
-        passwordTextField.leftView = nil
-        passwordTextField.leftViewMode = .never
-    }
-}
+
+
