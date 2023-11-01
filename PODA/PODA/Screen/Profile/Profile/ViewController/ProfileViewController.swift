@@ -54,6 +54,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         setActions()
         bindViewModel()
         getFirebaseData()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -150,7 +151,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             make.height.equalTo(44)
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().offset(-40)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-80)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-120)
         }
     }
     
