@@ -163,23 +163,27 @@ class PieceViewController: BaseViewController, UIConfigurable {
         addToGalleryButton.isHidden = hasImage
     }
     
+//    func saveImageToRealm(image: UIImage, date: Date?) {
+//        guard let imageData = image.pngData(), let selectedDate = date else {
+//            print("경고: 이미지 데이터 변환에 실패 또는 날짜 변환 실패")
+//            return
+//        }
+//
+//        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+//        let fileURL = directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("png")
+//
+//        do {
+//            try imageData.write(to: fileURL)
+//        } catch {
+//            print("경고: 파일로 이미지 저장 실패: \(error.localizedDescription)")
+//            return
+//        }
+//
+//        RealmManager.shared.saveImageMemory(imagePath: fileURL.path, memoryDate: selectedDate)
+//    }
+    
     func saveImageToRealm(image: UIImage, date: Date?) {
-        guard let imageData = image.pngData(), let selectedDate = date else {
-            print("경고: 이미지 데이터 변환에 실패 또는 날짜 변환 실패")
-            return
-        }
-
-        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let fileURL = directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("png")
-
-        do {
-            try imageData.write(to: fileURL)
-        } catch {
-            print("경고: 파일로 이미지 저장 실패: \(error.localizedDescription)")
-            return
-        }
-
-        RealmManager.shared.saveImageMemory(imagePath: fileURL.path, memoryDate: selectedDate)
+        RealmManager.shared.saveImageMemory(image: image, memoryDate: date)
     }
     
     func showSaveConfirmationAlert() {

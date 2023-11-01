@@ -6,7 +6,7 @@
 //
 
 import RealmSwift
-import Foundation
+import UIKit
 
 class RealmManager {
     static let shared = RealmManager()
@@ -23,19 +23,56 @@ class RealmManager {
         }
     }()
     
-    // Realm 데이터 저장 함수
-    func saveImageMemory(imagePath: String?, memoryDate: Date?) {
-        let imageMemory = ImageMemory()
-        imageMemory.imagePath = imagePath
-        imageMemory.memoryDate = memoryDate
+    //    // Realm 데이터 저장 함수
+    //    func saveImageMemory(imagePath: String?, memoryDate: Date?) {
+    //        let imageMemory = ImageMemory()
+    //        imageMemory.imagePath = imagePath
+    //        imageMemory.memoryDate = memoryDate
+    //
+    //        do {
+    //            try realm.write {
+    //                realm.add(imageMemory)
+    //                print("저장 성공: \(imageMemory)")
+    //            }
+    //        } catch {
+    //            print("Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
+    //        }
+    //    }
+    
+    // Document 디렉토리의 경로를 얻는 함수
+    func getDocumentDirectory() -> URL? {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths.first
+    }
+    
+    // 이미지를 Document 디렉토리에 저장하고, 그 경로를 Realm에 저장하는 함수
+    func saveImageMemory(image: UIImage?, memoryDate: Date?) {
+        guard let imageData = image?.pngData(),
+              let documentDirectory = getDocumentDirectory() else {
+            print("이미지 또는 Document 디렉토리를 가져오는데 실패했습니다.")
+            return
+        }
+        
+        guard let selectedDate = memoryDate else {
+            print("경고: 날짜 변환 실패")
+            return
+        }
+        
+        let fileName = "\(UUID().uuidString).png"
+        let filePath = documentDirectory.appendingPathComponent(fileName)
         
         do {
+            try imageData.write(to: filePath)
+            let imageMemory = ImageMemory()
+            imageMemory.imagePath = fileName
+            imageMemory.memoryDate = selectedDate
+            
             try realm.write {
                 realm.add(imageMemory)
                 print("저장 성공: \(imageMemory)")
             }
         } catch {
-            print("Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
+            print("이미지를 저장하거나 Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
         }
     }
     
