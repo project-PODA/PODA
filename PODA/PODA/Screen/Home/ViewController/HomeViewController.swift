@@ -28,7 +28,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     private var diaryDataList: [DiaryData] = []
     
-    private var imageMemories: Results<ImageMemory>?
+    private var pieceList: Results<ImageMemory>?
     private var randomPieceIndex = 0
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
@@ -384,11 +384,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     // FIXME: - memories > piece로 통일?
     // FIXME: - 랜덤 이미지 표시 주기 하루에 한번으로 가능한지 확인하기
     func loadPieceDataFromRealm() {
-        imageMemories = RealmManager.shared.loadImageMemories()
+        pieceList = RealmManager.shared.loadImageMemories()
         //        for imageMemory in imageMemories! {
         //            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
         //        }
-        guard let pieceCount = imageMemories?.count else { return }
+        guard let pieceCount = pieceList?.count else { return }
         print("추억 조각 갯수 = \(pieceCount)")
         self.pieceCountLabel.setUpLabel(title: "\(pieceCount)개", podaFont: .subhead4)
         if pieceCount != 0 {
@@ -400,7 +400,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             
             self.randomPieceIndex = Int.random(in: 0..<pieceCount)
             
-            guard let imageMemory = self.imageMemories?[self.randomPieceIndex] else { return }
+            guard let imageMemory = self.pieceList?[self.randomPieceIndex] else { return }
             self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
             self.pieceDateLabel.setUpLabel(title: self.getPieceDate(with: imageMemory), podaFont: .subhead2)
                         
@@ -500,7 +500,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - MoreDiaryVC, DetailVC에서 사용됨
     func goToDiarySaveDeleteVC(_ index: Int) {
-//        guard let imageMemory = self.imageMemories?[index] else { return }
+//        guard let pieceList = self.pieceList?[index] else { return }
 //        let saveDeleteVC = SaveDeleteViewController()
 //        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
 //        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
@@ -512,7 +512,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - Bind 함수로 정리하기
     func goToPieceSaveDeleteVC(_ index: Int) {
-        guard let imageMemory = self.imageMemories?[index] else { return }
+        guard let imageMemory = self.pieceList?[index] else { return }
         let saveDeleteVC = SaveDeleteViewController()
         saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
@@ -618,7 +618,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         if collectionView == diaryCollectionView {
             return diaryDataList.count
         } else {
-            guard let pieceCount = imageMemories?.count else { return 0 }
+            guard let pieceCount = pieceList?.count else { return 0 }
             print("Number of items in section: \(pieceCount)")
             return pieceCount
         }
@@ -632,7 +632,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
-            guard let imageMemory = imageMemories?[indexPath.item] else { return UICollectionViewCell() }
+            guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
             let image = getPieceImage(with: imageMemory)
             cell.pieceImageView.image = image
             return cell

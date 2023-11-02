@@ -17,7 +17,7 @@ class QRViewController: BaseViewController {
     private var cameraDevice: AVCaptureDevice?
     
     // FIXME: - QR 테두리 cornerRadius 줘 말아.. 어차피 링크로 엄청 빠르게 연결돼서 안 보이긴 함
-    private var qrCodeView = UIView().then {
+    private var qrBorderView = UIView().then {
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
         $0.layer.borderWidth = 2
         //        $0.layer.cornerRadius = 5
@@ -76,10 +76,10 @@ class QRViewController: BaseViewController {
             self.videoPreviewLayer.frame = self.view.layer.bounds
             self.view.layer.addSublayer(self.videoPreviewLayer)
             
-            [self.backButton, self.qrCodeView].forEach {
+            [self.backButton, self.qrBorderView].forEach {
                 self.view.addSubview($0)
             }
-            [self.backButton, self.qrCodeView].forEach {
+            [self.backButton, self.qrBorderView].forEach {
                 self.view.bringSubviewToFront($0)
             }
             
@@ -103,7 +103,7 @@ class QRViewController: BaseViewController {
 extension QRViewController: AVCaptureMetadataOutputObjectsDelegate {
     func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         if metadataObjects.count == 0 {
-            self.qrCodeView.transform = CGAffineTransform(scaleX: 0, y: 0)
+            self.qrBorderView.transform = CGAffineTransform(scaleX: 0, y: 0)
             return
         }
         
@@ -115,9 +115,9 @@ extension QRViewController: AVCaptureMetadataOutputObjectsDelegate {
         if metaDataObj.type == .qr {
             guard let qrCodeObject = videoPreviewLayer.transformedMetadataObject(for: metaDataObj) else { return }
             DispatchQueue.main.async {
-                self.qrCodeView.frame = qrCodeObject.bounds
+                self.qrBorderView.frame = qrCodeObject.bounds
                 UIView.animate(withDuration: 0.5) {
-                    self.qrCodeView.transform = CGAffineTransform(scaleX: 1, y: 1)
+                    self.qrBorderView.transform = CGAffineTransform(scaleX: 1, y: 1)
                 }
             }
             

@@ -20,7 +20,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     var isDiaryImage = true
-    var imageMemories: Results<ImageMemory>?
+    var pieceList: Results<ImageMemory>?
     var indexPath = 0
     //var diaryName: String? // 나중에 은서님 페이지에 이름 넘겨줄것.. (페이지 추가할 때?)
     
@@ -144,23 +144,18 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-20)
         }
         
-        // FIXME: - 기종 상관 없이 width 393 고정?
         imageView.snp.makeConstraints {
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
             
             if diaryData?.ratio == "square" {
-                //$0.width.height.equalTo(393)
-                $0.width.height.equalTo(view.frame.width)
+                $0.width.height.equalTo(UIScreen.main.bounds.width)
                 
             } else {
-                //$0.width.equalTo(393)
-                //$0.height.equalTo(524)
-                $0.width.equalTo(view.frame.width)
-                $0.height.equalTo(view.frame.width * 4 / 3)
+                $0.width.equalTo(UIScreen.main.bounds.width)
+                $0.height.equalTo(UIScreen.main.bounds.width * 4 / 3)
             }
         }
         
-        // FIXME: - imageView 와 safeArea 중간에 위치하도록
         buttonStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalTo(imageView.snp.bottom).offset(24)
@@ -246,8 +241,8 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
                     }
                 }
             } else {
-                imageMemories = RealmManager.shared.loadImageMemories()
-                guard let imageMemory = self.imageMemories?[indexPath] else { return }
+                pieceList = RealmManager.shared.loadImageMemories()
+                guard let imageMemory = self.pieceList?[indexPath] else { return }
                 RealmManager.shared.deleteImageMemory(imageMemory)
                 self.getBackToHome()
             }
