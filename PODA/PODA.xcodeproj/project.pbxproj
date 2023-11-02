@@ -29,6 +29,7 @@
 		27986DDE2AE125B900D27C84 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 27986DDD2AE125B900D27C84 /* RealmSwift */; };
 		27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */; };
 		27AA45822AEA400D0051C365 /* CameraAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */; };
+		27AD25B32AF37F5E00B2FDDF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 27AD25B22AF37F5E00B2FDDF /* GoogleService-Info.plist */; };
 		27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652A2ADD21B800B6E211 /* PieceViewController.swift */; };
 		27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652F2ADD237600B6E211 /* PieceViewModel.swift */; };
 		27DB5D0D2AE2532900489318 /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */; };
@@ -56,7 +57,6 @@
 		5F54EBFC2ADFFF5D00331E59 /* FirestorageImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EBFB2ADFFF5D00331E59 /* FirestorageImageManager.swift */; };
 		5F54EC002ADFFFFD00331E59 /* FirebaseError + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EBFF2ADFFFFD00331E59 /* FirebaseError + Enum.swift */; };
 		5F54EC022AE0012300331E59 /* FirebaseAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EC012AE0012300331E59 /* FirebaseAuthManager.swift */; };
-		5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5F54EC042AE0035900331E59 /* GoogleService-Info.plist */; };
 		5FD54B092AD90AE00092D75B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5FD54B082AD90AE00092D75B /* SnapKit */; };
 		5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B172AD90FB90092D75B /* BaseViewController.swift */; };
 		5FD54B1A2AD90FD90092D75B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B192AD90FD90092D75B /* MainViewController.swift */; };
@@ -148,6 +148,7 @@
 		2794D7AF2AE0216000B999EC /* TestPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPageViewController.swift; sourceTree = "<group>"; };
 		27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAccessHelper.swift; sourceTree = "<group>"; };
 		27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAccessHelper.swift; sourceTree = "<group>"; };
+		27AD25B22AF37F5E00B2FDDF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		27D2652A2ADD21B800B6E211 /* PieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewController.swift; sourceTree = "<group>"; };
 		27D2652F2ADD237600B6E211 /* PieceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewModel.swift; sourceTree = "<group>"; };
 		5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
@@ -173,7 +174,6 @@
 		5F54EBFB2ADFFF5D00331E59 /* FirestorageImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorageImageManager.swift; sourceTree = "<group>"; };
 		5F54EBFF2ADFFFFD00331E59 /* FirebaseError + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirebaseError + Enum.swift"; sourceTree = "<group>"; };
 		5F54EC012AE0012300331E59 /* FirebaseAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthManager.swift; sourceTree = "<group>"; };
-		5F54EC042AE0035900331E59 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5FD54B172AD90FB90092D75B /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		5FD54B192AD90FD90092D75B /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		5FD54B1B2AD90FE80092D75B /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -473,7 +473,7 @@
 		5F54EC032AE0035100331E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				5F54EC042AE0035900331E59 /* GoogleService-Info.plist */,
+				27AD25B22AF37F5E00B2FDDF /* GoogleService-Info.plist */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -930,7 +930,6 @@
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
 				E24A314D2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf in Resources */,
 				E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */,
-				5F54EC052AE0035900331E59 /* GoogleService-Info.plist in Resources */,
 				E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */,
 				E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */,
 				E24A31532AE65DE4006CF02C /* NanumMyeongjoOTF.otf in Resources */,
@@ -940,6 +939,7 @@
 				E24A31512AE65DBC006CF02C /* NanumSquareRoundB.ttf in Resources */,
 				5F2B1CD62ADCD08E00DAA9C8 /* Pretendard-SemiBold.otf in Resources */,
 				5F2B1CD72ADCD08E00DAA9C8 /* Pretendard-Regular.otf in Resources */,
+				27AD25B32AF37F5E00B2FDDF /* GoogleService-Info.plist in Resources */,
 				5F2B1CD02ADCD08E00DAA9C8 /* Pretendard-Black.otf in Resources */,
 				5F2B1CCF2ADCD08E00DAA9C8 /* Pretendard-Medium.otf in Resources */,
 			);
