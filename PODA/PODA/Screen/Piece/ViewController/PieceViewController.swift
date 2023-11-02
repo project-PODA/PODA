@@ -16,6 +16,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
     // MARK: UIComponents
     
     var isComeFromSaveDeleteVC = false
+    var pieceList: Results<ImageMemory>?
+    var indexPath = 0
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
@@ -158,6 +160,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
     }
     
+    func getPieceDate(with imageMemory: ImageMemory) -> String {
+        guard let memoryDate = imageMemory.memoryDate else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        return dateFormatter.string(from: memoryDate)
+    }
+    
     func updateUIForImageAvailability(hasImage: Bool) {
         vectorIconImage.isHidden = hasImage
         addToGalleryButton.isHidden = hasImage
@@ -206,11 +215,23 @@ class PieceViewController: BaseViewController, UIConfigurable {
 
             if !self.isComeFromSaveDeleteVC {
                 self.saveImageToRealm(image: selectedImage, date: selectedDate)
+                self.navigationController?.popViewController(animated: true)
             } else {
                 // 날짜만 변경하는 메서드
+                guard let imageMemory = self.pieceList?[indexPath] else { return }
+                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)
+                self.pieceList = RealmManager.shared.loadImageMemories()
+                
+                guard let imageMemory = self.pieceList?[indexPath] else { return }
+                guard let viewControllers = self.navigationController?.viewControllers else { return }
+                for viewController in viewControllers {
+                    if let viewController = viewController as? SaveDeleteViewController {
+                        viewController.dateLabel.text = getPieceDate(with: imageMemory)
+                        self.navigationController?.popToViewController(viewController, animated: true)
+                    }
+                }
             }
             print("pieceVC pop 될거야")
-            self.navigationController?.popViewController(animated: true)
         }
 
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)

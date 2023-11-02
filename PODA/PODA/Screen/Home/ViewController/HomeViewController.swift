@@ -517,6 +517,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         let saveDeleteVC = SaveDeleteViewController()
         saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
+        saveDeleteVC.pieceList = pieceList
         saveDeleteVC.indexPath = index
         saveDeleteVC.addButton.isHidden = true
         saveDeleteVC.isDiaryImage = false
