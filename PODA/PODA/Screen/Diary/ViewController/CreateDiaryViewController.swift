@@ -48,7 +48,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     private lazy var stickerButton = UIButton().then {
 //        $0.configuration = getButtonConfiguration(title: "스티커", iconName: "icon_sticker")
-        $0.configuration = getButtonConfiguration(title: "추억조각", iconName: "icon_pieceSticker")
+        $0.configuration = getButtonConfiguration(title: "추억 조각", iconName: "icon_pieceSticker")
         $0.addTarget(self, action: #selector(touchUpStickerButton), for: .touchUpInside)
     }
     

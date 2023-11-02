@@ -31,7 +31,7 @@ class StickerViewController: BaseViewController, UIConfigurable {
     //    }
     
     private let emptyPieceLabel = UILabel().then {
-        $0.setUpLabel(title: "추억조각이 없습니다\n홈에서 추가해주세요!", podaFont: .caption)
+        $0.setUpLabel(title: "추억 조각이 없습니다\n홈에서 추가해주세요!", podaFont: .caption)
         $0.numberOfLines = 2
         $0.textColor = Palette.podaGray3.getColor()
         $0.textAlignment = .center
