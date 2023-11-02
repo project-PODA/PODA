@@ -9,9 +9,6 @@ import UIKit
 
 class DetailViewController: BaseViewController, UIConfigurable {
     
-//    var viewTranslation = CGPoint(x: 0, y: 0)
-//    var viewVelocity = CGPoint(x: 0, y: 0)
-    
     var diaryData : DiaryData?
     
     // FIXME: - 1. 블러? 그라데이션? 2. 가능하다면 : 표지의 속지 배경색을 그라데이션 색상으로, 불가능하다면 : 검정색으로 그라데이션
@@ -36,7 +33,6 @@ class DetailViewController: BaseViewController, UIConfigurable {
 //        }
     }
 
-    // FIXME: - 하얀 배경일 때 shadowOpacity = 1.0?
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
         $0.layer.shadowOffset = CGSize(width: 1, height: 1)

@@ -13,17 +13,12 @@ class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
     
     static let identifier = "MoreDiaryCollectionViewCell"
     
-     lazy var gradientImageView = UIImageView().then {
-        let gradientLayer = CAGradientLayer()
-        let width = (UIScreen.main.bounds.width - 40) * 2 / 3
-        let height = ((UIScreen.main.bounds.height * 4 / 5) - 12) / 2
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: width, height: height)
-        gradientLayer.colors = [Palette.podaWhite.getColor().withAlphaComponent(0).cgColor,
-                                Palette.podaBlack.getColor().withAlphaComponent(1).cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.25)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
-        gradientLayer.locations = [0.0 ,1.0]
-        $0.layer.addSublayer(gradientLayer)
+    lazy var diaryCoverImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
+    }
+    
+    private let gradientImageView = UIImageView().then {
+        $0.image = UIImage(named: "image_gradientView")
         $0.contentMode = .scaleAspectFill
     }
     
@@ -52,15 +47,19 @@ class MoreDiaryCollectionViewCell: UICollectionViewCell, UIConfigurable {
         layer.cornerRadius = 20
         layer.masksToBounds = true
         
-        [gradientImageView, titleLabel, dateLabel].forEach {
-            addSubview($0)
+        [diaryCoverImageView, gradientImageView, titleLabel, dateLabel].forEach {
+            contentView.addSubview($0)
+        }
+        
+        diaryCoverImageView.snp.makeConstraints {
+            $0.top.bottom.left.right.equalToSuperview()
         }
         
         gradientImageView.snp.makeConstraints {
             $0.top.bottom.left.right.equalToSuperview()
         }
         
-        titleLabel.snp.makeConstraints { 
+        titleLabel.snp.makeConstraints {
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-120)
             $0.bottom.equalToSuperview().offset(-40)

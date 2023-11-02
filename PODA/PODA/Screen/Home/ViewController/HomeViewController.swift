@@ -9,7 +9,8 @@ import UIKit
 import Then
 import SnapKit
 import RealmSwift
-import Foundation
+import NVActivityIndicatorView
+
 
 // UI에 보여질 데이터순.
 struct DiaryData: Equatable {
@@ -22,9 +23,15 @@ struct DiaryData: Equatable {
 
 class HomeViewController: BaseViewController, UIConfigurable {
     
-    private var imageMemories: Results<ImageMemory>?
+    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    private let firebaseDBManager = FirestorageDBManager()
+    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     private var diaryDataList: [DiaryData] = []
+    
+    private var pieceList: Results<ImageMemory>?
     private var randomPieceIndex = 0
+    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
     
     private let statusLabel = UILabel().then {
         $0.setUpLabel(title: "나의 추억 현황", podaFont: .head1)
@@ -70,10 +77,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray1.getColor()
     }
     
-    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
-    
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
@@ -85,7 +88,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     private let timeCapsuleImageView = UIImageView().then {
-        $0.layer.cornerRadius = 20
         $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
     }
@@ -125,7 +127,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
-    // FIXME: - 최신순으로 등록되도록
     private lazy var diaryCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -190,6 +191,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.bringSubviewToFront(loadingIndicator)
         firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
             guard let _ = self else { return }
         }
@@ -227,7 +229,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.spacing = 8
         }
         
-        [mainStackView, diaryCountStackView, pieceCountStackView, scrollView].forEach {
+        [loadingIndicator, mainStackView, diaryCountStackView, pieceCountStackView, scrollView].forEach {
             view.addSubview($0)
         }
         
@@ -236,6 +238,10 @@ class HomeViewController: BaseViewController, UIConfigurable {
         // FIXME: - 추억 조각 더보기 드래그 기능 구현 후 morePieceButton 추가하기
         [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, pieceDateLabel, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, emptyPieceLabel, pieceCollectionView].forEach {
             contentView.addSubview($0)
+        }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
         mainStackView.snp.makeConstraints {
@@ -378,11 +384,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     // FIXME: - memories > piece로 통일?
     // FIXME: - 랜덤 이미지 표시 주기 하루에 한번으로 가능한지 확인하기
     func loadPieceDataFromRealm() {
-        imageMemories = RealmManager.shared.loadImageMemories()
+        pieceList = RealmManager.shared.loadImageMemories()
         //        for imageMemory in imageMemories! {
         //            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
         //        }
-        guard let pieceCount = imageMemories?.count else { return }
+        guard let pieceCount = pieceList?.count else { return }
         print("추억 조각 갯수 = \(pieceCount)")
         self.pieceCountLabel.setUpLabel(title: "\(pieceCount)개", podaFont: .subhead4)
         if pieceCount != 0 {
@@ -394,7 +400,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             
             self.randomPieceIndex = Int.random(in: 0..<pieceCount)
             
-            guard let imageMemory = self.imageMemories?[self.randomPieceIndex] else { return }
+            guard let imageMemory = self.pieceList?[self.randomPieceIndex] else { return }
             self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
             self.pieceDateLabel.setUpLabel(title: self.getPieceDate(with: imageMemory), podaFont: .subhead2)
                         
@@ -419,8 +425,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - diaryCountLabel 한번만 설정하도록
     func loadDiaryDataFromFirebase() {
+        loadingIndicator.startAnimating()
+
         firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
             guard let self = self else { return }
+            
             if error == .none {
                 // FIXME: - counter 변수 확인
                 print("diaryList: \(diaryList)")
@@ -450,6 +459,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
                                         if counter == diaryList.count - 1 {
                                             DispatchQueue.main.async {
                                                 self.updateDiaryCollectionView(isEmpty: false)
+                                                self.loadingIndicator.stopAnimating()
                                             }
                                         }
                                     }
@@ -490,7 +500,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - MoreDiaryVC, DetailVC에서 사용됨
     func goToDiarySaveDeleteVC(_ index: Int) {
-//        guard let imageMemory = self.imageMemories?[index] else { return }
+//        guard let pieceList = self.pieceList?[index] else { return }
 //        let saveDeleteVC = SaveDeleteViewController()
 //        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
 //        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
@@ -502,7 +512,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - Bind 함수로 정리하기
     func goToPieceSaveDeleteVC(_ index: Int) {
-        guard let imageMemory = self.imageMemories?[index] else { return }
+        guard let imageMemory = self.pieceList?[index] else { return }
         let saveDeleteVC = SaveDeleteViewController()
         saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
@@ -532,16 +542,24 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddButton() {
-        let homeMenuViewController = HomeMenuViewController()
-        homeMenuViewController.modalPresentationStyle = .overFullScreen
-        present(homeMenuViewController, animated: true)
+        let homeMenuVC = HomeMenuViewController()
+        homeMenuVC.modalPresentationStyle = .overFullScreen
+        present(homeMenuVC, animated: true)
         
-        homeMenuViewController.touchedDiary = {
+        // FIXME: - 실기기 테스트 해보고 화면 전환 방식 변경
+        homeMenuVC.didTapQR = {
+            self.dismiss(animated: true)
+            let qrVC = QRViewController()
+            qrVC.modalPresentationStyle = .overFullScreen
+            self.present(qrVC, animated: true)
+        }
+        
+        homeMenuVC.didTapDiary = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(SelectRatioViewController(), animated: true)
         }
         
-        homeMenuViewController.touchedPiece = {
+        homeMenuVC.didTapPiece = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(PieceViewController(), animated: true)
         }
@@ -600,10 +618,9 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         if collectionView == diaryCollectionView {
             return diaryDataList.count
         } else {
-            guard let pieceCount = imageMemories?.count else { return 0 }
+            guard let pieceCount = pieceList?.count else { return 0 }
             print("Number of items in section: \(pieceCount)")
             return pieceCount
-//            return pieceImageList.count
         }
     }
     
@@ -615,7 +632,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
-            guard let imageMemory = imageMemories?[indexPath.item] else { return UICollectionViewCell() }
+            guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
             let image = getPieceImage(with: imageMemory)
             cell.pieceImageView.image = image
             return cell
@@ -629,17 +646,8 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             let width = (view.frame.width / 5) - 2
             return CGSize(width: width, height: width * 1.35)
         } else {
-//            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return CGSize() }
-//            guard let imageMemory = imageMemories?[indexPath.item] else { return CGSize() }
-//            let image = getPieceImage(with: imageMemory)
-//            let width = image.size.width
-//            print("이 이미지의 사이즈는 \(width)")
             let width = (view.frame.width / 2.5) - 32
             return CGSize(width: width, height: collectionView.frame.height)
-//                        let image = pieceImageList[indexPath.row]
-//                        guard let image = image else { return CGSize() }
-//                        let width = image.size.width
-//                        return CGSize(width: width, height: collectionView.frame.height)
         }
     }
 }
