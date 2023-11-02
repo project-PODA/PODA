@@ -47,7 +47,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     private lazy var stickerButton = UIButton().then {
-        $0.configuration = getButtonConfiguration(title: "스티커", iconName: "icon_sticker")
+//        $0.configuration = getButtonConfiguration(title: "스티커", iconName: "icon_sticker")
+        $0.configuration = getButtonConfiguration(title: "추억 조각", iconName: "icon_pieceSticker")
         $0.addTarget(self, action: #selector(touchUpStickerButton), for: .touchUpInside)
     }
     
@@ -130,10 +131,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             
             switch ratio {
             case .square:
-                $0.top.equalTo(scrollView).offset(30)
+                $0.top.equalTo(scrollView).offset(10)
                 $0.width.height.equalTo(UIScreen.main.bounds.width)
             case .rectangle:
-                $0.top.equalTo(scrollView)
+                $0.top.equalTo(scrollView).offset(10)
                 $0.width.equalTo(UIScreen.main.bounds.width)
                 $0.height.equalTo(UIScreen.main.bounds.width / 3 * 4)
             case .none:
