@@ -438,6 +438,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
                     // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
                     DispatchQueue.main.async {
                         self.updateDiaryCollectionView(isEmpty: true)
+                        self.loadingIndicator.stopAnimating()
                     }
                 }
                 for diaryName in diaryList {

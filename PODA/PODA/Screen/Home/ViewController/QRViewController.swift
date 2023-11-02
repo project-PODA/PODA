@@ -121,6 +121,7 @@ extension QRViewController: AVCaptureMetadataOutputObjectsDelegate {
                 }
             }
             
+            // FIXME: - http:// 링크 이동 안되면 추가 처리하기
             guard let qrCodeStringData = metaDataObj.stringValue else { return }
             if qrCodeStringData.hasPrefix("http://") || qrCodeStringData.hasPrefix("https://") {
                 if let url = URL(string: qrCodeStringData) {
