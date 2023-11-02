@@ -160,6 +160,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
     }
     
+    func getPieceDate(with imageMemory: ImageMemory) -> String {
+        guard let memoryDate = imageMemory.memoryDate else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        return dateFormatter.string(from: memoryDate)
+    }
+    
     func updateUIForImageAvailability(hasImage: Bool) {
         vectorIconImage.isHidden = hasImage
         addToGalleryButton.isHidden = hasImage
