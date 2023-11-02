@@ -56,6 +56,13 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
         $0.spacing = 20
     }
     
+    private let stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.distribution = .fill
+        $0.alignment = .center
+        $0.spacing = 30
+    }
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -70,7 +77,11 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
             ratioStackView.addArrangedSubview($0)
         }
         
-        [navigationBar, messageLabel, ratioStackView].forEach {
+        [messageLabel, ratioStackView].forEach {
+            stackView.addArrangedSubview($0)
+        }
+        
+        [navigationBar, stackView].forEach {
             view.addSubview($0)
         }
         
@@ -79,14 +90,8 @@ class SelectRatioViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(40)
         }
         
-        messageLabel.snp.makeConstraints {
-            $0.top.equalTo(navigationBar.snp.bottom).offset(244)
-            $0.centerX.equalToSuperview()
-        }
-        
-        ratioStackView.snp.makeConstraints {
-            $0.top.equalTo(messageLabel.snp.bottom).offset(30)
-            $0.centerX.equalToSuperview()
+        stackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
         squareButton.snp.makeConstraints {

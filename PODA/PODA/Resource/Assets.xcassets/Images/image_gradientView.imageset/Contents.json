@@ -1,15 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "image_gradientView.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "piece_example2.png",
+      "filename" : "image_gradientView@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "image_gradientView@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

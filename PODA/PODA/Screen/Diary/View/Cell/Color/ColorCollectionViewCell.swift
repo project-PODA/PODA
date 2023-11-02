@@ -15,6 +15,7 @@ class ColorCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        colorView.layer.cornerRadius = 18.5
         // Initialization code
     }
 

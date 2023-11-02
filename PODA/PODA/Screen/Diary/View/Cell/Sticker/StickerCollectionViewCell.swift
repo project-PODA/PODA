@@ -24,9 +24,6 @@ class StickerCollectionViewCell: UICollectionViewCell {
     }
     
     func setImage(_ image: UIImage) {
-        imageView.snp.makeConstraints {
-            $0.width.height.equalTo(130)
-        }
         imageView.image = image
     }
 

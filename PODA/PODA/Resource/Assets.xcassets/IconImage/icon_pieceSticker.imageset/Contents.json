@@ -1,15 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "solar_sticker-circle-bold.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "piece_example3.png",
+      "filename" : "solar_sticker-circle-bold@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "solar_sticker-circle-bold@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

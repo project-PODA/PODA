@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import SnapKit
 
 class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
@@ -19,7 +20,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     var isDiaryImage = true
-    var imageMemories: Results<ImageMemory>?
+    var pieceList: Results<ImageMemory>?
     var indexPath = 0
     //var diaryName: String? // 나중에 은서님 페이지에 이름 넘겨줄것.. (페이지 추가할 때?)
     
@@ -59,25 +60,69 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     private lazy var deleteButton = UIButton().then {
         $0.setUpButton(title: "delete", podaFont: .head1)
         $0.titleLabel?.textColor = Palette.podaWhite.getColor()
-        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    
+        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
     }
+    
+    private lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [saveButton, deleteButton])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = 128
+        stackView.distribution = .equalCentering
+        return stackView
+    }()
+    
+    private lazy var navigationBarStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [backButton, dateLabel, addButton, editButton])
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .equalSpacing
+        return stackView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+    //🔫 save, delete 버튼 레이아웃 공부
+//        let topBorder = UIView()
+//        topBorder.backgroundColor = .red // 또는 원하는 색상으로 변경
+//        view.addSubview(topBorder)
+//        topBorder.snp.makeConstraints { make in
+//            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+//            make.left.right.equalToSuperview()
+//            make.height.equalTo(2) // 테두리 두께
+//        }
+//
+//        let bottomBorder = UIView()
+//        bottomBorder.backgroundColor = .red // 또는 원하는 색상으로 변경
+//        view.addSubview(bottomBorder)
+//        bottomBorder.snp.makeConstraints { make in
+//            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+//            make.left.right.equalToSuperview()
+//            make.height.equalTo(2) // 테두리 두께
+//        }
     }
     
+    //🔫 save, delete 버튼 레이아웃 공부
+    //    override func viewDidLayoutSubviews() {
+    //        super.viewDidLayoutSubviews()
+    //
+    //        let safeAreaTop: CGFloat = self.view.safeAreaInsets.top
+    //        let safeAreaBottom: CGFloat = self.view.safeAreaInsets.bottom
+    //        let totalHeight: CGFloat = self.view.frame.height
+    //        let imageViewHeight: CGFloat = self.imageView.frame.height
+    //        let navigationBarHeight: CGFloat = navigationBarStackView.frame.height
+    //        let padding: CGFloat = 24
+    //
+    //        self.buttonStackView.snp.remakeConstraints {
+    //            $0.centerX.equalToSuperview()
+    //            $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
+    //        }
+    //
+    //    }
+     
     func configUI() {
-        let navigationBarStackView = UIStackView(arrangedSubviews: [backButton, dateLabel, addButton, editButton])
-        navigationBarStackView.axis = .horizontal
-        navigationBarStackView.alignment = .center
-        navigationBarStackView.distribution = .equalSpacing
         
-        let buttonStackView = UIStackView(arrangedSubviews: [saveButton, deleteButton])
-        buttonStackView.axis = .horizontal
-        buttonStackView.alignment = .center
-        buttonStackView.spacing = 128
-        buttonStackView.distribution = .equalCentering
         
         [navigationBarStackView, imageView, buttonStackView].forEach(view.addSubview)
         
@@ -99,27 +144,38 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-20)
         }
         
-        // FIXME: - 기종 상관 없이 width 393 고정?
         imageView.snp.makeConstraints {
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
-            //$0.left.right.equalToSuperview()
-            //$0.height.equalTo(512)
-            //$0.height.equalTo(view.frame.width * 1.25)
             
             if diaryData?.ratio == "square" {
-                $0.width.height.equalTo(393)
+                $0.width.height.equalTo(UIScreen.main.bounds.width)
+                
             } else {
-                $0.width.equalTo(393)
-                $0.height.equalTo(524)
+                $0.width.equalTo(UIScreen.main.bounds.width)
+                $0.height.equalTo(UIScreen.main.bounds.width * 4 / 3)
             }
         }
         
         buttonStackView.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-88)
             $0.centerX.equalToSuperview()
+            $0.centerY.equalTo(imageView.snp.bottom).offset(24)
+        }
+        
+        DispatchQueue.main.async {
+            let safeAreaTop: CGFloat = self.view.safeAreaInsets.top
+            let safeAreaBottom: CGFloat = self.view.safeAreaInsets.bottom
+            let totalHeight: CGFloat = self.view.frame.height
+            let imageViewHeight: CGFloat = self.imageView.frame.height
+            let navigationBarHeight: CGFloat = self.navigationBarStackView.frame.height
+            let padding: CGFloat = 24
+            
+            self.buttonStackView.snp.remakeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
+            }
         }
     }
-    
+                                                            
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }
@@ -185,8 +241,8 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
                     }
                 }
             } else {
-                imageMemories = RealmManager.shared.loadImageMemories()
-                guard let imageMemory = self.imageMemories?[indexPath] else { return }
+                pieceList = RealmManager.shared.loadImageMemories()
+                guard let imageMemory = self.pieceList?[indexPath] else { return }
                 RealmManager.shared.deleteImageMemory(imageMemory)
                 self.getBackToHome()
             }

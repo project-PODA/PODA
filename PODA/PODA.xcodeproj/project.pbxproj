@@ -14,6 +14,7 @@
 		26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */; };
 		26A7D4992AE56D9400810D63 /* SaveDeleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */; };
 		26A7D49B2AE63F6D00810D63 /* PieceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D49A2AE63F6D00810D63 /* PieceCollectionViewCell.swift */; };
+		26AE844D2AF1E451004CFB6B /* QRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26AE844C2AF1E451004CFB6B /* QRViewController.swift */; };
 		26B79F6C2AE1135000455539 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6B2AE1135000455539 /* HomeViewController.swift */; };
 		26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */; };
 		26B79F722AE113B600455539 /* MorePieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F712AE113B600455539 /* MorePieceViewController.swift */; };
@@ -131,6 +132,7 @@
 		26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreDiaryViewController.swift; sourceTree = "<group>"; };
 		26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveDeleteViewController.swift; sourceTree = "<group>"; };
 		26A7D49A2AE63F6D00810D63 /* PieceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceCollectionViewCell.swift; sourceTree = "<group>"; };
+		26AE844C2AF1E451004CFB6B /* QRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRViewController.swift; sourceTree = "<group>"; };
 		26B79F6B2AE1135000455539 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuViewController.swift; sourceTree = "<group>"; };
 		26B79F712AE113B600455539 /* MorePieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceViewController.swift; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 				26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */,
 				26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */,
 				26B79F712AE113B600455539 /* MorePieceViewController.swift */,
+				26AE844C2AF1E451004CFB6B /* QRViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -1009,6 +1012,7 @@
 				5F54EBF42ADFFE4800331E59 /* FrameRate + Enum.swift in Sources */,
 				D8E5D0522AE12471005EE3C9 /* CompleteSignUpViewController.swift in Sources */,
 				27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */,
+				26AE844D2AF1E451004CFB6B /* QRViewController.swift in Sources */,
 				5FD54B1A2AD90FD90092D75B /* MainViewController.swift in Sources */,
 				D8F46ADE2AE80F1600C8FDF4 /* LeaveViewController.swift in Sources */,
 				26A7D4992AE56D9400810D63 /* SaveDeleteViewController.swift in Sources */,
@@ -1169,7 +1173,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6A4DKMQA22;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
@@ -1203,7 +1207,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6A4DKMQA22;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PODA/Resource/Support/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";

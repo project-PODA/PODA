@@ -8,6 +8,8 @@
 import UIKit
 import SnapKit
 import Then
+import NVActivityIndicatorView
+
 
 class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
@@ -22,6 +24,8 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     private let firebaseDBManager = FirestorageDBManager()
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+    
     private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "뒤로", rightButtonTitle: "저장").then {
         $0.leftButton.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
         $0.rightButton.addTarget(self, action: #selector(touchUpSaveButton), for: .touchUpInside)
@@ -33,8 +37,8 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     private let titleTextField = UITextField().then {
-        $0.font = UIFont.podaFont(.body1)
-        $0.textColor = Palette.podaGray4.getColor()
+        $0.font = UIFont.podaFont(.body2)
+        $0.textColor = Palette.podaGray2.getColor()
         $0.placeholder = "ex. 포다랑 인생네컷 모음"
         $0.borderStyle = .none
     }
@@ -79,6 +83,11 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         contentTextView.delegate = self
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        view.bringSubviewToFront(loadingIndicator)
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
@@ -90,11 +99,15 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     private func setupLayout() {
-        [navigationBar,
+        [loadingIndicator, navigationBar,
          titleLabel, titleTextField, underLine, titleCountLabel,
          contentLabel, contentTextView, contentCountLabel
         ].forEach {
             view.addSubview($0)
+        }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
         navigationBar.snp.makeConstraints {
@@ -148,6 +161,8 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func touchUpSaveButton() {
+        loadingIndicator.startAnimating()
+        
         if let title = titleTextField.text, title.isEmpty || contentTextView.text == "내용을 입력하세요." {
             showAlert()
         } else {
@@ -160,39 +175,40 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
                 description: contentTextView.text,
                 frameRate: ratio) { [weak self] error in
                     
-                guard let self = self else { return }
+                    guard let self = self else { return }
+                    
+                    if error == .none {
+                        print("다이어리 성공")
+                        let diaryName = titleTextField.text ?? ""
+                        let imageData = pageInfo[0].imageData
+                        firebaseImageManager.createDiaryImage(diaryName: diaryName, pageImage: imageData) { error in
+                            if error == .none, let viewControllers = self.navigationController?.viewControllers {
+                                print("다이어리 이미지 생성 성공")
+                                for viewController in viewControllers {
+                                    if viewController is BaseTabbarController {
+                                        NotificationCenter.default.post(
+                                            name: DetailDiaryViewController.createDiaryNotificationName,
+                                            object: DiaryData(
+                                                diaryName: diaryName,
+                                                diaryImageList: [imageData],
+                                                createDate: Date().getCurrentTime(),
+                                                ratio: self.ratio.toString(),
+                                                description: self.contentTextView.text)
+                                        )
+                                        self.loadingIndicator.stopAnimating()
 
-                if error == .none {
-                    print("다이어리 성공")
-                    let diaryName = titleTextField.text ?? ""
-                    let imageData = pageInfo[0].imageData
-                    firebaseImageManager.createDiaryImage(diaryName: diaryName, pageImage: imageData) { error in
-                        if error == .none, let viewControllers = self.navigationController?.viewControllers {
-                            print("다이어리 이미지 생성 성공")
-                            for viewController in viewControllers {
-                                if viewController is BaseTabbarController {
-                                    NotificationCenter.default.post(
-                                        name: DetailDiaryViewController.createDiaryNotificationName,
-                                        object: DiaryData(
-                                            diaryName: diaryName,
-                                            diaryImageList: [imageData],
-                                            createDate: Date().getCurrentTime(),
-                                            ratio: self.ratio.toString(),
-                                            description: self.contentTextView.text)
-                                    )
-                                    
-                                    self.navigationController?.popToViewController(viewController, animated: true)
-                                    break
+                                        self.navigationController?.popToViewController(viewController, animated: true)
+                                        break
+                                    }
                                 }
+                            } else {
+                                print("다이어리 이미지 생성 실패")
                             }
-                        } else {
-                            print("다이어리 이미지 생성 실패")
                         }
+                    } else {
+                        print("다이어리 성공 실패")
                     }
-                } else {
-                    print("다이어리 성공 실패")
                 }
-            }
         }
     }
     
@@ -235,7 +251,7 @@ extension DetailDiaryViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == "내용을 입력하세요." {
             textView.text = ""
-            textView.textColor = Palette.podaGray4.getColor()
+            textView.textColor = Palette.podaGray2.getColor()
         }
     }
 }

@@ -34,7 +34,23 @@ class ColorPaletteView: UIView {
         Font(text: "써라운드", font: UIFont(name: "Cafe24SsurroundOTF", size: 17) ?? UIFont()),
         Font(text: "고운돋움", font: UIFont(name: "GowunDodum-Regular", size: 17) ?? UIFont())
     ]
-    private var colorList: [UIColor] = [.red, .orange, .yellow, .green, .blue, .purple, .cyan, .magenta]
+    private var colorList: [UIColor] = [
+        .white,
+        UIColor(red: 0.796, green: 0.796, blue: 0.796, alpha: 1),
+        UIColor(red: 0.521, green: 0.521, blue: 0.521, alpha: 1),
+        UIColor(red: 0.221, green: 0.221, blue: 0.221, alpha: 1),
+        .black,
+        UIColor(red: 0.983, green: 0.836, blue: 0.836, alpha: 1),
+        UIColor(red: 0.984, green: 0.952, blue: 0.835, alpha: 1),
+        UIColor(red: 0.874, green: 0.984, blue: 0.835, alpha: 1),
+        UIColor(red: 0.835, green: 0.984, blue: 0.975, alpha: 1),
+        UIColor(red: 0.984, green: 0.835, blue: 0.969, alpha: 1),
+        UIColor(red: 0.788, green: 0.276, blue: 0.276, alpha: 1),
+        UIColor(red: 0.788, green: 0.552, blue: 0.276, alpha: 1),
+        UIColor(red: 0.501, green: 0.788, blue: 0.276, alpha: 1),
+        UIColor(red: 0.276, green: 0.388, blue: 0.788, alpha: 1),
+        UIColor(red: 0.788, green: 0.276, blue: 0.644, alpha: 1)
+    ]
     
     private lazy var colorPicker = UIColorPickerViewController().then {
         $0.delegate = self
@@ -56,9 +72,13 @@ class ColorPaletteView: UIView {
         $0.minimumInteritemSpacing = 5
     }
     
-    private lazy var fontCollectionView = UICollectionView(frame: .zero, collectionViewLayout: fontFlowLayout)
+    private lazy var fontCollectionView = UICollectionView(frame: .zero, collectionViewLayout: fontFlowLayout).then {
+        $0.showsHorizontalScrollIndicator = false
+    }
     
-    private lazy var colorCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorFlowLayout)
+    private lazy var colorCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorFlowLayout).then {
+        $0.showsHorizontalScrollIndicator = false
+    }
     
     private let colorStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -164,9 +184,13 @@ extension ColorPaletteView: UICollectionViewDataSource {
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ColorCollectionViewCell.identifier, for: indexPath) as? ColorCollectionViewCell
             else { return UICollectionViewCell() }
-            
-            cell.layer.cornerRadius = 18.5
+        
             cell.setColor(colorList[indexPath.item])
+            
+            if cell.colorView.backgroundColor == .black {
+                cell.colorView.layer.borderWidth = 1
+                cell.colorView.layer.borderColor = UIColor.white.cgColor
+            }
             
             return cell
         }

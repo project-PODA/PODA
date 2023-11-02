@@ -47,7 +47,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     private lazy var stickerButton = UIButton().then {
-        $0.configuration = getButtonConfiguration(title: "스티커", iconName: "icon_sticker")
+//        $0.configuration = getButtonConfiguration(title: "스티커", iconName: "icon_sticker")
+        $0.configuration = getButtonConfiguration(title: "추억 조각", iconName: "icon_pieceSticker")
         $0.addTarget(self, action: #selector(touchUpStickerButton), for: .touchUpInside)
     }
     
@@ -130,12 +131,12 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             
             switch ratio {
             case .square:
-                $0.top.equalTo(scrollView).offset(30)
-                $0.width.height.equalTo(393)
+                $0.top.equalTo(scrollView).offset(10)
+                $0.width.height.equalTo(UIScreen.main.bounds.width)
             case .rectangle:
-                $0.top.equalTo(scrollView)
-                $0.width.equalTo(393)
-                $0.height.equalTo(524)
+                $0.top.equalTo(scrollView).offset(10)
+                $0.width.equalTo(UIScreen.main.bounds.width)
+                $0.height.equalTo(UIScreen.main.bounds.width / 3 * 4)
             case .none:
                 $0.width.height.equalTo(393)
             }
@@ -203,11 +204,15 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpGalleryButton() {
-        var configuration = PHPickerConfiguration()
-        configuration.filter = .images
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        present(picker, animated: true, completion: nil)
+        PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { (isAuthorized) in
+            if isAuthorized {
+                var configuration = PHPickerConfiguration()
+                configuration.filter = .images
+                let picker = PHPickerViewController(configuration: configuration)
+                picker.delegate = self
+                self.present(picker, animated: true, completion: nil)
+            }
+        }
     }
     
     @objc private func touchUpStickerButton() {
