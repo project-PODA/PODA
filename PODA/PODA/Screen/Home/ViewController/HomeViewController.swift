@@ -389,7 +389,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         //            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
         //        }
         guard let pieceCount = pieceList?.count else { return }
-        print("추억 조각 갯수 = \(pieceCount)")
+        //print("추억 조각 갯수 = \(pieceCount)")
         self.pieceCountLabel.setUpLabel(title: "\(pieceCount)개", podaFont: .subhead4)
         if pieceCount != 0 {
             // 등록된 추억 조각이 있는 경우
@@ -621,7 +621,6 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             return diaryDataList.count
         } else {
             guard let pieceCount = pieceList?.count else { return 0 }
-            print("Number of items in section: \(pieceCount)")
             return pieceCount
         }
     }
