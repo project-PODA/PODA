@@ -220,8 +220,10 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 // 날짜만 변경하는 메서드
                 guard let imageMemory = self.pieceList?[indexPath] else { return }
                 RealmManager.shared.updatePieceDate(imageMemory, selectedDate)
+                //print(selectedDate)
                 self.pieceList = RealmManager.shared.loadImageMemories()
                 
+                // FIXME: - getPieceDate 호출 없이 selectedDate 로만 UI 업데이트하기
                 guard let imageMemory = self.pieceList?[indexPath] else { return }
                 guard let viewControllers = self.navigationController?.viewControllers else { return }
                 for viewController in viewControllers {

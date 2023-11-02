@@ -117,8 +117,9 @@ class DetailViewController: BaseViewController, UIConfigurable {
         contentLabel.setUpLabel(title: diaryData.description, podaFont: .body2)
     }
     
+    // FIXME: - 다이어리 페이지 추가 기능 구현하고 나면 pageCountimageView 추가하기
     func configUI() {
-        [diaryCoverView, backButton, scrollLabel, scrollImageView, pageCountimageView, titleLabel, dateLabel, contentLabel].forEach {
+        [diaryCoverView, backButton, scrollLabel, scrollImageView, titleLabel, dateLabel, contentLabel].forEach {
             view.addSubview($0)
         }
         
@@ -142,10 +143,10 @@ class DetailViewController: BaseViewController, UIConfigurable {
             $0.right.equalTo(scrollLabel.snp.left).offset((scrollLabel.bounds.width / 2) - (scrollLabel.bounds.height / 2))
         }
         
-        pageCountimageView.snp.makeConstraints {
-            $0.bottom.equalTo(titleLabel.snp.top).offset(-16)
-            $0.left.equalToSuperview().offset(20)
-        }
+//        pageCountimageView.snp.makeConstraints {
+//            $0.bottom.equalTo(titleLabel.snp.top).offset(-16)
+//            $0.left.equalToSuperview().offset(20)
+//        }
         
         titleLabel.snp.makeConstraints { 
             $0.bottom.equalTo(dateLabel.snp.top)
