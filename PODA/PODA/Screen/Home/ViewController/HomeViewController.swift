@@ -518,6 +518,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
         saveDeleteVC.indexPath = index
+        saveDeleteVC.pieceList = pieceList
         saveDeleteVC.addButton.isHidden = true
         saveDeleteVC.isDiaryImage = false
         navigationController?.pushViewController(saveDeleteVC, animated: true)

@@ -92,4 +92,15 @@ class RealmManager {
             print("Realm에서 이미지 메모리 삭제 실패: \(error.localizedDescription)")
         }
     }
+    
+    func updatePieceDate(_ imageMemory: ImageMemory, _ date: Date) {
+        do {
+            try realm.write {
+                imageMemory.memoryDate = date
+                print("Realm에서 날짜 업데이트 성공")
+            }
+        } catch {
+            print("Realm에서 날짜 업데이트 실패: \(error.localizedDescription)")
+        }
+    }
 }

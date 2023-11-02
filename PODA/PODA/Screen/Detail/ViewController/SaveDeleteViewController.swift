@@ -83,7 +83,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-    //🔫 save, delete 버튼 레이아웃 공부
+//        🔫 save, delete 버튼 레이아웃 공부
 //        let topBorder = UIView()
 //        topBorder.backgroundColor = .red // 또는 원하는 색상으로 변경
 //        view.addSubview(topBorder)
@@ -92,7 +92,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
 //            make.left.right.equalToSuperview()
 //            make.height.equalTo(2) // 테두리 두께
 //        }
-//
+//        
 //        let bottomBorder = UIView()
 //        bottomBorder.backgroundColor = .red // 또는 원하는 색상으로 변경
 //        view.addSubview(bottomBorder)
@@ -102,28 +102,25 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
 //            make.height.equalTo(2) // 테두리 두께
 //        }
     }
-    
-    //🔫 save, delete 버튼 레이아웃 공부
-    //    override func viewDidLayoutSubviews() {
-    //        super.viewDidLayoutSubviews()
-    //
-    //        let safeAreaTop: CGFloat = self.view.safeAreaInsets.top
-    //        let safeAreaBottom: CGFloat = self.view.safeAreaInsets.bottom
-    //        let totalHeight: CGFloat = self.view.frame.height
-    //        let imageViewHeight: CGFloat = self.imageView.frame.height
-    //        let navigationBarHeight: CGFloat = navigationBarStackView.frame.height
-    //        let padding: CGFloat = 24
-    //
-    //        self.buttonStackView.snp.remakeConstraints {
-    //            $0.centerX.equalToSuperview()
-    //            $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
-    //        }
-    //
-    //    }
+//    
+//    🔫 save, delete 버튼 레이아웃 공부
+//    override func viewDidLayoutSubviews() {
+//        super.viewDidLayoutSubviews()
+//        
+//        let safeAreaTop: CGFloat = self.view.safeAreaInsets.top
+//        let safeAreaBottom: CGFloat = self.view.safeAreaInsets.bottom
+//        let totalHeight: CGFloat = self.view.frame.height
+//        let imageViewHeight: CGFloat = self.imageView.frame.height
+//        let navigationBarHeight: CGFloat = navigationBarStackView.frame.height
+//        let padding: CGFloat = 24
+//        
+//        self.buttonStackView.snp.remakeConstraints {
+//            $0.centerX.equalToSuperview()
+//            $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
+//        }
+//    }
      
     func configUI() {
-        
-        
         [navigationBarStackView, imageView, buttonStackView].forEach(view.addSubview)
         
         backButton.snp.makeConstraints {
@@ -191,6 +188,8 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         pieceVC.imageView.isUserInteractionEnabled = false
         pieceVC.isComeFromSaveDeleteVC = true
         pieceVC.imageView.image = imageView.image
+        pieceVC.pieceList = pieceList
+        pieceVC.indexPath = indexPath
         navigationController?.pushViewController(pieceVC, animated: true)
     }
     
