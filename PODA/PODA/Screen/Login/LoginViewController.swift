@@ -29,6 +29,8 @@ class LoginViewController: BaseViewController, UIConfigurable {
     
     private let emailTextField = UITextField().then {
         $0.borderStyle = .none
+        $0.autocapitalizationType = .none
+        $0.keyboardType = .emailAddress
     }
     
     private let emailLineView = UIView().then {
