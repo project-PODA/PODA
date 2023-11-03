@@ -57,6 +57,7 @@
 		5F54EBFC2ADFFF5D00331E59 /* FirestorageImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EBFB2ADFFF5D00331E59 /* FirestorageImageManager.swift */; };
 		5F54EC002ADFFFFD00331E59 /* FirebaseError + Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EBFF2ADFFFFD00331E59 /* FirebaseError + Enum.swift */; };
 		5F54EC022AE0012300331E59 /* FirebaseAuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F54EC012AE0012300331E59 /* FirebaseAuthManager.swift */; };
+		5F77FF962AF482A70049E8EB /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5F77FF952AF482A70049E8EB /* GoogleService-Info-Dev.plist */; };
 		5FD54B092AD90AE00092D75B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5FD54B082AD90AE00092D75B /* SnapKit */; };
 		5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B172AD90FB90092D75B /* BaseViewController.swift */; };
 		5FD54B1A2AD90FD90092D75B /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD54B192AD90FD90092D75B /* MainViewController.swift */; };
@@ -174,6 +175,7 @@
 		5F54EBFB2ADFFF5D00331E59 /* FirestorageImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestorageImageManager.swift; sourceTree = "<group>"; };
 		5F54EBFF2ADFFFFD00331E59 /* FirebaseError + Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirebaseError + Enum.swift"; sourceTree = "<group>"; };
 		5F54EC012AE0012300331E59 /* FirebaseAuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthManager.swift; sourceTree = "<group>"; };
+		5F77FF952AF482A70049E8EB /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		5FD54B172AD90FB90092D75B /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		5FD54B192AD90FD90092D75B /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		5FD54B1B2AD90FE80092D75B /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
@@ -473,6 +475,7 @@
 		5F54EC032AE0035100331E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				5F77FF952AF482A70049E8EB /* GoogleService-Info-Dev.plist */,
 				27AD25B22AF37F5E00B2FDDF /* GoogleService-Info.plist */,
 			);
 			path = Config;
@@ -930,6 +933,7 @@
 				5F2B1CD22ADCD08E00DAA9C8 /* Pretendard-ExtraBold.otf in Resources */,
 				E24A314D2AE65CC0006CF02C /* Cafe24SsurroundOTF.otf in Resources */,
 				E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */,
+				5F77FF962AF482A70049E8EB /* GoogleService-Info-Dev.plist in Resources */,
 				E2B8F8DD2AE2538F00578D15 /* ColorCollectionViewCell.xib in Resources */,
 				E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */,
 				E24A31532AE65DE4006CF02C /* NanumMyeongjoOTF.otf in Resources */,
