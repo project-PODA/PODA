@@ -291,7 +291,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         
         pieceDateLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(26)
-            $0.right.equalToSuperview().offset(-35)
+            $0.right.equalToSuperview().offset(-37)
         }
         
         pieceDateImageView.snp.makeConstraints {
