@@ -1,5 +1,5 @@
 //
-//  PieceAlbumViewController.swift
+//  MorePieceViewController.swift
 //  PODA
 //
 //  Created by 랑 on 2023/11/03.
@@ -10,7 +10,7 @@ import Then
 import SnapKit
 import RealmSwift
 
-class PieceAlbumViewController: BaseViewController, UIConfigurable {
+class MorePieceViewController: BaseViewController, UIConfigurable {
     
     var pieceList: Results<ImageMemory>?
     private var isSortedByPieceDate = true
@@ -228,12 +228,17 @@ class PieceAlbumViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapfloatingButton() {
-        //navigationController?.pushViewController(PieceShakeViewController(), animated: true)
+        guard let pieceCount = pieceList?.count else { return }
+        
+        if pieceCount >= 6 {
+            let pieceShakeViewController = PieceShakeViewController()
+            pieceShakeViewController.pieceList = pieceList
+            navigationController?.pushViewController(pieceShakeViewController, animated: true)
+        }
     }
-    
 }
 
-extension PieceAlbumViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension MorePieceViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let pieceCount = pieceList?.count else { return 0 }
         return pieceCount
@@ -257,7 +262,7 @@ extension PieceAlbumViewController: UICollectionViewDataSource, UICollectionView
     }
 }
     
-extension PieceAlbumViewController: UICollectionViewDelegateFlowLayout {
+extension MorePieceViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = (UIScreen.main.bounds.width - 40 - 16) / 2
         let safeAreaTop: CGFloat = view.safeAreaInsets.top

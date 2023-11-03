@@ -1,5 +1,5 @@
 //
-//  RandomPieceViewController.swift
+//  PieceShakeViewController.swift
 //  PODA
 //
 //  Created by FUTURE on 2023/11/03.
@@ -17,9 +17,7 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
     
     
     // Realm 데이터베이스에서 불러온 ImageMemory 객체를 저장할 변수 선언
-    private var pieceList: Results<ImageMemory>?
-    // Realm 인스턴스 초기화, 실패할 경우 크래시 발생(try!)
-    private let localRealm = try! Realm()
+    var pieceList: Results<ImageMemory>?
     
     // 백 버튼을 위한 lazy var 선언, 실제 사용될 때 초기화됨
     private lazy var backButton = UIButton().then {
@@ -43,8 +41,7 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         [fingerImageView, infoLabel].forEach($0.addSubview)
         
         fingerImageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(248)
+            $0.center.equalToSuperview()
             $0.width.height.equalTo(140)
         }
         infoLabel.snp.makeConstraints {
@@ -55,7 +52,6 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadImages()
         displayRandomImages()
         configUI()
         hideTranslucentView()
@@ -68,8 +64,6 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
     }
     
     func configUI() {
-
-        
         [backButton, translucentView].forEach {
             view.addSubview($0)
         }
@@ -81,11 +75,9 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         }
         
         translucentView.snp.makeConstraints {
-            $0.top.left.right.equalTo(view.safeAreaLayoutGuide)
-            $0.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
     }
-    
     
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true) // 네비게이션 스택에서 현재 뷰 컨트롤러를 팝
@@ -130,13 +122,6 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTranslucentView))
         translucentView.addGestureRecognizer(tapGesture)
     }
-    
-    // 이미지를 로드하는 메서드
-    private func loadImages() {
-        // Realm 데이터베이스에서 ImageMemory 객체를 모두 불러와 pieceList에 할당
-        pieceList = localRealm.objects(ImageMemory.self)
-    }
-    
     
     // 이미지를 랜덤하게 표시하는 메서드
     private func displayRandomImages() {
@@ -188,12 +173,12 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    
-    
     // 이미지 뷰를 초기화하고 움직임 벡터를 설정하는 메서드
     private func setupFloatingImages() {
         for imageView in self.view.subviews.compactMap({ $0 as? UIImageView }) {
-            // 각 이미지 뷰에 대해 랜덤한 움직임 벡터 생성, 여기서 각각의 속도를 다르게 설정할 수 있음
+            // backButton과 translucentView를 제외하고 floatingImages 배열에 추가
+            guard imageView != backButton.imageView, imageView != translucentView.subviews.first(where: { $0 is UIImageView }) else { continue }
+            
             let speed = CGFloat.random(in: 0.1...0.4) // 속도 랜덤하게 설정
             let vector = CGVector(dx: speed * (Bool.random() ? 1 : -1), dy: speed * (Bool.random() ? 1 : -1))
             floatingImages.append((imageView, vector))
