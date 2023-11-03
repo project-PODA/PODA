@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import Then
 import PhotosUI
+import AVFoundation
 
 class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfigurable {
     
@@ -18,11 +19,24 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     var ratio: Ratio?
     var diaryName: String?
     
+    private var currentImageView: UIImageView?
+    private var currentTextView: UITextView?
     private var currentTextPosition: CGPoint?
     
     private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "취소", rightButtonTitle: "다음").then {
         $0.leftButton.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
         $0.rightButton.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
+    }
+    
+    private lazy var deleteButton = UIButton().then {
+        $0.setTitle("선택 항목 삭제", for: .normal)
+        $0.titleLabel?.textColor = Palette.podaWhite.getColor()
+        $0.titleLabel?.font = UIFont.podaFont(.subhead1)
+        $0.backgroundColor = Palette.podaBlue.getColor()
+        $0.contentEdgeInsets = UIEdgeInsets(top: 3, left: 11, bottom: 3, right: 11)
+        $0.layer.cornerRadius = 11.5
+        $0.isHidden = true
+        $0.addTarget(self, action: #selector(touchUpDeleteButton), for: .touchUpInside)
     }
     
     private let scrollView = UIScrollView().then {
@@ -31,8 +45,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.backgroundColor = Palette.podaBlack.getColor()
     }
     
-    private let diaryView = UIView().then {
-        $0.backgroundColor = Palette.podaGray4.getColor()
+    private lazy var diaryView = DiaryView().then {
+        $0.didTap = {
+            if let imageView = self.currentImageView {
+                imageView.layer.borderWidth = 0
+                self.deleteButton.isHidden = true
+            }
+        }
     }
     
     private lazy var backgroundButton = UIButton().then {
@@ -47,7 +66,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     private lazy var stickerButton = UIButton().then {
-//        $0.configuration = getButtonConfiguration(title: "스티커", iconName: "icon_sticker")
+        //        $0.configuration = getButtonConfiguration(title: "스티커", iconName: "icon_sticker")
         $0.configuration = getButtonConfiguration(title: "추억 조각", iconName: "icon_pieceSticker")
         $0.addTarget(self, action: #selector(touchUpStickerButton), for: .touchUpInside)
     }
@@ -110,13 +129,20 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         scrollView.addSubview(diaryView)
         
-        [navigationBar, scrollView, decorateView, selectBackgroundColorView, selectTextColorView].forEach {
+        [navigationBar, deleteButton, 
+         scrollView, decorateView,
+         selectBackgroundColorView, selectTextColorView].forEach {
             view.addSubview($0)
         }
         
         navigationBar.snp.makeConstraints {
             $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(40)
+        }
+        
+        deleteButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(6)
+            $0.centerX.equalToSuperview()
         }
         
         scrollView.snp.makeConstraints {
@@ -245,6 +271,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         if let imageView = recognizer.view as? UIImageView {
             imageView.transform = imageView.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
+            
+            setImageEditMode(imageView)
         } else if let textField = recognizer.view as? UITextView {
             textField.transform = textField.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
@@ -255,6 +283,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         if let imageView = recognizer.view as? UIImageView {
             imageView.transform = imageView.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
+            
+            setImageEditMode(imageView)
         } else if let textField = recognizer.view as? UITextView {
             textField.transform = textField.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
@@ -266,10 +296,30 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             let translation = recognizer.translation(in: view)
             imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
+            
+            setImageEditMode(imageView)
         } else if let textField = recognizer.view as? UITextView {
             let translation = recognizer.translation(in: view)
             textField.center = CGPoint(x: textField.center.x + translation.x, y: textField.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
+        }
+    }
+    
+    @objc func didTapImageView(_ recognizer: UITapGestureRecognizer) {
+        if let imageView = recognizer.view as? UIImageView {
+            setImageEditMode(imageView)
+        }
+    }
+    
+    @objc func touchUpDeleteButton(_ sender: UIButton) {
+        deleteButton.isHidden = true
+        
+        if let imageView = currentImageView {
+            imageView.removeFromSuperview()
+            currentImageView = nil
+        } else if let textView = currentTextView {
+            textView.removeFromSuperview()
+            currentTextView = nil
         }
     }
     
@@ -292,13 +342,32 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         return config
     }
     
+    private func setImageEditMode(_ imageView: UIImageView) {
+        deleteButton.isHidden = false
+        
+        currentImageView = imageView
+        currentTextView = nil
+        
+        imageView.layer.borderWidth = 2
+        imageView.layer.borderColor = Palette.podaBlue.getColor().cgColor
+    }
+    
     private func addImage(_ image: UIImage) {
+        if let imageView = currentImageView {
+            imageView.layer.borderWidth = 0
+        }
+        
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
         
+        setImageEditMode(imageView)
+        
         imageView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: 200, height: 200)
         diaryView.addSubview(imageView)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView(_:)))
+        imageView.addGestureRecognizer(tapGesture)
         
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
         imageView.addGestureRecognizer(pinchGesture)
@@ -363,6 +432,10 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
 
 extension CreateDiaryViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
+        currentTextView = textView
+        currentImageView = nil
+        
+        deleteButton.isHidden = false
         selectTextColorView.isHidden = false
         
         currentTextPosition = textView.frame.origin
@@ -394,6 +467,7 @@ extension CreateDiaryViewController: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
+        deleteButton.isHidden = true
         textView.sizeToFit()
         textView.frame.origin = currentTextPosition ?? CGPoint()
     }
