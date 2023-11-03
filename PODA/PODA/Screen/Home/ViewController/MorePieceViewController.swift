@@ -22,7 +22,7 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
     }
     
     private let emptyMorePieceLabel = UILabel().then {
-        $0.setUpLabel(title: "아직 추억조각이 없어요\n홈으로 돌아가 버튼을 +눌러 등록해 보세요 :)", podaFont: .caption)
+        $0.setUpLabel(title: "아직 추억조각이 없어요\n홈으로 돌아가 +버튼을 눌러 등록해 보세요 :)", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
         $0.numberOfLines = 2
         $0.textAlignment = .center
