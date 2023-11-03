@@ -16,7 +16,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.layer.cornerRadius = 105
+        $0.layer.cornerRadius = 75
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
         $0.image = UIImage(named: "image_profile")
@@ -96,7 +96,6 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     private func setActions() {
         cameraButton.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)
         nickNameEditButton.addTarget(self, action: #selector(didnickNameButton), for: .touchUpInside)
-        logoutButton.addTarget(self, action: #selector(didLogoutButton), for: .touchUpInside)
     }
     
     init(viewModel: ProfileViewModel) {
@@ -122,7 +121,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         profileImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
-            $0.width.height.equalTo(210)
+            $0.width.height.equalTo(150)
         }
         
         loadingIndicator.snp.makeConstraints{
@@ -131,8 +130,8 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         }
         
         cameraButton.snp.makeConstraints {
-            $0.bottom.right.equalTo(profileImageView).offset(-8)
-            $0.width.height.equalTo(44)
+            $0.bottom.right.equalTo(profileImageView).offset(-3)
+            $0.width.height.equalTo(35)
         }
         
         usernameLabel.snp.makeConstraints {
@@ -145,13 +144,6 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             $0.width.equalTo(100)
             $0.height.equalTo(44)
             $0.centerX.equalToSuperview()
-        }
-        
-        logoutButton.snp.makeConstraints { 
-            $0.height.equalTo(44)
-            $0.left.equalToSuperview().offset(40)
-            $0.right.equalToSuperview().offset(-40)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-120)
         }
     }
     
@@ -191,28 +183,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         }
     }
     
-    @objc private func didLogoutButton() {
-        let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
-        let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
-            guard let self = self else { return }
-            self.fireAuthManager.userLogOut() { error in
-                if error == .none {
-                    UserDefaultManager.isUserLoggedIn = false
-                    UserDefaultManager.userEmail = ""
-                    UserDefaultManager.userPassword = ""
-                    self.moveToHome()
-                    
-                }
-            }
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(logoutAction)
-        
-        present(alertController, animated: true, completion: nil)
-    }
+
 
 
     @objc private func didTapInfoButton() {
