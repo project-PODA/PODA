@@ -11,5 +11,6 @@ import RealmSwift
 class ImageMemory: Object {
     @Persisted var imagePath: String?
     @Persisted var memoryDate: Date?
+    @Persisted var createDate: Date?
 }
 
