@@ -11,26 +11,36 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-
         // 앱 전체 다크모드 막기
         window?.overrideUserInterfaceStyle = .light
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         
-        if !UserDefaultManager.isUserLoggedIn{
+        if UserDefaultManager.isUserLoggedIn {
+            switchToMainPage()
+        } else {
             let loginViewController = LoginViewController()
             let navigationController = BaseNavigationController(rootViewController: loginViewController)
-            window?.rootViewController = navigationController
-        } else {
-            let tabBarController = BaseTabbarController()
-            let navigationController = BaseNavigationController(rootViewController: tabBarController)
             window?.rootViewController = navigationController
         }
         window?.makeKeyAndVisible()
     }
+    
+    //로그인 뷰 컨트롤러를 스택에서 제거하고, 메인페이지로 전환하기
+    func switchToMainPage() {
+        let tabBarController = BaseTabbarController()
+        let navigationController = BaseNavigationController(rootViewController: tabBarController)
+        
+        if let window = self.window {
+            UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                window.rootViewController = navigationController
+            })
+        }
+    }
+    
+    
     
     
     func sceneDidDisconnect(_ scene: UIScene) {
