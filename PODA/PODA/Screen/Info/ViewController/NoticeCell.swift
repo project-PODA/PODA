@@ -34,6 +34,10 @@ class NoticeCell: UITableViewCell {
         $0.textColor = Palette.podaWhite.getColor()
         $0.numberOfLines = 0
     }
+    
+    private let chevronImageView = UIImageView().then {
+        $0.tintColor = Palette.podaWhite.getColor()
+    }
 
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -48,7 +52,7 @@ class NoticeCell: UITableViewCell {
     // MARK: - configUI
     private func configUI() {
         // Adding subviews
-        [titleLabel, dateLabel, contentBox].forEach {
+        [titleLabel, dateLabel, contentBox, chevronImageView].forEach {
             contentView.addSubview($0)
         }
         contentBox.addSubview(contentLabel)
@@ -74,6 +78,11 @@ class NoticeCell: UITableViewCell {
         contentLabel.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(20)
         }
+        
+        chevronImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(12)
+            $0.trailing.equalToSuperview().offset(-12)
+        }
 
         contentBox.isHidden = true
     }
@@ -86,5 +95,8 @@ class NoticeCell: UITableViewCell {
 
         contentBox.isHidden = !isContentVisible
         contentLabel.isHidden = !isContentVisible
+        
+        let chevronImageName = isContentVisible ? "chevron.up" : "chevron.down"
+        chevronImageView.image = UIImage(systemName: chevronImageName)
     }
 }
