@@ -11,6 +11,7 @@
 		1BFF04022ADE62B100A5430D /* UIColor + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */; };
 		2683649A2AE2A92E00872ABB /* MoreDiaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 268364992AE2A92E00872ABB /* MoreDiaryCollectionViewCell.swift */; };
 		2683649D2AE2CDDE00872ABB /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2683649C2AE2CDDE00872ABB /* DetailViewController.swift */; };
+		2698C78C2AF50E8800219F02 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2698C78B2AF50E8800219F02 /* TestViewController.swift */; };
 		26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */; };
 		26A7D4992AE56D9400810D63 /* SaveDeleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */; };
 		26A7D49B2AE63F6D00810D63 /* PieceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D49A2AE63F6D00810D63 /* PieceCollectionViewCell.swift */; };
@@ -130,6 +131,7 @@
 		1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor + Extension.swift"; sourceTree = "<group>"; };
 		268364992AE2A92E00872ABB /* MoreDiaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreDiaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		2683649C2AE2CDDE00872ABB /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		2698C78B2AF50E8800219F02 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreDiaryViewController.swift; sourceTree = "<group>"; };
 		26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveDeleteViewController.swift; sourceTree = "<group>"; };
 		26A7D49A2AE63F6D00810D63 /* PieceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -318,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				26B79F6B2AE1135000455539 /* HomeViewController.swift */,
+				2698C78B2AF50E8800219F02 /* TestViewController.swift */,
 				26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */,
 				26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */,
 				26B79F712AE113B600455539 /* MorePieceViewController.swift */,
@@ -1026,6 +1029,7 @@
 				2683649A2AE2A92E00872ABB /* MoreDiaryCollectionViewCell.swift in Sources */,
 				D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */,
 				5F54EBFC2ADFFF5D00331E59 /* FirestorageImageManager.swift in Sources */,
+				2698C78C2AF50E8800219F02 /* TestViewController.swift in Sources */,
 				E24A315E2AE665AB006CF02C /* FontCollectionViewCell.swift in Sources */,
 				5F2B1CDB2ADCDB7400DAA9C8 /* DiaryInfo.swift in Sources */,
 				5F54EC022AE0012300331E59 /* FirebaseAuthManager.swift in Sources */,
