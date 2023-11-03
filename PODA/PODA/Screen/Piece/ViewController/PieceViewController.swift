@@ -198,7 +198,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     func showSaveConfirmationAlert() {
         guard let selectedImage = self.imageView.image,
               let selectedDateString = self.datePickerButton.title(for: .normal),
-              let selectedDate = Date(dateString: selectedDateString, format: "yyyy. MM. dd") else {
+              let selectedDate = Date(dateString: selectedDateString, format: "yyyy.MM.dd") else {
             
             let failAlertController = UIAlertController(title: "알림", message: "이미지와 추억 날짜를 모두 설정해주세요.", preferredStyle: .alert)
             let confirmAction = UIAlertAction(title: "확인", style: .default, handler: nil)
@@ -236,10 +236,10 @@ class PieceViewController: BaseViewController, UIConfigurable {
             print("pieceVC pop 될거야")
         }
 
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
 
-        alertController.addAction(confirmAction)
         alertController.addAction(cancelAction)
+        alertController.addAction(confirmAction)
 
         present(alertController, animated: true, completion: nil)
     }
@@ -277,7 +277,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         datePicker.locale = Locale(identifier: "ko_KR")
         
         if let title = datePickerButton.title(for: .normal),
-           let currentDate = Date(dateString: title, format: "yyyy. MM. dd") {
+           let currentDate = Date(dateString: title, format: "yyyy.MM.dd") {
             datePicker.date = currentDate
         }
         
@@ -288,13 +288,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.centerX.equalToSuperview()
         }
         
-        let selectAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+        let selectAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
             let selectedDate = datePicker.date
-            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy. MM. dd")
+            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy.MM.dd")
             self?.datePickerButton.setTitle(formattedDate, for: .normal)
         }
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
         
         alertController.addAction(selectAction)
         alertController.addAction(cancelAction)
@@ -319,7 +319,7 @@ extension PieceViewController: PHPickerViewControllerDelegate {
             if let error = error {
                 print("이미지 로딩 중 오류: \(error.localizedDescription)")
             } else if let selectedImage = object as? UIImage {
-                print("선택된 이미지의 너비 \(selectedImage.size.width)")
+                //print("선택된 이미지의 너비 \(selectedImage.size.width)")
                 DispatchQueue.main.async {
                     self?.imageView.image = selectedImage
                     self?.updateUIForImageAvailability(hasImage: true)

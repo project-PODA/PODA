@@ -208,7 +208,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     @objc func didTapDeleteButton() {
         print("이미지 삭제")
         let alert = UIAlertController(title: "정말 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
-        let confirmAction = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
+        let confirmAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
             guard let self else { return }
             print(isDiaryImage)
             if isDiaryImage {
@@ -247,10 +247,11 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             }
         }
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
         
-        alert.addAction(confirmAction)
         alert.addAction(cancelAction)
+        alert.addAction(confirmAction)
+        
         
         self.present(alert, animated: true, completion: nil)
     }
