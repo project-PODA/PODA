@@ -700,6 +700,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 detailVC.diaryData = diaryDataList[indexPath.row]
                 navigationController?.pushViewController(detailVC, animated: true)
             }
+//            navigationController?.pushViewController(TestViewController(), animated: true)
         } else {
             goToPieceSaveDeleteVC(indexPath.row)
         }
