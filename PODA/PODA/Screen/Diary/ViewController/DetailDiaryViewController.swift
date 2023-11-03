@@ -161,11 +161,11 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func touchUpSaveButton() {
-        loadingIndicator.startAnimating()
-        
         if let title = titleTextField.text, title.isEmpty || contentTextView.text == "내용을 입력하세요." {
             showAlert()
         } else {
+            loadingIndicator.startAnimating()
+            
             var pageData = pageInfo!
             pageData[0].imageData = Data()
             
