@@ -291,7 +291,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         
         pieceDateLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(26)
-            $0.right.equalToSuperview().offset(-35)
+            $0.right.equalToSuperview().offset(-37)
         }
         
         pieceDateImageView.snp.makeConstraints {
@@ -408,6 +408,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
         pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
         pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+        pieceCollectionView.reloadData()
     }
     
     func createDateOrderButtonOn() {
@@ -417,6 +418,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
         pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+        pieceCollectionView.reloadData()
     }
     
     func updateUI() {
@@ -483,9 +485,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
             } else {
                 createDateOrderButtonOn()
             }
-            
-            pieceCollectionView.reloadData()
-            
         } else {
             // 등록된 추억 조각이 없는 경우
             emptyTimeCapsuleLabel.isHidden = false
@@ -685,13 +684,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     @objc func didTapPieceDateOrderButton() {
         isSortedByPieceDate = true
         pieceDateOrderButtonOn()
-        pieceCollectionView.reloadData()
     }
     
     @objc func didTapCreateDateOrderButton() {
         isSortedByPieceDate = false
         createDateOrderButtonOn()
-        pieceCollectionView.reloadData()
     }
 }
 
