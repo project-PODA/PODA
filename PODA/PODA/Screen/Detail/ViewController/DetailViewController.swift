@@ -21,6 +21,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
         gradientLayer.locations = [0.0 ,1.0]
         $0.layer.addSublayer(gradientLayer)
+        $0.clipsToBounds = true
         $0.contentMode = .scaleAspectFill   // scaleAspectFill로 설정해서 이미지가 스크린 밖으로 크게 존재함. pop 할 때 그 이미지가 남아서 중간에 멈춰있는 것 처럼 보이는거,,
         
 //        let blurEffectView = UIVisualEffectView().then {
