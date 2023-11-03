@@ -29,12 +29,36 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
     
+    private let translucentView = UIView().then {
+        $0.backgroundColor = Palette.podaBlack.getColor().withAlphaComponent(0.8)
+        let fingerImageView = UIImageView().then {
+            $0.image = UIImage(named: "icon_finger")
+            $0.contentMode = .scaleAspectFill
+        }
+        let infoLabel = UILabel().then {
+            $0.setUpLabel(title: "추억 조각들을 마음대로 드래그해보세요 !", podaFont: .caption)
+            $0.textColor = Palette.podaWhite.getColor()
+        }
+        
+        [fingerImageView, infoLabel].forEach($0.addSubview)
+        
+        fingerImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().offset(248)
+            $0.width.height.equalTo(140)
+        }
+        infoLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(fingerImageView.snp.bottom).offset(20)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadImages()
         displayRandomImages()
         configUI()
+        hideTranslucentView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -44,19 +68,31 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
     }
     
     func configUI() {
-        view.addSubview(backButton)
+
+        
+        [backButton, translucentView].forEach {
+            view.addSubview($0)
+        }
         
         backButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.left.equalToSuperview().offset(20)
             $0.width.height.equalTo(30)
         }
+        
+        translucentView.snp.makeConstraints {
+            $0.top.left.right.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview()
+        }
     }
     
     
-    // 백 버튼 탭 시 호출되는 메서드
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true) // 네비게이션 스택에서 현재 뷰 컨트롤러를 팝
+    }
+    
+    @objc func didTapTranslucentView() {
+        translucentView.isHidden = true
     }
     
     // 팬 제스처 인식기 업데이트를 처리하는 메서드
@@ -76,7 +112,7 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
             let maxSpeed: CGFloat = 550.0
             velocity.x = max(min(velocity.x, maxSpeed), -maxSpeed)
             velocity.y = max(min(velocity.y, maxSpeed), -maxSpeed)
-            let vector = CGVector(dx: velocity.x / 200, dy: velocity.y / 250) // 속도 값을 관리하기 쉬운 숫자로 줄임
+            let vector = CGVector(dx: velocity.x / 200, dy: velocity.y / 300) // 속도 값을 관리하기 쉬운 숫자로 줄임
             
             // floatingImages 배열을 업데이트하여 이 imageView의 새 벡터로 설정
             for i in 0..<floatingImages.count {
@@ -88,6 +124,11 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         default:
             break
         }
+    }
+    
+    private func hideTranslucentView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTranslucentView))
+        translucentView.addGestureRecognizer(tapGesture)
     }
     
     // 이미지를 로드하는 메서드
