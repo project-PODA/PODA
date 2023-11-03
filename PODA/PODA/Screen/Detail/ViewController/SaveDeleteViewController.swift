@@ -51,26 +51,15 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         $0.contentMode = .scaleAspectFit
     }
     
-    private lazy var saveButton = UIButton().then {
-        $0.setUpButton(title: "save", podaFont: .head1)
-        $0.titleLabel?.textColor = Palette.podaWhite.getColor()
-        $0.addTarget(self, action: #selector(didTapSaveButton), for: .touchUpInside)
-    }
-    
     private lazy var deleteButton = UIButton().then {
-        $0.setUpButton(title: "delete", podaFont: .head1)
-        $0.titleLabel?.textColor = Palette.podaWhite.getColor()
+        $0.setImage(UIImage(named: "icon_trash"), for: .normal)
         $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
     }
     
-    private lazy var buttonStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [saveButton, deleteButton])
-        stackView.axis = .horizontal
-        stackView.alignment = .center
-        stackView.spacing = 128
-        stackView.distribution = .equalCentering
-        return stackView
-    }()
+    private lazy var saveButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_download"), for: .normal)
+        $0.addTarget(self, action: #selector(didTapSaveButton), for: .touchUpInside)
+    }
     
     private lazy var navigationBarStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [backButton, dateLabel, addButton, editButton])
@@ -92,7 +81,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
 //            make.left.right.equalToSuperview()
 //            make.height.equalTo(2) // 테두리 두께
 //        }
-//        
+//
 //        let bottomBorder = UIView()
 //        bottomBorder.backgroundColor = .red // 또는 원하는 색상으로 변경
 //        view.addSubview(bottomBorder)
@@ -102,18 +91,18 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
 //            make.height.equalTo(2) // 테두리 두께
 //        }
     }
-//    
+//
 //    🔫 save, delete 버튼 레이아웃 공부
 //    override func viewDidLayoutSubviews() {
 //        super.viewDidLayoutSubviews()
-//        
+//
 //        let safeAreaTop: CGFloat = self.view.safeAreaInsets.top
 //        let safeAreaBottom: CGFloat = self.view.safeAreaInsets.bottom
 //        let totalHeight: CGFloat = self.view.frame.height
 //        let imageViewHeight: CGFloat = self.imageView.frame.height
 //        let navigationBarHeight: CGFloat = navigationBarStackView.frame.height
 //        let padding: CGFloat = 24
-//        
+//
 //        self.buttonStackView.snp.remakeConstraints {
 //            $0.centerX.equalToSuperview()
 //            $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
@@ -121,7 +110,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
 //    }
      
     func configUI() {
-        [navigationBarStackView, imageView, buttonStackView].forEach(view.addSubview)
+        [navigationBarStackView, imageView, deleteButton, saveButton].forEach(view.addSubview)
         
         backButton.snp.makeConstraints {
             $0.width.height.equalTo(30)
@@ -153,24 +142,31 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
             }
         }
         
-        buttonStackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalTo(imageView.snp.bottom).offset(24)
+        deleteButton.snp.makeConstraints {
+            $0.left.equalToSuperview().offset(20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-30)
+            $0.width.height.equalTo(30)
         }
         
-        DispatchQueue.main.async {
-            let safeAreaTop: CGFloat = self.view.safeAreaInsets.top
-            let safeAreaBottom: CGFloat = self.view.safeAreaInsets.bottom
-            let totalHeight: CGFloat = self.view.frame.height
-            let imageViewHeight: CGFloat = self.imageView.frame.height
-            let navigationBarHeight: CGFloat = self.navigationBarStackView.frame.height
-            let padding: CGFloat = 24
-            
-            self.buttonStackView.snp.remakeConstraints {
-                $0.centerX.equalToSuperview()
-                $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
-            }
+        saveButton.snp.makeConstraints {
+            $0.right.equalToSuperview().offset(-20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-30)
+            $0.width.height.equalTo(30)
         }
+        
+//        DispatchQueue.main.async {
+//            let safeAreaTop: CGFloat = self.view.safeAreaInsets.top
+//            let safeAreaBottom: CGFloat = self.view.safeAreaInsets.bottom
+//            let totalHeight: CGFloat = self.view.frame.height
+//            let imageViewHeight: CGFloat = self.imageView.frame.height
+//            let navigationBarHeight: CGFloat = self.navigationBarStackView.frame.height
+//            let padding: CGFloat = 24
+//
+//            self.buttonStackView.snp.remakeConstraints {
+//                $0.centerX.equalToSuperview()
+//                $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
+//            }
+//        }
     }
                                                             
     @objc func didTapBackButton() {
