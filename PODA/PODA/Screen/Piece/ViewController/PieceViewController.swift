@@ -198,7 +198,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     func showSaveConfirmationAlert() {
         guard let selectedImage = self.imageView.image,
               let selectedDateString = self.datePickerButton.title(for: .normal),
-              let selectedDate = Date(dateString: selectedDateString, format: "yyyy. MM. dd") else {
+              let selectedDate = Date(dateString: selectedDateString, format: "yyyy.MM.dd") else {
             
             let failAlertController = UIAlertController(title: "알림", message: "이미지와 추억 날짜를 모두 설정해주세요.", preferredStyle: .alert)
             let confirmAction = UIAlertAction(title: "확인", style: .default, handler: nil)

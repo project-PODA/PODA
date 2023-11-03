@@ -29,6 +29,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private var diaryDataList: [DiaryData] = []
     
     private var pieceList: Results<ImageMemory>?
+    private var isSortedByPieceDate = false
+    private let localRealm = try! Realm()
     private var randomPieceIndex = 0
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
@@ -77,6 +79,14 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaGray1.getColor()
     }
     
+    private let pieceDateImageView = UIImageView().then {
+        $0.image = UIImage(named: "image_speechBubblePodaBlue")
+    }
+    
+    private let pieceDateLabel = UILabel().then {
+        $0.textColor = Palette.podaBlue.getColor()
+    }
+    
     private let emptyTimeCapsuleLabel = UILabel().then {
         $0.setUpLabel(title: "추억 다이어리와 추억 조각을 만들고\n타임캡슐을 받아보세요 !", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
@@ -90,10 +100,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private let timeCapsuleImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.clipsToBounds = true
-    }
-    
-    private let pieceDateLabel = UILabel().then {
-        $0.textColor = Palette.podaWhite.getColor()
     }
 
     private let diaryMenuLabel = UILabel().then {
@@ -170,6 +176,27 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
+    private lazy var createDateOrderButton = UIButton().then {
+        $0.setUpButton(title: "등록순", podaFont: .caption)
+        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        $0.backgroundColor = Palette.podaBlack.getColor()
+        $0.layer.cornerRadius = 14
+        $0.layer.borderWidth = 0.5
+        $0.layer.borderColor = Palette.podaGray4.getColor().cgColor
+        $0.addTarget(self, action: #selector(didTapCreateDateOrderButton), for: .touchUpInside)
+        // isSortedByPieceDate = false
+    }
+    
+    private lazy var pieceDateOrderButton = UIButton().then {
+        $0.setUpButton(title: "추억날짜순", podaFont: .caption)
+        $0.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+        $0.backgroundColor = Palette.podaWhite.getColor()
+        $0.layer.cornerRadius = 14
+        $0.layer.borderWidth = 0.5
+        $0.layer.borderColor = Palette.podaWhite.getColor().cgColor
+        $0.addTarget(self, action: #selector(didTapPieceDateOrderButton), for: .touchUpInside)
+    }
+    
     private lazy var pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -197,6 +224,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         loadPieceDataFromRealm()
         updateUI()
+        print(pieceList)
+        pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "memoryDate", ascending: false)
+        print("추억날짜순: \(pieceList)")
+        pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "createDate", ascending: false)
+        print("등록날짜순: \(pieceList)")
     }
     
     func configUI() {
@@ -236,7 +268,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         scrollView.addSubview(contentView)
         
         // FIXME: - 추억 조각 더보기 드래그 기능 구현 후 morePieceButton 추가하기
-        [timeCapsuleLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, pieceDateLabel, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, emptyPieceLabel, pieceCollectionView].forEach {
+        [timeCapsuleLabel, pieceDateImageView, pieceDateLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, emptyPieceLabel, createDateOrderButton, pieceDateOrderButton, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
         
@@ -269,10 +301,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.left.equalToSuperview().offset(20)
         }
         
+        pieceDateLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(timeCapsuleImageView.snp.bottom).offset(8)
+        }
+        
         emptyTimeCapsuleLabel.snp.makeConstraints {
             $0.top.equalTo(timeCapsuleLabel.snp.bottom).offset(20)
-            $0.left.equalToSuperview().offset(40)
-            $0.right.equalToSuperview().offset(-40)
+            $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(416)
         }
        
@@ -282,11 +319,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.right.equalToSuperview().offset(-40)
             $0.centerX.equalToSuperview()
             $0.height.equalTo(416)
-        }
-        
-        pieceDateLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(timeCapsuleImageView.snp.bottom).offset(8)
         }
         
         addDiaryButton.snp.makeConstraints {
@@ -333,9 +365,23 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(180)
         }
         
+        createDateOrderButton.snp.makeConstraints {
+            $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(12)
+            $0.left.equalToSuperview().offset(20)
+            $0.width.equalTo(60)
+            $0.height.equalTo(28)
+        }
+        
+        pieceDateOrderButton.snp.makeConstraints {
+            $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(12)
+            $0.left.equalTo(createDateOrderButton.snp.right).offset(4)
+            $0.width.equalTo(72)
+            $0.height.equalTo(28)
+        }
+        
         // FIXME: - cell size 정한 후 height 수정하기
         pieceCollectionView.snp.makeConstraints {
-            $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(20)
+            $0.top.equalTo(createDateOrderButton.snp.bottom).offset(18)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(180)
@@ -402,7 +448,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             
             guard let imageMemory = self.pieceList?[self.randomPieceIndex] else { return }
             self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
-            self.pieceDateLabel.setUpLabel(title: self.getPieceDate(with: imageMemory), podaFont: .subhead2)
+            self.pieceDateLabel.setUpLabel(title: "\(self.getPieceDate(with: imageMemory))의 조각", podaFont: .subhead2)
                         
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
             timeCapsuleImageView.addGestureRecognizer(tapGesture)
@@ -411,7 +457,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
             // 추억 조각들 뷰 업데이트
             emptyPieceLabel.isHidden = true
             pieceCollectionView.isHidden = false
-            
+            createDateOrderButton.isHidden = false
+            pieceDateOrderButton.isHidden = false
+            contentView.snp.updateConstraints {
+                $0.height.equalTo(1100)
+            }
             pieceCollectionView.reloadData()
         } else {
             // 등록된 추억 조각이 없는 경우
@@ -420,6 +470,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
             pieceDateLabel.isHidden = true
             emptyPieceLabel.isHidden = false
             pieceCollectionView.isHidden = true
+            createDateOrderButton.isHidden = true
+            pieceDateOrderButton.isHidden = true
+            isSortedByPieceDate = false
+            contentView.snp.updateConstraints {
+                $0.height.equalTo(1080)
+            }
         }
     }
     
@@ -601,6 +657,28 @@ class HomeViewController: BaseViewController, UIConfigurable {
     @objc func didTapMorePieceButton() {
         navigationController?.pushViewController(MorePieceViewController(), animated: true)
     }
+    
+    @objc func didTapCreateDateOrderButton() {
+        isSortedByPieceDate = false
+        createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+        createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+        createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+        pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+        pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+        pieceCollectionView.reloadData()
+    }
+    
+    @objc func didTapPieceDateOrderButton() {
+        isSortedByPieceDate = true
+        createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+        createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+        pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+        pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+        pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+        pieceCollectionView.reloadData()
+    }
 }
 
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -633,10 +711,19 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
-            guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
-            let image = getPieceImage(with: imageMemory)
-            cell.pieceImageView.image = image
-            return cell
+            if !isSortedByPieceDate {
+                pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "createDate", ascending: false)  // true 인 경우 과거 > 최신 / 등록순
+                guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
+                let image = getPieceImage(with: imageMemory)
+                cell.pieceImageView.image = image
+                return cell
+            } else {
+                pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "memoryDate", ascending: false)  // true 인 경우 과거 > 최신 / 추억날짜순
+                guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
+                let image = getPieceImage(with: imageMemory)
+                cell.pieceImageView.image = image
+                return cell
+            }
         }
     }
 }
