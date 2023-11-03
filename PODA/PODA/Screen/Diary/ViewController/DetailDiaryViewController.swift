@@ -237,7 +237,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
     private func showAlert() {
         let alertController = UIAlertController(title: "알림", message: "제목과 내용을 모두 적어주세요.", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "확인", style: .cancel)
+        let okAction = UIAlertAction(title: "확인", style: .default)
         
         alertController.addAction(okAction)
         

@@ -29,7 +29,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     private var diaryDataList: [DiaryData] = []
     
     private var pieceList: Results<ImageMemory>?
-    private var isSortedByPieceDate = false
+    private var isSortedByPieceDate = true
     private let localRealm = try! Realm()
     private var randomPieceIndex = 0
     
@@ -176,25 +176,18 @@ class HomeViewController: BaseViewController, UIConfigurable {
         $0.clipsToBounds = true
     }
     
-    private lazy var createDateOrderButton = UIButton().then {
-        $0.setUpButton(title: "등록순", podaFont: .caption)
-        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        $0.backgroundColor = Palette.podaBlack.getColor()
-        $0.layer.cornerRadius = 14
-        $0.layer.borderWidth = 0.5
-        $0.layer.borderColor = Palette.podaGray4.getColor().cgColor
-        $0.addTarget(self, action: #selector(didTapCreateDateOrderButton), for: .touchUpInside)
-        // isSortedByPieceDate = false
-    }
-    
     private lazy var pieceDateOrderButton = UIButton().then {
         $0.setUpButton(title: "추억날짜순", podaFont: .caption)
-        $0.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-        $0.backgroundColor = Palette.podaWhite.getColor()
         $0.layer.cornerRadius = 14
         $0.layer.borderWidth = 0.5
-        $0.layer.borderColor = Palette.podaWhite.getColor().cgColor
         $0.addTarget(self, action: #selector(didTapPieceDateOrderButton), for: .touchUpInside)
+    }
+    
+    private lazy var createDateOrderButton = UIButton().then {
+        $0.setUpButton(title: "등록순", podaFont: .caption)
+        $0.layer.cornerRadius = 14
+        $0.layer.borderWidth = 0.5
+        $0.addTarget(self, action: #selector(didTapCreateDateOrderButton), for: .touchUpInside)
     }
     
     private lazy var pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
@@ -224,11 +217,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         loadPieceDataFromRealm()
         updateUI()
-        print(pieceList)
-        pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "memoryDate", ascending: false)
-        print("추억날짜순: \(pieceList)")
-        pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "createDate", ascending: false)
-        print("등록날짜순: \(pieceList)")
     }
     
     func configUI() {
@@ -268,7 +256,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
         scrollView.addSubview(contentView)
         
         // FIXME: - 추억 조각 더보기 드래그 기능 구현 후 morePieceButton 추가하기
-        [timeCapsuleLabel, pieceDateImageView, pieceDateLabel, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, emptyPieceLabel, createDateOrderButton, pieceDateOrderButton, pieceCollectionView].forEach {
+        [timeCapsuleLabel, pieceDateLabel, pieceDateImageView, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, emptyPieceLabel, createDateOrderButton, pieceDateOrderButton, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
         
@@ -302,8 +290,16 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         
         pieceDateLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(timeCapsuleImageView.snp.bottom).offset(8)
+            $0.top.equalToSuperview().offset(26)
+            $0.right.equalToSuperview().offset(-35)
+        }
+        
+        pieceDateImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(19)
+            //$0.left.equalTo(timeCapsuleLabel.snp.right).offset(68)
+            $0.right.equalToSuperview().offset(-24)
+            $0.width.equalTo(140)
+            $0.height.equalTo(44)
         }
         
         emptyTimeCapsuleLabel.snp.makeConstraints {
@@ -365,17 +361,17 @@ class HomeViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(180)
         }
         
-        createDateOrderButton.snp.makeConstraints {
+        pieceDateOrderButton.snp.makeConstraints {
             $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(12)
             $0.left.equalToSuperview().offset(20)
-            $0.width.equalTo(60)
+            $0.width.equalTo(72)
             $0.height.equalTo(28)
         }
         
-        pieceDateOrderButton.snp.makeConstraints {
+        createDateOrderButton.snp.makeConstraints {
             $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(12)
-            $0.left.equalTo(createDateOrderButton.snp.right).offset(4)
-            $0.width.equalTo(72)
+            $0.left.equalTo(pieceDateOrderButton.snp.right).offset(5)
+            $0.width.equalTo(60)
             $0.height.equalTo(28)
         }
         
@@ -401,8 +397,26 @@ class HomeViewController: BaseViewController, UIConfigurable {
         contentView.snp.makeConstraints {
             $0.top.left.right.bottom.equalToSuperview()
             $0.width.equalTo(scrollView.snp.width)
-            $0.height.equalTo(1080)    // 스크롤 가능 높이 조절하기 > 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기
+            $0.height.equalTo(1120)    // 스크롤 가능 높이 조절하기 > 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기
         }
+    }
+    
+    func pieceDateOrderButtonOn() {
+        createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+        createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+        pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+        pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+        pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+    }
+    
+    func createDateOrderButtonOn() {
+        createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+        createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+        createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+        pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+        pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
     }
     
     func updateUI() {
@@ -442,6 +456,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             // 타임캡슐 뷰 업데이트
             emptyTimeCapsuleLabel.isHidden = true
             timeCapsuleImageView.isHidden = false
+            pieceDateImageView.isHidden = false
             pieceDateLabel.isHidden = false
             
             self.randomPieceIndex = Int.random(in: 0..<pieceCount)
@@ -460,21 +475,30 @@ class HomeViewController: BaseViewController, UIConfigurable {
             createDateOrderButton.isHidden = false
             pieceDateOrderButton.isHidden = false
             contentView.snp.updateConstraints {
-                $0.height.equalTo(1100)
+                $0.height.equalTo(1140)
             }
+            
+            if isSortedByPieceDate {
+                pieceDateOrderButtonOn()
+            } else {
+                createDateOrderButtonOn()
+            }
+            
             pieceCollectionView.reloadData()
+            
         } else {
             // 등록된 추억 조각이 없는 경우
             emptyTimeCapsuleLabel.isHidden = false
             timeCapsuleImageView.isHidden = true
+            pieceDateImageView.isHidden = true
             pieceDateLabel.isHidden = true
             emptyPieceLabel.isHidden = false
             pieceCollectionView.isHidden = true
             createDateOrderButton.isHidden = true
             pieceDateOrderButton.isHidden = true
-            isSortedByPieceDate = false
+            isSortedByPieceDate = true
             contentView.snp.updateConstraints {
-                $0.height.equalTo(1080)
+                $0.height.equalTo(1120)
             }
         }
     }
@@ -658,25 +682,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
         navigationController?.pushViewController(MorePieceViewController(), animated: true)
     }
     
-    @objc func didTapCreateDateOrderButton() {
-        isSortedByPieceDate = false
-        createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-        createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-        createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-        pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-        pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+    @objc func didTapPieceDateOrderButton() {
+        isSortedByPieceDate = true
+        pieceDateOrderButtonOn()
         pieceCollectionView.reloadData()
     }
     
-    @objc func didTapPieceDateOrderButton() {
-        isSortedByPieceDate = true
-        createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-        createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-        pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-        pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-        pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+    @objc func didTapCreateDateOrderButton() {
+        isSortedByPieceDate = false
+        createDateOrderButtonOn()
         pieceCollectionView.reloadData()
     }
 }

@@ -194,7 +194,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     @objc private func didLogoutButton() {
         let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
         let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             self.fireAuthManager.userLogOut() { error in
