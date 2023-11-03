@@ -66,6 +66,7 @@ class RealmManager {
             let imageMemory = ImageMemory()
             imageMemory.imagePath = fileName
             imageMemory.memoryDate = selectedDate
+            imageMemory.createDate = Date()
             
             try realm.write {
                 realm.add(imageMemory)
