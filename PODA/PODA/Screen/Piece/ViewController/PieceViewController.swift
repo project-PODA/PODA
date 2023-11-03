@@ -21,7 +21,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        $0.setUpButton(title: "뒤로", podaFont: .subhead3)
+        $0.setUpButton(title: "취소", podaFont: .subhead3)
     }
     
     let nextButton = UIButton().then {
