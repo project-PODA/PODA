@@ -36,35 +36,4 @@ class PieceCollectionViewCell: UICollectionViewCell, UIConfigurable {
         }
     }
 }
-    
-//    func configure(with imageMemory: ImageMemory) {
-//        
-//        guard let imagePath = imageMemory.imagePath else { return }
-//        print("Image Path: \(imagePath)")
-//        
-//        if let image = UIImage(contentsOfFile: imagePath) {
-//            pieceImageView.image = image
-//        } else {
-//            print("이미지 경로 없음: \(imagePath)")
-//        }
-//        
-//    }
-    
-//        func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
-//            
-//        // 이미지 로드 및 설정
-//        guard let imagePath = imageMemory.imagePath else { return UIImage() }
-//        //print("Image Path: \(imagePath)")
-//        
-//        guard let pieceImage = UIImage(contentsOfFile: imagePath) else { return UIImage() }
-//        return pieceImage
-//        
-//        // 추억 날짜 설정
-//        if let memoryDate = imageMemory.memoryDate {
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.dateFormat = "yyyy. MM. dd"
-//            dateLabel.text = dateFormatter.string(from: memoryDate)
-//        }
-
-
 
