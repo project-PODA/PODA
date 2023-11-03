@@ -66,12 +66,10 @@ class InfoViewController: BaseViewController, UIConfigurable {
         self.navigationItem.leftBarButtonItem = backButton
         self.navigationItem.hidesBackButton = true
         
-        func addSubviews() {
-            [tableView, logoutButton, leaveButton].forEach {
-                view.addSubview($0)
-            }
+        [tableView, logoutButton, leaveButton].forEach {
+            view.addSubview($0)
         }
-    
+        
         tableView.snp.makeConstraints {
             $0.top.trailing.leading.equalToSuperview()
             $0.height.equalTo(400)
