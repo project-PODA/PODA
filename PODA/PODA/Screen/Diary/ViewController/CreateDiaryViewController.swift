@@ -46,12 +46,17 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     private lazy var diaryView = DiaryView().then {
-        $0.didTap = {
+        $0.didTap = { touchedLocation in
             if let imageView = self.currentImageView {
-                imageView.layer.borderWidth = 0
-                self.deleteButton.isHidden = true
+                if !imageView.frame.contains(touchedLocation) {
+                    // UIImageView 영역 외부를 터치한 경우에만 아래 코드가 실행
+                    print("UIView를 터치했습니다.")
+                    imageView.layer.borderWidth = 0
+                    self.deleteButton.isHidden = true
+                }
             }
         }
+        
     }
     
     private lazy var backgroundButton = UIButton().then {
@@ -348,11 +353,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         currentImageView = imageView
         currentTextView = nil
         
+        imageView.clipsToBounds = true
         imageView.layer.borderWidth = 2
         imageView.layer.borderColor = Palette.podaBlue.getColor().cgColor
     }
     
     private func addImage(_ image: UIImage) {
+        // 선택된 이미지가 있으면 새로운 이미지 추가 전에 border 없앰
         if let imageView = currentImageView {
             imageView.layer.borderWidth = 0
         }

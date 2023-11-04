@@ -8,7 +8,7 @@
 import UIKit
 
 class DiaryView: UIView {
-    var didTap: (() -> ())?
+    var didTap: ((_ touchedLocation: CGPoint) -> ())?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -20,6 +20,9 @@ class DiaryView: UIView {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        didTap?()
+        if let touch = touches.first {
+            let touchedLocation = touch.location(in: self)
+            didTap?(touchedLocation)
+        }
     }
 }
