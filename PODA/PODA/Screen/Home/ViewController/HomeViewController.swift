@@ -591,8 +591,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     // FIXME: - Bind 함수로 정리하기
-    func goToPieceSaveDeleteVC(_ index: Int) {
-        guard let imageMemory = self.pieceList?[index] else { return }
+    func goToPieceSaveDeleteVC(_ index: Int, _ pieceList: Results<ImageMemory>?) {
+        guard let imageMemory = pieceList?[index] else { return }
         let saveDeleteVC = SaveDeleteViewController()
         saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
@@ -647,7 +647,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapCapsuleImage() {
-        goToPieceSaveDeleteVC(randomPieceIndex)
+        goToPieceSaveDeleteVC(randomPieceIndex, pieceList)
     }
     
     @objc func didTapAddDiaryButton() {
@@ -703,7 +703,13 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 navigationController?.pushViewController(detailVC, animated: true)
             }
         } else {
-            goToPieceSaveDeleteVC(indexPath.row)
+            if !isSortedByPieceDate {
+                let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)
+                goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
+            } else {
+                let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)
+                goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
+            }
         }
     }
     
@@ -732,7 +738,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
                 return cell
             } else {
                 let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)  // true 인 경우 과거 > 최신 / 추억날짜순
-                guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
+                guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
                 let image = getPieceImage(with: imageMemory)
                 cell.pieceImageView.image = image
                 return cell
