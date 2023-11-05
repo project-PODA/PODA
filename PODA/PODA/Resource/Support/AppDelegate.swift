@@ -7,6 +7,8 @@
 
 import UIKit
 import FirebaseCore
+import RealmSwift
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -21,6 +23,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
           #endif
           let options: FirebaseOptions? = FirebaseOptions.init(contentsOfFile: filePath)
           FirebaseApp.configure(options: options!)
+        
+        let defaultPath = Realm.Configuration.defaultConfiguration.fileURL!
+
+        do {
+            let schemaVersion = try schemaVersionAtURL(defaultPath)
+            print("Realm 스키마 버전: \(schemaVersion)")
+        } catch {
+            print("스키마 버전을 확인하는데 오류가 발생했습니다: \(error)")
+        }
+
         return true
     }
 
