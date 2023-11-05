@@ -49,6 +49,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Realm.Configuration.defaultConfiguration = config
         
+        do {
+            _ = try Realm()
+            print("Realm 마이그레이션 성공")
+        } catch {
+            print("Realm 마이그레이션 실패: \(error)")
+        }
+        
         return true
     }
     
