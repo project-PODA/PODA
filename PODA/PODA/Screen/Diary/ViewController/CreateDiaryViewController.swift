@@ -61,6 +61,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     private lazy var diaryView = DiaryView().then {
+        $0.clipsToBounds = true
         $0.didTap = { touchedLocation in
             if let imageView = self.currentImageView {
                 if !imageView.frame.contains(touchedLocation) {
@@ -170,15 +171,14 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
         
         diaryView.snp.makeConstraints {
+            $0.top.equalTo(scrollView).offset(10)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(scrollView)
             
             switch ratio {
             case .square:
-                $0.top.equalTo(scrollView).offset(10)
                 $0.width.height.equalTo(UIScreen.main.bounds.width)
             case .rectangle:
-                $0.top.equalTo(scrollView).offset(10)
                 $0.width.equalTo(UIScreen.main.bounds.width)
                 $0.height.equalTo(UIScreen.main.bounds.width / 3 * 4)
             case .none:
