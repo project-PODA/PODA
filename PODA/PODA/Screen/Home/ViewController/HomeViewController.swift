@@ -725,13 +725,13 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
             if !isSortedByPieceDate {
-                pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "createDate", ascending: false)  // true 인 경우 과거 > 최신 / 등록순
-                guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
+                let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)  // true 인 경우 과거 > 최신 / 등록순
+                guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
                 let image = getPieceImage(with: imageMemory)
                 cell.pieceImageView.image = image
                 return cell
             } else {
-                pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "memoryDate", ascending: false)  // true 인 경우 과거 > 최신 / 추억날짜순
+                let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)  // true 인 경우 과거 > 최신 / 추억날짜순
                 guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
                 let image = getPieceImage(with: imageMemory)
                 cell.pieceImageView.image = image
