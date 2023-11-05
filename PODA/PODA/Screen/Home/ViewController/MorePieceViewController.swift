@@ -194,6 +194,18 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
         pieceAlbumCollectionView.reloadData()
     }
     
+    func goToPieceSaveDeleteVC(_ index: Int, _ pieceList: Results<ImageMemory>?) {
+        guard let imageMemory = pieceList?[index] else { return }
+        let saveDeleteVC = SaveDeleteViewController()
+        saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
+        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
+        saveDeleteVC.pieceList = pieceList
+        saveDeleteVC.indexPath = index
+        saveDeleteVC.addButton.isHidden = true
+        saveDeleteVC.isDiaryImage = false
+        navigationController?.pushViewController(saveDeleteVC, animated: true)
+    }
+    
     func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
         guard let fileName = imageMemory.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
@@ -211,6 +223,13 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
             print("이미지 로딩 실패: \(error.localizedDescription)")
         }
         return UIImage()
+    }
+    
+    func getPieceDate(with imageMemory: ImageMemory) -> String {
+        guard let memoryDate = imageMemory.memoryDate else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        return dateFormatter.string(from: memoryDate)
     }
     
     @objc func didTapBackButton() {
@@ -239,6 +258,16 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
 }
 
 extension MorePieceViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if !isSortedByPieceDate {
+            let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)
+            goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
+        } else {
+            let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)
+            goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let pieceCount = pieceList?.count else { return 0 }
         return pieceCount
@@ -247,14 +276,14 @@ extension MorePieceViewController: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MorePieceCollectionViewCell.identifier, for: indexPath) as? MorePieceCollectionViewCell else { return UICollectionViewCell() }
         if !isSortedByPieceDate {
-            pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "createDate", ascending: false)  // true 인 경우 과거 > 최신 / 등록순
-            guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
+            let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)
+            guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
             let image = getPieceImage(with: imageMemory)
             cell.pieceImageView.image = image
             return cell
         } else {
-            pieceList = localRealm.objects(ImageMemory.self).sorted(byKeyPath: "memoryDate", ascending: false)  // true 인 경우 과거 > 최신 / 추억날짜순
-            guard let imageMemory = pieceList?[indexPath.item] else { return UICollectionViewCell() }
+            let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)
+            guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
             let image = getPieceImage(with: imageMemory)
             cell.pieceImageView.image = image
             return cell
