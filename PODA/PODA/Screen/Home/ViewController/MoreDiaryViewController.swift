@@ -23,11 +23,11 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
     lazy var deleteButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_trash"), for: .normal)
-        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)    
+        $0.addTarget(self, action: #selector(didTapDeleteButton), for: .touchUpInside)
     }
     
     let emptyMoreDiaryLabel = UILabel().then {
-        $0.setUpLabel(title: "아직 다이어리가 없어요\n홈으로 돌아가 생성하기를 통해 만들어보세요 :)", podaFont: .caption)
+        $0.setUpLabel(title: "아직 다이어리가 없어요\n홈으로 돌아가 +버튼을 눌러 만들어보세요 :)", podaFont: .caption)
         $0.textColor = Palette.podaGray3.getColor()
         $0.numberOfLines = 2
         $0.textAlignment = .center
@@ -57,7 +57,7 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
             view.addSubview($0)
         }
         
-        backButton.snp.makeConstraints { 
+        backButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.left.equalToSuperview().offset(20)
             $0.width.height.equalTo(30)
@@ -73,7 +73,7 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
             $0.center.equalToSuperview()
         }
         
-        moreDiaryCollectionView.snp.makeConstraints { 
+        moreDiaryCollectionView.snp.makeConstraints {
             $0.top.equalTo(backButton.snp.bottom).offset(12)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
@@ -98,7 +98,7 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
 //                    // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
 //                    // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
 //                    self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-//                        
+//
 //                    }
 //                    self.getBackToHome()
 //                }
@@ -114,17 +114,17 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
 //                // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
 //                // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
 //                self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-//                    
+//
 //                }
 //                self.getBackToHome()
 //            }
 //        }
 //    }
 //    let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-//    
+//
 //    alert.addAction(confirmAction)
 //    alert.addAction(cancelAction)
-//    
+//
 //    self.present(alert, animated: true, completion: nil)
     }
 }

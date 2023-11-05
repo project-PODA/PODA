@@ -19,6 +19,7 @@
 		26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */; };
 		26B79F722AE113B600455539 /* MorePieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F712AE113B600455539 /* MorePieceViewController.swift */; };
 		26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */; };
+		26E3FBAF2AF52FA800680C76 /* MorePieceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E3FBAE2AF52FA800680C76 /* MorePieceCollectionViewCell.swift */; };
 		276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276985882AD8E20B00A5100D /* AppDelegate.swift */; };
 		2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2769858A2AD8E20B00A5100D /* SceneDelegate.swift */; };
 		276985922AD8E20D00A5100D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 276985912AD8E20D00A5100D /* Assets.xcassets */; };
@@ -92,6 +93,7 @@
 		5FEC85C72AE156B0000E5D4C /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEC85C62AE156B0000E5D4C /* UserInfo.swift */; };
 		D81320A12AEC2FB70032F487 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81320A02AEC2FB70032F487 /* UIImage.swift */; };
 		D870C78A2AEA19A80066A61E /* CustomLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C7892AEA19A80066A61E /* CustomLoadingIndicator.swift */; };
+		D8777E062AF5649400DFEA6A /* PieceShakeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8777E052AF5649400DFEA6A /* PieceShakeViewController.swift */; };
 		D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7762ADD478400FFB3F7 /* LoginViewController.swift */; };
 		D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */; };
 		D89A29EC2AEFB09100B4ACBD /* AgreeTermsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */; };
@@ -139,6 +141,7 @@
 		26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuViewController.swift; sourceTree = "<group>"; };
 		26B79F712AE113B600455539 /* MorePieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceViewController.swift; sourceTree = "<group>"; };
 		26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryCollectionViewCell.swift; sourceTree = "<group>"; };
+		26E3FBAE2AF52FA800680C76 /* MorePieceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceCollectionViewCell.swift; sourceTree = "<group>"; };
 		276985852AD8E20B00A5100D /* PODA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PODA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		276985882AD8E20B00A5100D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2769858A2AD8E20B00A5100D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -206,6 +209,7 @@
 		5FEC85C62AE156B0000E5D4C /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		D81320A02AEC2FB70032F487 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		D870C7892AEA19A80066A61E /* CustomLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLoadingIndicator.swift; sourceTree = "<group>"; };
+		D8777E052AF5649400DFEA6A /* PieceShakeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceShakeViewController.swift; sourceTree = "<group>"; };
 		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgreeTermsViewController.swift; sourceTree = "<group>"; };
@@ -324,6 +328,7 @@
 				26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */,
 				26B79F712AE113B600455539 /* MorePieceViewController.swift */,
 				26AE844C2AF1E451004CFB6B /* QRViewController.swift */,
+				D8777E052AF5649400DFEA6A /* PieceShakeViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -341,6 +346,7 @@
 				26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */,
 				26A7D49A2AE63F6D00810D63 /* PieceCollectionViewCell.swift */,
 				268364992AE2A92E00872ABB /* MoreDiaryCollectionViewCell.swift */,
+				26E3FBAE2AF52FA800680C76 /* MorePieceCollectionViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -990,6 +996,7 @@
 				5FD54B2D2AD9114B0092D75B /* UIView + Extension.swift in Sources */,
 				2794D7AC2ADFFDD900B999EC /* PieceImageModel.swift in Sources */,
 				5FD54B4A2AD913460092D75B /* Logger.swift in Sources */,
+				26E3FBAF2AF52FA800680C76 /* MorePieceCollectionViewCell.swift in Sources */,
 				D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */,
 				2683649D2AE2CDDE00872ABB /* DetailViewController.swift in Sources */,
 				5F54EBE72ADFFCE200331E59 /* ImageManipulator.swift in Sources */,
@@ -1003,6 +1010,7 @@
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
 				D81320A12AEC2FB70032F487 /* UIImage.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
+				D8777E062AF5649400DFEA6A /* PieceShakeViewController.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
 				5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */,
 				5FE44D412AE93B1900DB3EB1 /* NoticeInfo.swift in Sources */,
