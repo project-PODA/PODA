@@ -69,11 +69,11 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         
     }
     
-    private let descriptionLabel = UILabel().then {
-        $0.numberOfLines = 2
-        $0.textColor = Palette.podaGray3.getColor()
-        $0.setUpLabel(title: "프로필 정보는 내가 친구간 커뮤니케이션\n동의목적으로 활용되며, PODA 이용기간동안 보관됩니다.", podaFont: .caption)
-    }
+//    private let descriptionLabel = UILabel().then {
+//        $0.numberOfLines = 2
+//        $0.textColor = Palette.podaGray3.getColor()
+//        $0.setUpLabel(title: "프로필 정보는 내가 친구간 커뮤니케이션\n동의목적으로 활용되며, PODA 이용기간동안 보관됩니다.", podaFont: .caption)
+//    }
     
     private let signUpButton = UIButton().then {
         $0.setUpButton(title: "가입 완료", podaFont: .button1, cornerRadius: 22)
@@ -106,7 +106,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         nicknameTextField.rightView = clearButton
         nicknameTextField.rightViewMode = .whileEditing
         
-        [backButton, titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, descriptionLabel, signUpButton,loadingIndicator].forEach { view.addSubview($0) }
+        [backButton, titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, signUpButton,loadingIndicator].forEach { view.addSubview($0) }
         
         backButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -148,11 +148,11 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
             make.left.right.equalTo(nicknameTextField)
         }
         
-        descriptionLabel.snp.makeConstraints { make in
-            make.top.equalTo(nicknameWarningLabel.snp.bottom).offset(10)
-            make.left.equalToSuperview().offset(20)
-            make.right.equalToSuperview().offset(-20)
-        }
+//        descriptionLabel.snp.makeConstraints { make in
+//            make.top.equalTo(nicknameWarningLabel.snp.bottom).offset(10)
+//            make.left.equalToSuperview().offset(20)
+//            make.right.equalToSuperview().offset(-20)
+//        }
         
         signUpButton.snp.makeConstraints { make in
             make.height.equalTo(44)
