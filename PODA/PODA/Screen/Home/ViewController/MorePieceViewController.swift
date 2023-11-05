@@ -239,13 +239,11 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
     @objc func didTapPieceDateOrderButton() {
         isSortedByPieceDate = true
         pieceDateOrderButtonOn()
-        print("\(isSortedByPieceDate)")
     }
     
     @objc func didTapCreateDateOrderButton() {
         isSortedByPieceDate = false
         createDateOrderButtonOn()
-        print("\(isSortedByPieceDate)")
     }
     
     @objc func didTapfloatingButton() {
