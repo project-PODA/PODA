@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 import Then
 import PhotosUI
-import AVFoundation
 
 class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfigurable {
     
