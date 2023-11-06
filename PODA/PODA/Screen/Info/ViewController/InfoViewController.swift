@@ -14,13 +14,28 @@ import FirebaseAuth
 
 class InfoViewController: BaseViewController, UIConfigurable {
     
+    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
+    
     private let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.register(InfoCell.self, forCellReuseIdentifier: "infoCell")
         $0.backgroundColor = .clear
     }
     
+    private lazy var logoutButton = UIButton().then {
+        $0.setUpButton(title: "로그아웃", podaFont: .caption)
+        $0.setTitleColor(Palette.podaGray3.getColor(), for: .normal)
+        $0.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
+    }
     
-    private let items: [String] = ["버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고", "탈퇴하기"]
+    private lazy var leaveButton = UIButton().then {
+        $0.setUpButton(title: "회원탈퇴", podaFont: .caption)
+        $0.setTitleColor(Palette.podaGray3.getColor(), for: .normal)
+        $0.addTarget(self, action: #selector(didTapLeaveButton), for: .touchUpInside)
+    }
+    
+    
+    private let items: [String] = ["버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고"]
     
     
     override func viewDidLoad() {
@@ -51,15 +66,30 @@ class InfoViewController: BaseViewController, UIConfigurable {
         self.navigationItem.leftBarButtonItem = backButton
         self.navigationItem.hidesBackButton = true
         
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+        [tableView, logoutButton, leaveButton].forEach {
+            view.addSubview($0)
+        }
+        
+        tableView.snp.makeConstraints {
+            $0.top.trailing.leading.equalToSuperview()
+            $0.height.equalTo(400)
+        }
+        
+        logoutButton.snp.makeConstraints {
+            $0.right.equalTo(leaveButton.snp.left).offset(-16)
+            $0.bottom.equalTo(tableView.snp.bottom).offset(10)
+        }
+        
+        leaveButton.snp.makeConstraints {
+            $0.trailing.equalToSuperview().offset(-20)
+            $0.centerY.equalTo(logoutButton)
         }
     }
     
     
     func setTableView() {
         tableView.setUpTableView(delegate: self, dataSource: self, cellType: InfoCell.self)
+        tableView.isScrollEnabled = false
     }
     
     func sendEmail() {
@@ -91,8 +121,36 @@ class InfoViewController: BaseViewController, UIConfigurable {
     @objc func didTapBackButton() {
         self.navigationController?.popViewController(animated: true)
     }
+    
+    
+    @objc private func didTapLogoutButton() {
+        let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
+        let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            self.fireAuthManager.userLogOut() { error in
+                if error == .none {
+                    UserDefaultManager.isUserLoggedIn = false
+                    UserDefaultManager.userEmail = ""
+                    UserDefaultManager.userPassword = ""
+                    self.moveToHome()
+                }
+            }
+        }
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(logoutAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    @objc private func didTapLeaveButton() {
+        
+        let leaveVC = LeaveViewController()
+        self.navigationController?.pushViewController(leaveVC, animated: true)
+    }
 }
-
 // MARK: - UITableViewDataSource
 extension InfoViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -138,13 +196,10 @@ extension InfoViewController: UITableViewDelegate {
             self.navigationController?.pushViewController(noticeVC, animated: true)
         case 4: // 기능 추가 요청/오류 신고
             sendEmail()
-        case 5: // 탈퇴하기
-            let leaveVC = LeaveViewController()
-            self.navigationController?.pushViewController(leaveVC, animated: true)
+            
         default:
             break
         }
-        
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

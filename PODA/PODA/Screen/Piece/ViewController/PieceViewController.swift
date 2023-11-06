@@ -21,7 +21,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        $0.setUpButton(title: "뒤로", podaFont: .subhead3)
+        $0.setUpButton(title: "취소", podaFont: .subhead3)
     }
     
     let nextButton = UIButton().then {
@@ -95,18 +95,18 @@ class PieceViewController: BaseViewController, UIConfigurable {
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
-            $0.top.equalToSuperview().offset(59)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
         }
         
         nextButton.snp.makeConstraints {
             $0.right.equalToSuperview().offset(-20)
-            $0.top.equalToSuperview().offset(59)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
         }
         
         imageView.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
-            $0.top.equalToSuperview().offset(107)
+            $0.top.equalTo(cancelButton.snp.bottom).offset(28)
             $0.bottom.equalTo(memoryDate.snp.top).offset(-32)
         }
         
