@@ -11,7 +11,6 @@ import SnapKit
 import RealmSwift
 import NVActivityIndicatorView
 
-
 // UI에 보여질 데이터순.
 struct DiaryData: Equatable {
     var diaryName: String
@@ -590,12 +589,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     // FIXME: - Bind 함수로 정리하기
-    func goToPieceSaveDeleteVC(_ index: Int, _ pieceList: Results<ImageMemory>?) {
-        guard let imageMemory = pieceList?[index] else { return }
+    func goToPieceSaveDeleteVC(_ index: Int, _ sortedPieceList: Results<ImageMemory>?) {
+        guard let imageMemory = sortedPieceList?[index] else { return }
         let saveDeleteVC = SaveDeleteViewController()
         saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
-        saveDeleteVC.pieceList = pieceList
+        saveDeleteVC.sortedPieceList = sortedPieceList
         saveDeleteVC.indexPath = index
         saveDeleteVC.addButton.isHidden = true
         saveDeleteVC.isDiaryImage = false
