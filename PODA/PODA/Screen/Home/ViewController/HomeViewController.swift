@@ -30,7 +30,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     var pieceList: Results<ImageMemory>?
     private var isSortedByPieceDate = true
-    private let localRealm = try! Realm()
     private var randomPieceIndex = 0
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
