@@ -215,6 +215,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpNextButton() {
+        currentImageView = nil
         let diaryImage = diaryView.convertToPNGData()
         let detailDiaryViewController = DetailDiaryViewController()
         detailDiaryViewController.ratio = ratio
