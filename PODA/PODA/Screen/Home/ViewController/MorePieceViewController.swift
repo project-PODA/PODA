@@ -14,7 +14,6 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
     
     var pieceList: Results<ImageMemory>?
     private var isSortedByPieceDate = true
-    private let localRealm = try! Realm()
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
