@@ -43,11 +43,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     private lazy var deleteButton = UIButton().then {
-        $0.setTitle("선택 항목 삭제", for: .normal)
-        $0.titleLabel?.textColor = Palette.podaWhite.getColor()
-        $0.titleLabel?.font = UIFont.podaFont(.subhead1)
+        var config = getButtonConfiguration(title: "선택 항목 삭제", iconName: nil)
+        config.contentInsets = NSDirectionalEdgeInsets.init(top: 3, leading: 11, bottom: 3, trailing: 11)
+        $0.configuration = config
         $0.backgroundColor = Palette.podaBlue.getColor()
-        $0.contentEdgeInsets = UIEdgeInsets(top: 3, left: 11, bottom: 3, right: 11)
         $0.layer.cornerRadius = 11.5
         $0.isHidden = true
         $0.addTarget(self, action: #selector(touchUpDeleteButton), for: .touchUpInside)
@@ -350,15 +349,18 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
     }
     
-    private func getButtonConfiguration(title: String, iconName: String) -> UIButton.Configuration {
+    private func getButtonConfiguration(title: String, iconName: String?) -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
         var titleAttr = AttributedString.init(title)
         titleAttr.foregroundColor = Palette.podaWhite.getColor()
         titleAttr.font = UIFont.podaFont(.subhead1)
         config.attributedTitle = titleAttr
-        config.image = UIImage(named: iconName)
-        config.imagePlacement = .top
-        config.imagePadding = 10
+        
+        if let iconName = iconName {
+            config.image = UIImage(named: iconName)
+            config.imagePlacement = .top
+            config.imagePadding = 10
+        }
         
         return config
     }
