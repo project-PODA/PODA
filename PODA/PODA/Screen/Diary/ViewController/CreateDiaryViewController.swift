@@ -291,6 +291,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             
             currentImageView = imageView
         } else if let textField = recognizer.view as? UITextView {
+            textField.resignFirstResponder()
             textField.transform = textField.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
         }
@@ -303,6 +304,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             
             currentImageView = imageView
         } else if let textField = recognizer.view as? UITextView {
+            textField.resignFirstResponder()
             textField.transform = textField.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
         }
@@ -316,6 +318,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             
             currentImageView = imageView
         } else if let textField = recognizer.view as? UITextView {
+            textField.resignFirstResponder()
             let translation = recognizer.translation(in: view)
             textField.center = CGPoint(x: textField.center.x + translation.x, y: textField.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
