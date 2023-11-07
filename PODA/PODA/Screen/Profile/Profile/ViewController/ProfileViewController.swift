@@ -14,6 +14,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     
     var viewModel: ProfileViewModel!
     
+
     
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -56,7 +57,6 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         loadingIndicator.startAnimating()
         viewModel.getFirebaseData()
     }
-    
 
     
     private func setComponentDisable(_ enabled : Bool){
