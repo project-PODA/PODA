@@ -210,20 +210,20 @@ class FirestorageDBManager {
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
             return
         }
-
+        
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let self = self else {return}
-
+            
             let collectionRef = db.collection(currentUserUID)
             let docRef = collectionRef.document("account")
-
+            
             docRef.getDocument { (document, error) in
                 if let document = document, document.exists {
                     let json = document.data()?["accountInfo"] as? String
-
+                    
                     var model = UserInfo.fromJson(jsonString: json!, model: UserInfo.self)
                     model?.userNickname = updateName
-
+                    
                     docRef.setData(["accountInfo" : model.toJson()]) { error in
                         if let errCode = error as NSError?{
                             Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
@@ -316,7 +316,7 @@ class FirestorageDBManager {
             }
         }
     }
-
+    
     func deleteUserMail (completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
@@ -350,7 +350,7 @@ class FirestorageDBManager {
         }
         
         let batch = db.batch()
-
+        
         db.collection(collection).getDocuments { (snapshot, error) in
             if let errCode = error as NSError?{
                 Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
@@ -413,15 +413,44 @@ class FirestorageDBManager {
                 if let date1 = dateFormatter.date(from: noticeInfo1.date), let date2 = dateFormatter.date(from: noticeInfo2.date) {
                     return date1 > date2
                 } else {
-                    return false 
+                    return false
                 }
             }
             completion(sortedNoticeInfoArray, .none)
         }
         
     }
+    func getSMTPInfo(completion: @escaping (SMTPInfo?, FireStorageDBError) -> Void) {
+        guard let _ = Auth.auth().currentUser?.uid else {
+            let error = FireStorageDBError.unavailableUUID
+            Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
+            completion(nil, .error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
+            return
+        }
+        
+        let collectionRef = db.collection("SMTP")
+        let documentRef = collectionRef.document("Naver")
+        
+        documentRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                if let smtpDataString = document["smtpInfo"] as? String {
+                    if let smtpInfo = SMTPInfo.fromJson(jsonString: smtpDataString, model: SMTPInfo.self) {
+                        completion(SMTPInfo(sendUserName: smtpInfo.sendUserName, smtpAddress: smtpInfo.smtpAddress, email: smtpInfo.email, password: smtpInfo.password), .none)
+                        
+                    } else {
+                        completion(nil, .error(FireStorageDBError.decodingError.code, FireStorageDBError.decodingError.description))
+                        Logger.writeLog(.error, message: FireStorageDBError.decodingError.description)
+                    }
+                }
+            } else {
+                Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
+                completion(nil, .error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
+            }
+        }
+    }
+    
+    
     func isDiaryPath(refDocPath: String, accountPath: String) -> Bool {
         return refDocPath == accountPath ? false : true
     }
 }
-

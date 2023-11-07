@@ -9,6 +9,7 @@ import UIKit
 import Then
 import SnapKit
 import NVActivityIndicatorView
+import SwiftSMTP
 
 class SignUpViewController: BaseViewController {
     private let smtpManager = SMTPManager(htmpParser: HTMLParser())
@@ -571,22 +572,31 @@ class SignUpViewController: BaseViewController {
                     verifyCodeButton.isEnabled = true
                     
                 } else {
-                    smtpManager.sendAuth(userEmail: emailTextField.text!, logoImage: UIImage(named: "logo_poda")?.pngData()!){ [weak self] (authCode, success) in
-                        guard let self = self else {return}
-                        if ((authCode >= 10000 && authCode <= 99999) && success){
-                            userAuthCode = authCode
-                            DispatchQueue.main.async{
-                                self.emailErrorLabel.isHidden = false
-                                               self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
-                                               self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
-                                               
-                                               self.verificationCodeErrorLabel.isHidden = false
-                                               self.verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
-                                               self.verificationCodeErrorLabel.text = "입력 완료 후 인증하기 버튼을 눌러주세요."
-                                               
-                                               self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
-                                               self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
+                    fireStoreDB.getSMTPInfo(){ [weak self] smtpInfo, error in
+                        guard let self = self else { return }
+                        
+                        
+                        if let smtpInfo = smtpInfo {
+                            smtpManager.sendAuth(userEmail: emailTextField.text!, logoImage: UIImage(named: "logo_poda")?.pngData()!, smtpInfo: smtpInfo){ [weak self] (authCode, success) in
+                                guard let self = self else {return}
+                                if ((authCode >= 10000 && authCode <= 99999) && success){
+                                    userAuthCode = authCode
+                                    DispatchQueue.main.async{
+                                        self.emailErrorLabel.isHidden = false
+                                        self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
+                                        self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
+
+                                        self.verificationCodeErrorLabel.isHidden = false
+                                        self.verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
+                                        self.verificationCodeErrorLabel.text = "입력 완료 후 인증하기 버튼을 눌러주세요."
+
+                                        self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
+                                        self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
+                                    }
+                                }
                             }
+                        } else {
+                            showAlert(title: "에러", message: error.description)
                         }
                     }
                 }
