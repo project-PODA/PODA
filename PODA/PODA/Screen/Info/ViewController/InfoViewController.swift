@@ -146,11 +146,13 @@ class InfoViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func didTapLeaveButton() {
-        
-        let leaveVC = LeaveViewController()
-        self.navigationController?.pushViewController(leaveVC, animated: true)
+        let viewModel = LeaveViewModel(fireAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())))
+        let leaveViewController = LeaveViewController(viewModel: viewModel)
+
+        self.navigationController?.pushViewController(leaveViewController, animated: true)
     }
 }
+
 // MARK: - UITableViewDataSource
 extension InfoViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

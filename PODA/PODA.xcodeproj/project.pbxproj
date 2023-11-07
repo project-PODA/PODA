@@ -98,6 +98,7 @@
 		D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */; };
 		D89A29EC2AEFB09100B4ACBD /* AgreeTermsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */; };
 		D8BD5C612AE6B0CA00A3802A /* InfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BD5C602AE6B0CA00A3802A /* InfoCell.swift */; };
+		D8CBFD8D2AF9CA3800D0242F /* LeaveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CBFD8C2AF9CA3800D0242F /* LeaveViewModel.swift */; };
 		D8E5D0502AE1227A005EE3C9 /* SetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */; };
 		D8E5D0522AE12471005EE3C9 /* CompleteSignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */; };
 		D8F46ADA2AE7E0EA00C8FDF4 /* NoticeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F46AD92AE7E0EA00C8FDF4 /* NoticeViewController.swift */; };
@@ -214,6 +215,7 @@
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgreeTermsViewController.swift; sourceTree = "<group>"; };
 		D8BD5C602AE6B0CA00A3802A /* InfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoCell.swift; sourceTree = "<group>"; };
+		D8CBFD8C2AF9CA3800D0242F /* LeaveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveViewModel.swift; sourceTree = "<group>"; };
 		D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProfileViewController.swift; sourceTree = "<group>"; };
 		D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteSignUpViewController.swift; sourceTree = "<group>"; };
 		D8F46AD92AE7E0EA00C8FDF4 /* NoticeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeViewController.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 		1B883AA32AE4F99C004D5FCE /* Info */ = {
 			isa = PBXGroup;
 			children = (
+				D8B9B9122AF9C68D009BCDC5 /* Leave */,
 				1B883AA82AE4FA89004D5FCE /* ViewController */,
 			);
 			path = Info;
@@ -288,7 +291,6 @@
 				D8BD5C602AE6B0CA00A3802A /* InfoCell.swift */,
 				D8F46AD92AE7E0EA00C8FDF4 /* NoticeViewController.swift */,
 				D8F46ADB2AE7E34800C8FDF4 /* NoticeCell.swift */,
-				D8F46ADD2AE80F1600C8FDF4 /* LeaveViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -627,6 +629,31 @@
 				D879F7762ADD478400FFB3F7 /* LoginViewController.swift */,
 			);
 			path = Login;
+			sourceTree = "<group>";
+		};
+		D8B9B9122AF9C68D009BCDC5 /* Leave */ = {
+			isa = PBXGroup;
+			children = (
+				D8CBFD8A2AF9CA2300D0242F /* ViewModel */,
+				D8CBFD8B2AF9CA2B00D0242F /* View */,
+			);
+			path = Leave;
+			sourceTree = "<group>";
+		};
+		D8CBFD8A2AF9CA2300D0242F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				D8CBFD8C2AF9CA3800D0242F /* LeaveViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D8CBFD8B2AF9CA2B00D0242F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D8F46ADD2AE80F1600C8FDF4 /* LeaveViewController.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		E20C9AE52AE4202300BA5754 /* Page */ = {
@@ -1045,6 +1072,7 @@
 				E20C9AE42AE41A0300BA5754 /* StickerViewController.swift in Sources */,
 				D8BD5C612AE6B0CA00A3802A /* InfoCell.swift in Sources */,
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
+				D8CBFD8D2AF9CA3800D0242F /* LeaveViewModel.swift in Sources */,
 				26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */,
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
 				5FE92C612AEF752200DDD34F /* String + Extension.swift in Sources */,

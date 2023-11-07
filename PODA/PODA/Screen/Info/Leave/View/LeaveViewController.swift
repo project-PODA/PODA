@@ -9,10 +9,20 @@ import UIKit
 import SnapKit
 import MessageUI
 import Then
-import NVActivityIndicatorView
 
 class LeaveViewController: BaseViewController, UIConfigurable {
-    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
+    let viewModel: LeaveViewModel
+    
+    init(viewModel: LeaveViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        bindViewModel()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private let topLabel = UILabel().then {
         $0.numberOfLines = 0
@@ -45,7 +55,7 @@ class LeaveViewController: BaseViewController, UIConfigurable {
         $0.setUpButton(title: "탈퇴하기", podaFont: .button1, cornerRadius: 22)
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         $0.backgroundColor = Palette.podaRed.getColor()
-        $0.addTarget(self, action: #selector(didSignOutButton), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(signOutButtonTapped), for: .touchUpInside)
     }
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
@@ -101,34 +111,30 @@ class LeaveViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    @objc func didSignOutButton() {
-        showAlertWithTextField(title: "경고", message: "탈퇴를 원하시면 \"동의합니다\"를 입력해주세요", placeholder: "동의합니다"){ [weak self]  text in
-            guard let self = self else {return}
-            if let text = text {
-                if text == "동의합니다" {
-                    loadingIndicator.startAnimating()
-                    fireAuthManager.deleteAccount{ [weak self] error in
-                        guard let self = self else {return}
-                        DispatchQueue.main.async{ [weak self] in
-                            guard let self = self else{return}
-                            loadingIndicator.stopAnimating()
-                            if error == .none {
-                                self.showAlert(title: "알림", message: "계정 삭제가 완료되었습니다.") {
-                                    self.moveToHome()
-                                }
-                            } else {
-                                self.showAlert(title: "에러", message: "탈퇴에 문제가 발생했습니다. 고객센터에 연락해주세요.")
-                            }
-                        }
-                    }
-                } else {
-                    self.showAlert(title: "에러", message: "\"동의합니다\"를 입력해주세요")
-                }
+    private func bindViewModel() {
+           viewModel.onAccountDeletionSuccess = { [weak self] in
+               DispatchQueue.main.async {
+                   self?.loadingIndicator.stopAnimating()
+                   self?.showAlert(title: "알림", message: "계정 삭제가 완료되었습니다.") {
+                       self?.moveToHome()
+                   }
+               }
+           }
+           
+           viewModel.onAccountDeletionFailure = { [weak self] message in
+               DispatchQueue.main.async {
+                   self?.loadingIndicator.stopAnimating()
+                   self?.showAlert(title: "에러", message: message)
+               }
+           }
+       }
+    
+    @objc func signOutButtonTapped() {
+            showAlertWithTextField(title: "경고", message: "탈퇴를 원하시면 \"동의합니다\"를 입력해주세요", placeholder: "동의합니다") { [weak self] text in
+                self?.loadingIndicator.startAnimating()
+                self?.viewModel.deleteAccount(withConfirmation: text ?? "")
             }
         }
-    }
-
-
     
     @objc func didTapBackButton() {
         self.navigationController?.popViewController(animated: true)
