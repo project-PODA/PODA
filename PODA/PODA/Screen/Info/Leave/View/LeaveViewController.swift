@@ -10,9 +10,9 @@ import SnapKit
 import MessageUI
 import Then
 
-class LeaveViewController: BaseViewController, UIConfigurable {
+class LeaveViewController: BaseViewController, UIConfigurable, ViewModelBindable {
     
-    let viewModel: LeaveViewModel
+    var viewModel: LeaveViewModel!
     
     init(viewModel: LeaveViewModel) {
         self.viewModel = viewModel
@@ -111,7 +111,7 @@ class LeaveViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    private func bindViewModel() {
+    func bindViewModel() {
            viewModel.onAccountDeletionSuccess = { [weak self] in
                DispatchQueue.main.async {
                    self?.loadingIndicator.stopAnimating()
