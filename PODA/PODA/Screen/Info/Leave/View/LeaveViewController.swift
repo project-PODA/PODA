@@ -10,6 +10,7 @@ import SnapKit
 import MessageUI
 import Then
 import NVActivityIndicatorView
+
 class LeaveViewController: BaseViewController, UIConfigurable {
     private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     
