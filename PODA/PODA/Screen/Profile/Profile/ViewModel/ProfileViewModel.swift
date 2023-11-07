@@ -29,8 +29,14 @@ class ProfileViewModel {
         }
     }
     
+    func resizingImage(image: UIImage) -> UIImage? {
+        let newSize = CGSize(width: 300, height: 300 * image.size.height / image.size.width)
+        let resizedImage = image.resized(to: newSize)
+        return resizedImage
+    }
+    
+    
     func getFirebaseData(){
-        
         fireImageManager.getProfileImage { [weak self] (error, image) in
             guard let self = self else { return }
             

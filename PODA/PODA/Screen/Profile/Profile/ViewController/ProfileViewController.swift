@@ -14,10 +14,6 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     
     var viewModel: ProfileViewModel!
     
-    private let fireImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
-    private let fireDBManager = FirestorageDBManager()
-    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    
     
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -61,9 +57,7 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         viewModel.getFirebaseData()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
+
     
     private func setComponentDisable(_ enabled : Bool){
         cameraButton.isEnabled = enabled
@@ -198,8 +192,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         if let selectedImage = info[.originalImage] as? UIImage {
             
             // 이미지 크기 조정
-            let newSize = CGSize(width: 300, height: 300 * selectedImage.size.height / selectedImage.size.width)
-            let resizedImage = selectedImage.resized(to: newSize)
+            let resizedImage = viewModel.resizingImage(image: selectedImage)
             
             profileImageView.image = resizedImage
             loadingIndicator.startAnimating()
