@@ -21,9 +21,11 @@ class BaseTabbarController: UITabBarController {
         
         let homeVC = HomeViewController()
         
-        let profileVC = ProfileViewController(viewModel: ProfileViewModel())
-        let profileNavVC = BaseNavigationController(rootViewController: profileVC)
-        profileVC.bind(to: profileVC.viewModel)
+        
+        let viewModel = ProfileViewModel(fireDBManager: FirestorageDBManager(), fireImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+        let profileViewController = ProfileViewController(viewModel: viewModel)
+        let profileNavVC = BaseNavigationController(rootViewController: profileViewController)
+        profileViewController.bind(to: profileViewController.viewModel)
         
         viewControllers = [homeVC, profileNavVC]
         
