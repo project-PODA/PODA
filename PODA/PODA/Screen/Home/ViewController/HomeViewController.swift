@@ -635,12 +635,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
         
         homeMenuVC.didTapDiary = {
             self.dismiss(animated: true)
-            self.navigationController?.pushViewController(SelectRatioViewController(), animated: true)
+            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: SelectRatioViewModel()), animated: true)
         }
         
         homeMenuVC.didTapPiece = {
             self.dismiss(animated: true)
-            self.navigationController?.pushViewController(PieceViewController(), animated: true)
+            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: SelectRatioViewModel()), animated: true)
         }
     }
     
@@ -649,7 +649,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddDiaryButton() {
-        navigationController?.pushViewController(SelectRatioViewController(), animated: true)
+        let selectRatioViewModel = SelectRatioViewModel()
+        let selectRatioViewController = SelectRatioViewController(viewModel: selectRatioViewModel)
+        selectRatioViewController.bind(to: selectRatioViewModel)
+        
+        navigationController?.pushViewController(selectRatioViewController, animated: true)
     }
     
     // FIXME: - Bind 함수로 정리하기
