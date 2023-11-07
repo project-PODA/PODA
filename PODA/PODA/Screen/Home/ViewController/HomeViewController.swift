@@ -13,11 +13,16 @@ import NVActivityIndicatorView
 
 // UI에 보여질 데이터순.
 struct DiaryData: Equatable {
+    var pageDataList: [PageInfo]
     var diaryName: String
     var diaryImageList: [Data]
     var createDate: String
-    var ratio: String
+    var ratio: Ratio
     var description: String
+    
+    static func == (lhs: DiaryData, rhs: DiaryData) -> Bool {
+        return lhs.diaryName == rhs.diaryName
+    }
 }
 
 class HomeViewController: BaseViewController, UIConfigurable {
@@ -527,10 +532,11 @@ class HomeViewController: BaseViewController, UIConfigurable {
                                     guard let self = self else { return }
                                     if error == .none {
                                         self.diaryDataList.append(DiaryData(
+                                            pageDataList: diaryInfoList[0].diaryDetail?.pageInfo ?? [],
                                             diaryName: diaryInfo.diaryName,
                                             diaryImageList: imageList,
                                             createDate: diaryInfo.createTime,
-                                            ratio: diaryInfo.frameRate,
+                                            ratio: Ratio(rawValue: diaryInfo.frameRate) ?? .square,
                                             description: diaryInfo.description)
                                         )
                                         counter += 1
@@ -635,12 +641,12 @@ class HomeViewController: BaseViewController, UIConfigurable {
         
         homeMenuVC.didTapDiary = {
             self.dismiss(animated: true)
-            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: SelectRatioViewModel()), animated: true)
+            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
         }
         
         homeMenuVC.didTapPiece = {
             self.dismiss(animated: true)
-            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: SelectRatioViewModel()), animated: true)
+            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
         }
     }
     
@@ -649,11 +655,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddDiaryButton() {
-        let selectRatioViewModel = SelectRatioViewModel()
-        let selectRatioViewController = SelectRatioViewController(viewModel: selectRatioViewModel)
-        selectRatioViewController.bind(to: selectRatioViewModel)
-        
-        navigationController?.pushViewController(selectRatioViewController, animated: true)
+        navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
     }
     
     // FIXME: - Bind 함수로 정리하기

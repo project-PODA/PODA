@@ -10,19 +10,13 @@ import SnapKit
 import Then
 import NVActivityIndicatorView
 
-
-class DetailDiaryViewController: BaseViewController, UIConfigurable {
+class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBindable {
     
     // MARK: - Properties
     
     static let createDiaryNotificationName = NSNotification.Name("createDiary")
     
-    var ratio: Ratio!
-    var pageInfo: [PageInfo]!
-    var diaryName : String?
-    
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
+    var viewModel: CreateDiaryViewModel!
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
     
@@ -36,11 +30,13 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let titleTextField = UITextField().then {
+    private lazy var titleTextField = UITextField().then {
         $0.font = UIFont.podaFont(.body2)
         $0.textColor = Palette.podaGray2.getColor()
         $0.placeholder = "ex. 포다랑 인생네컷 모음"
         $0.borderStyle = .none
+        $0.enableHideKeyboardOnReturn()
+        $0.addTarget(self, action: #selector(titleTextDidChange(_:)), for: .editingChanged)
     }
     
     private let underLine = UIView().then {
@@ -57,13 +53,14 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         $0.textColor = Palette.podaWhite.getColor()
     }
     
-    private let contentTextView = UITextView().then {
+    private lazy var contentTextView = UITextView().then {
         $0.font = UIFont.podaFont(.body1)
         $0.text = "내용을 입력하세요."
         $0.textColor = Palette.podaGray4.getColor()
         $0.backgroundColor = Palette.podaGray6.getColor()
         $0.layer.cornerRadius = 5
         $0.contentInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        $0.delegate = self
     }
     
     private let contentCountLabel = UILabel().then {
@@ -77,10 +74,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
         hideKeyboardWhenTappedAround()
-        titleTextField.enableHideKeyboardOnReturn()
-        titleTextField.addTarget(self, action: #selector(titleTextDidChange(_:)), for: .editingChanged)
-        NotificationCenter.default.addObserver(self, selector: #selector(contentTextDidChange(_:)), name: UITextView.textDidChangeNotification, object: nil)
-        contentTextView.delegate = self
+        bindViewModel()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -90,6 +84,15 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
+    }
+    
+    init(viewModel: CreateDiaryViewModel!) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - InitUI
@@ -161,79 +164,70 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func touchUpSaveButton() {
-        if let title = titleTextField.text, title.isEmpty || contentTextView.text == "내용을 입력하세요." {
+        if viewModel.isFilledAll(title: titleTextField.text, content: contentTextView.text) {
             showAlert()
         } else {
             loadingIndicator.startAnimating()
             
-            var pageData = pageInfo!
-            pageData[0].imageData = Data()
-            
-            firebaseDBManager.createDiary(
-                deviceName: UIDevice.current.name,
-                pageDataList: pageData, title: titleTextField.text!,
-                description: contentTextView.text,
-                frameRate: ratio) { [weak self] error in
-                    
-                    guard let self = self else { return }
-                    
-                    if error == .none {
-                        print("다이어리 성공")
-                        let diaryName = titleTextField.text ?? ""
-                        let imageData = pageInfo[0].imageData
-                        firebaseImageManager.createDiaryImage(diaryName: diaryName, pageImage: imageData) { error in
-                            if error == .none, let viewControllers = self.navigationController?.viewControllers {
-                                print("다이어리 이미지 생성 성공")
-                                for viewController in viewControllers {
-                                    if viewController is BaseTabbarController {
-                                        NotificationCenter.default.post(
-                                            name: DetailDiaryViewController.createDiaryNotificationName,
-                                            object: DiaryData(
-                                                diaryName: diaryName,
-                                                diaryImageList: [imageData],
-                                                createDate: Date().getCurrentTime(),
-                                                ratio: self.ratio.toString(),
-                                                description: self.contentTextView.text)
-                                        )
-                                        self.loadingIndicator.stopAnimating()
-
-                                        self.navigationController?.popToViewController(viewController, animated: true)
-                                        break
-                                    }
-                                }
-                            } else {
-                                print("다이어리 이미지 생성 실패")
-                            }
-                        }
-                    } else {
-                        print("다이어리 성공 실패")
+            viewModel.handleSaveButton { [weak self] in
+                guard let self = self, let viewControllers = navigationController?.viewControllers else { return }
+                for viewController in viewControllers {
+                    if viewController is BaseTabbarController {
+                        NotificationCenter.default.post(
+                            name: DetailDiaryViewController.createDiaryNotificationName,
+                            object: viewModel.getDiaryData()
+                        )
+                        self.loadingIndicator.stopAnimating()
+                        
+                        self.navigationController?.popToViewController(viewController, animated: true)
+                        break
                     }
                 }
+            }
         }
     }
-    
+        
     @objc func titleTextDidChange(_ textField: UITextField) {
-        let textCount = textField.text?.count ?? 0
-        titleCountLabel.text = "\(textCount)자 / 12자"
-        if textCount > 12 {
-            titleCountLabel.text = "12자 / 12자"
-            textField.text = String(textField.text!.prefix(12))
-            return
-        }
-    }
-    
-    @objc func contentTextDidChange(_ notification: NSNotification) {
-        guard let textView = notification.object as? UITextView else { return }
-        let textCount = textView.text.count
-        contentCountLabel.text = "\(textCount)자 / 100자"
-        if textCount > 100 {
-            contentCountLabel.text = "100자 / 100자"
-            textView.text = String(textView.text.prefix(100))
-            return
-        }
+        // title TextField 값이 변하면 메소드 호출 -> 이 메소드에 viewModel의 titleCount 값이 변하도록 구현함
+        // titleCount 값이 변하면 아래 🚀이 실행됨
+        viewModel.setTitle(textField.text ?? "")
+        viewModel.handleTitleTextField(textCount: textField.text?.count ?? 0)
     }
     
     // MARK: - Custom Method
+    
+    func bindViewModel() {
+        // 🚀
+        viewModel.titleTextCount.addObserver { [weak self] textCount in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.titleCountLabel.text = "\(textCount)자 / 12자"
+                
+                if textCount > 12 {
+                    self.titleTextField.text = String(self.titleTextField.text!.prefix(12))
+                }
+            }
+        }
+        
+        viewModel.contentTextCount.addObserver { [weak self] textCount in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.contentCountLabel.text = "\(textCount)자 / 100자"
+                
+                if textCount > 12 {
+                    self.contentTextView.text = String(self.contentTextView.text.prefix(100))
+                }
+            }
+        }
+        
+        viewModel.content.addObserver { [weak self] content in
+            guard let self = self else { return }
+            if content == "내용을 입력하세요." {
+                contentTextView.text = ""
+                contentTextView.textColor = Palette.podaGray2.getColor()
+            }
+        }
+    }
     
     private func showAlert() {
         let alertController = UIAlertController(title: "알림", message: "제목과 내용을 모두 적어주세요.", preferredStyle: .alert)
@@ -249,9 +243,18 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable {
 
 extension DetailDiaryViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if textView.text == "내용을 입력하세요." {
-            textView.text = ""
-            textView.textColor = Palette.podaGray2.getColor()
+        viewModel.setContent(textView.text)
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        viewModel.setContent(textView.text)
+        viewModel.handleContentTextView(textCount: textView.text.count)
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text == "" {
+            textView.text = "내용을 입력하세요."
+            textView.textColor = Palette.podaGray4.getColor()
         }
     }
 }

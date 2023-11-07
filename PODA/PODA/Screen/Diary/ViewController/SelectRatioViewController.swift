@@ -13,7 +13,7 @@ class SelectRatioViewController: BaseViewController, UIConfigurable, ViewModelBi
 
     // MARK: - Properties
     
-    var viewModel: SelectRatioViewModel!
+    var viewModel: CreateDiaryViewModel!
     
     private var alertController: UIAlertController {
         let alertController = UIAlertController(title: "알림", message: "템플릿을 골라주세요.", preferredStyle: .alert)
@@ -71,7 +71,7 @@ class SelectRatioViewController: BaseViewController, UIConfigurable, ViewModelBi
         bindViewModel()
     }
     
-    init(viewModel: SelectRatioViewModel) {
+    init(viewModel: CreateDiaryViewModel) {
         super.init(nibName: nil, bundle: nil)
         self.viewModel = viewModel
     }
@@ -144,7 +144,7 @@ class SelectRatioViewController: BaseViewController, UIConfigurable, ViewModelBi
     
     @objc private func touchUpNextButton() {
         if let ratio = viewModel.getRatio() {
-            let viewController = CreateDiaryViewController(viewModel: CreateDiaryViewModel(), ratio: ratio)
+            let viewController = CreateDiaryViewController(viewModel: viewModel, ratio: ratio)
             navigationController?.pushViewController(viewController, animated: true)
         } else {
             present(alertController, animated: true)

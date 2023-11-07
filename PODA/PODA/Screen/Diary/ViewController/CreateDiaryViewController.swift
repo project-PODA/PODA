@@ -119,7 +119,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        
+        bindViewModel()
     }
     
     init(viewModel: CreateDiaryViewModel, ratio: Ratio) {
@@ -216,10 +216,9 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     @objc private func touchUpNextButton() {
         currentImageView = nil
         let diaryImage = diaryView.convertToPNGData()
-        let detailDiaryViewController = DetailDiaryViewController()
-        detailDiaryViewController.ratio = ratio
-        detailDiaryViewController.diaryName = diaryName
-        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage!, backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
+        let detailDiaryViewController = DetailDiaryViewController(viewModel: viewModel)
+        viewModel.setDiaryName(diaryName ?? "")
+        viewModel.setPageInfo([PageInfo(imageData: diaryImage!, backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")])
         navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
     
@@ -272,9 +271,9 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         present(stickerViewController, animated: true)
         
-        stickerViewController.touchedCell = { image in
+        stickerViewController.touchedCell = { [weak self] image in
             stickerViewController.dismiss(animated: true)
-            self.addImage(image)
+            self?.viewModel.handleNewImage(image)
         }
     }
     
@@ -346,7 +345,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     // MARK: - Custom Method
     
     func bindViewModel() {
-        
+        viewModel.newImage.addObserver { [weak self] image in
+            guard let self = self, let image = image else { return }
+            addImage(image)
+        }
     }
     
     private func getButtonConfiguration(title: String, iconName: String?) -> UIButton.Configuration {
@@ -429,8 +431,9 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
             if let error = error {
                 print("이미지 로딩 중 오류: \(error.localizedDescription)")
             } else if let selectedImage = object as? UIImage {
+                guard let self = self else { return }
                 DispatchQueue.main.async {
-                    self?.addImage(selectedImage)
+                    self.viewModel.handleNewImage(selectedImage)
                 }
             }
         }
