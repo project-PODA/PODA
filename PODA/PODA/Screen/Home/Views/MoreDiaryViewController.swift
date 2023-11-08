@@ -11,6 +11,8 @@ import SnapKit
 
 class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
+    var moreDiaryVM: MoreDiaryViewModel!
+    
     var diaryList : [DiaryData] = []
     var diaryName: String?
     private let firebaseDBManager = FirestorageDBManager()

@@ -223,12 +223,14 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "yyyy.MM.dd"
-                let modifiedDated = dateFormatter.string(from: selectedDate)
+                let modifiedDate = dateFormatter.string(from: selectedDate)
+                
+                print(modifiedDate)
                 
                 guard let viewControllers = self.navigationController?.viewControllers else { return }
                 for viewController in viewControllers {
                     if let viewController = viewController as? SaveDeleteViewController {
-                        viewController.dateLabel.text = modifiedDated
+                        viewController.dateLabel.text = modifiedDate
                         self.navigationController?.popToViewController(viewController, animated: true)
                     }
                 }

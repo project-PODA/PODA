@@ -19,7 +19,9 @@ class BaseTabbarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let homeVC = HomeViewController()
+        let homeVM = HomeViewModel(firebaseDBManager: FirestorageDBManager(), firebaseImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()), diaryDataList: [DiaryData]())
+        let homeVC = HomeViewController(viewModel: homeVM)
+        homeVC.bind(to: homeVC.viewModel)
         
         let profileVC = ProfileViewController(viewModel: ProfileViewModel())
         let profileNavVC = BaseNavigationController(rootViewController: profileVC)

@@ -128,13 +128,8 @@ extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigation
         CameraAccessHelper.requestCameraAccess(presenter: self) { [weak self] isAuthorized in
             DispatchQueue.main.async {
                 if isAuthorized {
-                    guard let touchedQR = self?.didTapQR else { return }
-                    touchedQR()
-//                    let camera = UIImagePickerController()
-//                    camera.delegate = self
-//                    camera.sourceType = .camera
-//                    camera.mediaTypes = [UTType.image.identifier]
-//                    self?.present(camera, animated: true)
+                    guard let didTapQR = self?.didTapQR else { return }
+                    didTapQR()
                 }
             }
         }

@@ -11,20 +11,11 @@ import SnapKit
 import RealmSwift
 import NVActivityIndicatorView
 
-// UI에 보여질 데이터순.
-struct DiaryData: Equatable {
-    var diaryName: String
-    var diaryImageList: [Data]
-    var createDate: String
-    var ratio: String
-    var description: String
-}
-
-class HomeViewController: BaseViewController, UIConfigurable {
+class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable {
+    
+    var viewModel: HomeViewModel! // (생성자 initializer 만들기 귀찮으면 ! 붙여서 var viewModel: HomeViewModel! 하삼)
     
     private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     private var diaryDataList: [DiaryData] = []
     
     var pieceList: Results<ImageMemory>?
@@ -203,7 +194,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        loadDiaryDataFromFirebase()
+        loadingIndicator.startAnimating()
+        viewModel.loadDiaryDataFromFirebase()
         registerNotification()
     }
     
@@ -215,6 +207,15 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
         loadPieceDataFromRealm()
         updateUI()
+    }
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func configUI() {
@@ -399,6 +400,36 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    func bindViewModel() {
+        // 데이터가 바뀔 때마다 얘를 다시 호출, 데이터 변경이 완료된 후 클로저에서 어떤 걸 실행할 지 정해주기
+        viewModel.diaryDataLoaded = { [weak self] _ in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                
+            }
+        }
+        
+        viewModel.updateDiaryCollectionView = { [weak self] isEmptyDiary in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                if isEmptyDiary {
+                    self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+                    self.emptyDiaryLabel.isHidden = false
+                    self.diaryCollectionView.isHidden = true
+                } else {
+                    let diaryCount = self.viewModel.diaryCountInt
+                    self.diaryCountLabel.setUpLabel(title: "\(diaryCount)권", podaFont: .subhead4)
+                    self.emptyDiaryLabel.isHidden = true
+                    self.diaryCollectionView.isHidden = false
+                    self.diaryCollectionView.reloadData()
+                }
+                self.loadingIndicator.stopAnimating()
+            }
+        }
+        
+        
+    }
+    
     func pieceDateOrderButtonOn() {
         createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
         createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
@@ -500,55 +531,54 @@ class HomeViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    // FIXME: - diaryCountLabel 한번만 설정하도록
-    func loadDiaryDataFromFirebase() {
-        loadingIndicator.startAnimating()
-
-        firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
-            guard let self = self else { return }
-            
-            if error == .none {
-                // FIXME: - counter 변수 확인
-                print("diaryList: \(diaryList)")
-                var counter = 0
-                if diaryList.count == 1 {
-                    // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
-                    DispatchQueue.main.async {
-                        self.updateDiaryCollectionView(isEmpty: true)
-                        self.loadingIndicator.stopAnimating()
-                    }
-                }
-                for diaryName in diaryList {
-                    if diaryName != "account" {
-                        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { [weak self] diaryInfoList, error in
-                            guard let self = self else { return }
-                            if error == .none, let diaryInfo = diaryInfoList.first {
-                                firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
-                                    guard let self = self else { return }
-                                    if error == .none {
-                                        self.diaryDataList.append(DiaryData(
-                                            diaryName: diaryInfo.diaryName,
-                                            diaryImageList: imageList,
-                                            createDate: diaryInfo.createTime,
-                                            ratio: diaryInfo.frameRate,
-                                            description: diaryInfo.description)
-                                        )
-                                        counter += 1
-                                        if counter == diaryList.count - 1 {
-                                            DispatchQueue.main.async {
-                                                self.updateDiaryCollectionView(isEmpty: false)
-                                                self.loadingIndicator.stopAnimating()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    func loadDiaryDataFromFirebase() {
+//        loadingIndicator.startAnimating()
+//
+//        firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
+//            guard let self = self else { return }
+//            
+//            if error == .none {
+//                // FIXME: - counter 변수 확인
+//                print("diaryList: \(diaryList)")
+//                var counter = 0
+//                if diaryList.count == 1 {
+//                    // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
+//                    DispatchQueue.main.async {
+//                        self.updateDiaryCollectionView(isEmpty: true)
+//                        self.loadingIndicator.stopAnimating()
+//                    }
+//                }
+//                for diaryName in diaryList {
+//                    if diaryName != "account" {
+//                        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { [weak self] diaryInfoList, error in
+//                            guard let self = self else { return }
+//                            if error == .none, let diaryInfo = diaryInfoList.first {
+//                                firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
+//                                    guard let self = self else { return }
+//                                    if error == .none {
+//                                        self.diaryDataList.append(DiaryData(
+//                                            diaryName: diaryInfo.diaryName,
+//                                            diaryImageList: imageList,
+//                                            createDate: diaryInfo.createTime,
+//                                            ratio: diaryInfo.frameRate,
+//                                            description: diaryInfo.description)
+//                                        )
+//                                        counter += 1
+//                                        if counter == diaryList.count - 1 {
+//                                            DispatchQueue.main.async {
+//                                                self.updateDiaryCollectionView(isEmpty: false)
+//                                                self.loadingIndicator.stopAnimating()
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
         guard let fileName = imageMemory.imagePath,
@@ -590,15 +620,18 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     // FIXME: - Bind 함수로 정리하기
     func goToPieceSaveDeleteVC(_ index: Int, _ sortedPieceList: Results<ImageMemory>?) {
+        // MVC 에서는 saveDeleteVC.indexPath = index 이렇게 직접 전달하지만, MVVM 에서는 직접 값을 전달하는게 아니라 다음 뷰가 필요한 뷰모델을 전달해줘야함
+        
         guard let imageMemory = sortedPieceList?[index] else { return }
         let saveDeleteVC = SaveDeleteViewController()
-        saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
-        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
+        saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1) // viewModel.pieceDate or 
+        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory) // viewModel.pieceImage
         saveDeleteVC.sortedPieceList = sortedPieceList
         saveDeleteVC.indexPath = index
         saveDeleteVC.addButton.isHidden = true
         saveDeleteVC.isDiaryImage = false
         navigationController?.pushViewController(saveDeleteVC, animated: true)
+        // present 는 viewController만 가지고 있음. 그래서 뷰컨에서는 self.present 이런식으로 쓸 수 있지만 뷰모델에서는 사용 불가 그래서 메서드 만들때 fromCurrentVC로 뷰컨을 받은 다음 fromCurrentVC.present 이런식으로 사용해야함
     }
     
     func registerNotification() {
@@ -621,6 +654,8 @@ class HomeViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapAddButton() {
+        // 뷰 모델한테 탭 됐다고 알려주기
+        // handleButtonTapped() {}
         let homeMenuVC = HomeMenuViewController()
         homeMenuVC.modalPresentationStyle = .overFullScreen
         present(homeMenuVC, animated: true)
@@ -655,6 +690,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
     // FIXME: - Bind 함수로 정리하기
     @objc func didTapMoreDiaryButton() {
         let moreDiaryVC = MoreDiaryViewController()
+        //moreDiaryVC.moreDiaryVM = viewModel
         if diaryDataList.isEmpty {
             moreDiaryVC.emptyMoreDiaryLabel.isHidden = false
             moreDiaryVC.moreDiaryCollectionView.isHidden = true
@@ -665,7 +701,7 @@ class HomeViewController: BaseViewController, UIConfigurable {
             moreDiaryVC.deleteButton.isHidden = false
             moreDiaryVC.diaryList = diaryDataList
         }
-        navigationController?.pushViewController(moreDiaryVC, animated: true)
+        navigationController?.pushViewController(moreDiaryVC, animated: true)  // >> MVVM에서 뷰 전환을 뷰모델이 해야한다 뷰컨이 해야한다 정해져있는거 아님. 우리는 유경님 말대로 뷰컨에서 하기로 함
     }
     
     // FIXME: - Bind 함수로 정리하기
