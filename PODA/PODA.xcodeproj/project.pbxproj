@@ -121,6 +121,8 @@
 		E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */; };
 		E261FF492AF52FA100D05EA6 /* DiaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E261FF482AF52FA100D05EA6 /* DiaryView.swift */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
+		E2981D1C2AFA41C100E8D262 /* DiaryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2981D1B2AFA41C100E8D262 /* DiaryAPI.swift */; };
+		E2ABBC782AF9098D0043D7F0 /* Ratio.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2ABBC772AF9098D0043D7F0 /* Ratio.swift */; };
 		E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */; };
 		E2B8F8D52AE1161600578D15 /* PageCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */; };
 		E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */; };
@@ -237,6 +239,8 @@
 		E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontCollectionViewCell.swift; sourceTree = "<group>"; };
 		E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FontCollectionViewCell.xib; sourceTree = "<group>"; };
 		E261FF482AF52FA100D05EA6 /* DiaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryView.swift; sourceTree = "<group>"; };
+		E2981D1B2AFA41C100E8D262 /* DiaryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryAPI.swift; sourceTree = "<group>"; };
+		E2ABBC772AF9098D0043D7F0 /* Ratio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ratio.swift; sourceTree = "<group>"; };
 		E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCollectionViewCell.swift; sourceTree = "<group>"; };
 		E2B8F8D32AE1161600578D15 /* PageCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PageCollectionViewCell.xib; sourceTree = "<group>"; };
 		E2B8F8D82AE1A5FE00578D15 /* ColorPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPaletteView.swift; sourceTree = "<group>"; };
@@ -686,6 +690,8 @@
 		E24331C42AE0F33F00244A5A /* Diary */ = {
 			isa = PBXGroup;
 			children = (
+				E2981D1A2AFA418900E8D262 /* Network */,
+				E2ABBC762AF909810043D7F0 /* Model */,
 				E2B8F8D12AE115F600578D15 /* View */,
 				E24331C62AE0F37600244A5A /* ViewModel */,
 				E24331C52AE0F36900244A5A /* ViewController */,
@@ -849,6 +855,22 @@
 				5FD54B352AD911EE0092D75B /* NetworkProtocol + NetworkError.swift */,
 			);
 			path = Base;
+			sourceTree = "<group>";
+		};
+		E2981D1A2AFA418900E8D262 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				E2981D1B2AFA41C100E8D262 /* DiaryAPI.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		E2ABBC762AF909810043D7F0 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E2ABBC772AF9098D0043D7F0 /* Ratio.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		E2B8F8D12AE115F600578D15 /* View */ = {
@@ -1021,9 +1043,11 @@
 				5F5447CD2AE6356300365DB7 /* SMTPError + Enum.swift in Sources */,
 				D8F46ADC2AE7E34800C8FDF4 /* NoticeCell.swift in Sources */,
 				5FD54B2D2AD9114B0092D75B /* UIView + Extension.swift in Sources */,
+				E2ABBC782AF9098D0043D7F0 /* Ratio.swift in Sources */,
 				2794D7AC2ADFFDD900B999EC /* PieceImageModel.swift in Sources */,
 				5FD54B4A2AD913460092D75B /* Logger.swift in Sources */,
 				26E3FBAF2AF52FA800680C76 /* MorePieceCollectionViewCell.swift in Sources */,
+				E2981D1C2AFA41C100E8D262 /* DiaryAPI.swift in Sources */,
 				D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */,
 				2683649D2AE2CDDE00872ABB /* DetailViewController.swift in Sources */,
 				5F54EBE72ADFFCE200331E59 /* ImageManipulator.swift in Sources */,
