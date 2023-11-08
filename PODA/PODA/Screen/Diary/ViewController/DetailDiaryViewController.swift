@@ -188,10 +188,10 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
     }
         
     @objc func titleTextDidChange(_ textField: UITextField) {
-        // title TextField 값이 변하면 메소드 호출 -> 이 메소드에 viewModel의 titleCount 값이 변하도록 구현함
-        // titleCount 값이 변하면 아래 🚀이 실행됨
         viewModel.setTitle(textField.text ?? "")
-        viewModel.handleTitleTextField(textCount: textField.text?.count ?? 0)
+        // title TextField 값이 변하면 handleTitleTextCount 메소드 호출 -> viewModel의 titleTextCount 값이 변함
+        // titleTextCount 값이 변하면 아래 🚀이 실행됨
+        viewModel.handleTitleTextCount(textField.text?.count ?? 0)
     }
     
     // MARK: - Custom Method
@@ -248,7 +248,7 @@ extension DetailDiaryViewController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         viewModel.setContent(textView.text)
-        viewModel.handleContentTextView(textCount: textView.text.count)
+        viewModel.handleContentTextCount(textView.text.count)
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {

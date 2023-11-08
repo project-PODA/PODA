@@ -67,14 +67,14 @@ class CreateDiaryViewModel {
         newImage.value = image
     }
     
-    func handleTitleTextField(textCount: Int) {
+    func handleTitleTextCount(_ textCount: Int) {
         titleTextCount.value = textCount
         if textCount > 12 {
             titleTextCount.value = 12
         }
     }
     
-    func handleContentTextView(textCount: Int) {
+    func handleContentTextCount(_ textCount: Int) {
         contentTextCount.value = textCount
         if textCount > 100 {
             contentTextCount.value = 100
