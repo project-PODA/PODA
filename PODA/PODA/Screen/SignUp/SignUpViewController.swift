@@ -666,6 +666,8 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
     //💥deinit 추가!! dismiss추가
 }
 
+// MARK: Extensions
+
 extension UIView {
     var firstResponder: UIView? {
         if self.isFirstResponder {

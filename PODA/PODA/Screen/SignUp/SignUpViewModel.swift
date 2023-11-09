@@ -45,8 +45,8 @@ class SignUpViewModel {
     var passwordText: Observable<PasswordValidStatus> = Observable(.none)
     var passwordRepeatText: Observable<PasswordRepeatValidStatus> = Observable(.none)
     var isSignUpAllowed: Observable<Bool> {
-            return Observable(emailAuthSuccess && authCodeSuccess && passwordAuthSuccess)
-        }
+        return Observable(emailAuthSuccess && authCodeSuccess && passwordAuthSuccess)
+    }
     
     var emailAuthSuccess = false // 이메일 코드 전송 성공 여부
     var authCodeSuccess = false // 이메일 코드 인증 성공 여부
@@ -111,7 +111,7 @@ class SignUpViewModel {
     func sendAuthCode(email: String, completion: @escaping (Bool, String?) -> Void) {
         firebaseAuthManager.userLogin(email: "admin@naver.com", password: "admin1!") { [weak self] authError in
             guard let self = self else { return }
-
+            
             if authError == .none {
                 self.fireStoreDB.emailCheck(email: email) { emailCheckError in
                     if emailCheckError == .none {
