@@ -19,7 +19,6 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
     init(viewModel: InfoViewModel!) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        bindViewModel()
     }
     
     required init?(coder: NSCoder) {
@@ -135,16 +134,14 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
     
     
     @objc private func didTapLogoutButton() {
+        
         let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
         let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
-            self?.viewModel.logout { error in
-                if error == FireAuthError.none {
-                    self?.viewModel.clearUserSession()
-                    self?.moveToHome()
-                }
-            }
+            self?.viewModel.logout(completion: {
+                self?.moveToHome()
+            })
         }
         
         alertController.addAction(cancelAction)
@@ -158,17 +155,6 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
         let leaveViewController = LeaveViewController(viewModel: viewModel)
         
         self.navigationController?.pushViewController(leaveViewController, animated: true)
-    }
-    
-    private func showLogoutFailureAlert(with error: Error) {
-        // 사용자에게 실패 메시지를 표시합니다.
-        let alert = UIAlertController(
-            title: "오류",
-            message: "로그아웃에 실패했습니다: \(error.localizedDescription)",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
     }
 }
 

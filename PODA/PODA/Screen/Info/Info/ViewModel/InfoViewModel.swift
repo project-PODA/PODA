@@ -17,14 +17,18 @@ class InfoViewModel {
         self.fireAuthManager = fireAuthManager
     }
     
-    var onLogoutCompleted: ((Bool, FireAuthError?) -> Void)?
-
-    
     
     // 로그아웃 로직
-    func logout(completion: @escaping (FireAuthError?) -> Void) {
-        fireAuthManager.userLogOut(completion: completion)
+    func logout(completion: @escaping () -> Void) {
+        fireAuthManager.userLogOut { error in
+            if error == FireAuthError.none {
+                self.clearUserSession()
+                completion()
+            }
+        }
     }
+    
+    
     
     func clearUserSession() {
         UserDefaultManager.isUserLoggedIn = false
@@ -62,7 +66,4 @@ class InfoViewModel {
             completion(.failure(.mailServicesError))
         }
     }
-    
-    
-    // 기타 ViewModel 로직들...
 }
