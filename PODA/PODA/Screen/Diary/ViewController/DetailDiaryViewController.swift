@@ -86,7 +86,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
         view.endEditing(true)
     }
     
-    init(viewModel: CreateDiaryViewModel!) {
+    init(viewModel: CreateDiaryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
