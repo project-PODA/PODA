@@ -398,6 +398,25 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		27C679862AFD872000509DAE /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */,
+				D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */,
+				D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */,
+				D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		27C679872AFD872F00509DAE /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				27C679842AFCC28500509DAE /* SignUpViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		27D2652C2ADD21DF00B6E211 /* Piece */ = {
 			isa = PBXGroup;
 			children = (
@@ -648,11 +667,8 @@
 		D879F7782ADD93E900FFB3F7 /* SignUp */ = {
 			isa = PBXGroup;
 			children = (
-				D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */,
-				27C679842AFCC28500509DAE /* SignUpViewModel.swift */,
-				D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */,
-				D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */,
-				D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */,
+				27C679872AFD872F00509DAE /* ViewModel */,
+				27C679862AFD872000509DAE /* ViewController */,
 			);
 			path = SignUp;
 			sourceTree = "<group>";
