@@ -10,7 +10,11 @@ import Then
 import SnapKit
 import NVActivityIndicatorView
 
-class SignUpViewController: BaseViewController, ViewModelBindable {
+class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurable {
+    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
+    
+    // MARK: BindViewModel
     
     var viewModel: SignUpViewModel!
     
@@ -101,8 +105,6 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
             }
         }
     }
-    
-    private lazy var loadingIndicator = CustomLoadingIndicator()
     
     // MARK: UIComponent
     
@@ -274,7 +276,7 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setActions()
-        setupUI()
+        configUI()
         setupTextFields()
         hideKeyboardWhenTappedAround()
         emailTextField.enableHideKeyboardOnReturn()
@@ -289,7 +291,10 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
         removeKeyboardObservers()
     }
     
-    private func setupUI() {
+    // MARK: ConfigUI, Constraints
+    
+    func configUI() {
+        
         view.addSubview(backButton)
         view.addSubview(titleLabel)
         view.addSubview(scrollView)
@@ -491,7 +496,7 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
         verifyCodeButton.isEnabled = false
         verifyCodeButton.backgroundColor = Palette.podaGray4.getColor()
         verifyCodeButton.setTitle("인증완료", for: .normal)
-
+        
         emailTextField.backgroundColor = Palette.podaGray2.getColor()
         emailTextField.isEnabled = false
         
@@ -504,7 +509,7 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
         emailDeleteButton.isHidden = true
         verificationCodeDeleteButton.isHidden = true
     }
-
+    
     private func updateUIForAuthFailure() {
         verificationCodeErrorLabel.isHidden = false
         verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
@@ -541,6 +546,8 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
         }
     }
     
+    // MARK: Objc Functions
+    
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true)
     }
@@ -567,7 +574,7 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
         guard let confirmPassword = textField.text else { return }
         viewModel.setPasswordConfirmationText(confirmPassword)
     }
-
+    
     @objc private func togglePasswordVisibility(_ sender: UIButton) {
         passwordTextField.isSecureTextEntry.toggle()
         let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
@@ -622,16 +629,16 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
             showAlert(title: "에러", message: "이메일 주소를 입력해주세요.")
             return
         }
-
+        
         loadingIndicator.startAnimating()
         setComponentDisable(false)
-
+        
         viewModel.sendAuthCode(email: email) { [weak self] (success, message) in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.loadingIndicator.stopAnimating()
                 self.setComponentDisable(true)
-
+                
                 if success {
                     self.emailErrorLabel.isHidden = false
                     self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
@@ -655,7 +662,6 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
         
         viewModel.checkAuthCode(inputCode: authCode)
     }
-
     
     //💥deinit 추가!! dismiss추가
 }
