@@ -318,7 +318,9 @@ class LoginViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func signUpButtonTap() {
-        let signUpVC = SignUpViewController()
+        let viewModel = SignUpViewModel(firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())), fireStorageManager: FirestorageDBManager(), smtpManager: SMTPManager(htmpParser: HTMLParser()))
+        
+        let signUpVC = SignUpViewController(viewModel: viewModel)
         self.navigationController?.pushViewController(signUpVC, animated: true)
     }
     

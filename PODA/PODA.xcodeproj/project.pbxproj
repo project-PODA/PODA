@@ -31,6 +31,7 @@
 		27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */; };
 		27AA45822AEA400D0051C365 /* CameraAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */; };
 		27AD25B32AF37F5E00B2FDDF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 27AD25B22AF37F5E00B2FDDF /* GoogleService-Info.plist */; };
+		27C679852AFCC28500509DAE /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C679842AFCC28500509DAE /* SignUpViewModel.swift */; };
 		27D2652B2ADD21B800B6E211 /* PieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652A2ADD21B800B6E211 /* PieceViewController.swift */; };
 		27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D2652F2ADD237600B6E211 /* PieceViewModel.swift */; };
 		27DB5D0D2AE2532900489318 /* NVActivityIndicatorView in Frameworks */ = {isa = PBXBuildFile; productRef = 27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */; };
@@ -157,6 +158,7 @@
 		27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAccessHelper.swift; sourceTree = "<group>"; };
 		27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAccessHelper.swift; sourceTree = "<group>"; };
 		27AD25B22AF37F5E00B2FDDF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		27C679842AFCC28500509DAE /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		27D2652A2ADD21B800B6E211 /* PieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewController.swift; sourceTree = "<group>"; };
 		27D2652F2ADD237600B6E211 /* PieceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceViewModel.swift; sourceTree = "<group>"; };
 		5F2B1CC62ADCD08D00DAA9C8 /* Pretendard-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.otf"; sourceTree = "<group>"; };
@@ -620,6 +622,7 @@
 			isa = PBXGroup;
 			children = (
 				D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */,
+				27C679842AFCC28500509DAE /* SignUpViewModel.swift */,
 				D8E5D04F2AE1227A005EE3C9 /* SetProfileViewController.swift */,
 				D8E5D0512AE12471005EE3C9 /* CompleteSignUpViewController.swift */,
 				D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */,
@@ -1036,6 +1039,7 @@
 				5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */,
 				5FD54B522AD915690092D75B /* ProfileViewModel.swift in Sources */,
 				D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */,
+				27C679852AFCC28500509DAE /* SignUpViewModel.swift in Sources */,
 				26A7D49B2AE63F6D00810D63 /* PieceCollectionViewCell.swift in Sources */,
 				5F54EC002ADFFFFD00331E59 /* FirebaseError + Enum.swift in Sources */,
 				27AA45822AEA400D0051C365 /* CameraAccessHelper.swift in Sources */,
