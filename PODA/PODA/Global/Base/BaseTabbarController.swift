@@ -108,15 +108,6 @@ class BaseTabbarController: UITabBarController {
     }
     
     
-    @objc private func didTapInfoButton() {
-        let infoVC = InfoViewController()
-        if let baseTabbar = self.tabBarController as? BaseTabbarController {
-            baseTabbar.setCustomTabbarHidden(true)
-        }
-        self.navigationController?.pushViewController(infoVC, animated: true)
-    }
-    
-    
     @objc private func homeTapped() {
         self.selectedIndex = 0
         updateTabbarImages()
