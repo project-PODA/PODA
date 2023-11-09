@@ -616,54 +616,6 @@ class SignUpViewController: BaseViewController, ViewModelBindable {
         
         self.navigationController?.pushViewController(agreeTermsVC, animated: true)
     }
-
-//    메일 인증 보내기
-//    @objc private func sendAuthUserCode() {
-//        
-//        guard let _ = emailTextField.text  else {return}
-//        
-//        loadingIndicator.startAnimating()
-//        setComponentDisable(false)
-//        //어드민계정으로 접속후 이메일에 중복된 값이 있는지 확인
-//        viewModel.firebaseAuthManager.userLogin(email: "admin@naver.com", password: "admin1!"){ [weak self] error in
-//            guard let self = self else {return}
-//            
-//            viewModel.fireStoreDB.emailCheck(email: emailTextField.text!.lowercased()){[weak self] error in
-//                guard let self = self else {return}
-//                //로그인 못하는 상태라면 -> 유저정보가 없다면 다시 비활성화 된 버튼들을 활성화시킴
-//                if error == .none{
-//                    showAlert(title: "에러", message: "유저 정보가 존재합니다. 다른 계정으로 가입해주세요.")
-//                    emailSendButton.isEnabled = true
-//                    verifyCodeButton.isEnabled = true
-//                    
-//                } else {
-//                    viewModel.smtpManager.sendAuth(userEmail: emailTextField.text!, logoImage: UIImage(named: "logo_poda")?.pngData()!){ [weak self] (authCode, success) in
-//                        guard let self = self else {return}
-//                        if ((authCode >= 10000 && authCode <= 99999) && success){
-//                            viewModel.userAuthCode = authCode
-//                            DispatchQueue.main.async{
-//                                self.emailErrorLabel.isHidden = false
-//                                               self.emailErrorLabel.textColor = Palette.podaBlue.getColor()
-//                                               self.emailErrorLabel.text = "메세지가 발송되었습니다. 코드를 입력해주세요."
-//                                               
-//                                               self.verificationCodeErrorLabel.isHidden = false
-//                                               self.verificationCodeErrorLabel.textColor = Palette.podaRed.getColor()
-//                                               self.verificationCodeErrorLabel.text = "입력 완료 후 인증하기 버튼을 눌러주세요."
-//                                               
-//                                               self.emailSendButton.backgroundColor = Palette.podaGray4.getColor()
-//                                               self.verifyCodeButton.backgroundColor = Palette.podaBlue.getColor()
-//                            }
-//                        }
-//                    }
-//                }
-//                DispatchQueue.main.async{ [weak self] in
-//                    guard let self = self else {return}
-//                    loadingIndicator.stopAnimating()
-//                    setComponentDisable(true)
-//                }
-//            }
-//        }
-//    }
     
     @objc private func sendAuthUserCode() {
         guard let email = emailTextField.text?.lowercased(), !email.isEmpty else {
