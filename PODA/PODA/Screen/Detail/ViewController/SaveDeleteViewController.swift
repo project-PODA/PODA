@@ -133,7 +133,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         imageView.snp.makeConstraints {
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
             
-            if diaryData?.ratio == "square" {
+            if diaryData?.ratio == .square {
                 $0.width.height.equalTo(UIScreen.main.bounds.width)
                 
             } else {
@@ -221,10 +221,11 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
                                     NotificationCenter.default.post(
                                         name: SaveDeleteViewController.deleteDiaryNotificationName,
                                         object: DiaryData(
+                                            pageDataList: self.diaryData?.pageDataList ?? [],
                                             diaryName: diaryName,
                                             diaryImageList: self.diaryData?.diaryImageList ?? [],
                                             createDate: self.diaryData?.createDate ?? "",
-                                            ratio: self.diaryData?.ratio ?? "",
+                                            ratio: self.diaryData?.ratio ?? .square,
                                             description: self.diaryData?.description ?? "")
                                     )
                                     self.navigationController?.popToViewController(viewController, animated: true)

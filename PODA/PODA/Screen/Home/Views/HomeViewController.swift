@@ -11,9 +11,7 @@ import SnapKit
 import RealmSwift
 import NVActivityIndicatorView
 
-class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable {
-    
-    var viewModel: HomeViewModel! // (생성자 initializer 만들기 귀찮으면 ! 붙여서 var viewModel: HomeViewModel! 하삼)
+class HomeViewController: BaseViewController, UIConfigurable {
     
     private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private var diaryDataList: [DiaryData] = []
@@ -531,55 +529,6 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         }
     }
     
-//    func loadDiaryDataFromFirebase() {
-//        loadingIndicator.startAnimating()
-//
-//        firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
-//            guard let self = self else { return }
-//            
-//            if error == .none {
-//                // FIXME: - counter 변수 확인
-//                print("diaryList: \(diaryList)")
-//                var counter = 0
-//                if diaryList.count == 1 {
-//                    // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
-//                    DispatchQueue.main.async {
-//                        self.updateDiaryCollectionView(isEmpty: true)
-//                        self.loadingIndicator.stopAnimating()
-//                    }
-//                }
-//                for diaryName in diaryList {
-//                    if diaryName != "account" {
-//                        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { [weak self] diaryInfoList, error in
-//                            guard let self = self else { return }
-//                            if error == .none, let diaryInfo = diaryInfoList.first {
-//                                firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
-//                                    guard let self = self else { return }
-//                                    if error == .none {
-//                                        self.diaryDataList.append(DiaryData(
-//                                            diaryName: diaryInfo.diaryName,
-//                                            diaryImageList: imageList,
-//                                            createDate: diaryInfo.createTime,
-//                                            ratio: diaryInfo.frameRate,
-//                                            description: diaryInfo.description)
-//                                        )
-//                                        counter += 1
-//                                        if counter == diaryList.count - 1 {
-//                                            DispatchQueue.main.async {
-//                                                self.updateDiaryCollectionView(isEmpty: false)
-//                                                self.loadingIndicator.stopAnimating()
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
         guard let fileName = imageMemory.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
@@ -670,12 +619,12 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         
         homeMenuVC.didTapDiary = {
             self.dismiss(animated: true)
-            self.navigationController?.pushViewController(SelectRatioViewController(), animated: true)
+            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
         }
         
         homeMenuVC.didTapPiece = {
             self.dismiss(animated: true)
-            self.navigationController?.pushViewController(PieceViewController(), animated: true)
+            self.navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
         }
     }
     
@@ -684,7 +633,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     }
     
     @objc func didTapAddDiaryButton() {
-        navigationController?.pushViewController(SelectRatioViewController(), animated: true)
+        navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
     }
     
     // FIXME: - Bind 함수로 정리하기
