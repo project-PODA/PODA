@@ -26,7 +26,6 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
     }
     
     
-    
     private let tableView = UITableView(frame: .zero, style: .plain).then {
         $0.register(InfoCell.self, forCellReuseIdentifier: "infoCell")
         $0.backgroundColor = .clear
@@ -43,9 +42,6 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
         $0.setTitleColor(Palette.podaGray3.getColor(), for: .normal)
         $0.addTarget(self, action: #selector(didTapLeaveButton), for: .touchUpInside)
     }
-    
-    
-    private let items: [String] = ["버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고"]
     
     
     override func viewDidLoad() {
@@ -143,7 +139,6 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
                 self?.moveToHome()
             })
         }
-        
         alertController.addAction(cancelAction)
         alertController.addAction(logoutAction)
         
@@ -161,7 +156,7 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
 // MARK: - UITableViewDataSource
 extension InfoViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return viewModel.getItemsCount()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -172,7 +167,8 @@ extension InfoViewController: UITableViewDataSource {
                 cell.setVersion(version)
             }
         } else {
-            cell.setTitle(items[indexPath.row])
+            let itemTitle = viewModel.getItemTitle(indexPath.row)
+            cell.setTitle(itemTitle)
         }
         
         cell.selectionStyle = .none

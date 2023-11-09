@@ -17,6 +17,15 @@ class InfoViewModel {
         self.fireAuthManager = fireAuthManager
     }
     
+    let items: [String] = ["버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고"]
+    
+    func getItemsCount() -> Int {
+        return items.count
+    }
+    
+    func getItemTitle(_ index: Int) -> String {
+        return items[index]
+    }
     
     // 로그아웃 로직
     func logout(completion: @escaping () -> Void) {
@@ -27,7 +36,6 @@ class InfoViewModel {
             }
         }
     }
-    
     
     
     func clearUserSession() {
