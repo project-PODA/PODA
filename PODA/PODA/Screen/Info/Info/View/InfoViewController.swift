@@ -9,12 +9,21 @@ import UIKit
 import SnapKit
 import MessageUI
 import Then
-import FirebaseAuth
 
 
-class InfoViewController: BaseViewController, UIConfigurable {
+class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable {
     
-    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
+    var viewModel: InfoViewModel!
+    
+    init(viewModel: InfoViewModel!) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     
     private let tableView = UITableView(frame: .zero, style: .plain).then {
@@ -33,9 +42,6 @@ class InfoViewController: BaseViewController, UIConfigurable {
         $0.setTitleColor(Palette.podaGray3.getColor(), for: .normal)
         $0.addTarget(self, action: #selector(didTapLeaveButton), for: .touchUpInside)
     }
-    
-    
-    private let items: [String] = ["버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고"]
     
     
     override func viewDidLoad() {
@@ -57,6 +63,10 @@ class InfoViewController: BaseViewController, UIConfigurable {
         if let baseTabbar = self.tabBarController as? BaseTabbarController {
             baseTabbar.setCustomTabbarHidden(false)
         }
+    }
+    
+    func bindViewModel() {
+        
     }
     
     
@@ -92,31 +102,27 @@ class InfoViewController: BaseViewController, UIConfigurable {
         tableView.isScrollEnabled = false
     }
     
-    func sendEmail() {
-        // App Version.
-        guard let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else { return }
-        
-        // User ID
-        let userID = Auth.auth().currentUser?.uid ?? "Unknown"
-        
-        // mail 을 연동해서 보낼 수 있는가를 체크.
-        if MFMailComposeViewController.canSendMail() {
-            let mailComposeVC = MFMailComposeViewController()
-            mailComposeVC.mailComposeDelegate = self
-            mailComposeVC.setToRecipients(["poda_official@naver.com"])
-            mailComposeVC.setSubject("PODA 문의 사항")
-            mailComposeVC.setMessageBody("오류사항 및 문의사항을 세세히 입력해주세요.\n(필요하다면 스크린샷도 함께 첨부해주세요.) \n\n App Version: \(appVersion) \n Device: \(UIDevice.iPhoneModel) \n OS: \(UIDevice.iOSVersion) \n UserID: \(userID)", isHTML: false)
-            mailComposeVC.modalPresentationStyle = .overFullScreen
-            present(mailComposeVC, animated: true, completion: nil)
-        } else {
-            // mail 이 계정과 연동되지 않은 경우.
-            let mailErrorAlert = UIAlertController(title: "설정", message: "이메일 설정을 확인하고 다시 시도해주세요.\n('설정'앱>Mail>계정>계정추가)\n\n문의 : poda_official@naver.com", preferredStyle: .alert)
-            let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in }
-            mailErrorAlert.addAction(confirmAction)
-            present(mailErrorAlert, animated: true, completion: nil)
+    func didTapEmailSupportButton() {
+        viewModel.sendEmail { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let mailComposeVC):
+                    mailComposeVC.mailComposeDelegate = self
+                    self?.present(mailComposeVC, animated: true, completion: nil)
+                case .failure(let error):
+                    self?.showErrorAlert(error: error)
+                }
+            }
         }
     }
     
+    
+    private func showErrorAlert(error: Error) {
+        let message = (error as NSError).domain == "MailServicesError" ? "이메일 설정을 확인하고 다시 시도해주세요.\n('설정'앱>Mail>계정>계정추가)\n\n문의 : poda_official@naver.com" : "앱 버전 정보를 가져올 수 없습니다."
+        let alertController = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alertController, animated: true)
+    }
     
     @objc func didTapBackButton() {
         self.navigationController?.popViewController(animated: true)
@@ -124,21 +130,15 @@ class InfoViewController: BaseViewController, UIConfigurable {
     
     
     @objc private func didTapLogoutButton() {
+        
         let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
         let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
-            guard let self = self else { return }
-            self.fireAuthManager.userLogOut() { error in
-                if error == .none {
-                    UserDefaultManager.isUserLoggedIn = false
-                    UserDefaultManager.userEmail = ""
-                    UserDefaultManager.userPassword = ""
-                    self.moveToHome()
-                }
-            }
+            self?.viewModel.logout(completion: {
+                self?.moveToHome()
+            })
         }
-        
         alertController.addAction(cancelAction)
         alertController.addAction(logoutAction)
         
@@ -148,7 +148,7 @@ class InfoViewController: BaseViewController, UIConfigurable {
     @objc private func didTapLeaveButton() {
         let viewModel = LeaveViewModel(fireAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())))
         let leaveViewController = LeaveViewController(viewModel: viewModel)
-
+        
         self.navigationController?.pushViewController(leaveViewController, animated: true)
     }
 }
@@ -156,7 +156,7 @@ class InfoViewController: BaseViewController, UIConfigurable {
 // MARK: - UITableViewDataSource
 extension InfoViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return viewModel.getItemsCount()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -167,7 +167,8 @@ extension InfoViewController: UITableViewDataSource {
                 cell.setVersion(version)
             }
         } else {
-            cell.setTitle(items[indexPath.row])
+            let itemTitle = viewModel.getItemTitle(indexPath.row)
+            cell.setTitle(itemTitle)
         }
         
         cell.selectionStyle = .none
@@ -197,8 +198,7 @@ extension InfoViewController: UITableViewDelegate {
             let noticeVC = NoticeViewController()
             self.navigationController?.pushViewController(noticeVC, animated: true)
         case 4: // 기능 추가 요청/오류 신고
-            sendEmail()
-            
+            didTapEmailSupportButton()
         default:
             break
         }
