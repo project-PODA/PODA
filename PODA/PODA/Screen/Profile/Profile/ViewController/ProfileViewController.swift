@@ -180,19 +180,12 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     }
     
     @objc private func didTapInfoButton() {
-        // FireAuthManager 인스턴스 생성
         let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
         
-        // InfoViewModel에 FireAuthManager 인스턴스 주입
-        let infoViewModel = InfoViewModel(fireAuthManager: fireAuthManager)
+        let infoVC = InfoViewController(viewModel: InfoViewModel(fireAuthManager: fireAuthManager))
         
-        // InfoViewController 초기화
-        let infoVC = InfoViewController(viewModel: infoViewModel)
+        infoVC.bind(to: infoVC.viewModel)
         
-        // ViewModel 바인딩
-        infoVC.bind(to: infoViewModel)
-        
-        // InfoViewController로 화면 전환
         self.navigationController?.pushViewController(infoVC, animated: true)
     }
 }
