@@ -5,7 +5,6 @@
 //  Created by Kyle on 11/9/23.
 //
 
-import Foundation
 import UIKit
 
 enum EmailTextValidStatus {
