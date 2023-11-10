@@ -222,16 +222,19 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
     
+    // 배경색 변경 버튼을 눌렀을 때 실행되는 메소드
     @objc private func touchUpBackgroundButton() {
         UIView.animate(withDuration: 0.8) {
             self.selectBackgroundColorView.isHidden = self.isSelectedBackgroundButton
         }
         isSelectedBackgroundButton.toggle()
         
+        // 앱에 기본으로 설정되어 있는 색상을 눌렀을 때
         selectBackgroundColorView.touchedColor = { color in
             self.diaryView.backgroundColor = color
         }
         
+        // 사용자가 직접 커스텀한 색상을 눌렀을 때
         selectBackgroundColorView.changedCustomColor = { color in
             self.diaryView.backgroundColor = color
         }
@@ -245,6 +248,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
+    // 사진 추가 버튼을 눌렀을 때 실행되는 메소드
     @objc private func touchUpGalleryButton() {
         PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { (isAuthorized) in
             if isAuthorized {
@@ -257,6 +261,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
+    // 스티커(추억조각) 추가 버튼을 눌렀을 때 실행되는 메소드
     @objc private func touchUpStickerButton() {
         let stickerViewController = StickerViewController()
         stickerViewController.modalPresentationStyle = .pageSheet
@@ -277,6 +282,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
+    // 텍스트 추가 버튼을 눌렀을 때 실행되는 메소드
     @objc private func touchUpTextButton() {
         var textView = UITextView()
         textView = addText(textView)
@@ -330,6 +336,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
+    // 삭제 버튼 클릭시 현재 사용자가 편집 중인 (이미지 or 텍스트)가 삭제됨
     @objc func touchUpDeleteButton(_ sender: UIButton) {
         deleteButton.isHidden = true
         
@@ -345,6 +352,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     // MARK: - Custom Method
     
     func bindViewModel() {
+        // newImage 변수 값이 바뀔 때마다 (즉, 새로운 이미지가 들어갈 때마다) addImage()를 실행시킴
         viewModel.newImage.addObserver { [weak self] image in
             guard let self = self, let image = image else { return }
             addImage(image)
