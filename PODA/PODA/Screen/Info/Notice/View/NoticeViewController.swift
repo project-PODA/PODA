@@ -18,7 +18,6 @@ class NoticeViewController: BaseViewController, UIConfigurable, ViewModelBindabl
     init(viewModel: NoticeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        bindViewModel()
     }
     
     required init?(coder: NSCoder) {

@@ -197,9 +197,8 @@ extension InfoViewController: UITableViewDelegate {
         case 3: // 공지사항
             let noticeVC = NoticeViewController(viewModel: NoticeViewModel(fireDBManager: FirestorageDBManager()))
             
-            let noticeViewModel = NoticeViewModel(fireDBManager: FirestorageDBManager())
             
-            noticeVC.bind(to: noticeViewModel)
+            noticeVC.bind(to: noticeVC.viewModel)
 
             self.navigationController?.pushViewController(noticeVC, animated: true)
         case 4: // 기능 추가 요청/오류 신고
