@@ -11,19 +11,28 @@ import SnapKit
 import NVActivityIndicatorView
 import PhotosUI
 
-class SetProfileViewController: BaseViewController, UIConfigurable {
+class SetProfileViewController: BaseViewController, UIConfigurable, ViewModelBindable {
     
-    var email: String = ""
-    var password: String = ""
-    private var firebaseAuth = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    var viewModel: SetProfileViewModel!
+
+    init(viewModel: SetProfileViewModel, email: String, password: String) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel.updateData(email: email, password: password)
+        self.viewModel.setProfileImage(imageData: profileImageView.image?.pngData())
+        
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
     
-    private let titleLabel = UILabel().then {
+    private lazy var titleLabel = UILabel().then {
         $0.numberOfLines = 2
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 8
@@ -35,47 +44,44 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         $0.attributedText = attributedString
     }
     
-    private let profileImageView = UIImageView().then {
+    private lazy var profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 105
         $0.clipsToBounds = true
         $0.image = UIImage(named: "image_profile")
     }
     
-    private let cameraButton = UIButton(type: .custom).then {
+    private lazy var cameraButton = UIButton(type: .custom).then {
         $0.setImage(UIImage(named: "icon_camera"), for: .normal)
         $0.layer.cornerRadius = 22
     }
     
-    private let nicknameTextField = UITextField().then {
+    private lazy var nicknameTextField = UITextField().then {
         $0.placeholder = "ex. 김포다"
         $0.textColor = Palette.podaBlack.getColor()
         $0.attributedPlaceholder = NSAttributedString(string: "ex. 김포다", attributes: [NSAttributedString.Key.foregroundColor: Palette.podaGray3.getColor()])
+        $0.delegate = self
+        $0.rightView = clearButton
+        $0.rightViewMode = .whileEditing
     }
     
-    private let nicknameUnderlineView = UIView().then {
+    private lazy var nicknameUnderlineView = UIView().then {
         $0.backgroundColor = Palette.podaGray3.getColor()
     }
     
-    private let nicknameWarningLabel = UILabel().then {
+    private lazy var nicknameWarningLabel = UILabel().then {
         $0.textColor = Palette.podaRed.getColor()
-        $0.isHidden = true
+        $0.isHidden = false
         $0.setUpLabel(title: "5자 이내로 입력해주세요.", podaFont: .caption)
     }
     
-    private let clearButton = UIButton().then {
+    private lazy var clearButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_delete"), for: .normal)
         $0.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         
     }
-    
-//    private let descriptionLabel = UILabel().then {
-//        $0.numberOfLines = 2
-//        $0.textColor = Palette.podaGray3.getColor()
-//        $0.setUpLabel(title: "프로필 정보는 내가 친구간 커뮤니케이션\n동의목적으로 활용되며, PODA 이용기간동안 보관됩니다.", podaFont: .caption)
-//    }
-    
-    private let signUpButton = UIButton().then {
+        
+    private lazy var signUpButton = UIButton().then {
         $0.setUpButton(title: "가입 완료", podaFont: .button1, cornerRadius: 22)
         $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
@@ -91,8 +97,58 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         hideKeyboardWhenTappedAround()
         nicknameTextField.enableHideKeyboardOnReturn()
         nicknameTextField.delegate = self
-        
     }
+    
+    func bindViewModel() {
+        viewModel.profileImage.addObserver { [weak self] imageData in
+            guard let self = self else { return }
+            if let imageData = imageData {
+                DispatchQueue.main.async { [weak self] in
+                    self?.profileImageView.image = UIImage(data: imageData)
+                }
+            } else {
+                showAlert(title: "에러", message: "이미지 정보를 찾을 수 없습니다.")
+            }
+        }
+        
+        viewModel.nicknameText.addObserver{ [weak self] nickNameText in
+            guard let self = self else { return }
+            if nickNameText.isEmpty {
+                nicknameTextField.text = ""
+                nicknameWarningLabel.isHidden = false
+            } else if nickNameText.count > 5 {
+                nicknameWarningLabel.isHidden = false
+                makeAnimation(animationType: .shake, for: nicknameTextField)
+                
+            } else {
+                nicknameWarningLabel.isHidden = true
+            }
+            updateSignUpButtonAppearance()
+        }
+        
+        viewModel.completeSignup.addObserver { [weak self] signUpStatus in
+            guard let self = self else { return }
+            switch signUpStatus {
+            case .success:
+                let completeSignUpVC = CompleteSignUpViewController()
+                navigationController?.pushViewController(completeSignUpVC, animated: true)
+            case .emptyText:
+                showAlert(title: "에러", message: "닉네임을 설정해 주세요.")
+            case .exceedTextLength:
+                showAlert(title: "에러", message: "5자 이내로 입력해주세요.")
+                nicknameTextField.text = ""
+            case .profileImageEmpty:
+                showAlert(title: "에러", message: "이미지를 설정해 주세요.")
+            case .error(let error):
+                showAlert(title: "에러", message: error.description)
+            default:
+                break
+            }
+            setComponentEnable(true)
+            loadingIndicator.stopAnimating()
+        }
+    }
+    
     
     func setActions() {
         cameraButton.addTarget(self, action: #selector(openGallery), for: .touchUpInside)
@@ -101,10 +157,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         nicknameTextField.addTarget(self, action: #selector(textFieldDidChangeSelection(_:)), for: .editingChanged)
     }
     
-    
     func configUI() {
-        nicknameTextField.rightView = clearButton
-        nicknameTextField.rightViewMode = .whileEditing
         
         [backButton, titleLabel, profileImageView, cameraButton, nicknameTextField, nicknameUnderlineView, nicknameWarningLabel, signUpButton,loadingIndicator].forEach { view.addSubview($0) }
         
@@ -148,12 +201,6 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
             make.left.right.equalTo(nicknameTextField)
         }
         
-//        descriptionLabel.snp.makeConstraints { make in
-//            make.top.equalTo(nicknameWarningLabel.snp.bottom).offset(10)
-//            make.left.equalToSuperview().offset(20)
-//            make.right.equalToSuperview().offset(-20)
-//        }
-        
         signUpButton.snp.makeConstraints { make in
             make.height.equalTo(44)
             make.left.equalToSuperview().offset(40)
@@ -166,11 +213,7 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    @objc func didTapBackButton() {
-        navigationController?.popViewController(animated: true)
-    }
-    
-    func updateSignUpButtonAppearance() {
+    private func updateSignUpButtonAppearance() {
         if let nickname = nicknameTextField.text, !nickname.isEmpty {
             // 프로필 이름이 설정 완료
             signUpButton.backgroundColor = Palette.podaBlue.getColor()
@@ -186,13 +229,9 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
         }
     }
     
-//    @objc private func openGallery() {
-//        let picker = UIImagePickerController().then {
-//            $0.delegate = self
-//            $0.sourceType = .photoLibrary
-//        }
-//        self.present(picker, animated: true, completion: nil)
-//    }
+    @objc func didTapBackButton() {
+        navigationController?.popViewController(animated: true)
+    }
     
     @objc func openGallery() {
         PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { [weak self] isAuthorized in
@@ -207,12 +246,14 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
             }
         }
     }
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        updateSignUpButtonAppearance()
+    }
     
     @objc private func clearTextField() {
-        nicknameTextField.text = ""
-        nicknameWarningLabel.isHidden = true
+        viewModel.setNickName(nickname: "")
     }
-    private func setComponentDisable(_ enabled : Bool){
+    private func setComponentEnable(_ enabled : Bool){
         cameraButton.isEnabled = enabled
         clearButton.isEnabled = enabled
         signUpButton.isEnabled = enabled
@@ -220,62 +261,25 @@ class SetProfileViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func navigateToCompleteSignUp() {
-        guard let _ = nicknameTextField.text, let imageData = profileImageView.image?.pngData() else {
-            showAlert(title: "에러", message: "데이터가 올바르지 않습니다. 확인해주세요.")
-            return
-        }
-        if nicknameTextField.text == "" {
-            showAlert(title: "에러", message: "닉네임을 입력해주세요.")
-            return
-        }
         loadingIndicator.startAnimating()
-        setComponentDisable(false)
-        firebaseAuth.signUpUser(email: email, password: password, profileImage: imageData, nickName: nicknameTextField.text!) { [weak self] error in
-            guard let self = self else { return }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else {return}
-                if error == .none {
-                    let completeSignUpVC = CompleteSignUpViewController()
-                    navigationController?.pushViewController(completeSignUpVC, animated: true)
-                } else {
-                    showAlert(title: "에러", message: error.description)
-                }
-                loadingIndicator.stopAnimating()
-                setComponentDisable(true)
-            }
-        }
-    }
-}
-
-extension SetProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[.originalImage] as? UIImage {
-            profileImageView.image = image
-        }
-        dismiss(animated: true, completion: nil)
+        setComponentEnable(false)
+        viewModel.onCompleteSingupTapped()
     }
 }
 
 extension SetProfileViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == nicknameTextField {
-            let newText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-            let isWithinLimit = newText.count <= 5
-            nicknameWarningLabel.isHidden = isWithinLimit
-            return isWithinLimit
+            if let newText = textField.text {
+                viewModel.setNickName(nickname: newText)
+            }
         }
-        return true
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        updateSignUpButtonAppearance()
     }
 }
 
 extension SetProfileViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         dismiss(animated: true, completion: nil)
-        
         guard !results.isEmpty else {
             return
         }
@@ -283,12 +287,11 @@ extension SetProfileViewController: PHPickerViewControllerDelegate {
         let selectedResult = results[0]
         
         selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
+            guard let self = self else { return }
             if let error = error {
-                print("이미지 로딩 중 오류: \(error.localizedDescription)")
+                showAlert(title: "에러", message: error.localizedDescription)
             } else if let selectedImage = object as? UIImage {
-                DispatchQueue.main.async {
-                    self?.profileImageView.image = selectedImage
-                }
+                viewModel.setProfileImage(imageData: selectedImage.pngData())
             }
         }
     }

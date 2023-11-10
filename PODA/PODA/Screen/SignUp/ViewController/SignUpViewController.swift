@@ -615,9 +615,8 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         guard viewModel.isSignUpAllowed.value else { return }
         
         let agreeTermsVC = AgreeTermsViewController()
-        let setProfileVC = SetProfileViewController()
-        setProfileVC.email = emailTextField.text!.lowercased()
-        setProfileVC.password = passwordTextField.text!
+        let setProfileVC = SetProfileViewController(viewModel: SetProfileViewModel(firebaseAuth: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))), email: emailTextField.text!.lowercased(), password: passwordTextField.text!)
+        setProfileVC.bind(to: setProfileVC.viewModel)
         
         agreeTermsVC.setProfileVC = setProfileVC
         

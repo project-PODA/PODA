@@ -84,7 +84,7 @@ extension UIViewController {
         }
     }
     
-    private func makeAnimation(animationType: AnimationType, for textField: UITextField) {
+    func makeAnimation(animationType: AnimationType, for textField: UITextField) {
         switch animationType {
         case .shake:
             let shakeAnimation = CABasicAnimation(keyPath: "position")
