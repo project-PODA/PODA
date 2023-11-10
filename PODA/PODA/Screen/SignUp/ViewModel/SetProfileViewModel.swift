@@ -6,14 +6,6 @@
 //
 import Foundation
 
-
-enum NicknameValidStatus {
-    case success
-    case emptyText
-    case exceedTextLength
-    case none
-}
-
 enum CompleteSignUpValidStatus {
     case success
     case emptyText
@@ -23,9 +15,8 @@ enum CompleteSignUpValidStatus {
     case none
 }
 
-
 class SetProfileViewModel {
-
+    
     var profileImage: Observable<Data?> = Observable(nil)
     var nicknameText: Observable<String> = Observable("")
     var completeSignup: Observable<CompleteSignUpValidStatus> = Observable(.none)
@@ -72,15 +63,14 @@ class SetProfileViewModel {
             completeSignup.value = .exceedTextLength
             return
         }
-        print(nicknameText.value)
-
+        
         firebaseAuth.signUpUser(email: email, password: password, profileImage: profileImage.value, nickName: nicknameText.value) { [weak self] error in
             guard let self = self else { return }
-                if error == .none {
-                    completeSignup.value = .success
-                } else {
-                    completeSignup.value = .error(error.description)
-                }
+            if error == .none {
+                completeSignup.value = .success
+            } else {
+                completeSignup.value = .error(error.description)
             }
+        }
     }
 }

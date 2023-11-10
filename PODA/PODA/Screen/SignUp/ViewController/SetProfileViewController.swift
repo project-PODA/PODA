@@ -119,7 +119,6 @@ class SetProfileViewController: BaseViewController, UIConfigurable, ViewModelBin
             } else if nickNameText.count > 5 {
                 nicknameWarningLabel.isHidden = false
                 makeAnimation(animationType: .shake, for: nicknameTextField)
-                
             } else {
                 nicknameWarningLabel.isHidden = true
             }
