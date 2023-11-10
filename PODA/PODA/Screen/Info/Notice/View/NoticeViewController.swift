@@ -18,6 +18,7 @@ class NoticeViewController: BaseViewController, UIConfigurable, ViewModelBindabl
     init(viewModel: NoticeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        bindViewModel()
     }
     
     required init?(coder: NSCoder) {
@@ -52,6 +53,7 @@ class NoticeViewController: BaseViewController, UIConfigurable, ViewModelBindabl
         tableView.setUpTableView(delegate: self, dataSource: self, cellType: NoticeCell.self)
     }
     
+    
     // MARK: - configUI
     func configUI() {
         setupNavigationBarAppearance()
@@ -69,7 +71,11 @@ class NoticeViewController: BaseViewController, UIConfigurable, ViewModelBindabl
     func bindViewModel() {
         viewModel.onNoticesChanged = { [weak self] in
             DispatchQueue.main.async {
-                self?.tableView.reloadData()
+                if let errorMessage = self?.viewModel.errorMessage {
+                    self?.showAlert(title: "에러", message: errorMessage)
+                } else {
+                    self?.tableView.reloadData()
+                }
             }
         }
     }
@@ -107,6 +113,7 @@ class NoticeViewController: BaseViewController, UIConfigurable, ViewModelBindabl
         tabBarController?.tabBar.standardAppearance = tabBarAppearance
         tabBarController?.tabBar.scrollEdgeAppearance = tabBarAppearance
     }
+    
     
     
     // MARK: - objc
