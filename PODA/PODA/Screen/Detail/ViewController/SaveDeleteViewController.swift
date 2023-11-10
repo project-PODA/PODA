@@ -20,7 +20,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     var isDiaryImage = true
-    var sortedPieceList: Results<ImageMemory>?
+    var sortedPieceList: [ImageMemory] = []
     var indexPath = 0
     //var diaryName: String? // 나중에 은서님 페이지에 이름 넘겨줄것.. (페이지 추가할 때?)
     
@@ -237,9 +237,9 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
                     }
                 }
             } else {
-                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
-                RealmManager.shared.deleteImageMemory(imageMemory)
-                self.getBackToHome()
+//                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
+//                RealmManager.shared.deleteImageMemory(imageMemory)
+//                self.getBackToHome()
             }
         }
         

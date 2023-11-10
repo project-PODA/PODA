@@ -19,7 +19,7 @@ class BaseTabbarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let homeVM = HomeViewModel(firebaseDBManager: FirestorageDBManager(), firebaseImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()), diaryDataList: [DiaryData]())
+        let homeVM = HomeViewModel(firebaseDBManager: FirestorageDBManager(), firebaseImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
         let homeVC = HomeViewController(viewModel: homeVM)
         homeVC.bind(to: homeVC.viewModel)
         

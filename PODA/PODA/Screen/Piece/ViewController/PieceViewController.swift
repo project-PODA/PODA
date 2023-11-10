@@ -16,7 +16,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     // MARK: UIComponents
     
     var isComeFromSaveDeleteVC = false
-    var sortedPieceList: Results<ImageMemory>?
+    var sortedPieceList: [ImageMemory] = []
     var indexPath = 0
     
     let cancelButton = UIButton().then {
@@ -218,22 +218,22 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 self.navigationController?.popViewController(animated: true)
             } else {
                 // 날짜만 변경하는 메서드
-                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
-                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)
-                
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy.MM.dd"
-                let modifiedDate = dateFormatter.string(from: selectedDate)
-                
-                print(modifiedDate)
-                
-                guard let viewControllers = self.navigationController?.viewControllers else { return }
-                for viewController in viewControllers {
-                    if let viewController = viewController as? SaveDeleteViewController {
-                        viewController.dateLabel.text = modifiedDate
-                        self.navigationController?.popToViewController(viewController, animated: true)
-                    }
-                }
+//                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
+//                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)
+//                
+//                let dateFormatter = DateFormatter()
+//                dateFormatter.dateFormat = "yyyy.MM.dd"
+//                let modifiedDate = dateFormatter.string(from: selectedDate)
+//                
+//                print(modifiedDate)
+//                
+//                guard let viewControllers = self.navigationController?.viewControllers else { return }
+//                for viewController in viewControllers {
+//                    if let viewController = viewController as? SaveDeleteViewController {
+//                        viewController.dateLabel.text = modifiedDate
+//                        self.navigationController?.popToViewController(viewController, animated: true)
+//                    }
+//                }
             }
             print("pieceVC pop 될거야")
         }

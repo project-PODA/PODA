@@ -10,7 +10,9 @@ import Then
 import SnapKit
 import RealmSwift
 
-class MorePieceViewController: BaseViewController, UIConfigurable {
+class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigurable {
+   
+    var viewModel: HomeViewModel!
     
     var pieceList: Results<ImageMemory>?
     private var isSortedByPieceDate = true
@@ -79,7 +81,16 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        updateUI()
+        setPieceUI()
+    }
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func configUI() {
@@ -141,60 +152,97 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    func updateUI() {
-        guard let pieceCount = pieceList?.count else { return }
-        
-        if pieceCount != 0 {
-            pieceCountLabel.isHidden = false
-            emptyMorePieceLabel.isHidden = true
-            pieceDateOrderButton.isHidden = false
-            createDateOrderButton.isHidden = false
-            pieceAlbumCollectionView.isHidden = false
-            self.pieceCountLabel.setUpLabel(title: "총 \(pieceCount)개", podaFont: .body1)
+    func setPieceUI() {
+        if viewModel.pieceEmptyState {
+            self.pieceCountLabel.isHidden = false
+            self.emptyMorePieceLabel.isHidden = true
+            self.pieceDateOrderButton.isHidden = false
+            self.createDateOrderButton.isHidden = false
+            self.pieceAlbumCollectionView.isHidden = false
             
-            if isSortedByPieceDate {
-                pieceDateOrderButtonOn()
+            if self.viewModel.isSortedByPieceDate {
+                self.viewModel.selectedOrderOptionState?(true)
             } else {
-                createDateOrderButtonOn()
+                self.viewModel.selectedOrderOptionState?(false)
             }
-            if pieceCount < 6 {
+            
+            if viewModel.pieceCountState {
                 bubbleImageView.isHidden = false
                 infoLabel.isHidden = false
             } else {
                 bubbleImageView.isHidden = true
                 infoLabel.isHidden = true
             }
+            
         } else {
-            pieceCountLabel.isHidden = true
-            emptyMorePieceLabel.isHidden = false
-            pieceDateOrderButton.isHidden = true
-            createDateOrderButton.isHidden = true
-            pieceAlbumCollectionView.isHidden = true
+            self.pieceCountLabel.isHidden = true
+            self.emptyMorePieceLabel.isHidden = false
+            self.pieceDateOrderButton.isHidden = true
+            self.createDateOrderButton.isHidden = true
+            self.pieceAlbumCollectionView.isHidden = true
         }
     }
     
-    func pieceDateOrderButtonOn() {
-        createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-        createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-        pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-        pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-        pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-        pieceAlbumCollectionView.reloadData()
+    func bindViewModel() {
+        viewModel.pieceListLoaded = { [weak self] _ in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                let pieceCount = self.viewModel.pieceCountInt
+                self.pieceCountLabel.setUpLabel(title: "총 \(pieceCount)개", podaFont: .body1)
+            }
+        }
+                
+//        viewModel.pieceEmptyState = { [weak self] isPieceEmpty in
+//            guard let self else { return }
+//            DispatchQueue.main.async {
+//                if isPieceEmpty {
+//                    self.pieceCountLabel.isHidden = false
+//                    self.emptyMorePieceLabel.isHidden = true
+//                    self.pieceDateOrderButton.isHidden = false
+//                    self.createDateOrderButton.isHidden = false
+//                    self.pieceAlbumCollectionView.isHidden = false
+//                    
+//                    if self.viewModel.isSortedByPieceDate {
+//                        self.viewModel.selectedOrderOptionState?(true)
+//                    } else {
+//                        self.viewModel.selectedOrderOptionState?(false)
+//                    }
+//                } else {
+//                    self.pieceCountLabel.isHidden = true
+//                    self.emptyMorePieceLabel.isHidden = false
+//                    self.pieceDateOrderButton.isHidden = true
+//                    self.createDateOrderButton.isHidden = true
+//                    self.pieceAlbumCollectionView.isHidden = true
+//                }
+//            }
+//        }
+        
+        viewModel.selectedOrderOptionState = { [weak self] isPieceDateOrderButtonOn in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                if isPieceDateOrderButtonOn {
+                    self.createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                    self.pieceAlbumCollectionView.reloadData()
+                } else {
+                    self.createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                    self.pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.pieceAlbumCollectionView.reloadData()
+                }
+            }
+        }
     }
     
-    func createDateOrderButtonOn() {
-        createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-        createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-        createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-        pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-        pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-        pieceAlbumCollectionView.reloadData()
-    }
-    
-    func goToPieceSaveDeleteVC(_ index: Int, _ sortedPieceList: Results<ImageMemory>?) {
-        guard let imageMemory = sortedPieceList?[index] else { return }
+    func goToPieceSaveDeleteVC(_ index: Int, _ sortedPieceList: [ImageMemory]) {
+        let imageMemory = sortedPieceList[index]
         let saveDeleteVC = SaveDeleteViewController()
         saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
         saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
@@ -236,19 +284,15 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapPieceDateOrderButton() {
-        isSortedByPieceDate = true
-        pieceDateOrderButtonOn()
+        viewModel.didTapPieceDateOrderButton()
     }
     
     @objc func didTapCreateDateOrderButton() {
-        isSortedByPieceDate = false
-        createDateOrderButtonOn()
+        viewModel.didTapCreateDateOrderButton()
     }
     
     @objc func didTapfloatingButton() {
-        guard let pieceCount = pieceList?.count else { return }
-        
-        if pieceCount >= 6 {
+        if !viewModel.pieceCountState {
             let pieceShakeViewController = PieceShakeViewController()
             pieceShakeViewController.pieceList = pieceList
             navigationController?.pushViewController(pieceShakeViewController, animated: true)
@@ -258,33 +302,24 @@ class MorePieceViewController: BaseViewController, UIConfigurable {
 
 extension MorePieceViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if !isSortedByPieceDate {
-            let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)
-            goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
+        if self.viewModel.isSortedByPieceDate {
+            goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedListbyPieceDate)
         } else {
-            let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)
-            goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
+            goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedListbyCreateDate)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let pieceCount = pieceList?.count else { return 0 }
-        return pieceCount
+        return viewModel.pieceCountInt
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MorePieceCollectionViewCell.identifier, for: indexPath) as? MorePieceCollectionViewCell else { return UICollectionViewCell() }
-        if !isSortedByPieceDate {
-            let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)
-            guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
-            let image = getPieceImage(with: imageMemory)
-            cell.pieceImageView.image = image
+        if self.viewModel.isSortedByPieceDate {
+            cell.pieceImageView.image = self.viewModel.getPieceImage(indexPath.item, true)
             return cell
         } else {
-            let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)
-            guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
-            let image = getPieceImage(with: imageMemory)
-            cell.pieceImageView.image = image
+            cell.pieceImageView.image = self.viewModel.getPieceImage(indexPath.item, false)
             return cell
         }
     }
