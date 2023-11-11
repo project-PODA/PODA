@@ -16,7 +16,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
     // MARK: UIComponents
     
     var isComeFromSaveDeleteVC = false
-    var sortedPieceList: [ImageMemory] = []
+    var sortedPieceList: [PieceData] = []
     var indexPath = 0
     
     let cancelButton = UIButton().then {
@@ -160,11 +160,11 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
     }
     
-    func getPieceDate(with imageMemory: ImageMemory) -> String {
-        guard let memoryDate = imageMemory.memoryDate else { return "" }
+    func getPieceDate(with pieceInfo: RealmPieceData) -> String {
+        guard let pieceDate = pieceInfo.pieceDate else { return "" }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy.MM.dd"
-        return dateFormatter.string(from: memoryDate)
+        return dateFormatter.string(from: pieceDate)
     }
     
     func updateUIForImageAvailability(hasImage: Bool) {
@@ -192,7 +192,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //    }
     
     func saveImageToRealm(image: UIImage, date: Date?) {
-        RealmManager.shared.saveImageMemory(image: image, memoryDate: date)
+        RealmManager.shared.saveImageMemory(image: image, pieceDate: date)
     }
     
     func showSaveConfirmationAlert() {
@@ -217,6 +217,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 self.saveImageToRealm(image: selectedImage, date: selectedDate)
                 self.navigationController?.popViewController(animated: true)
             } else {
+                // FIXME: - ImageMemory 타입을 가지는 RealmPieceList를 따로 또 만들어야하나..
                 // 날짜만 변경하는 메서드
 //                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
 //                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)

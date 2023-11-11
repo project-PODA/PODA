@@ -9,7 +9,7 @@ import UIKit
 
 class DetailViewController: BaseViewController, UIConfigurable {
     
-    var diaryData : DiaryData?
+    var viewModel: DetailViewModel!
     
     // FIXME: - 1. 블러? 그라데이션? 2. 가능하다면 : 표지의 속지 배경색을 그라데이션 색상으로, 불가능하다면 : 검정색으로 그라데이션
     lazy var diaryCoverView = UIImageView().then {
@@ -107,15 +107,16 @@ class DetailViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
         addSwipeGesture()
-        setupComp()
+        setUI()
     }
     
-    private func setupComp() {
-        guard let diaryData = diaryData else { return }
-        diaryCoverView.image = UIImage(data: diaryData.diaryImageList[0])
-        titleLabel.setUpLabel(title: diaryData.diaryName, podaFont: .display3)
-        dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryData.createDate), podaFont: .head1)
-        contentLabel.setUpLabel(title: diaryData.description, podaFont: .body2)
+    init(viewModel: DetailViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // FIXME: - 다이어리 페이지 추가 기능 구현하고 나면 pageCountimageView 추가하기
@@ -166,6 +167,13 @@ class DetailViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    private func setUI() {
+        diaryCoverView.image = viewModel.getDiaryImage()
+        titleLabel.setUpLabel(title: viewModel.getDiaryName(), podaFont: .display3)
+        dateLabel.setUpLabel(title: viewModel.getDiaryDate(), podaFont: .head1)
+        contentLabel.setUpLabel(title: viewModel.getDiaryContent(), podaFont: .body2)
+    }
+    
     func addSwipeGesture() {
         let swipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(scrollView))
         swipeGestureRecognizer.direction = .left
@@ -180,23 +188,14 @@ class DetailViewController: BaseViewController, UIConfigurable {
     
     @objc func scrollView(_ sender: UISwipeGestureRecognizer) {
         if sender.direction == .left {
-            let saveDeleteVC = SaveDeleteViewController()
-            saveDeleteVC.diaryData = diaryData
-            saveDeleteVC.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryData?.createDate ?? ""), podaFont: .body1)
-            saveDeleteVC.imageView.image = UIImage(data: diaryData?.diaryImageList[0] ?? Data())
-            saveDeleteVC.isDiaryImage = true
-            saveDeleteVC.editButton.isHidden = true
-            navigationController?.pushViewController(saveDeleteVC, animated: true)
+            let saveDeleteViewModel = SaveDeleteViewModel()
+            let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
+            saveDeleteViewModel.isDiaryImage = true
+            saveDeleteViewModel.diaryData = viewModel.diaryData
+            saveDeleteViewController.imageView.image = viewModel.getDiaryImage()
+            saveDeleteViewController.dateLabel.setUpLabel(title: viewModel.getDiaryDate(), podaFont: .body1)
+            saveDeleteViewController.editButton.isHidden = true
+            navigationController?.pushViewController(saveDeleteViewController, animated: true)
         }
-    }
-}
-
-// FIXME: - extension 파일 추가?
-extension UIImageView {
-    func addShadowToImageView() {
-        self.layer.shadowOffset = CGSize(width: 1, height: 1)
-        self.layer.shadowOpacity = 0.5
-        self.layer.shadowRadius = 7
-        self.layer.shadowColor = Palette.podaBlack.getColor().cgColor
     }
 }

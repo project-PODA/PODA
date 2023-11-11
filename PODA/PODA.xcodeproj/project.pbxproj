@@ -16,12 +16,18 @@
 		26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */; };
 		26A7D4992AE56D9400810D63 /* SaveDeleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */; };
 		26A7D49B2AE63F6D00810D63 /* PieceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A7D49A2AE63F6D00810D63 /* PieceCollectionViewCell.swift */; };
+		26AD6BFF2AFF5C6E003BD148 /* UIImageView + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26AD6BFE2AFF5C6E003BD148 /* UIImageView + Extension.swift */; };
 		26AE844D2AF1E451004CFB6B /* QRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26AE844C2AF1E451004CFB6B /* QRViewController.swift */; };
 		26B79F6C2AE1135000455539 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6B2AE1135000455539 /* HomeViewController.swift */; };
 		26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */; };
 		26B79F722AE113B600455539 /* MorePieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F712AE113B600455539 /* MorePieceViewController.swift */; };
 		26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */; };
 		26BD63DC2AFA6D1500552469 /* DiaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BD63DB2AFA6D1500552469 /* DiaryData.swift */; };
+		26BFF5812AFE1A8E00EF02E3 /* MorePieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5802AFE1A8E00EF02E3 /* MorePieceViewModel.swift */; };
+		26BFF5832AFE1CA300EF02E3 /* RealmPieceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5822AFE1CA300EF02E3 /* RealmPieceData.swift */; };
+		26BFF5862AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5852AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift */; };
+		26BFF5882AFE444400EF02E3 /* PieceShakeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5872AFE444400EF02E3 /* PieceShakeViewModel.swift */; };
+		26BFF58A2AFE606400EF02E3 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5892AFE606400EF02E3 /* DetailViewModel.swift */; };
 		26E3FBAF2AF52FA800680C76 /* MorePieceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E3FBAE2AF52FA800680C76 /* MorePieceCollectionViewCell.swift */; };
 		276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276985882AD8E20B00A5100D /* AppDelegate.swift */; };
 		2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2769858A2AD8E20B00A5100D /* SceneDelegate.swift */; };
@@ -95,7 +101,7 @@
 		5FEC85C12AE14E0F000E5D4C /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85C02AE14E0F000E5D4C /* FirebaseFirestore */; };
 		5FEC85C32AE14E0F000E5D4C /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 5FEC85C22AE14E0F000E5D4C /* FirebaseStorage */; };
 		5FEC85C72AE156B0000E5D4C /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEC85C62AE156B0000E5D4C /* UserInfo.swift */; };
-		D81320A12AEC2FB70032F487 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81320A02AEC2FB70032F487 /* UIImage.swift */; };
+		D81320A12AEC2FB70032F487 /* UIImage + Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81320A02AEC2FB70032F487 /* UIImage + Extension.swift */; };
 		D8433AD62AFB92A000481E96 /* InfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8433AD52AFB92A000481E96 /* InfoViewModel.swift */; };
 		D870C78A2AEA19A80066A61E /* CustomLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C7892AEA19A80066A61E /* CustomLoadingIndicator.swift */; };
 		D8777E062AF5649400DFEA6A /* PieceShakeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8777E052AF5649400DFEA6A /* PieceShakeViewController.swift */; };
@@ -146,12 +152,18 @@
 		26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreDiaryViewController.swift; sourceTree = "<group>"; };
 		26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveDeleteViewController.swift; sourceTree = "<group>"; };
 		26A7D49A2AE63F6D00810D63 /* PieceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceCollectionViewCell.swift; sourceTree = "<group>"; };
+		26AD6BFE2AFF5C6E003BD148 /* UIImageView + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView + Extension.swift"; sourceTree = "<group>"; };
 		26AE844C2AF1E451004CFB6B /* QRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRViewController.swift; sourceTree = "<group>"; };
 		26B79F6B2AE1135000455539 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeMenuViewController.swift; sourceTree = "<group>"; };
 		26B79F712AE113B600455539 /* MorePieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceViewController.swift; sourceTree = "<group>"; };
 		26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		26BD63DB2AFA6D1500552469 /* DiaryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryData.swift; sourceTree = "<group>"; };
+		26BFF5802AFE1A8E00EF02E3 /* MorePieceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceViewModel.swift; sourceTree = "<group>"; };
+		26BFF5822AFE1CA300EF02E3 /* RealmPieceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmPieceData.swift; sourceTree = "<group>"; };
+		26BFF5852AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveDeleteViewModel.swift; sourceTree = "<group>"; };
+		26BFF5872AFE444400EF02E3 /* PieceShakeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceShakeViewModel.swift; sourceTree = "<group>"; };
+		26BFF5892AFE606400EF02E3 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 		26E3FBAE2AF52FA800680C76 /* MorePieceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceCollectionViewCell.swift; sourceTree = "<group>"; };
 		276985852AD8E20B00A5100D /* PODA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PODA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		276985882AD8E20B00A5100D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -219,7 +231,7 @@
 		5FE92C602AEF752200DDD34F /* String + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extension.swift"; sourceTree = "<group>"; };
 		5FEC85882AE0BDAE000E5D4C /* DiaryInfo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DiaryInfo.md; sourceTree = "<group>"; };
 		5FEC85C62AE156B0000E5D4C /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
-		D81320A02AEC2FB70032F487 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
+		D81320A02AEC2FB70032F487 /* UIImage + Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage + Extension.swift"; sourceTree = "<group>"; };
 		D8433AD52AFB92A000481E96 /* InfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewModel.swift; sourceTree = "<group>"; };
 		D870C7892AEA19A80066A61E /* CustomLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLoadingIndicator.swift; sourceTree = "<group>"; };
 		D8777E052AF5649400DFEA6A /* PieceShakeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceShakeViewController.swift; sourceTree = "<group>"; };
@@ -311,18 +323,19 @@
 		2683649B2AE2CDC100872ABB /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				2683649E2AE2CDE800872ABB /* ViewController */,
+				26BFF5842AFE3BF400EF02E3 /* ViewModels */,
+				2683649E2AE2CDE800872ABB /* Views */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
 		};
-		2683649E2AE2CDE800872ABB /* ViewController */ = {
+		2683649E2AE2CDE800872ABB /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				2683649C2AE2CDDE00872ABB /* DetailViewController.swift */,
 				26A7D4982AE56D9400810D63 /* SaveDeleteViewController.swift */,
 			);
-			path = ViewController;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		26B79F6A2AE1133600455539 /* Home */ = {
@@ -354,6 +367,8 @@
 			children = (
 				265347502AF8F1BD00412A96 /* HomeViewModel.swift */,
 				265347522AF9009F00412A96 /* MoreDiaryVIewModel.swift */,
+				26BFF5802AFE1A8E00EF02E3 /* MorePieceViewModel.swift */,
+				26BFF5872AFE444400EF02E3 /* PieceShakeViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -373,8 +388,18 @@
 			isa = PBXGroup;
 			children = (
 				26BD63DB2AFA6D1500552469 /* DiaryData.swift */,
+				26BFF5822AFE1CA300EF02E3 /* RealmPieceData.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		26BFF5842AFE3BF400EF02E3 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				26BFF5892AFE606400EF02E3 /* DetailViewModel.swift */,
+				26BFF5852AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		2769857C2AD8E20B00A5100D = {
@@ -631,7 +656,8 @@
 				1BFF04012ADE62B100A5430D /* UIColor + Extension.swift */,
 				5F54EBF52ADFFE8600331E59 /* Encodable + Extension.swift */,
 				5F54EBF72ADFFEA700331E59 /* Decodable + Extension.swift */,
-				D81320A02AEC2FB70032F487 /* UIImage.swift */,
+				D81320A02AEC2FB70032F487 /* UIImage + Extension.swift */,
+				26AD6BFE2AFF5C6E003BD148 /* UIImageView + Extension.swift */,
 				5FE92C602AEF752200DDD34F /* String + Extension.swift */,
 			);
 			path = Extension;
@@ -1081,6 +1107,7 @@
 				E2B8F8E12AE2872300578D15 /* DiaryNavigationBar.swift in Sources */,
 				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
 				E2B8F8D92AE1A5FE00578D15 /* ColorPaletteView.swift in Sources */,
+				26AD6BFF2AFF5C6E003BD148 /* UIImageView + Extension.swift in Sources */,
 				E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */,
 				5FD54B292AD911120092D75B /* UITableView + Extension.swift in Sources */,
 				E24331CA2AE0F45C00244A5A /* CreateDiaryViewController.swift in Sources */,
@@ -1089,6 +1116,7 @@
 				27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */,
 				2794D7B02AE0216000B999EC /* TestPageViewController.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
+				26BFF5882AFE444400EF02E3 /* PieceShakeViewModel.swift in Sources */,
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
 				E2B8F8DC2AE2538F00578D15 /* ColorCollectionViewCell.swift in Sources */,
@@ -1107,6 +1135,7 @@
 				5F5447CD2AE6356300365DB7 /* SMTPError + Enum.swift in Sources */,
 				D8F46ADC2AE7E34800C8FDF4 /* NoticeCell.swift in Sources */,
 				5FD54B2D2AD9114B0092D75B /* UIView + Extension.swift in Sources */,
+				26BFF58A2AFE606400EF02E3 /* DetailViewModel.swift in Sources */,
 				E2ABBC782AF9098D0043D7F0 /* Ratio.swift in Sources */,
 				2794D7AC2ADFFDD900B999EC /* PieceImageModel.swift in Sources */,
 				5FD54B4A2AD913460092D75B /* Logger.swift in Sources */,
@@ -1124,9 +1153,10 @@
 				E20C9AEA2AE4209300BA5754 /* StickerCollectionViewCell.swift in Sources */,
 				D8F46ADA2AE7E0EA00C8FDF4 /* NoticeViewController.swift in Sources */,
 				5FD54B182AD90FB90092D75B /* BaseViewController.swift in Sources */,
-				D81320A12AEC2FB70032F487 /* UIImage.swift in Sources */,
+				D81320A12AEC2FB70032F487 /* UIImage + Extension.swift in Sources */,
 				5FD54B3F2AD912960092D75B /* Palette + Enum.swift in Sources */,
 				D8777E062AF5649400DFEA6A /* PieceShakeViewController.swift in Sources */,
+				26BFF5862AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
 				5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */,
 				D8433AD62AFB92A000481E96 /* InfoViewModel.swift in Sources */,
@@ -1134,6 +1164,7 @@
 				5F5447C92AE6354B00365DB7 /* InquireManager.swift in Sources */,
 				2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */,
 				26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */,
+				26BFF5812AFE1A8E00EF02E3 /* MorePieceViewModel.swift in Sources */,
 				26B79F6C2AE1135000455539 /* HomeViewController.swift in Sources */,
 				26B79F722AE113B600455539 /* MorePieceViewController.swift in Sources */,
 				5F5447CB2AE6355900365DB7 /* SMTPManager.swift in Sources */,
@@ -1150,6 +1181,7 @@
 				D8F46ADE2AE80F1600C8FDF4 /* LeaveViewController.swift in Sources */,
 				26A7D4992AE56D9400810D63 /* SaveDeleteViewController.swift in Sources */,
 				D870C78A2AEA19A80066A61E /* CustomLoadingIndicator.swift in Sources */,
+				26BFF5832AFE1CA300EF02E3 /* RealmPieceData.swift in Sources */,
 				5FD54B472AD913110092D75B /* LayoutMultiplier + Enum.swift in Sources */,
 				5FD54B1C2AD90FE80092D75B /* MainViewModel.swift in Sources */,
 				2683649A2AE2A92E00872ABB /* MoreDiaryCollectionViewCell.swift in Sources */,

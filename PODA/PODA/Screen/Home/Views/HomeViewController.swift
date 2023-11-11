@@ -8,7 +8,6 @@
 import UIKit
 import Then
 import SnapKit
-import RealmSwift
 import NVActivityIndicatorView
 
 class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable {
@@ -17,10 +16,6 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     
     private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private var diaryDataList: [DiaryData] = []
-    
-    var pieceList: Results<ImageMemory>?
-    private var isSortedByPieceDate = true
-    private var randomPieceIndex = 0
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
     
@@ -198,7 +193,6 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         loadingIndicator.startAnimating()
         viewModel.loadDiaryData()
 //        viewModel.loadPieceData()
-//        setPieceUI()
         registerNotification()
         print(viewModel.diaryList)
     }
@@ -211,8 +205,8 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
             guard let _ = self else { return }
         }
         viewModel.loadPieceData()
-        //setPieceUI()
-        setDiaryUI()
+        setPieceUI()
+        //setDiaryUI()
     }
     
     init(viewModel: HomeViewModel) {
@@ -401,35 +395,40 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         contentView.snp.makeConstraints {
             $0.top.left.right.bottom.equalToSuperview()
             $0.width.equalTo(scrollView.snp.width)
-            $0.height.equalTo(1132)    // 스크롤 가능 높이 조절하기 > 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기
+            $0.height.equalTo(1132)
         }
     }
     
+    // FIXME: - loadingIndicator 좀 어떻게 해바
     func setDiaryUI() {
         if viewModel.diaryEmptyState {
-            self.emptyDiaryLabel.isHidden = false
-            self.diaryCollectionView.isHidden = true
+            diaryUI(true)
         } else {
-            self.emptyDiaryLabel.isHidden = true
-            self.diaryCollectionView.isHidden = false
-            self.diaryCollectionView.reloadData()
+            diaryUI(false)
+            diaryCollectionView.reloadData()
         }
-        self.loadingIndicator.stopAnimating()
+        loadingIndicator.stopAnimating()
+    }
+    
+    func diaryUI(_ isHidden: Bool) {
+        emptyDiaryLabel.isHidden = !isHidden
+        diaryCollectionView.isHidden = isHidden
     }
     
     func setPieceUI() {
+        let pieceCount = self.viewModel.pieceCount
+        self.pieceCountLabel.setUpLabel(title: "\(pieceCount)개", podaFont: .subhead4)
+        
         if viewModel.pieceEmptyState {
-            self.emptyTimeCapsuleLabel.isHidden = false
-            self.timeCapsuleImageView.isHidden = true
-            self.pieceDateImageView.isHidden = true
-            self.pieceDateLabel.isHidden = true
-            self.emptyPieceLabel.isHidden = false
-            self.pieceCollectionView.isHidden = true
-            self.createDateOrderButton.isHidden = true
-            self.pieceDateOrderButton.isHidden = true
-            self.isSortedByPieceDate = true
-            self.contentView.snp.updateConstraints {
+            pieceUI(true)
+            viewModel.isSortedByPieceDate = true
+            contentView.snp.updateConstraints {
                 $0.height.equalTo(1132)
+            }
+        } else {
+            pieceUI(false)
+            contentView.snp.updateConstraints {
+                $0.height.equalTo(1152)
             }
             
             if viewModel.isSortedByPieceDate {
@@ -438,12 +437,26 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
                 viewModel.selectedOrderOptionState?(false)
             }
             
-        } else {
-            self.emptyTimeCapsuleLabel.isHidden = true
-            self.timeCapsuleImageView.isHidden = false
-            self.pieceDateImageView.isHidden = false
-            self.pieceDateLabel.isHidden = false
+            let randomPieceIndex = self.viewModel.randomPieceIndex
+            let pieceInfo = self.viewModel.pieceList[randomPieceIndex ?? 0]
+            timeCapsuleImageView.image = pieceInfo.image
+            pieceDateLabel.setUpLabel(title: "\(pieceInfo.pieceDate)의 조각", podaFont: .subhead2)
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.didTapCapsuleImage))
+            timeCapsuleImageView.addGestureRecognizer(tapGesture)
+            timeCapsuleImageView.isUserInteractionEnabled = true
         }
+    }
+    
+    func pieceUI(_ isHidden: Bool) {
+        emptyTimeCapsuleLabel.isHidden = !isHidden
+        timeCapsuleImageView.isHidden = isHidden
+        pieceDateImageView.isHidden = isHidden
+        pieceDateLabel.isHidden = isHidden
+        emptyPieceLabel.isHidden = !isHidden
+        pieceCollectionView.isHidden = isHidden
+        createDateOrderButton.isHidden = isHidden
+        pieceDateOrderButton.isHidden = isHidden
     }
     
     func bindViewModel() {
@@ -451,7 +464,8 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         viewModel.diaryDataLoaded = { [weak self] _ in
             guard let self else { return }
             DispatchQueue.main.async {
-                let diaryCount = self.viewModel.diaryCountInt
+                self.setDiaryUI()
+                let diaryCount = self.viewModel.diaryCount
                 self.diaryCountLabel.setUpLabel(title: "\(diaryCount)권", podaFont: .subhead4)
             }
         }
@@ -471,49 +485,6 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
 //                    self.diaryCollectionView.reloadData()
 //                }
 //                self.loadingIndicator.stopAnimating()
-//            }
-//        }
-        
-        // 추억 조각 데이터가 바뀔 때마다 얘를 다시 호출, 데이터 변경이 완료된 후 클로저에서 어떤 걸 실행할 지 정해주기
-        viewModel.pieceListLoaded = { [weak self] _ in
-            guard let self else { return }
-            DispatchQueue.main.async {
-                self.setPieceUI()
-                let pieceCount = self.viewModel.pieceCountInt
-                self.pieceCountLabel.setUpLabel(title: "\(pieceCount)개", podaFont: .subhead4)
-                let randomPieceIndex = self.viewModel.randomPieceIndex
-                let pieceInfo = self.viewModel.pieceList[randomPieceIndex ?? 0]
-                self.timeCapsuleImageView.image = self.viewModel.getPieceImageFromRealm(with: pieceInfo)
-                self.pieceDateLabel.setUpLabel(title: "\(self.viewModel.getPieceDate(with: pieceInfo))의 조각", podaFont: .subhead2)
-                
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.didTapCapsuleImage))
-                self.timeCapsuleImageView.addGestureRecognizer(tapGesture)
-                self.timeCapsuleImageView.isUserInteractionEnabled = true
-            }
-        }
-
-//        viewModel.pieceEmptyState = { [weak self] isPieceEmpty in
-//            guard let self else { return }
-//            DispatchQueue.main.async {
-//                if isPieceEmpty {
-//                    self.emptyTimeCapsuleLabel.isHidden = false
-//                    self.timeCapsuleImageView.isHidden = true
-//                    self.pieceDateImageView.isHidden = true
-//                    self.pieceDateLabel.isHidden = true
-//                    self.emptyPieceLabel.isHidden = false
-//                    self.pieceCollectionView.isHidden = true
-//                    self.createDateOrderButton.isHidden = true
-//                    self.pieceDateOrderButton.isHidden = true
-//                    self.isSortedByPieceDate = true
-//                    self.contentView.snp.updateConstraints {
-//                        $0.height.equalTo(1132)
-//                    }
-//                } else {
-//                    self.emptyTimeCapsuleLabel.isHidden = true
-//                    self.timeCapsuleImageView.isHidden = false
-//                    self.pieceDateImageView.isHidden = false
-//                    self.pieceDateLabel.isHidden = false
-//                }
 //            }
 //        }
         
@@ -539,68 +510,21 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
                 }
             }
         }
-        
-//        viewModel.sortedPieceListState = { [weak self] index in
-//            guard let self else { return }
-//            if self.viewModel.isSortedByPieceDate {
-//                goToPieceSaveDeleteVC(index, self.viewModel.sortedListbyPieceDate)
-//            } else {
-//                goToPieceSaveDeleteVC(index, self.viewModel.sortedListbyCreateDate)
-//            }
-//        }
-    }
-    
-    func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
-        guard let fileName = imageMemory.imagePath,
-              let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
-            return UIImage()
-        }
-        
-        let filePath = documentDirectory.appendingPathComponent(fileName).path
-        
-        do {
-            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
-            if let image = UIImage(data: data) {
-                return image
-            }
-        } catch {
-            print("이미지 로딩 실패: \(error.localizedDescription)")
-        }
-        return UIImage()
-    }
-    
-    func getPieceDate(with imageMemory: ImageMemory) -> String {
-        guard let memoryDate = imageMemory.memoryDate else { return "" }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
-        return dateFormatter.string(from: memoryDate)
-    }
-    
-    // FIXME: - MoreDiaryVC, DetailVC에서 사용됨
-    func goToDiarySaveDeleteVC(_ index: Int) {
-//        guard let pieceList = self.pieceList?[index] else { return }
-//        let saveDeleteVC = SaveDeleteViewController()
-//        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
-//        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
-//        saveDeleteVC.indexPath = index
-//        saveDeleteVC.addButton.isHidden = true
-//        saveDeleteVC.isDiaryImage = false
-//        navigationController?.pushViewController(saveDeleteVC, animated: true)
     }
     
     // FIXME: - Bind 함수로 정리하기
-    func goToPieceSaveDeleteVC(_ index: Int, _ sortedPieceList: [ImageMemory]) {
+    func goToPieceSaveDeleteVC(_ index: Int, _ sortedList: [PieceData]) {
         // MVC 에서는 saveDeleteVC.indexPath = index 이렇게 직접 전달하지만, MVVM 에서는 직접 값을 전달하는게 아니라 다음 뷰가 필요한 뷰모델을 전달해줘야함
-        
-        let imageMemory = sortedPieceList[index]
-        let saveDeleteVC = SaveDeleteViewController()
-        saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1) // viewModel.pieceDate or 
-        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory) // viewModel.pieceImage
-        saveDeleteVC.sortedPieceList = sortedPieceList
-        saveDeleteVC.indexPath = index
-        saveDeleteVC.addButton.isHidden = true
-        saveDeleteVC.isDiaryImage = false
-        navigationController?.pushViewController(saveDeleteVC, animated: true)
+        let saveDeleteViewModel = SaveDeleteViewModel()
+        let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
+        saveDeleteViewModel.realmPieceList = viewModel.realmPieceList
+        saveDeleteViewModel.pieceList = viewModel.sortedList
+        saveDeleteViewModel.pieceIndex = index
+        saveDeleteViewModel.isDiaryImage = false
+        saveDeleteViewController.dateLabel.setUpLabel(title: viewModel.sortedList[index].pieceDate, podaFont: .body1)
+        saveDeleteViewController.imageView.image = viewModel.sortedList[index].image
+        saveDeleteViewController.addButton.isHidden = true
+        navigationController?.pushViewController(saveDeleteViewController, animated: true)
         // present 는 viewController만 가지고 있음. 그래서 뷰컨에서는 self.present 이런식으로 쓸 수 있지만 뷰모델에서는 사용 불가 그래서 메서드 만들때 fromCurrentVC로 뷰컨을 받은 다음 fromCurrentVC.present 이런식으로 사용해야함
     }
     
@@ -654,21 +578,21 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
     }
     
-    // FIXME: - Bind 함수로 정리하기
+    // FIXME: - Bind 함수로 정리하기, MVVM 고치기
     @objc func didTapMoreDiaryButton() {
-        let moreDiaryVC = MoreDiaryViewController()
-        //moreDiaryVC.moreDiaryVM = viewModel
+        let moreDiaryViewModel = MoreDiaryViewModel()
+        let moreDiaryViewController = MoreDiaryViewController(viewModel: moreDiaryViewModel)
         if diaryDataList.isEmpty {
-            moreDiaryVC.emptyMoreDiaryLabel.isHidden = false
-            moreDiaryVC.moreDiaryCollectionView.isHidden = true
-            moreDiaryVC.deleteButton.isHidden = true
+            moreDiaryViewController.emptyMoreDiaryLabel.isHidden = false
+            moreDiaryViewController.moreDiaryCollectionView.isHidden = true
+            moreDiaryViewController.deleteButton.isHidden = true
         } else {
-            moreDiaryVC.emptyMoreDiaryLabel.isHidden = true
-            moreDiaryVC.moreDiaryCollectionView.isHidden = false
-            moreDiaryVC.deleteButton.isHidden = false
-            moreDiaryVC.diaryList = diaryDataList
+            moreDiaryViewController.emptyMoreDiaryLabel.isHidden = true
+            moreDiaryViewController.moreDiaryCollectionView.isHidden = false
+            moreDiaryViewController.deleteButton.isHidden = false
+            moreDiaryViewController.diaryList = diaryDataList
         }
-        navigationController?.pushViewController(moreDiaryVC, animated: true)  // >> MVVM에서 뷰 전환을 뷰모델이 해야한다 뷰컨이 해야한다 정해져있는거 아님. 우리는 유경님 말대로 뷰컨에서 하기로 함
+        navigationController?.pushViewController(moreDiaryViewController, animated: true)  // >> MVVM에서 뷰 전환을 뷰모델이 해야한다 뷰컨이 해야한다 정해져있는거 아님. 우리는 유경님 말대로 뷰컨에서 하기로 함
     }
     
     // FIXME: - Bind 함수로 정리하기
@@ -679,7 +603,11 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     }
     
     @objc func didTapMorePieceButton() {
-        let morePieceViewController = MorePieceViewController(viewModel: viewModel)
+        let morePieceViewModel = MorePieceViewModel()
+        let morePieceViewController = MorePieceViewController(viewModel: morePieceViewModel)
+        morePieceViewModel.realmPieceList = viewModel.realmPieceList
+        morePieceViewModel.pieceList = viewModel.sortedList
+        morePieceViewController.bind(to: morePieceViewController.viewModel)
         navigationController?.pushViewController(morePieceViewController, animated: true)
     }
     
@@ -697,24 +625,20 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // FIXME: - 이 부분을 어떻게 MVVM으로 할까
         if collectionView == diaryCollectionView {
-            let detailVC = DetailViewController()
-            detailVC.diaryData = viewModel.getDiaryData(indexPath.row)
-            navigationController?.pushViewController(detailVC, animated: true)
+            let detailViewModel = DetailViewModel()
+            let detailViewController = DetailViewController(viewModel: detailViewModel)
+            detailViewModel.diaryData = viewModel.getDiaryData(indexPath.row)
+            navigationController?.pushViewController(detailViewController, animated: true)
         } else {
             goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedList)
-//            if self.viewModel.isSortedByPieceDate {
-//                goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedListbyPieceDate)
-//            } else {
-//                goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedListbyCreateDate)
-//            }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == diaryCollectionView {
-            return viewModel.diaryCountInt
+            return viewModel.diaryCount
         } else {
-            return viewModel.pieceCountInt
+            return viewModel.pieceCount
         }
     }
     
@@ -728,13 +652,8 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
             
-            if self.viewModel.isSortedByPieceDate {
-                cell.pieceImageView.image = self.viewModel.getPieceImage(indexPath.item, true)
-                return cell
-            } else {
-                cell.pieceImageView.image = self.viewModel.getPieceImage(indexPath.item, false)
-                return cell
-            }
+            cell.pieceImageView.image = self.viewModel.sortedList[indexPath.item].image
+            return cell
         }
     }
 }

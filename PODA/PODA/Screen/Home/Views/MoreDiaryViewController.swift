@@ -11,12 +11,9 @@ import SnapKit
 
 class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
-    var moreDiaryVM: MoreDiaryViewModel!
+    var viewModel: MoreDiaryViewModel!
     
     var diaryList : [DiaryData] = []
-    var diaryName: String?
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
@@ -52,7 +49,16 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
     }
-
+    
+    init(viewModel: MoreDiaryViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // FIXME: - 삭제 기능 구현하면 deleteButton 추가
     func configUI() {
         [backButton, emptyMoreDiaryLabel, moreDiaryCollectionView].forEach {
@@ -146,27 +152,27 @@ extension MoreDiaryViewController: UICollectionViewDelegateFlowLayout {
 
 extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return diaryList.count
+        return viewModel.diaryCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoreDiaryCollectionViewCell.identifier, for: indexPath) as? MoreDiaryCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.diaryCoverImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
-        cell.titleLabel.setUpLabel(title: diaryList[indexPath.row].diaryName, podaFont: .head1)
-        cell.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryList[indexPath.row].createDate), podaFont: .subhead2)
+        cell.diaryCoverImageView.image = viewModel.getDiaryImage(indexPath.row)
+        cell.titleLabel.setUpLabel(title: viewModel.getDiaryName(indexPath.row), podaFont: .head1)
+        cell.dateLabel.setUpLabel(title: viewModel.getDiaryDate(indexPath.row), podaFont: .subhead2)
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let saveDeleteVC = SaveDeleteViewController()
-        saveDeleteVC.diaryData = diaryList[indexPath.row]
-        saveDeleteVC.dateLabel.text = Date.updateTime(dateTime: diaryList[indexPath.row].createDate)
-        //saveDeleteVC.diaryName = diaryList[indexPath.row].diaryName
-        saveDeleteVC.imageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
-        saveDeleteVC.isDiaryImage = true
-        saveDeleteVC.editButton.isHidden = true
-        navigationController?.pushViewController(saveDeleteVC, animated: true)
+        let saveDeleteViewModel = SaveDeleteViewModel()
+        let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
+        saveDeleteViewModel.isDiaryImage = true
+        saveDeleteViewModel.diaryData = viewModel.diaryList[indexPath.row]
+        saveDeleteViewController.imageView.image = viewModel.getDiaryImage(indexPath.row)
+        saveDeleteViewController.dateLabel.text = viewModel.getDiaryDate(indexPath.row)
+        saveDeleteViewController.editButton.isHidden = true
+        navigationController?.pushViewController(saveDeleteViewController, animated: true)
     }
 }

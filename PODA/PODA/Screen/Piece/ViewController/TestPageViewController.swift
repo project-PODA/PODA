@@ -12,7 +12,7 @@ import RealmSwift
 
 class TestPageViewController: BaseViewController, UIConfigurable {
     
-    var imageMemories: Results<ImageMemory>?
+    var imageMemories: Results<RealmPieceData>?
     
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -47,10 +47,10 @@ class TestPageViewController: BaseViewController, UIConfigurable {
     }
     
     func loadImagesFromRealm() {
-        imageMemories = RealmManager.shared.loadImageMemories()
+        imageMemories = RealmManager.shared.loadPieceData()
         
         for imageMemory in imageMemories! {
-            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
+            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.pieceDate ?? Date())")
         }
         collectionView.reloadData()
     }
@@ -135,9 +135,9 @@ class Cell: UICollectionViewCell {
         }
     }
     
-    func configure(with imageMemory: ImageMemory) {
+    func configure(with pieceInfo: RealmPieceData) {
         // 이미지 로드 및 설정
-        guard let imagePath = imageMemory.imagePath else {
+        guard let imagePath = pieceInfo.imagePath else {
             return
         }
         print("Image Path: \(imagePath)")
@@ -151,10 +151,10 @@ class Cell: UICollectionViewCell {
         
         
         // 추억 날짜 설정
-        if let memoryDate = imageMemory.memoryDate {
+        if let pieceDate = pieceInfo.pieceDate {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy. MM. dd"
-            dateLabel.text = dateFormatter.string(from: memoryDate)
+            dateLabel.text = dateFormatter.string(from: pieceDate)
         }
     }
 }

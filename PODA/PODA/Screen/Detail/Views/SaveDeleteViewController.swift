@@ -13,16 +13,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
     static let deleteDiaryNotificationName = NSNotification.Name("deleteDiary")
     
-    var diaryData : DiaryData?
-    var ratio: String?
-    
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
-    
-    var isDiaryImage = true
-    var sortedPieceList: [ImageMemory] = []
-    var indexPath = 0
-    //var diaryName: String? // 나중에 은서님 페이지에 이름 넘겨줄것.. (페이지 추가할 때?)
+    var viewModel: SaveDeleteViewModel!
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
@@ -108,7 +99,16 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
 //            $0.centerY.equalTo(self.imageView.snp.bottom).offset((totalHeight - safeAreaTop - navigationBarHeight - imageViewHeight - safeAreaBottom - padding) / 2)
 //        }
 //    }
-     
+    
+    init(viewModel: SaveDeleteViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func configUI() {
         [navigationBarStackView, imageView, deleteButton, saveButton].forEach(view.addSubview)
         
@@ -133,7 +133,7 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         imageView.snp.makeConstraints {
             $0.top.equalTo(navigationBarStackView.snp.bottom).offset(24)
             
-            if diaryData?.ratio == .square {
+            if viewModel.diaryData?.ratio == .square {
                 $0.width.height.equalTo(UIScreen.main.bounds.width)
                 
             } else {
@@ -178,15 +178,17 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapEditButton() {
-        let pieceVC = PieceViewController()
-        pieceVC.vectorIconImage.isHidden = true
-        pieceVC.addToGalleryButton.isHidden = true
-        pieceVC.imageView.isUserInteractionEnabled = false
-        pieceVC.isComeFromSaveDeleteVC = true
-        pieceVC.imageView.image = imageView.image
-        pieceVC.sortedPieceList = sortedPieceList
-        pieceVC.indexPath = indexPath
-        navigationController?.pushViewController(pieceVC, animated: true)
+        let pieceViewModel = PieceViewModel()
+        let pieceViewController = PieceViewController() //(viewModel: pieceViewModel)
+        //pieceViewModel.isComeFromSaveDeleteVC = true > 지근님 이거 뷰모델에 만들어주십쇼!
+        //pieceViewModel.pieceIndex = viewModel.pieceIndex > 이것도!
+        //pieceViewModel.realmPieceList = viewModel.realmPieceList
+        //pieceViewModel.pieceList = viewModel.pieceList > 이것도!
+        pieceViewController.imageView.image = imageView.image
+        pieceViewController.vectorIconImage.isHidden = true
+        pieceViewController.addToGalleryButton.isHidden = true
+        pieceViewController.imageView.isUserInteractionEnabled = false
+        navigationController?.pushViewController(pieceViewController, animated: true)
     }
     
     @objc func didTapSaveButton() {
@@ -201,45 +203,30 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    @objc func savedImage(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            NSLog("Failed to save image. Error = \(error.localizedDescription)")
+        } else {
+            showToastMessage("성공적으로 저장되었습니다!", withDuration: 0.8, delay: 0.8)
+        }
+    }
+    
     @objc func didTapDeleteButton() {
         print("이미지 삭제")
         let alert = UIAlertController(title: "정말 삭제하시겠습니까?", message: nil, preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
             guard let self else { return }
-            print(isDiaryImage)
-            if isDiaryImage {
-                guard let diaryName = diaryData?.diaryName else { return }
-                firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
-                    if error == .none, let viewControllers = self.navigationController?.viewControllers {
-                        // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
-                        // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
-                        
-                        // deleteDiaryImage 후 다이어리 이미지 갯수 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
-                        self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-                            for viewController in viewControllers {
-                                if let viewController = viewController as? BaseTabbarController {
-                                    NotificationCenter.default.post(
-                                        name: SaveDeleteViewController.deleteDiaryNotificationName,
-                                        object: DiaryData(
-                                            pageDataList: self.diaryData?.pageDataList ?? [],
-                                            diaryName: diaryName,
-                                            diaryImageList: self.diaryData?.diaryImageList ?? [],
-                                            createDate: self.diaryData?.createDate ?? "",
-                                            ratio: self.diaryData?.ratio ?? .square,
-                                            description: self.diaryData?.description ?? "")
-                                    )
-                                    self.navigationController?.popToViewController(viewController, animated: true)
-                                    break
-                                }
-                            }
-                        }
-                        // self.getBackToHome() > 이거 주석 안하면 updateUI이 handleDeleteNotification보다 먼저 실행돼서 삭제가 반영이 안됨
-                    }
+            print(viewModel.isDiaryImage)
+            if viewModel.isDiaryImage {
+                viewModel.deleteDiaryData {
+                    // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
+                    // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
+                    // deleteDiaryImage 후 다이어리 이미지 갯수 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
+                    self.getBackToHome()
                 }
             } else {
-//                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
-//                RealmManager.shared.deleteImageMemory(imageMemory)
-//                self.getBackToHome()
+                viewModel.deletePieceData(viewModel.pieceIndex ?? 0)
+                self.getBackToHome()
             }
         }
         
@@ -250,14 +237,6 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
         
         
         self.present(alert, animated: true, completion: nil)
-    }
-    
-    @objc func savedImage(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            NSLog("Failed to save image. Error = \(error.localizedDescription)")
-        } else {
-            showToastMessage("성공적으로 저장되었습니다!", withDuration: 0.8, delay: 0.8)
-        }
     }
     
     func getBackToHome() {

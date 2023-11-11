@@ -17,6 +17,7 @@ import UIKit
 
 class HomeViewModel {
     
+    // MARK: - Properties for diary
     private let firebaseDBManager: FirestorageDBManager
     private let firebaseImageManager: FireStorageImageManager
     
@@ -30,70 +31,50 @@ class HomeViewModel {
     }
     
     var diaryDataLoaded: ([DiaryData]) -> Void = { _ in }
-    //var diaryEmptyState: ((Bool) -> Void)?
     
     var diaryEmptyState: Bool {
         return diaryList.isEmpty
     }
     
-    var diaryCountInt: Int {
+    var diaryCount: Int {
         return diaryList.count
     }
     
+    // MARK: - Properties for piece
     // 핵심 데이터(모델)
-    var pieceList: [ImageMemory] = [] {
-        didSet {
-            // pieceList 데이터가 담겼을 때 didSet 실행
-            // pieceListLoaded() > 클로져를 통해서 데이터가 변한 시점을 전달
-            pieceListLoaded(self.pieceList)
+    var realmPieceList: [RealmPieceData] = []
+
+    var pieceList: [PieceData] = []
+    
+    var isSortedByPieceDate = true
+    
+    var sortedList: [PieceData] {
+        if isSortedByPieceDate {
+            return pieceList.sorted(by: { $0.pieceDate > $1.pieceDate } )
+        } else {
+            return pieceList.sorted(by: { $0.createDate > $1.createDate } )
         }
     }
+    
     // loadedWithError
-    var pieceListLoaded: ([ImageMemory]) -> Void = { _ in }
-    //var pieceEmptyState: ((Bool) -> Void)?
+    var pieceListLoaded: ([PieceData]) -> Void = { _ in }
     
     var pieceEmptyState: Bool {
-        return pieceList.isEmpty
+        return realmPieceList.isEmpty
     }
     
-    var pieceCountState: Bool {
-        return pieceCountInt < 6
-    }
-    
-    var selectedOrderOptionState: ((Bool) -> Void)?
-    // var sortedPieceListState: ((Int) -> Void)?
-    
-    var pieceCountInt: Int {
+    var pieceCount: Int {
         return pieceList.count
     }
     
-    var sortedList : [ImageMemory] {
-        if isSortedByPieceDate {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy.MM.dd"
-            return pieceList.sorted(by: { dateFormatter.string(from: $0.memoryDate ?? Date()) > dateFormatter.string(from: $1.memoryDate ?? Date()) })
-        } else {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy.MM.dd"
-            return pieceList.sorted(by: { dateFormatter.string(from: $0.createDate ?? Date()) > dateFormatter.string(from: $1.createDate ?? Date()) })
-        }
-        
+    var pieceCountState: Bool {
+        return pieceCount < 6
     }
     
-    var sortedListbyPieceDate: [ImageMemory] {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
-        return pieceList.sorted(by: { dateFormatter.string(from: $0.memoryDate ?? Date()) > dateFormatter.string(from: $1.memoryDate ?? Date()) })
-    }
-    
-    var sortedListbyCreateDate: [ImageMemory] {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
-        return pieceList.sorted(by: { dateFormatter.string(from: $0.createDate ?? Date()) > dateFormatter.string(from: $1.createDate ?? Date()) })
-    }
-    
+    var selectedOrderOptionState: ((Bool) -> Void)?
+     
     var randomPieceIndex: Int?
-    var isSortedByPieceDate = true
+    var onLoadingStatus: ((Bool) -> Void)?
     
     init(firebaseDBManager: FirestorageDBManager, firebaseImageManager: FireStorageImageManager) {
         self.firebaseDBManager = firebaseDBManager
@@ -101,12 +82,7 @@ class HomeViewModel {
         // self.pieceList = [] > 위에서 빈 배열로 선언하지 않는 경우 여기서 이렇게 초기화할 수도 있음
     }
     
-//    func getSortedPieceList(with date: Date) -> Array<Any> {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "yyyy.MM.dd"
-//        return pieceList.sorted(by: { dateFormatter.string(from: $0.date ?? Date()) > dateFormatter.string(from: $1.date ?? Date()) })
-//    }
-    
+    // MARK: - Helpers for diary
     func loadDiaryData() {
         firebaseDBManager.getDiaryDocuments { [weak self] diaryNameList, error in
             guard let self else { return }
@@ -118,32 +94,34 @@ class HomeViewModel {
                 } else {
                     for diaryName in diaryNameList {
                         if diaryName != "account" {
-                            let diaryInfoList = getDiaryList(diaryName)
-                            getDiaryImage(diaryInfoList)
-                            print("diaryInfoList: \(diaryInfoList)")
+                            firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { diaryInfoList, error in
+                                if error == .none {
+                                    self.getDiaryImage(diaryInfoList)
+                                }
+                            }
+                            diaryList.sort { $0.createDate > $1.createDate }
+                            //diaryEmptyState?(false)
                         }
                     }
-                    print("diaryList: \(diaryList)")
-                    diaryList.sort { $0.createDate > $1.createDate }
-                    //diaryEmptyState?(false)
                 }
             }
         }
     }
     
-    func getDiaryList(_ diaryName: String) -> [DiaryInfo] {
-        var list: [DiaryInfo] = []
-        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { diaryInfoList, error in
-            if error == .none {
-                for diaryInfo in diaryInfoList {
-                    list.append(diaryInfo)
-                    print("1번 \(list)")
-                }
-            }
-        }
-        print("2번 \(list)")
-        return list
-    }
+            // FIXME: - async/await 사용해서 이 함수 호출하기
+//    func getDiaryList(_ diaryName: String) -> [DiaryInfo] {
+//        var list: [DiaryInfo] = []
+//        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { diaryInfoList, error in
+//            if error == .none {
+//                for diaryInfo in diaryInfoList {
+//                    list.append(diaryInfo)
+//                    print("1번 \(list)")
+//                }
+//            }
+//        }
+//        print("2번 \(list)")
+//        return list
+//    }
     
     func getDiaryImage(_ diaryInfoList: [DiaryInfo]) {
         guard let diaryInfo = diaryInfoList.first else { return }
@@ -172,12 +150,30 @@ class HomeViewModel {
         return diaryDataList.diaryName
     }
     
+    // MARK: - Helpers for piece
+    // FIXME: - 추억날짜 최신순/오래된순으로 정렬 변경하면 createDateFormatter 삭제하기
     func loadPieceData() {
-        pieceList = RealmManager.shared.loadImageMemories().map { $0 }
+        print("*******************loadPieceData 실행")
+        print("*******************home의 pieceList: \(pieceList)")
+        realmPieceList = RealmManager.shared.loadPieceData().map { $0 }
+        print("*******************처음 받아온 realmPieceList: \(realmPieceList)")
+        let pieceDateFormatter = DateFormatter()
+        pieceDateFormatter.dateFormat = "yyyy.MM.dd"
+        let createDateFormatter = DateFormatter()
+        createDateFormatter.dateFormat = "yyyy.MM.dd HH:mm:ss"
+        for realmPiece in realmPieceList {
+            // FIXME: - 수정
+            // pieceList에 추가하려는 id가 없는 경우에만 append > 이렇게 하거나 이 메서드 실행될 때 pieceList를 [] 빈 배열로 초기화 해주기(이렇게 하면 갯수 많아졌을 때 실행될 때마다 모든 piece를 배열에 추가해야하는 단점이 있을 듯)
+            if !pieceList.contains(where: { $0.id == realmPiece.id }) {
+                let image = getPieceImage(with: realmPiece)
+                pieceList.append(PieceData(id: realmPiece.id ?? UUID(), image: image, createDate: createDateFormatter.string(from: realmPiece.createDate ?? Date()), pieceDate: pieceDateFormatter.string(from: realmPiece.pieceDate ?? Date())))
+            }
+        }
+        print("*******************HomeVM/168/pieceData타입으로 바꾼 pieceList: \(pieceList)")
         randomPieceIndex = pieceList.count != 0 ? Int.random(in: 0..<pieceList.count) : nil
     }
     
-    func getPieceImageFromRealm(with pieceInfo: ImageMemory) -> UIImage {
+    func getPieceImage(with pieceInfo: RealmPieceData) -> UIImage {
         guard let fileName = pieceInfo.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else { return UIImage() }
         
@@ -194,13 +190,6 @@ class HomeViewModel {
         return UIImage()
     }
     
-    func getPieceDate(with pieceInfo: ImageMemory) -> String {
-        guard let pieceDate = pieceInfo.memoryDate else { return "" }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
-        return dateFormatter.string(from: pieceDate)
-    }
-    
     func didTapPieceDateOrderButton() {
         isSortedByPieceDate = true
         selectedOrderOptionState?(true)
@@ -210,43 +199,6 @@ class HomeViewModel {
         isSortedByPieceDate = false
         selectedOrderOptionState?(false)
     }
-    
-    func getPieceImage(_ index: Int, _ isSortedByPieceDate: Bool) -> UIImage {
-        if isSortedByPieceDate {
-            let pieceInfo = self.sortedListbyPieceDate[index]
-            return getPieceImageFromRealm(with: pieceInfo)
-        } else {
-            let pieceInfo = self.sortedListbyCreateDate[index]
-            return getPieceImageFromRealm(with: pieceInfo)
-        }
-    }
-    
-//    func updateUI() {
-//        guard let pieceCount = pieceList?.count else { return }
-//        
-//        if pieceCount != 0 {
-//            pieceCountLabel.isHidden = false
-//            emptyMorePieceLabel.isHidden = true
-//            pieceDateOrderButton.isHidden = false
-//            createDateOrderButton.isHidden = false
-//            pieceAlbumCollectionView.isHidden = false
-//            self.pieceCountLabel.setUpLabel(title: "총 \(pieceCount)개", podaFont: .body1)
-//            
-//            if pieceCount < 6 {
-//                bubbleImageView.isHidden = false
-//                infoLabel.isHidden = false
-//            } else {
-//                bubbleImageView.isHidden = true
-//                infoLabel.isHidden = true
-//            }
-//        } else {
-//            pieceCountLabel.isHidden = true
-//            emptyMorePieceLabel.isHidden = false
-//            pieceDateOrderButton.isHidden = true
-//            createDateOrderButton.isHidden = true
-//            pieceAlbumCollectionView.isHidden = true
-//        }
-//    }
 }
 
 /*
