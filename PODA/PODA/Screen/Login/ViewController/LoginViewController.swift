@@ -11,7 +11,9 @@ import NVActivityIndicatorView
 import Firebase
 import FirebaseAuth
 
-class LoginViewController: BaseViewController, UIConfigurable {
+class LoginViewController: BaseViewController, UIConfigurable, ViewModelBindable {
+    
+    var viewModel: LoginViewModel!
     
     private let logoImageView = UIImageView().then {
         $0.image = UIImage(named: "logo_poda")
@@ -85,8 +87,6 @@ class LoginViewController: BaseViewController, UIConfigurable {
         $0.layer.borderWidth = 1
     }
     
-    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    
     private lazy var loadingIndicator = CustomLoadingIndicator()
     
     #if DEBUG
@@ -108,13 +108,19 @@ class LoginViewController: BaseViewController, UIConfigurable {
         passwordTextField.enableHideKeyboardOnReturn()
     }
     
+    init(viewModel: LoginViewModel!) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
     
-    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     private func setupActions() {
-        signUpButton.addTarget(self, action: #selector(signUpButtonTap), for: .touchUpInside)
-        eyeButton.addTarget(self, action: #selector(eyeButtonTapped), for: .touchUpInside)
-        loginButton.addTarget(self, action: #selector(goToMain), for: .touchUpInside)
+        signUpButton.addTarget(self, action: #selector(didTapSignUpButton), for: .touchUpInside)
+        eyeButton.addTarget(self, action: #selector(didTapEyeButton), for: .touchUpInside)
+        loginButton.addTarget(self, action: #selector(didTapLoginButton), for: .touchUpInside)
     }
     
     func configUI() {
@@ -280,36 +286,29 @@ class LoginViewController: BaseViewController, UIConfigurable {
     
     #if DEBUG
     @objc private func touchDebugButton() {
-        let originalString = "test@naver.com"
-        let randomPart = originalString.randomString(length: 8)
-        let userEmail = originalString.replacingOccurrences(of: "test", with: randomPart)
-        let userPasswrod = "Poda1!"
         loadingIndicator.startAnimating()
-        fireAuthManager.signUpUser(email: userEmail, password: userPasswrod, profileImage: UIImage(named: "image_profile")?.pngData(), nickName: "랜덤계정") { [weak self] error in
-            guard let self = self else { return }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else {return}
-                if error == .none {
-                    print("랜덤계정 생성 성공! 로그인 진입중..")
-                    UserDefaultManager.isUserLoggedIn = true
-                    UserDefaultManager.userEmail = userEmail.lowercased()
-                    UserDefaultManager.userPassword = userPasswrod
-                    DispatchQueue.main.async {
-                        let tabBarController = BaseTabbarController()
-                        self.navigationController!.pushViewController(tabBarController, animated: true)
-                        self.loadingIndicator.stopAnimating()
-                    }
-                } else {
-                    showAlert(title: "에러", message: error.description)
+        viewModel.handleDebugLoginButton { [weak self] userInfo, error in
+            guard let self else { return }
+            if let userInfo = userInfo {
+                UserDefaultManager.isUserLoggedIn = true
+                UserDefaultManager.userEmail = userInfo.email.lowercased()
+                UserDefaultManager.userPassword = userInfo.password
+                
+                DispatchQueue.main.async {
+                    let tabBarController = BaseTabbarController()
+                    self.navigationController!.pushViewController(tabBarController, animated: true)
+                    self.loadingIndicator.stopAnimating()
                 }
-                loadingIndicator.stopAnimating()
+            } else {
+                showAlert(title: "에러", message: error?.description)
             }
+            loadingIndicator.stopAnimating()
         }
     }
     #endif
     
     
-    @objc private func eyeButtonTapped() {
+    @objc private func didTapEyeButton() {
         passwordTextField.isSecureTextEntry.toggle()
         
         let imageName = passwordTextField.isSecureTextEntry ? "icon_eye" : "icon_eye.filled"
@@ -317,40 +316,39 @@ class LoginViewController: BaseViewController, UIConfigurable {
         eyeButton.setImage(image, for: .normal)
     }
     
-    @objc private func signUpButtonTap() {
-        let viewModel = SignUpViewModel(firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())), fireStorageManager: FirestorageDBManager(), smtpManager: SMTPManager(htmpParser: HTMLParser()))
+    @objc private func didTapSignUpButton() {
+        let viewModel = SignUpViewModel(
+            firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())),
+            fireStorageManager: FirestorageDBManager(),
+            smtpManager: SMTPManager(htmpParser: HTMLParser()))
         
         let signUpVC = SignUpViewController(viewModel: viewModel)
         self.navigationController?.pushViewController(signUpVC, animated: true)
     }
     
-    @objc private func goToMain() {
-        let email = emailTextField.text!
-        let password = passwordTextField.text!
-        
+    @objc private func didTapLoginButton() {
         loadingIndicator.startAnimating()
         setComponentDisable(false)
-        fireAuthManager.userLogin(email: email, password: password){ [weak self] error in
-            guard let self = self else {return}
+        
+        let userInfo = LoginUserInfo(email: emailTextField.text!, password: passwordTextField.text!)
+        
+        viewModel.handleLoginButton(userInfo) { [weak self] userInfo, error in
+            guard let self else { return }
             
-            DispatchQueue.main.async{ [weak self] in
-                guard let self = self else {return}
-                self.loadingIndicator.stopAnimating()
-                self.setComponentDisable(true)
+            if let userInfo = userInfo {
+                UserDefaultManager.isUserLoggedIn = true
+                UserDefaultManager.userEmail = userInfo.email.lowercased()
+                UserDefaultManager.userPassword = userInfo.password
                 
-                if error == .none {
-                    UserDefaultManager.isUserLoggedIn = true
-                    UserDefaultManager.userEmail = email.lowercased()
-                    UserDefaultManager.userPassword = password
-                    
-                    // 로그인 성공 후, sceneDelegate.switchToMainInterface() 호출 (switchToMainInterface :로그인 뷰 컨트롤러를 스택에서 제거하고, 메인페이지로 전환하기)
-                    if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                        sceneDelegate.switchToMainPage()
-                    }
-                    
-                } else {
-                    self.showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
+                loadingIndicator.stopAnimating()
+                setComponentDisable(true)
+                
+                // 로그인 성공 후, sceneDelegate.switchToMainInterface() 호출 (switchToMainInterface :로그인 뷰 컨트롤러를 스택에서 제거하고, 메인페이지로 전환하기)
+                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                    sceneDelegate.switchToMainPage()
                 }
+            } else {
+                self.showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
             }
         }
     }
@@ -364,6 +362,10 @@ class LoginViewController: BaseViewController, UIConfigurable {
 //        appleIconButton.isEnabled = enabled
         loginButton.isEnabled = enabled
         signUpButton.isEnabled = enabled
+    }
+    
+    func bindViewModel() {
+        
     }
 }
 

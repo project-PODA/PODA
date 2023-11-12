@@ -21,7 +21,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if UserDefaultManager.isUserLoggedIn {
             switchToMainPage()
         } else {
-            let loginViewController = LoginViewController()
+            let loginViewModel = LoginViewModel()
+            let loginViewController = LoginViewController(viewModel: loginViewModel)
+            loginViewController.bind(to: loginViewModel)
             let navigationController = BaseNavigationController(rootViewController: loginViewController)
             window?.rootViewController = navigationController
         }

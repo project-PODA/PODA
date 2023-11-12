@@ -72,7 +72,9 @@ extension UIViewController {
         
         DispatchQueue.main.async {
             self.dismiss(animated: true) {
-                let loginViewController = LoginViewController()
+                let loginViewModel = LoginViewModel()
+                let loginViewController = LoginViewController(viewModel: loginViewModel)
+                loginViewController.bind(to: loginViewModel)
                 let navigationController = BaseNavigationController(rootViewController: loginViewController)
                 if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
                     UIView.transition(with: sceneDelegate.window!, duration: 0.5, options: .transitionCrossDissolve, animations: {

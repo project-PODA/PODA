@@ -8,12 +8,12 @@
 import Foundation
 import UIKit
 
-enum NetworkSuccess {
-    case createDiary
-    case diaryImage
-}
-
 final class DiaryAPI {
+    
+    enum NetworkSuccess {
+        case createDiary
+        case diaryImage
+    }
     
     static let shared = DiaryAPI()
     
