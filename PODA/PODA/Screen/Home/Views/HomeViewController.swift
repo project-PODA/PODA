@@ -8,33 +8,11 @@
 import UIKit
 import Then
 import SnapKit
-import RealmSwift
 import NVActivityIndicatorView
 
-// UI에 보여질 데이터순.
-struct DiaryData: Equatable {
-    var pageDataList: [PageInfo]
-    var diaryName: String
-    var diaryImageList: [Data]
-    var createDate: String
-    var ratio: Ratio
-    var description: String
+class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable {
     
-    static func == (lhs: DiaryData, rhs: DiaryData) -> Bool {
-        return lhs.diaryName == rhs.diaryName
-    }
-}
-
-class HomeViewController: BaseViewController, UIConfigurable {
-    
-    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
-    private var diaryDataList: [DiaryData] = []
-    
-    var pieceList: Results<ImageMemory>?
-    private var isSortedByPieceDate = true
-    private var randomPieceIndex = 0
+    var viewModel: HomeViewModel! // (생성자 initializer 만들기 귀찮으면 ! 붙여서 var viewModel: HomeViewModel! 하삼)
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
     
@@ -207,19 +185,32 @@ class HomeViewController: BaseViewController, UIConfigurable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("viewDidLoad")
         configUI()
-        loadDiaryDataFromFirebase()
-        registerNotification()
+        loadingIndicator.startAnimating()
+        viewModel.loadDiaryData()
+        viewModel.registerNotification()
+        print(viewModel.diaryList)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("viewWillAppear")
         view.bringSubviewToFront(loadingIndicator)
-        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
-            guard let _ = self else { return }
-        }
-        loadPieceDataFromRealm()
-        updateUI()
+        viewModel.login()
+        // FIXME: - loadPieceData도 viewDidLoad에서만 호출해도 될 듯. pieceVC에서 realm에 추가, 업데이트 & 홈의 pieceList에도 추가, 업데이트 한다면..
+        viewModel.loadPieceData()
+        setPieceUI()
+        //setDiaryUI()
+    }
+    
+    init(viewModel: HomeViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func configUI() {
@@ -258,7 +249,6 @@ class HomeViewController: BaseViewController, UIConfigurable {
         
         scrollView.addSubview(contentView)
         
-        // FIXME: - 추억 조각 더보기 드래그 기능 구현 후 morePieceButton 추가하기
         [timeCapsuleLabel, pieceDateLabel, pieceDateImageView, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, createDateOrderButton, pieceDateOrderButton, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
@@ -400,329 +390,231 @@ class HomeViewController: BaseViewController, UIConfigurable {
         contentView.snp.makeConstraints {
             $0.top.left.right.bottom.equalToSuperview()
             $0.width.equalTo(scrollView.snp.width)
-            $0.height.equalTo(1132)    // 스크롤 가능 높이 조절하기 > 추억 조각들 아래에 탭바 크기만큼의 투명한 뷰를 추가하기
+            $0.height.equalTo(1132)
         }
     }
     
-    func pieceDateOrderButtonOn() {
-        createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-        createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-        pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-        pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-        pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-        pieceCollectionView.reloadData()
-    }
-    
-    func createDateOrderButtonOn() {
-        createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-        createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-        createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-        pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-        pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-        pieceCollectionView.reloadData()
-    }
-    
-    func updateUI() {
-        if diaryDataList.isEmpty {
-            updateDiaryCollectionView(isEmpty: true)
+    // FIXME: - loadingIndicator 좀 어떻게 해바
+    func setDiaryUI() {
+        if viewModel.diaryEmptyState {
+            diaryUI(true)
         } else {
-            updateDiaryCollectionView(isEmpty: false)
-        }
-    }
-    
-    func updateDiaryCollectionView(isEmpty: Bool) {
-        if isEmpty {
-            emptyDiaryLabel.isHidden = false
-            diaryCollectionView.isHidden = true
-            diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
-        } else {
-            diaryDataList.sort { $0.createDate > $1.createDate }
-            diaryCountLabel.setUpLabel(title: "\(self.diaryDataList.count)권", podaFont: .subhead4)
-            emptyDiaryLabel.isHidden = true
-            diaryCollectionView.isHidden = false
+            diaryUI(false)
             diaryCollectionView.reloadData()
         }
+        loadingIndicator.stopAnimating()
     }
     
-    // FIXME: - memories > piece로 통일?
-    // FIXME: - 랜덤 이미지 표시 주기 하루에 한번으로 가능한지 확인하기
-    func loadPieceDataFromRealm() {
-        pieceList = RealmManager.shared.loadImageMemories()
-        //        for imageMemory in imageMemories! {
-        //            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
-        //        }
-        guard let pieceCount = pieceList?.count else { return }
-        //print("추억 조각 갯수 = \(pieceCount)")
+    func diaryUI(_ isHidden: Bool) {
+        emptyDiaryLabel.isHidden = !isHidden
+        diaryCollectionView.isHidden = isHidden
+    }
+    
+    func setPieceUI() {
+        let pieceCount = self.viewModel.pieceCount
         self.pieceCountLabel.setUpLabel(title: "\(pieceCount)개", podaFont: .subhead4)
-        if pieceCount != 0 {
-            // 등록된 추억 조각이 있는 경우
-            // 타임캡슐 뷰 업데이트
-            emptyTimeCapsuleLabel.isHidden = true
-            timeCapsuleImageView.isHidden = false
-            pieceDateImageView.isHidden = false
-            pieceDateLabel.isHidden = false
-            
-            self.randomPieceIndex = Int.random(in: 0..<pieceCount)
-            
-            guard let imageMemory = self.pieceList?[self.randomPieceIndex] else { return }
-            self.timeCapsuleImageView.image = self.getPieceImage(with: imageMemory)
-            self.pieceDateLabel.setUpLabel(title: "\(self.getPieceDate(with: imageMemory))의 조각", podaFont: .subhead2)
-                        
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCapsuleImage))
-            timeCapsuleImageView.addGestureRecognizer(tapGesture)
-            timeCapsuleImageView.isUserInteractionEnabled = true
-            
-            // 추억 조각들 뷰 업데이트
-            emptyPieceLabel.isHidden = true
-            pieceCollectionView.isHidden = false
-            createDateOrderButton.isHidden = false
-            pieceDateOrderButton.isHidden = false
+        
+        if viewModel.pieceEmptyState {
+            pieceUI(true)
+            viewModel.isSortedByPieceDate = true
+            contentView.snp.updateConstraints {
+                $0.height.equalTo(1132)
+            }
+        } else {
+            pieceUI(false)
             contentView.snp.updateConstraints {
                 $0.height.equalTo(1152)
             }
             
-            if isSortedByPieceDate {
-                pieceDateOrderButtonOn()
+            if viewModel.isSortedByPieceDate {
+                viewModel.selectedOrderOptionState?(true)
             } else {
-                createDateOrderButtonOn()
+                viewModel.selectedOrderOptionState?(false)
             }
-        } else {
-            // 등록된 추억 조각이 없는 경우
-            emptyTimeCapsuleLabel.isHidden = false
-            timeCapsuleImageView.isHidden = true
-            pieceDateImageView.isHidden = true
-            pieceDateLabel.isHidden = true
-            emptyPieceLabel.isHidden = false
-            pieceCollectionView.isHidden = true
-            createDateOrderButton.isHidden = true
-            pieceDateOrderButton.isHidden = true
-            isSortedByPieceDate = true
-            contentView.snp.updateConstraints {
-                $0.height.equalTo(1132)
-            }
-        }
-    }
-    
-    // FIXME: - diaryCountLabel 한번만 설정하도록
-    func loadDiaryDataFromFirebase() {
-        loadingIndicator.startAnimating()
-
-        firebaseDBManager.getDiaryDocuments { [weak self] diaryList, error in
-            guard let self = self else { return }
             
-            if error == .none {
-                // FIXME: - counter 변수 확인
-                print("diaryList: \(diaryList)")
-                var counter = 0
-                if diaryList.count == 1 {
-                    // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
-                    DispatchQueue.main.async {
-                        self.updateDiaryCollectionView(isEmpty: true)
-                        self.loadingIndicator.stopAnimating()
-                    }
-                }
-                for diaryName in diaryList {
-                    if diaryName != "account" {
-                        firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { [weak self] diaryInfoList, error in
-                            guard let self = self else { return }
-                            if error == .none, let diaryInfo = diaryInfoList.first {
-                                firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
-                                    guard let self = self else { return }
-                                    if error == .none {
-                                        self.diaryDataList.append(DiaryData(
-                                            pageDataList: diaryInfoList[0].diaryDetail?.pageInfo ?? [],
-                                            diaryName: diaryInfo.diaryName,
-                                            diaryImageList: imageList,
-                                            createDate: diaryInfo.createTime,
-                                            ratio: Ratio(rawValue: diaryInfo.frameRate) ?? .square,
-                                            description: diaryInfo.description)
-                                        )
-                                        counter += 1
-                                        if counter == diaryList.count - 1 {
-                                            DispatchQueue.main.async {
-                                                self.updateDiaryCollectionView(isEmpty: false)
-                                                self.loadingIndicator.stopAnimating()
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+            let randomPieceIndex = self.viewModel.randomPieceIndex
+            let pieceInfo = self.viewModel.pieceList[randomPieceIndex ?? 0]
+            timeCapsuleImageView.image = pieceInfo.image
+            pieceDateLabel.setUpLabel(title: "\(pieceInfo.pieceDate)의 조각", podaFont: .subhead2)
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.didTapCapsuleImage))
+            timeCapsuleImageView.addGestureRecognizer(tapGesture)
+            timeCapsuleImageView.isUserInteractionEnabled = true
+        }
+    }
+    
+    func pieceUI(_ isHidden: Bool) {
+        emptyTimeCapsuleLabel.isHidden = !isHidden
+        timeCapsuleImageView.isHidden = isHidden
+        pieceDateImageView.isHidden = isHidden
+        pieceDateLabel.isHidden = isHidden
+        emptyPieceLabel.isHidden = !isHidden
+        pieceCollectionView.isHidden = isHidden
+        createDateOrderButton.isHidden = isHidden
+        pieceDateOrderButton.isHidden = isHidden
+    }
+    
+    func bindViewModel() {
+        // 다이어리 데이터가 바뀔 때마다 얘를 다시 호출, 데이터 변경이 완료된 후 클로저에서 어떤 걸 실행할 지 정해주기
+        viewModel.diaryDataLoaded = { [weak self] _ in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.setDiaryUI()
+                let diaryCount = self.viewModel.diaryCount
+                self.diaryCountLabel.setUpLabel(title: "\(diaryCount)권", podaFont: .subhead4)
+            }
+        }
+        
+//        viewModel.diaryEmptyState = { [weak self] isDiaryEmpty in
+//            guard let self else { return }
+//            DispatchQueue.main.async {
+//                if isDiaryEmpty {
+//                    //self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+//                    self.emptyDiaryLabel.isHidden = false
+//                    self.diaryCollectionView.isHidden = true
+//                } else {
+//                    //let diaryCount = self.viewModel.diaryCountInt
+//                    //self.diaryCountLabel.setUpLabel(title: "\(diaryCount)권", podaFont: .subhead4)
+//                    self.emptyDiaryLabel.isHidden = true
+//                    self.diaryCollectionView.isHidden = false
+//                    self.diaryCollectionView.reloadData()
+//                }
+//                self.loadingIndicator.stopAnimating()
+//            }
+//        }
+        
+        viewModel.selectedOrderOptionState = { [weak self] isPieceDateOrderButtonOn in
+                guard let self else { return }
+                DispatchQueue.main.async {
+                if isPieceDateOrderButtonOn {
+                    self.createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                    self.pieceCollectionView.reloadData()
+                } else {
+                    self.createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                    self.pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.pieceCollectionView.reloadData()
                 }
             }
         }
-    }
-    
-    func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
-        guard let fileName = imageMemory.imagePath,
-              let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
-            return UIImage()
-        }
-        
-        let filePath = documentDirectory.appendingPathComponent(fileName).path
-        
-        do {
-            let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
-            if let image = UIImage(data: data) {
-                return image
-            }
-        } catch {
-            print("이미지 로딩 실패: \(error.localizedDescription)")
-        }
-        return UIImage()
-    }
-    
-    func getPieceDate(with imageMemory: ImageMemory) -> String {
-        guard let memoryDate = imageMemory.memoryDate else { return "" }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
-        return dateFormatter.string(from: memoryDate)
-    }
-    
-    // FIXME: - MoreDiaryVC, DetailVC에서 사용됨
-    func goToDiarySaveDeleteVC(_ index: Int) {
-//        guard let pieceList = self.pieceList?[index] else { return }
-//        let saveDeleteVC = SaveDeleteViewController()
-//        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
-//        saveDeleteVC.dateLabel.text = getPieceDate(with: imageMemory)
-//        saveDeleteVC.indexPath = index
-//        saveDeleteVC.addButton.isHidden = true
-//        saveDeleteVC.isDiaryImage = false
-//        navigationController?.pushViewController(saveDeleteVC, animated: true)
     }
     
     // FIXME: - Bind 함수로 정리하기
-    func goToPieceSaveDeleteVC(_ index: Int, _ sortedPieceList: Results<ImageMemory>?) {
-        guard let imageMemory = sortedPieceList?[index] else { return }
-        let saveDeleteVC = SaveDeleteViewController()
-        saveDeleteVC.dateLabel.setUpLabel(title: getPieceDate(with: imageMemory), podaFont: .body1)
-        saveDeleteVC.imageView.image = getPieceImage(with: imageMemory)
-        saveDeleteVC.sortedPieceList = sortedPieceList
-        saveDeleteVC.indexPath = index
-        saveDeleteVC.addButton.isHidden = true
-        saveDeleteVC.isDiaryImage = false
-        navigationController?.pushViewController(saveDeleteVC, animated: true)
-    }
-    
-    func registerNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleCreateNotification), name: DetailDiaryViewController.createDiaryNotificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteNotification), name: SaveDeleteViewController.deleteDiaryNotificationName, object: nil)
-    }
-    
-    @objc func handleCreateNotification(_ notification: NSNotification) {
-        if let diaryData = notification.object as? DiaryData {
-            self.diaryDataList.append(diaryData)
-        }
-    }
-    
-    @objc func handleDeleteNotification(_ notification: NSNotification) {
-        if let diaryData = notification.object as? DiaryData {
-            if let targetIndex = self.diaryDataList.firstIndex(of: diaryData) {
-                self.diaryDataList.remove(at: targetIndex)
-            }
-        }
+    func goToPieceSaveDeleteVC(_ index: Int, _ sortedList: [PieceData]) {
+        // MVC 에서는 saveDeleteVC.indexPath = index 이렇게 직접 전달하지만, MVVM 에서는 직접 값을 전달하는게 아니라 다음 뷰가 필요한 뷰모델을 전달해줘야함
+        let saveDeleteViewModel = SaveDeleteViewModel()
+        let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
+        saveDeleteViewModel.realmPieceList = viewModel.realmPieceList
+        saveDeleteViewModel.pieceList = viewModel.sortedList
+        saveDeleteViewModel.pieceIndex = index
+        saveDeleteViewModel.isDiaryImage = false
+        saveDeleteViewController.dateLabel.setUpLabel(title: viewModel.sortedList[index].pieceDate, podaFont: .body1)
+        saveDeleteViewController.imageView.image = viewModel.sortedList[index].image
+        saveDeleteViewController.addButton.isHidden = true
+        navigationController?.pushViewController(saveDeleteViewController, animated: true)
+        // present 는 viewController만 가지고 있음. 그래서 뷰컨에서는 self.present 이런식으로 쓸 수 있지만 뷰모델에서는 사용 불가 그래서 메서드 만들때 fromCurrentVC로 뷰컨을 받은 다음 fromCurrentVC.present 이런식으로 사용해야함
     }
     
     @objc func didTapAddButton() {
-        let homeMenuVC = HomeMenuViewController()
-        homeMenuVC.modalPresentationStyle = .overFullScreen
-        present(homeMenuVC, animated: true)
+        let homeMenuViewController = HomeMenuViewController()
+        homeMenuViewController.modalPresentationStyle = .overFullScreen
+        present(homeMenuViewController, animated: true)
         
-        // FIXME: - 실기기 테스트 해보고 화면 전환 방식 변경
-        homeMenuVC.didTapQR = {
+        homeMenuViewController.didTapQR = {
             self.dismiss(animated: true)
-            let qrVC = QRViewController()
-            qrVC.modalPresentationStyle = .overFullScreen
-            self.present(qrVC, animated: true)
+            let qrViewController = QRViewController()
+            qrViewController.modalPresentationStyle = .overFullScreen
+            self.present(qrViewController, animated: true)
         }
         
-        homeMenuVC.didTapDiary = {
+        homeMenuViewController.didTapDiary = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
         }
         
-        homeMenuVC.didTapPiece = {
+        homeMenuViewController.didTapPiece = {
             self.dismiss(animated: true)
             self.navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
         }
     }
     
     @objc func didTapCapsuleImage() {
-        goToPieceSaveDeleteVC(randomPieceIndex, pieceList)
+        goToPieceSaveDeleteVC(self.viewModel.randomPieceIndex ?? 0, self.viewModel.pieceList)
     }
     
     @objc func didTapAddDiaryButton() {
         navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
     }
     
-    // FIXME: - Bind 함수로 정리하기
     @objc func didTapMoreDiaryButton() {
-        let moreDiaryVC = MoreDiaryViewController()
-        if diaryDataList.isEmpty {
-            moreDiaryVC.emptyMoreDiaryLabel.isHidden = false
-            moreDiaryVC.moreDiaryCollectionView.isHidden = true
-            moreDiaryVC.deleteButton.isHidden = true
+        let moreDiaryViewModel = MoreDiaryViewModel()
+        let moreDiaryViewController = MoreDiaryViewController(viewModel: moreDiaryViewModel)
+        if viewModel.diaryEmptyState {
+            moreDiaryViewController.emptyMoreDiaryLabel.isHidden = false
+            moreDiaryViewController.moreDiaryCollectionView.isHidden = true
+            moreDiaryViewController.deleteButton.isHidden = true
         } else {
-            moreDiaryVC.emptyMoreDiaryLabel.isHidden = true
-            moreDiaryVC.moreDiaryCollectionView.isHidden = false
-            moreDiaryVC.deleteButton.isHidden = false
-            moreDiaryVC.diaryList = diaryDataList
+            moreDiaryViewController.emptyMoreDiaryLabel.isHidden = true
+            moreDiaryViewController.moreDiaryCollectionView.isHidden = false
+            moreDiaryViewController.deleteButton.isHidden = false
+            moreDiaryViewModel.diaryList = viewModel.diaryList
         }
-        navigationController?.pushViewController(moreDiaryVC, animated: true)
+        navigationController?.pushViewController(moreDiaryViewController, animated: true)  // >> MVVM에서 뷰 전환을 뷰모델이 해야한다 뷰컨이 해야한다 정해져있는거 아님. 우리는 유경님 말대로 뷰컨에서 하기로 함
     }
     
     // FIXME: - Bind 함수로 정리하기
     @objc func didTapAddPieceButton() {
-        let pieceVC = PieceViewController()
-        pieceVC.imageView.isUserInteractionEnabled = true
-        navigationController?.pushViewController(pieceVC, animated: true)
+        let pieceViewModel = PieceViewModel()
+        let pieceViewController = PieceViewController() //(viewModel: pieceViewModel)
+        pieceViewController.imageView.isUserInteractionEnabled = true
+        navigationController?.pushViewController(pieceViewController, animated: true)
     }
     
     @objc func didTapMorePieceButton() {
-        let morePieceViewController = MorePieceViewController()
-        morePieceViewController.pieceList = pieceList
+        let morePieceViewModel = MorePieceViewModel()
+        let morePieceViewController = MorePieceViewController(viewModel: morePieceViewModel)
+        morePieceViewModel.realmPieceList = viewModel.realmPieceList
+        morePieceViewModel.pieceList = viewModel.sortedList
+        morePieceViewController.bind(to: morePieceViewController.viewModel)
         navigationController?.pushViewController(morePieceViewController, animated: true)
     }
     
     @objc func didTapPieceDateOrderButton() {
-        isSortedByPieceDate = true
-        pieceDateOrderButtonOn()
+        // 뷰 모델한테 탭 됐다고 알려주기
+        viewModel.didTapPieceDateOrderButton()
     }
     
     @objc func didTapCreateDateOrderButton() {
-        isSortedByPieceDate = false
-        createDateOrderButtonOn()
+        viewModel.didTapCreateDateOrderButton()
     }
 }
 
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // FIXME: - 이 부분을 어떻게 MVVM으로 할까
         if collectionView == diaryCollectionView {
-            if indexPath.row < diaryDataList.count {
-                let detailVC = DetailViewController()
-                detailVC.diaryData = diaryDataList[indexPath.row]
-                navigationController?.pushViewController(detailVC, animated: true)
-            }
+            let detailViewModel = DetailViewModel()
+            let detailViewController = DetailViewController(viewModel: detailViewModel)
+            detailViewModel.diaryData = viewModel.getDiaryData(indexPath.row)
+            navigationController?.pushViewController(detailViewController, animated: true)
         } else {
-            if !isSortedByPieceDate {
-                let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)
-                goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
-            } else {
-                let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)
-                goToPieceSaveDeleteVC(indexPath.row, sortedPieceList)
-            }
+            goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedList)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == diaryCollectionView {
-            return diaryDataList.count
+            return viewModel.diaryCount
         } else {
-            guard let pieceCount = pieceList?.count else { return 0 }
-            return pieceCount
+            return viewModel.pieceCount
         }
     }
     
@@ -730,23 +622,14 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         if collectionView == diaryCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DiaryCollectionViewCell.identifier, for: indexPath) as? DiaryCollectionViewCell else {
                 return UICollectionViewCell() }
-            cell.titleLabel.setUpLabel(title: diaryDataList[indexPath.row].diaryName, podaFont: .subhead3)
+            let diaryName = viewModel.getDiaryName(indexPath.row)
+            cell.titleLabel.setUpLabel(title: diaryName, podaFont: .subhead3)
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
-            if !isSortedByPieceDate {
-                let sortedPieceList = pieceList?.sorted(byKeyPath: "createDate", ascending: false)  // true 인 경우 과거 > 최신 / 등록순
-                guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
-                let image = getPieceImage(with: imageMemory)
-                cell.pieceImageView.image = image
-                return cell
-            } else {
-                let sortedPieceList = pieceList?.sorted(byKeyPath: "memoryDate", ascending: false)  // true 인 경우 과거 > 최신 / 추억날짜순
-                guard let imageMemory = sortedPieceList?[indexPath.item] else { return UICollectionViewCell() }
-                let image = getPieceImage(with: imageMemory)
-                cell.pieceImageView.image = image
-                return cell
-            }
+            
+            cell.pieceImageView.image = self.viewModel.sortedList[indexPath.item].image
+            return cell
         }
     }
 }

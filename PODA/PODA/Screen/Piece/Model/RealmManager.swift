@@ -46,14 +46,14 @@ class RealmManager {
     }
     
     // 이미지를 Document 디렉토리에 저장하고, 그 경로를 Realm에 저장하는 함수
-    func saveImageMemory(image: UIImage?, memoryDate: Date?) {
+    func savePieceData(image: UIImage?, pieceDate: Date?) {
         guard let imageData = image?.pngData(),
               let documentDirectory = getDocumentDirectory() else {
             print("이미지 또는 Document 디렉토리를 가져오는데 실패했습니다.")
             return
         }
         
-        guard let selectedDate = memoryDate else {
+        guard let selectedDate = pieceDate else {
             print("경고: 날짜 변환 실패")
             return
         }
@@ -63,14 +63,15 @@ class RealmManager {
         
         do {
             try imageData.write(to: filePath)
-            let imageMemory = ImageMemory()
-            imageMemory.imagePath = fileName
-            imageMemory.memoryDate = selectedDate
-            imageMemory.createDate = Date()
+            let realmPieceData = RealmPieceData()
+            realmPieceData.id = UUID()
+            realmPieceData.imagePath = fileName
+            realmPieceData.pieceDate = selectedDate
+            realmPieceData.createDate = Date()
             
             try realm.write {
-                realm.add(imageMemory)
-                print("저장 성공: \(imageMemory)")
+                realm.add(realmPieceData)
+                print("저장 성공: \(realmPieceData)")
             }
         } catch {
             print("이미지를 저장하거나 Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
@@ -78,15 +79,15 @@ class RealmManager {
     }
     
     // Realm 데이터 로드 함수
-    func loadImageMemories() -> Results<ImageMemory> {
-        return realm.objects(ImageMemory.self)
+    func loadPieceData() -> Results<RealmPieceData> {
+        return realm.objects(RealmPieceData.self)
     }
     
     // Realm 데이터 삭제 함수
-    func deleteImageMemory(_ imageMemory: ImageMemory) {
+    func deletePieceData(_ pieceInfo: RealmPieceData) {
         do {
             try realm.write {
-                realm.delete(imageMemory)
+                realm.delete(pieceInfo)
                 print("Realm에서 이미지 메모리 삭제 성공")
             }
         } catch {
@@ -94,10 +95,10 @@ class RealmManager {
         }
     }
     
-    func updatePieceDate(_ imageMemory: ImageMemory, _ date: Date) {
+    func updatePieceDate(_ pieceInfo: RealmPieceData, _ date: Date) {
         do {
             try realm.write {
-                imageMemory.memoryDate = date
+                pieceInfo.pieceDate = date
                 print("Realm에서 날짜 업데이트 성공")
             }
         } catch {

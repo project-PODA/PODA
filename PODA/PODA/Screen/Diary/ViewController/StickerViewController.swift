@@ -15,7 +15,7 @@ class StickerViewController: BaseViewController, UIConfigurable {
     // MARK: - Properties
     
     //    private let stickerList: [UIImage?] = [UIImage(named: "image_profile"), UIImage(named: "image_profile"), UIImage(named: "image_profile")]
-    private var pieceList: Results<ImageMemory>?
+    private var pieceList: Results<RealmPieceData>?
     
     var touchedCell: ((_ image: UIImage)->())?
     
@@ -113,7 +113,7 @@ class StickerViewController: BaseViewController, UIConfigurable {
     // MARK: - Custom Method
     
     func loadPieceDataFromRealm() {
-        pieceList = RealmManager.shared.loadImageMemories()
+        pieceList = RealmManager.shared.loadPieceData()
         guard let pieceCount = pieceList?.count else { return }
         print("추억 조각 갯수 = \(pieceCount)")
         if pieceCount != 0 {
@@ -129,8 +129,8 @@ class StickerViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
-        guard let fileName = imageMemory.imagePath,
+    func getPieceImage(with pieceInfo: RealmPieceData) -> UIImage {
+        guard let fileName = pieceInfo.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
             return UIImage()
         }
