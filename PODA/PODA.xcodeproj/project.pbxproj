@@ -134,6 +134,10 @@
 		E24A315F2AE665AB006CF02C /* FontCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */; };
 		E261FF492AF52FA100D05EA6 /* DiaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E261FF482AF52FA100D05EA6 /* DiaryView.swift */; };
 		E27DD4E62ADD15C5002B194A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = E27DD4E52ADD15C5002B194A /* Then */; };
+		E289E07B2AFE091900037120 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E289E07A2AFE091900037120 /* LoginViewModel.swift */; };
+		E289E07F2AFE0B7800037120 /* LoginAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E289E07E2AFE0B7800037120 /* LoginAPI.swift */; };
+		E289E0822AFE0C0900037120 /* SignUpUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E289E0812AFE0C0900037120 /* SignUpUserInfo.swift */; };
+		E289E0852AFE2E8000037120 /* LoginUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E289E0842AFE2E8000037120 /* LoginUserInfo.swift */; };
 		E2981D1C2AFA41C100E8D262 /* DiaryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2981D1B2AFA41C100E8D262 /* DiaryAPI.swift */; };
 		E2ABBC782AF9098D0043D7F0 /* Ratio.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2ABBC772AF9098D0043D7F0 /* Ratio.swift */; };
 		E2B8F8D42AE1161600578D15 /* PageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */; };
@@ -239,7 +243,7 @@
 		D8433AD52AFB92A000481E96 /* InfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewModel.swift; sourceTree = "<group>"; };
 		D870C7892AEA19A80066A61E /* CustomLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLoadingIndicator.swift; sourceTree = "<group>"; };
 		D8777E052AF5649400DFEA6A /* PieceShakeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceShakeViewController.swift; sourceTree = "<group>"; };
-		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
+		D879F7762ADD478400FFB3F7 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = PODA/Screen/Login/ViewController/LoginViewController.swift; sourceTree = SOURCE_ROOT; };
 		D879F7792ADD940700FFB3F7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		D89A29EB2AEFB09100B4ACBD /* AgreeTermsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgreeTermsViewController.swift; sourceTree = "<group>"; };
 		D8BD5C602AE6B0CA00A3802A /* InfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoCell.swift; sourceTree = "<group>"; };
@@ -265,6 +269,10 @@
 		E24A315C2AE665AB006CF02C /* FontCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontCollectionViewCell.swift; sourceTree = "<group>"; };
 		E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FontCollectionViewCell.xib; sourceTree = "<group>"; };
 		E261FF482AF52FA100D05EA6 /* DiaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryView.swift; sourceTree = "<group>"; };
+		E289E07A2AFE091900037120 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		E289E07E2AFE0B7800037120 /* LoginAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginAPI.swift; sourceTree = "<group>"; };
+		E289E0812AFE0C0900037120 /* SignUpUserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpUserInfo.swift; sourceTree = "<group>"; };
+		E289E0842AFE2E8000037120 /* LoginUserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginUserInfo.swift; sourceTree = "<group>"; };
 		E2981D1B2AFA41C100E8D262 /* DiaryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryAPI.swift; sourceTree = "<group>"; };
 		E2ABBC772AF9098D0043D7F0 /* Ratio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ratio.swift; sourceTree = "<group>"; };
 		E2B8F8D22AE1161600578D15 /* PageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -741,6 +749,7 @@
 		D879F7782ADD93E900FFB3F7 /* SignUp */ = {
 			isa = PBXGroup;
 			children = (
+				E289E0802AFE0BFC00037120 /* Model */,
 				27C679872AFD872F00509DAE /* ViewModel */,
 				27C679862AFD872000509DAE /* ViewController */,
 			);
@@ -750,7 +759,10 @@
 		D879F77B2ADD941400FFB3F7 /* Login */ = {
 			isa = PBXGroup;
 			children = (
-				D879F7762ADD478400FFB3F7 /* LoginViewController.swift */,
+				E289E0832AFE2E7500037120 /* Model */,
+				E289E07D2AFE0B6600037120 /* Network */,
+				E289E07C2AFE091E00037120 /* ViewController */,
+				E289E0792AFE090800037120 /* ViewModel */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -845,6 +857,46 @@
 				E24A315D2AE665AB006CF02C /* FontCollectionViewCell.xib */,
 			);
 			path = Font;
+			sourceTree = "<group>";
+		};
+		E289E0792AFE090800037120 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				E289E07A2AFE091900037120 /* LoginViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		E289E07C2AFE091E00037120 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				D879F7762ADD478400FFB3F7 /* LoginViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		E289E07D2AFE0B6600037120 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				E289E07E2AFE0B7800037120 /* LoginAPI.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		E289E0802AFE0BFC00037120 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E289E0812AFE0C0900037120 /* SignUpUserInfo.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		E289E0832AFE2E7500037120 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E289E0842AFE2E8000037120 /* LoginUserInfo.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		E28A2CF82AD95B91004401D1 /* Resource */ = {
@@ -1134,6 +1186,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E289E07B2AFE091900037120 /* LoginViewModel.swift in Sources */,
 				E24331CC2AE0F4BB00244A5A /* CreateDiaryViewModel.swift in Sources */,
 				E2B8F8E12AE2872300578D15 /* DiaryNavigationBar.swift in Sources */,
 				27D265302ADD237600B6E211 /* PieceViewModel.swift in Sources */,
@@ -1191,6 +1244,7 @@
 				26BFF5862AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
 				5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */,
+				E289E0852AFE2E8000037120 /* LoginUserInfo.swift in Sources */,
 				D8433AD62AFB92A000481E96 /* InfoViewModel.swift in Sources */,
 				5FE44D412AE93B1900DB3EB1 /* NoticeInfo.swift in Sources */,
 				5F5447C92AE6354B00365DB7 /* InquireManager.swift in Sources */,
@@ -1228,10 +1282,12 @@
 				E20C9AE42AE41A0300BA5754 /* StickerViewController.swift in Sources */,
 				D8BD5C612AE6B0CA00A3802A /* InfoCell.swift in Sources */,
 				5FD54B542AD915790092D75B /* ProfileViewController.swift in Sources */,
+				E289E07F2AFE0B7800037120 /* LoginAPI.swift in Sources */,
 				D8CBFD8D2AF9CA3800D0242F /* LeaveViewModel.swift in Sources */,
 				5F56D75D2AFDC645004C79DE /* SetProfileViewModel.swift in Sources */,
 				26A7D4972AE56B3200810D63 /* MoreDiaryViewController.swift in Sources */,
 				5FD54B212AD910890092D75B /* UIButton + Extension.swift in Sources */,
+				E289E0822AFE0C0900037120 /* SignUpUserInfo.swift in Sources */,
 				5FE92C612AEF752200DDD34F /* String + Extension.swift in Sources */,
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
 				26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */,
