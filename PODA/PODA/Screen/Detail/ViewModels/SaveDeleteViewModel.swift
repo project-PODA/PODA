@@ -11,6 +11,9 @@ import UIKit
 
 class SaveDeleteViewModel {
     
+    static let deleteDiaryNotificationName = NSNotification.Name("deleteDiary")
+    static let deletePieceNotificationName = NSNotification.Name("deletePiece")
+    
     private let firebaseDBManager = FirestorageDBManager()
     private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
     
@@ -40,7 +43,7 @@ class SaveDeleteViewModel {
             if error == .none {
                 self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
                     NotificationCenter.default.post(
-                        name: SaveDeleteViewController.deleteDiaryNotificationName,
+                        name: SaveDeleteViewModel.deleteDiaryNotificationName,
                         object: DiaryData(
                             pageDataList: self.diaryData?.pageDataList ?? [],
                             diaryName: diaryName,
@@ -69,9 +72,10 @@ class SaveDeleteViewModel {
         let targetId = pieceList[index].id
         if let targetIndex = realmPieceList.firstIndex(where: { $0.id == targetId }) {
             print("동일한 id를 가진 객체의 인덱스: \(targetIndex)")
-            RealmManager.shared.deleteImageMemory(realmPieceList[targetIndex])
-            // FIXME: - 수정하기
-            // pieceList.remove(at: index) > notification으로 홈의 pieceList에서 삭제해야함
+            RealmManager.shared.deletePieceData(realmPieceList[targetIndex])
+            NotificationCenter.default.post(
+                name: SaveDeleteViewModel.deletePieceNotificationName,
+                object: targetId)
         } else {
             print("targetId와 일치하는 realmPieceList.id가 없어!!")
         }

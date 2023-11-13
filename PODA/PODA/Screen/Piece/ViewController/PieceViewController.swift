@@ -47,7 +47,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaWhite.getColor()
     }
     
-    let memoryDate = UILabel().then {
+    let pieceDate = UILabel().then {
         $0.textColor = Palette.podaWhite.getColor()
         $0.setUpLabel(title: "추억 날짜", podaFont: .subhead2)
     }
@@ -89,7 +89,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(imageView)
         view.addSubview(vectorIconImage)
         view.addSubview(addToGalleryButton)
-        view.addSubview(memoryDate)
+        view.addSubview(pieceDate)
         view.addSubview(datePickerButton)
 //        view.addSubview(testPageButton)
         
@@ -107,7 +107,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.top.equalTo(cancelButton.snp.bottom).offset(28)
-            $0.bottom.equalTo(memoryDate.snp.top).offset(-32)
+            $0.bottom.equalTo(pieceDate.snp.top).offset(-32)
         }
         
         vectorIconImage.snp.makeConstraints {
@@ -122,7 +122,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(45)
         }
         
-        memoryDate.snp.makeConstraints {
+        pieceDate.snp.makeConstraints {
             $0.bottom.equalTo(datePickerButton.snp.top).offset(-20)
             $0.left.equalToSuperview().offset(21)
         }
@@ -192,7 +192,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //    }
     
     func saveImageToRealm(image: UIImage, date: Date?) {
-        RealmManager.shared.saveImageMemory(image: image, pieceDate: date)
+        RealmManager.shared.savePieceData(image: image, pieceDate: date)
     }
     
     func showSaveConfirmationAlert() {
@@ -217,7 +217,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 self.saveImageToRealm(image: selectedImage, date: selectedDate)
                 self.navigationController?.popViewController(animated: true)
             } else {
-                // FIXME: - ImageMemory 타입을 가지는 RealmPieceList를 따로 또 만들어야하나..
+                // FIXME: - PieceData 타입을 가지는 RealmPieceList를 따로 또 만들어야하나..
                 // 날짜만 변경하는 메서드
 //                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
 //                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)

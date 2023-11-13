@@ -14,9 +14,6 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     
     var viewModel: HomeViewModel! // (생성자 initializer 만들기 귀찮으면 ! 붙여서 var viewModel: HomeViewModel! 하삼)
     
-    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-    private var diaryDataList: [DiaryData] = []
-    
     private lazy var loadingIndicator = CustomLoadingIndicator()
     
     private let statusLabel = UILabel().then {
@@ -192,8 +189,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         configUI()
         loadingIndicator.startAnimating()
         viewModel.loadDiaryData()
-//        viewModel.loadPieceData()
-        registerNotification()
+        viewModel.registerNotification()
         print(viewModel.diaryList)
     }
     
@@ -201,9 +197,8 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         super.viewWillAppear(animated)
         print("viewWillAppear")
         view.bringSubviewToFront(loadingIndicator)
-        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
-            guard let _ = self else { return }
-        }
+        viewModel.login()
+        // FIXME: - loadPieceData도 viewDidLoad에서만 호출해도 될 듯. pieceVC에서 realm에 추가, 업데이트 & 홈의 pieceList에도 추가, 업데이트 한다면..
         viewModel.loadPieceData()
         setPieceUI()
         //setDiaryUI()
@@ -528,25 +523,6 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         // present 는 viewController만 가지고 있음. 그래서 뷰컨에서는 self.present 이런식으로 쓸 수 있지만 뷰모델에서는 사용 불가 그래서 메서드 만들때 fromCurrentVC로 뷰컨을 받은 다음 fromCurrentVC.present 이런식으로 사용해야함
     }
     
-    func registerNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleCreateNotification), name: DetailDiaryViewController.createDiaryNotificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteNotification), name: SaveDeleteViewController.deleteDiaryNotificationName, object: nil)
-    }
-    
-    @objc func handleCreateNotification(_ notification: NSNotification) {
-        if let diaryData = notification.object as? DiaryData {
-            self.diaryDataList.append(diaryData)
-        }
-    }
-    
-    @objc func handleDeleteNotification(_ notification: NSNotification) {
-        if let diaryData = notification.object as? DiaryData {
-            if let targetIndex = self.diaryDataList.firstIndex(of: diaryData) {
-                self.diaryDataList.remove(at: targetIndex)
-            }
-        }
-    }
-    
     @objc func didTapAddButton() {
         let homeMenuViewController = HomeMenuViewController()
         homeMenuViewController.modalPresentationStyle = .overFullScreen
@@ -578,11 +554,10 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         navigationController?.pushViewController(SelectRatioViewController(viewModel: CreateDiaryViewModel()), animated: true)
     }
     
-    // FIXME: - Bind 함수로 정리하기, MVVM 고치기
     @objc func didTapMoreDiaryButton() {
         let moreDiaryViewModel = MoreDiaryViewModel()
         let moreDiaryViewController = MoreDiaryViewController(viewModel: moreDiaryViewModel)
-        if diaryDataList.isEmpty {
+        if viewModel.diaryEmptyState {
             moreDiaryViewController.emptyMoreDiaryLabel.isHidden = false
             moreDiaryViewController.moreDiaryCollectionView.isHidden = true
             moreDiaryViewController.deleteButton.isHidden = true
@@ -590,7 +565,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
             moreDiaryViewController.emptyMoreDiaryLabel.isHidden = true
             moreDiaryViewController.moreDiaryCollectionView.isHidden = false
             moreDiaryViewController.deleteButton.isHidden = false
-            moreDiaryViewController.diaryList = diaryDataList
+            moreDiaryViewModel.diaryList = viewModel.diaryList
         }
         navigationController?.pushViewController(moreDiaryViewController, animated: true)  // >> MVVM에서 뷰 전환을 뷰모델이 해야한다 뷰컨이 해야한다 정해져있는거 아님. 우리는 유경님 말대로 뷰컨에서 하기로 함
     }

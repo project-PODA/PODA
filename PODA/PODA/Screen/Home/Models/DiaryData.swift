@@ -17,8 +17,8 @@ struct DiaryData: Equatable {
     var description: String
     
     static func == (lhs: DiaryData, rhs: DiaryData) -> Bool {
-        return lhs == rhs
-        //return lhs.diaryName == rhs.diaryName
+//        return lhs == rhs
+        return lhs.diaryName == rhs.diaryName
     }
 }
 

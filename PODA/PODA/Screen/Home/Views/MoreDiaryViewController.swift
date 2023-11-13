@@ -13,8 +13,6 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
     var viewModel: MoreDiaryViewModel!
     
-    var diaryList : [DiaryData] = []
-    
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
@@ -95,45 +93,6 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapDeleteButton() {
         // 삭제하는 로직은 delegate에
-//        diaryList[indexPath.row].diaryName
-//        guard let self else { return }
-//        print(isDiaryImage)
-//        if isDiaryImage {
-//            guard let diaryName else { return }
-//            firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
-//                if error == .none {
-//                    // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
-//                    // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
-//                    // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
-//                    self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-//
-//                    }
-//                    self.getBackToHome()
-//                }
-//            }
-//    }
-//    let alert = UIAlertController(title: "정말 삭제하시겠습니까?", message: "선택된 다이어리는 영구적으로 삭제됩니다.", preferredStyle: .alert)
-//    let confirmAction = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
-//        guard let self else { return }
-//        guard let diaryName else { return }
-//        firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
-//            if error == .none {
-//                // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
-//                // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
-//                // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
-//                self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-//
-//                }
-//                self.getBackToHome()
-//            }
-//        }
-//    }
-//    let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-//
-//    alert.addAction(confirmAction)
-//    alert.addAction(cancelAction)
-//
-//    self.present(alert, animated: true, completion: nil)
     }
 }
 

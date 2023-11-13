@@ -18,6 +18,7 @@ import UIKit
 class HomeViewModel {
     
     // MARK: - Properties for diary
+    private let firebaseAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
     private let firebaseDBManager: FirestorageDBManager
     private let firebaseImageManager: FireStorageImageManager
     
@@ -82,6 +83,12 @@ class HomeViewModel {
         // self.pieceList = [] > 위에서 빈 배열로 선언하지 않는 경우 여기서 이렇게 초기화할 수도 있음
     }
     
+    func login() {
+        firebaseAuthManager.userLogin(email: UserDefaultManager.userEmail, password: UserDefaultManager.userPassword) { [weak self] error in
+            guard let _ = self else { return }
+        }
+    }
+    
     // MARK: - Helpers for diary
     func loadDiaryData() {
         firebaseDBManager.getDiaryDocuments { [weak self] diaryNameList, error in
@@ -89,7 +96,6 @@ class HomeViewModel {
             if error == .none {
                 if diaryNameList.count == 1 {
                     // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
-                    //diaryEmptyState?(true)
                     diaryList = []
                 } else {
                     for diaryName in diaryNameList {
@@ -100,7 +106,6 @@ class HomeViewModel {
                                 }
                             }
                             diaryList.sort { $0.createDate > $1.createDate }
-                            //diaryEmptyState?(false)
                         }
                     }
                 }
@@ -153,10 +158,7 @@ class HomeViewModel {
     // MARK: - Helpers for piece
     // FIXME: - 추억날짜 최신순/오래된순으로 정렬 변경하면 createDateFormatter 삭제하기
     func loadPieceData() {
-        print("*******************loadPieceData 실행")
-        print("*******************home의 pieceList: \(pieceList)")
         realmPieceList = RealmManager.shared.loadPieceData().map { $0 }
-        print("*******************처음 받아온 realmPieceList: \(realmPieceList)")
         let pieceDateFormatter = DateFormatter()
         pieceDateFormatter.dateFormat = "yyyy.MM.dd"
         let createDateFormatter = DateFormatter()
@@ -169,7 +171,6 @@ class HomeViewModel {
                 pieceList.append(PieceData(id: realmPiece.id ?? UUID(), image: image, createDate: createDateFormatter.string(from: realmPiece.createDate ?? Date()), pieceDate: pieceDateFormatter.string(from: realmPiece.pieceDate ?? Date())))
             }
         }
-        print("*******************HomeVM/168/pieceData타입으로 바꾼 pieceList: \(pieceList)")
         randomPieceIndex = pieceList.count != 0 ? Int.random(in: 0..<pieceList.count) : nil
     }
     
@@ -198,6 +199,35 @@ class HomeViewModel {
     func didTapCreateDateOrderButton() {
         isSortedByPieceDate = false
         selectedOrderOptionState?(false)
+    }
+    
+    func registerNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleCreateNotification), name: DetailDiaryViewController.createDiaryNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteDiaryNotification), name: SaveDeleteViewModel.deleteDiaryNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleDeletePieceNotification), name: SaveDeleteViewModel.deletePieceNotificationName, object: nil)
+    }
+    
+    @objc func handleCreateNotification(_ notification: NSNotification) {
+        if let diaryData = notification.object as? DiaryData {
+            diaryList.append(diaryData)
+            diaryList.sort { $0.createDate > $1.createDate }
+        }
+    }
+    
+    @objc func handleDeleteDiaryNotification(_ notification: NSNotification) {
+        if let diaryData = notification.object as? DiaryData {
+            if let targetIndex = diaryList.firstIndex(of: diaryData) {
+                diaryList.remove(at: targetIndex)
+            }
+        }
+    }
+    
+    @objc func handleDeletePieceNotification(_ notification: NSNotification) {
+        if let targetId = notification.object as? UUID {
+            if let targetIndex = pieceList.firstIndex(where: { $0.id == targetId } ) {
+                pieceList.remove(at: targetIndex)
+            }
+        }
     }
 }
 

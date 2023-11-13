@@ -46,7 +46,7 @@ class RealmManager {
     }
     
     // 이미지를 Document 디렉토리에 저장하고, 그 경로를 Realm에 저장하는 함수
-    func saveImageMemory(image: UIImage?, pieceDate: Date?) {
+    func savePieceData(image: UIImage?, pieceDate: Date?) {
         guard let imageData = image?.pngData(),
               let documentDirectory = getDocumentDirectory() else {
             print("이미지 또는 Document 디렉토리를 가져오는데 실패했습니다.")
@@ -84,7 +84,7 @@ class RealmManager {
     }
     
     // Realm 데이터 삭제 함수
-    func deleteImageMemory(_ pieceInfo: RealmPieceData) {
+    func deletePieceData(_ pieceInfo: RealmPieceData) {
         do {
             try realm.write {
                 realm.delete(pieceInfo)

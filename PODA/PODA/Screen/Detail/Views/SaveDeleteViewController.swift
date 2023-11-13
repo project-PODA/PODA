@@ -11,8 +11,6 @@ import SnapKit
 
 class SaveDeleteViewController: BaseViewController, UIConfigurable {
     
-    static let deleteDiaryNotificationName = NSNotification.Name("deleteDiary")
-    
     var viewModel: SaveDeleteViewModel!
     
     private lazy var backButton = UIButton().then {
