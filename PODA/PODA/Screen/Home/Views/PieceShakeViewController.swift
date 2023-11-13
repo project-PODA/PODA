@@ -13,19 +13,19 @@ import Then
 
 class PieceShakeViewController: BaseViewController, UIConfigurable {
     
+    
     private var floatingImages: [(imageView: UIImageView, vector: CGVector)] = []
     
     
     // Realm 데이터베이스에서 불러온 ImageMemory 객체를 저장할 변수 선언
-    var pieceList: Results<RealmPieceData>?
+    var pieceList: [RealmPieceData]?
     
-    // 백 버튼을 위한 lazy var 선언, 실제 사용될 때 초기화됨
+    
     private lazy var backButton = UIButton().then {
-        // 버튼에 이미지 설정, .normal 상태일 때 "icon_back" 이미지 사용
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
-        // 버튼이 탭되었을 때 실행될 메서드(didTapBackButton) 연결
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
+    
     
     private let translucentView = UIView().then {
         $0.backgroundColor = Palette.podaBlack.getColor().withAlphaComponent(0.8)
@@ -50,12 +50,24 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    
+    private lazy var captureButton = UIButton().then {
+        $0.setUpButton(title: "화면캡쳐 📸", podaFont: .button1)
+        $0.backgroundColor = Palette.podaBlue.getColor()
+        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        $0.layer.cornerRadius = 22
+        $0.addTarget(self, action: #selector(captureScreen), for: .touchUpInside)
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         displayRandomImages()
         configUI()
         hideTranslucentView()
+        
     }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -63,8 +75,9 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         startFloatingAnimation()
     }
     
+    
     func configUI() {
-        [backButton, translucentView].forEach {
+        [backButton, captureButton, translucentView].forEach {
             view.addSubview($0)
         }
         
@@ -74,18 +87,62 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(30)
         }
         
+        captureButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+            $0.width.equalTo(120)
+            $0.height.equalTo(44)
+        }
+        
         translucentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
     
+    
+    @objc func captureScreen() {
+        // 버튼을 숨기고 캡쳐
+        backButton.isHidden = true
+        captureButton.isHidden = true
+        
+        // 화면 캡쳐
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
+        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        // 버튼 다시 보이게 함
+        backButton.isHidden = false
+        captureButton.isHidden = false
+        
+        // 갤러리에 이미지 저장
+        if let imageToSave = image {
+            UIImageWriteToSavedPhotosAlbum(imageToSave, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+        }
+    }
+    
+    
+    // 이미지 저장 완료 처리
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            // 에러 발생시 토스트 메시지로 알림
+            showToastMessage("저장 오류: \(error.localizedDescription)", withDuration: 3.0, delay: 0)
+        } else {
+            // 성공 메시지 토스트로 표시
+            showToastMessage("이미지가 갤러리에 저장되었습니다.", withDuration: 3.0, delay: 0)
+        }
+    }
+    
+    
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true) // 네비게이션 스택에서 현재 뷰 컨트롤러를 팝
     }
     
+    
     @objc func didTapTranslucentView() {
         translucentView.isHidden = true
     }
+    
     
     // 팬 제스처 인식기 업데이트를 처리하는 메서드
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
@@ -118,10 +175,63 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    
+    // 각 프레임마다 호출되는 메서드
+    @objc private func step(displayLink: CADisplayLink) {
+        for (imageView, vector) in floatingImages {
+            var newVector = vector
+            
+            // 이미지 뷰의 새 위치 계산
+            var newCenter = imageView.center
+            newCenter.x += vector.dx
+            newCenter.y += vector.dy
+            
+            // 화면의 경계에 도달했는지 확인하고 벡터를 반전시킴
+            if newCenter.x < 0 || newCenter.x > view.bounds.width {
+                newVector.dx = -vector.dx
+            }
+            if newCenter.y < 0 || newCenter.y > view.bounds.height {
+                newVector.dy = -vector.dy
+            }
+            
+            // 이미지 뷰와 벡터를 업데이트
+            imageView.center = newCenter
+            if newVector != vector {
+                for i in 0..<floatingImages.count {
+                    if floatingImages[i].imageView == imageView {
+                        floatingImages[i].vector = newVector
+                        break
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    private func showToastMessage(_ message: String, withDuration: Double, delay: Double) {
+        let toastLabel = UILabel(frame: CGRect(x: self.view.center.x - 100, y: self.view.center.y, width: 200, height: 36))
+        toastLabel.setUpLabel(title: message, podaFont: .caption)
+        toastLabel.textColor = Palette.podaWhite.getColor()
+        toastLabel.textAlignment = .center
+        toastLabel.backgroundColor = Palette.podaBlack.getColor().withAlphaComponent(0.7)
+        toastLabel.layer.cornerRadius = 7.0
+        toastLabel.clipsToBounds = true
+        
+        view.addSubview(toastLabel)
+        
+        UIView.animate(withDuration: 1.0, delay: 1.0, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
+    }
+    
+    
     private func hideTranslucentView() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTranslucentView))
         translucentView.addGestureRecognizer(tapGesture)
     }
+    
     
     // 이미지를 랜덤하게 표시하는 메서드
     private func displayRandomImages() {
@@ -173,6 +283,7 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    
     // 이미지 뷰를 초기화하고 움직임 벡터를 설정하는 메서드
     private func setupFloatingImages() {
         for imageView in self.view.subviews.compactMap({ $0 as? UIImageView }) {
@@ -185,6 +296,7 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    
     // 애니메이션 시작하는 메서드
     private func startFloatingAnimation() {
         let displayLink = CADisplayLink(target: self, selector: #selector(step))
@@ -192,40 +304,8 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
     }
     
     
-    // 각 프레임마다 호출되는 메서드
-    @objc private func step(displayLink: CADisplayLink) {
-        for (imageView, vector) in floatingImages {
-            var newVector = vector
-            
-            // 이미지 뷰의 새 위치 계산
-            var newCenter = imageView.center
-            newCenter.x += vector.dx
-            newCenter.y += vector.dy
-            
-            // 화면의 경계에 도달했는지 확인하고 벡터를 반전시킴
-            if newCenter.x < 0 || newCenter.x > view.bounds.width {
-                newVector.dx = -vector.dx
-            }
-            if newCenter.y < 0 || newCenter.y > view.bounds.height {
-                newVector.dy = -vector.dy
-            }
-            
-            // 이미지 뷰와 벡터를 업데이트
-            imageView.center = newCenter
-            if newVector != vector {
-                for i in 0..<floatingImages.count {
-                    if floatingImages[i].imageView == imageView {
-                        floatingImages[i].vector = newVector
-                        break
-                    }
-                }
-            }
-        }
-    }
-  
-    
     // ImageMemory 객체로부터 UIImage를 가져오는 메서드
-    func getPieceImage(with pieceInfo: RealmPieceData) -> UIImage {
+    private func getPieceImage(with pieceInfo: RealmPieceData) -> UIImage {
         // 파일 이름과 문서 디렉토리 경로를 확인하여 이미지 데이터를 로드
         guard let fileName = pieceInfo.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
