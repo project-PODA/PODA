@@ -15,7 +15,6 @@ class BaseNavigationController: UINavigationController {
         self.rootViewController = rootViewController
         self.navigationBar.isHidden = true
         //configTheme()
-        
     }
     
     required init?(coder aDecoder: NSCoder) {
