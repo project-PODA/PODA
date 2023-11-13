@@ -13,6 +13,11 @@ protocol UIConfigurable {
 
 
 class BaseViewController: UIViewController {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        // 배경색에 따라서 상태바 색상 변경되도록
+        return view.backgroundColor == UIColor.white ? .darkContent : .lightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -24,5 +29,9 @@ class BaseViewController: UIViewController {
         } else {
             view.backgroundColor = Palette.podaBlack.getColor()
         }
+
+        // 배경색 설정 후 상태바 업데이트를 요청
+        setNeedsStatusBarAppearanceUpdate()
     }
 }
+

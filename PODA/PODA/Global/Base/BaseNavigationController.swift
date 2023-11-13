@@ -10,6 +10,10 @@ import UIKit
 class BaseNavigationController: UINavigationController {
     var rootViewController: UIViewController?
     
+    override var childForStatusBarStyle: UIViewController? {
+            return topViewController 
+        }
+    
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         self.rootViewController = rootViewController
