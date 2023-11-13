@@ -17,7 +17,7 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
     
     
     // Realm 데이터베이스에서 불러온 ImageMemory 객체를 저장할 변수 선언
-    var pieceList: Results<ImageMemory>?
+    var pieceList: Results<RealmPieceData>?
     
     // 백 버튼을 위한 lazy var 선언, 실제 사용될 때 초기화됨
     private lazy var backButton = UIButton().then {
@@ -142,8 +142,8 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
             usedIndexes.insert(randomPieceIndex)
             
             // 랜덤하게 선택된 ImageMemory 객체로부터 이미지를 불러옴
-            let imageMemory = pieceList[randomPieceIndex]
-            let image = getPieceImage(with: imageMemory)
+            let pieceInfo = pieceList[randomPieceIndex]
+            let image = getPieceImage(with: pieceInfo)
             
             // UIImageView 생성 및 초기 설정
             let imageView = UIImageView(image: image).then {
@@ -225,9 +225,9 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
   
     
     // ImageMemory 객체로부터 UIImage를 가져오는 메서드
-    func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
+    func getPieceImage(with pieceInfo: RealmPieceData) -> UIImage {
         // 파일 이름과 문서 디렉토리 경로를 확인하여 이미지 데이터를 로드
-        guard let fileName = imageMemory.imagePath,
+        guard let fileName = pieceInfo.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
             return UIImage() // 조건에 맞지 않는 경우 빈 UIImage 반환
         }

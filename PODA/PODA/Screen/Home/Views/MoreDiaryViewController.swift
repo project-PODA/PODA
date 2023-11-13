@@ -11,10 +11,7 @@ import SnapKit
 
 class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
-    var diaryList : [DiaryData] = []
-    var diaryName: String?
-    private let firebaseDBManager = FirestorageDBManager()
-    private let firebaseImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
+    var viewModel: MoreDiaryViewModel!
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
@@ -50,7 +47,16 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
         super.viewDidLoad()
         configUI()
     }
-
+    
+    init(viewModel: MoreDiaryViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // FIXME: - 삭제 기능 구현하면 deleteButton 추가
     func configUI() {
         [backButton, emptyMoreDiaryLabel, moreDiaryCollectionView].forEach {
@@ -87,45 +93,6 @@ class MoreDiaryViewController: BaseViewController, UIConfigurable {
     
     @objc func didTapDeleteButton() {
         // 삭제하는 로직은 delegate에
-//        diaryList[indexPath.row].diaryName
-//        guard let self else { return }
-//        print(isDiaryImage)
-//        if isDiaryImage {
-//            guard let diaryName else { return }
-//            firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
-//                if error == .none {
-//                    // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
-//                    // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
-//                    // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
-//                    self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-//
-//                    }
-//                    self.getBackToHome()
-//                }
-//            }
-//    }
-//    let alert = UIAlertController(title: "정말 삭제하시겠습니까?", message: "선택된 다이어리는 영구적으로 삭제됩니다.", preferredStyle: .alert)
-//    let confirmAction = UIAlertAction(title: "삭제", style: .default) { [weak self] _ in
-//        guard let self else { return }
-//        guard let diaryName else { return }
-//        firebaseImageManager.deleteDiaryImage(diaryName: diaryName) { error in
-//            if error == .none {
-//                // 다이어리 이미지 여러장인 경우에만 삭제되었습니다 토스트 메세지 띄우면서 다음이미지를 앞으로 당기기
-//                // self.showToastMessage("삭제되었습니다.", withDuration: 0.8, delay: 0.8)
-//                // deleteDiaryImage 후 다이어리 이미지 = 0 인 경우 deleteDiary 호출 후 HomeViewController로 이동
-//                self.firebaseDBManager.deleteDiary(diaryName: diaryName) { error in
-//
-//                }
-//                self.getBackToHome()
-//            }
-//        }
-//    }
-//    let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-//
-//    alert.addAction(confirmAction)
-//    alert.addAction(cancelAction)
-//
-//    self.present(alert, animated: true, completion: nil)
     }
 }
 
@@ -144,27 +111,27 @@ extension MoreDiaryViewController: UICollectionViewDelegateFlowLayout {
 
 extension MoreDiaryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return diaryList.count
+        return viewModel.diaryCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MoreDiaryCollectionViewCell.identifier, for: indexPath) as? MoreDiaryCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.diaryCoverImageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
-        cell.titleLabel.setUpLabel(title: diaryList[indexPath.row].diaryName, podaFont: .head1)
-        cell.dateLabel.setUpLabel(title: Date.updateTime(dateTime: diaryList[indexPath.row].createDate), podaFont: .subhead2)
+        cell.diaryCoverImageView.image = viewModel.getDiaryImage(indexPath.row)
+        cell.titleLabel.setUpLabel(title: viewModel.getDiaryName(indexPath.row), podaFont: .head1)
+        cell.dateLabel.setUpLabel(title: viewModel.getDiaryDate(indexPath.row), podaFont: .subhead2)
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let saveDeleteVC = SaveDeleteViewController()
-        saveDeleteVC.diaryData = diaryList[indexPath.row]
-        saveDeleteVC.dateLabel.text = Date.updateTime(dateTime: diaryList[indexPath.row].createDate)
-        //saveDeleteVC.diaryName = diaryList[indexPath.row].diaryName
-        saveDeleteVC.imageView.image = UIImage(data: diaryList[indexPath.row].diaryImageList[0])
-        saveDeleteVC.isDiaryImage = true
-        saveDeleteVC.editButton.isHidden = true
-        navigationController?.pushViewController(saveDeleteVC, animated: true)
+        let saveDeleteViewModel = SaveDeleteViewModel()
+        let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
+        saveDeleteViewModel.isDiaryImage = true
+        saveDeleteViewModel.diaryData = viewModel.diaryList[indexPath.row]
+        saveDeleteViewController.imageView.image = viewModel.getDiaryImage(indexPath.row)
+        saveDeleteViewController.dateLabel.text = viewModel.getDiaryDate(indexPath.row)
+        saveDeleteViewController.editButton.isHidden = true
+        navigationController?.pushViewController(saveDeleteViewController, animated: true)
     }
 }
