@@ -11,7 +11,7 @@ import NVActivityIndicatorView
 import Firebase
 import FirebaseAuth
 
-class LoginViewController: BaseViewController, UIConfigurable, ViewModelBindable {
+class LoginViewController: BaseViewController, UIConfigurable {
     
     var viewModel: LoginViewModel!
     
@@ -328,7 +328,7 @@ class LoginViewController: BaseViewController, UIConfigurable, ViewModelBindable
     
     @objc private func didTapLoginButton() {
         loadingIndicator.startAnimating()
-        setComponentDisable(false)
+        setComponentDisable(true)
         
         let userInfo = LoginUserInfo(email: emailTextField.text!, password: passwordTextField.text!)
         
@@ -340,9 +340,6 @@ class LoginViewController: BaseViewController, UIConfigurable, ViewModelBindable
                 UserDefaultManager.userEmail = userInfo.email.lowercased()
                 UserDefaultManager.userPassword = userInfo.password
                 
-                loadingIndicator.stopAnimating()
-                setComponentDisable(true)
-                
                 // 로그인 성공 후, sceneDelegate.switchToMainInterface() 호출 (switchToMainInterface :로그인 뷰 컨트롤러를 스택에서 제거하고, 메인페이지로 전환하기)
                 if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                     sceneDelegate.switchToMainPage()
@@ -350,6 +347,8 @@ class LoginViewController: BaseViewController, UIConfigurable, ViewModelBindable
             } else {
                 self.showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
             }
+            
+            loadingIndicator.stopAnimating()
         }
     }
 
@@ -362,10 +361,6 @@ class LoginViewController: BaseViewController, UIConfigurable, ViewModelBindable
 //        appleIconButton.isEnabled = enabled
         loginButton.isEnabled = enabled
         signUpButton.isEnabled = enabled
-    }
-    
-    func bindViewModel() {
-        
     }
 }
 
