@@ -4,19 +4,21 @@
 //
 //  Created by 박유경 on 2023/10/13.
 //
+
 import UIKit
 import Then
 import NVActivityIndicatorView
+
+
 class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurable {
     
     var viewModel: ProfileViewModel!
-    private let fireImageManager = FireStorageImageManager(imageManipulator: ImageManipulator())
-    private let fireDBManager = FirestorageDBManager()
-    private let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+    
+
     
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
-        $0.layer.cornerRadius = 105
+        $0.layer.cornerRadius = 75
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
         $0.image = UIImage(named: "image_profile")
@@ -52,39 +54,10 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         super.viewDidLoad()
         configUI()
         setActions()
-        bindViewModel()
-        getFirebaseData()
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-  
-    
-    private func getFirebaseData(){
         loadingIndicator.startAnimating()
-        fireImageManager.getProfileImage { [weak self] (error, image) in
-            guard let self = self else { return }
-
-            if error == .none, let imageData = image {
-                DispatchQueue.main.async{ [weak self] in
-                    guard let self = self else {return}
-                    profileImageView.image = UIImage(data: imageData)
-                    loadingIndicator.stopAnimating()
-                }
-            }
-        }
-        fireDBManager.getUserNickname{[weak self] (name, error) in
-            guard let self = self else {return}
-            if error == .none {
-                DispatchQueue.main.async{ [weak self] in
-                    guard let self = self else {return}
-                    usernameLabel.text = name
-                }
-            }
-        }
+        viewModel.getFirebaseData()
     }
+
     
     private func setComponentDisable(_ enabled : Bool){
         cameraButton.isEnabled = enabled
@@ -92,11 +65,9 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         logoutButton.isEnabled = enabled
     }
     
-    
     private func setActions() {
         cameraButton.addTarget(self, action: #selector(didTapCameraButton), for: .touchUpInside)
-        nickNameEditButton.addTarget(self, action: #selector(didnickNameButton), for: .touchUpInside)
-        logoutButton.addTarget(self, action: #selector(didLogoutButton), for: .touchUpInside)
+        nickNameEditButton.addTarget(self, action: #selector(didTapNickNameButton), for: .touchUpInside)
     }
     
     init(viewModel: ProfileViewModel) {
@@ -109,20 +80,51 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
     }
     
     func bindViewModel() {
-        print("ProfileView bindViewModel called")
-
+        viewModel.profileImageSetting = { [weak self] imageData in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.profileImageView.image = UIImage(data: imageData)
+                self.loadingIndicator.stopAnimating()
+            }
+        }
+        
+        viewModel.profileNickNameSetting = { [weak self] name in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.usernameLabel.text = name
+            }
+        }
+        
+        //🔫4
+        viewModel.nickNameUpdate = { [weak self] nickname in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.usernameLabel.text = nickname
+            }
+        }
+        
+        //🥕3
+        viewModel.imageUpdate = {[weak self] in
+            
+            DispatchQueue.main.async{
+                guard let self = self else {return}
+                self.loadingIndicator.stopAnimating()
+                self.setComponentDisable(true)
+            }
+        }
     }
     
     func configUI() {
         setupNavigationBar()
-
+        
         
         [profileImageView, cameraButton, usernameLabel, nickNameEditButton, logoutButton, loadingIndicator].forEach { view.addSubview($0) }
         
         profileImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(52)
-            $0.width.height.equalTo(210)
+            $0.width.height.equalTo(150)
         }
         
         loadingIndicator.snp.makeConstraints{
@@ -131,8 +133,8 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         }
         
         cameraButton.snp.makeConstraints {
-            $0.bottom.right.equalTo(profileImageView).offset(-8)
-            $0.width.height.equalTo(44)
+            $0.bottom.right.equalTo(profileImageView).offset(-3)
+            $0.width.height.equalTo(35)
         }
         
         usernameLabel.snp.makeConstraints {
@@ -146,24 +148,18 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
             $0.height.equalTo(44)
             $0.centerX.equalToSuperview()
         }
-        
-        logoutButton.snp.makeConstraints { 
-            $0.height.equalTo(44)
-            $0.left.equalToSuperview().offset(40)
-            $0.right.equalToSuperview().offset(-40)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-120)
-        }
     }
     
     private func setupNavigationBar() {
         self.navigationController?.navigationBar.isHidden = false
-
+        
         let infoIcon = UIImage(named: "icon_info")?.withRenderingMode(.alwaysTemplate)
         let infoButtonItem = UIBarButtonItem(image: infoIcon, style: .plain, target: self, action: #selector(didTapInfoButton))
         infoButtonItem.tintColor = .white
         navigationItem.rightBarButtonItem = infoButtonItem
     }
-
+    
+  
     @objc private func didTapCameraButton() {
         PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { (isAuthorized) in
             if isAuthorized {
@@ -175,48 +171,21 @@ class ProfileViewController: BaseViewController, ViewModelBindable, UIConfigurab
         }
     }
     
-    @objc private func didnickNameButton() {
+    //🔫1
+    @objc private func didTapNickNameButton() {
         showAlertWithTextField(title: "닉네임 변경", message: "5글자 이하로 입력해주세요.", placeholder: usernameLabel.text!){ [weak self]  text in
-            guard let self = self else {return}
-            if let nickname = text {
-                usernameLabel.text = nickname
-                updateNickname(nickname: nickname)
-            }
-        }
-    }
-    private func updateNickname(nickname newNickname: String) {
-        fireDBManager.updateNickname(updateName: newNickname) { [weak self]  error in
-            guard let _ = self else { return }
-            print("Update 성공")
+            guard let self = self else { return }
+            viewModel.updateNickname(nickname: text ?? "")
         }
     }
     
-    @objc private func didLogoutButton() {
-        let alertController = UIAlertController(title: nil, message: "정말 로그아웃 하시겠습니까?", preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
-            guard let self = self else { return }
-            self.fireAuthManager.userLogOut() { error in
-                if error == .none {
-                    UserDefaultManager.isUserLoggedIn = false
-                    UserDefaultManager.userEmail = ""
-                    UserDefaultManager.userPassword = ""
-                    self.moveToHome()
-                    
-                }
-            }
-        }
-        
-        alertController.addAction(cancelAction)
-        alertController.addAction(logoutAction)
-        
-        present(alertController, animated: true, completion: nil)
-    }
-
-
     @objc private func didTapInfoButton() {
-        let infoVC = InfoViewController()
+        let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+        
+        let infoVC = InfoViewController(viewModel: InfoViewModel(fireAuthManager: fireAuthManager))
+        
+        infoVC.bind(to: infoVC.viewModel)
+        
         self.navigationController?.pushViewController(infoVC, animated: true)
     }
 }
@@ -228,27 +197,19 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         if let selectedImage = info[.originalImage] as? UIImage {
             
             // 이미지 크기 조정
-            let newSize = CGSize(width: 300, height: 300 * selectedImage.size.height / selectedImage.size.width)
-            let resizedImage = selectedImage.resized(to: newSize)
+            let resizedImage = viewModel.resizingImage(image: selectedImage)
             
             profileImageView.image = resizedImage
             loadingIndicator.startAnimating()
             setComponentDisable(false)
             
-            fireImageManager.createProfileImage(imageData: resizedImage!.pngData()!) { [weak self] (error) in
-                guard let self = self else { return }
-                DispatchQueue.main.async{ [weak self]  in
-                    if error == .none {
-                        guard let self = self else {return}
-                        loadingIndicator.stopAnimating()
-                        setComponentDisable(true)
-                    }
-                }
-            }
+            //🥕1
+            viewModel.updateProfileImage(profileImage: resizedImage)
+            
         }
         dismiss(animated: true, completion: nil)
     }
-
+    
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)

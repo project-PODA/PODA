@@ -15,7 +15,7 @@ struct DiaryInfo: Codable {
     var diaryTitle: String
     var description: String
     var frameRate: String
-    var diaryDetail: DiaryDetail
+    var diaryDetail: DiaryDetail?
 }
 
 struct DiaryDetail: Codable {

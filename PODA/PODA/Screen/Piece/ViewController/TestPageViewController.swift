@@ -12,7 +12,7 @@ import RealmSwift
 
 class TestPageViewController: BaseViewController, UIConfigurable {
     
-    var imageMemories: Results<ImageMemory>?
+    var pieceData: Results<RealmPieceData>?
     
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -47,10 +47,10 @@ class TestPageViewController: BaseViewController, UIConfigurable {
     }
     
     func loadImagesFromRealm() {
-        imageMemories = RealmManager.shared.loadImageMemories()
+        pieceData = RealmManager.shared.loadPieceData()
         
-        for imageMemory in imageMemories! {
-            print("Image Path: \(imageMemory.imagePath ?? "No Image Path"), Memory Date: \(imageMemory.memoryDate ?? Date())")
+        for pieceData in pieceData! {
+            print("Image Path: \(pieceData.imagePath ?? "No Image Path"), Piece Date: \(pieceData.pieceDate ?? Date())")
         }
         collectionView.reloadData()
     }
@@ -62,7 +62,7 @@ extension TestPageViewController: UICollectionViewDelegate {
 
 extension TestPageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let itemCount = imageMemories?.count ?? 0
+        let itemCount = pieceData?.count ?? 0
         print("Number of items in section: \(itemCount)")
         return itemCount
     }
@@ -76,8 +76,8 @@ extension TestPageViewController: UICollectionViewDataSource {
         }
         
         // 이미지 메모리 전달하여 셀 구성
-        if let imageMemory = imageMemories?[indexPath.item] {
-            cell.configure(with: imageMemory)
+        if let pieceData = pieceData?[indexPath.item] {
+            cell.configure(with: pieceData)
         }
         
         return cell
@@ -135,9 +135,9 @@ class Cell: UICollectionViewCell {
         }
     }
     
-    func configure(with imageMemory: ImageMemory) {
+    func configure(with pieceInfo: RealmPieceData) {
         // 이미지 로드 및 설정
-        guard let imagePath = imageMemory.imagePath else {
+        guard let imagePath = pieceInfo.imagePath else {
             return
         }
         print("Image Path: \(imagePath)")
@@ -151,10 +151,10 @@ class Cell: UICollectionViewCell {
         
         
         // 추억 날짜 설정
-        if let memoryDate = imageMemory.memoryDate {
+        if let pieceDate = pieceInfo.pieceDate {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy. MM. dd"
-            dateLabel.text = dateFormatter.string(from: memoryDate)
+            dateLabel.text = dateFormatter.string(from: pieceDate)
         }
     }
 }

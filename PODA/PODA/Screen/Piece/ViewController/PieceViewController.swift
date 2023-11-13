@@ -16,10 +16,12 @@ class PieceViewController: BaseViewController, UIConfigurable {
     // MARK: UIComponents
     
     var isComeFromSaveDeleteVC = false
+    var sortedPieceList: [PieceData] = []
+    var indexPath = 0
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-        $0.setUpButton(title: "뒤로", podaFont: .subhead3)
+        $0.setUpButton(title: "취소", podaFont: .subhead3)
     }
     
     let nextButton = UIButton().then {
@@ -45,7 +47,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaWhite.getColor()
     }
     
-    let memoryDate = UILabel().then {
+    let pieceDate = UILabel().then {
         $0.textColor = Palette.podaWhite.getColor()
         $0.setUpLabel(title: "추억 날짜", podaFont: .subhead2)
     }
@@ -87,25 +89,25 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(imageView)
         view.addSubview(vectorIconImage)
         view.addSubview(addToGalleryButton)
-        view.addSubview(memoryDate)
+        view.addSubview(pieceDate)
         view.addSubview(datePickerButton)
 //        view.addSubview(testPageButton)
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
-            $0.top.equalToSuperview().offset(59)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
         }
         
         nextButton.snp.makeConstraints {
             $0.right.equalToSuperview().offset(-20)
-            $0.top.equalToSuperview().offset(59)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
         }
         
         imageView.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
-            $0.top.equalToSuperview().offset(107)
-            $0.bottom.equalTo(memoryDate.snp.top).offset(-32)
+            $0.top.equalTo(cancelButton.snp.bottom).offset(28)
+            $0.bottom.equalTo(pieceDate.snp.top).offset(-32)
         }
         
         vectorIconImage.snp.makeConstraints {
@@ -120,7 +122,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(45)
         }
         
-        memoryDate.snp.makeConstraints {
+        pieceDate.snp.makeConstraints {
             $0.bottom.equalTo(datePickerButton.snp.top).offset(-20)
             $0.left.equalToSuperview().offset(21)
         }
@@ -158,6 +160,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
     }
     
+    func getPieceDate(with pieceInfo: RealmPieceData) -> String {
+        guard let pieceDate = pieceInfo.pieceDate else { return "" }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        return dateFormatter.string(from: pieceDate)
+    }
+    
     func updateUIForImageAvailability(hasImage: Bool) {
         vectorIconImage.isHidden = hasImage
         addToGalleryButton.isHidden = hasImage
@@ -183,13 +192,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
 //    }
     
     func saveImageToRealm(image: UIImage, date: Date?) {
-        RealmManager.shared.saveImageMemory(image: image, memoryDate: date)
+        RealmManager.shared.savePieceData(image: image, pieceDate: date)
     }
     
     func showSaveConfirmationAlert() {
         guard let selectedImage = self.imageView.image,
               let selectedDateString = self.datePickerButton.title(for: .normal),
-              let selectedDate = Date(dateString: selectedDateString, format: "yyyy. MM. dd") else {
+              let selectedDate = Date(dateString: selectedDateString, format: "yyyy.MM.dd") else {
             
             let failAlertController = UIAlertController(title: "알림", message: "이미지와 추억 날짜를 모두 설정해주세요.", preferredStyle: .alert)
             let confirmAction = UIAlertAction(title: "확인", style: .default, handler: nil)
@@ -206,17 +215,34 @@ class PieceViewController: BaseViewController, UIConfigurable {
 
             if !self.isComeFromSaveDeleteVC {
                 self.saveImageToRealm(image: selectedImage, date: selectedDate)
+                self.navigationController?.popViewController(animated: true)
             } else {
+                // FIXME: - PieceData 타입을 가지는 RealmPieceList를 따로 또 만들어야하나..
                 // 날짜만 변경하는 메서드
+//                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
+//                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)
+//                
+//                let dateFormatter = DateFormatter()
+//                dateFormatter.dateFormat = "yyyy.MM.dd"
+//                let modifiedDate = dateFormatter.string(from: selectedDate)
+//                
+//                print(modifiedDate)
+//                
+//                guard let viewControllers = self.navigationController?.viewControllers else { return }
+//                for viewController in viewControllers {
+//                    if let viewController = viewController as? SaveDeleteViewController {
+//                        viewController.dateLabel.text = modifiedDate
+//                        self.navigationController?.popToViewController(viewController, animated: true)
+//                    }
+//                }
             }
             print("pieceVC pop 될거야")
-            self.navigationController?.popViewController(animated: true)
         }
 
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
 
-        alertController.addAction(confirmAction)
         alertController.addAction(cancelAction)
+        alertController.addAction(confirmAction)
 
         present(alertController, animated: true, completion: nil)
     }
@@ -254,7 +280,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         datePicker.locale = Locale(identifier: "ko_KR")
         
         if let title = datePickerButton.title(for: .normal),
-           let currentDate = Date(dateString: title, format: "yyyy. MM. dd") {
+           let currentDate = Date(dateString: title, format: "yyyy.MM.dd") {
             datePicker.date = currentDate
         }
         
@@ -265,13 +291,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.centerX.equalToSuperview()
         }
         
-        let selectAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+        let selectAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
             let selectedDate = datePicker.date
-            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy. MM. dd")
+            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy.MM.dd")
             self?.datePickerButton.setTitle(formattedDate, for: .normal)
         }
         
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
         
         alertController.addAction(selectAction)
         alertController.addAction(cancelAction)
@@ -296,7 +322,7 @@ extension PieceViewController: PHPickerViewControllerDelegate {
             if let error = error {
                 print("이미지 로딩 중 오류: \(error.localizedDescription)")
             } else if let selectedImage = object as? UIImage {
-                print("선택된 이미지의 너비 \(selectedImage.size.width)")
+                //print("선택된 이미지의 너비 \(selectedImage.size.width)")
                 DispatchQueue.main.async {
                     self?.imageView.image = selectedImage
                     self?.updateUIForImageAvailability(hasImage: true)

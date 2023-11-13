@@ -8,8 +8,10 @@
 import Foundation
 import RealmSwift
 
-class ImageMemory: Object {
+// FIXME: - 마이그레이션!!!! 필수!!!!!!!! 지근님 도움!!!!!!!!!!!
+class RealmPieceData: Object {
+    @Persisted var id: UUID?
     @Persisted var imagePath: String?
-    @Persisted var memoryDate: Date?
+    @Persisted var pieceDate: Date?
+    @Persisted var createDate: Date?
 }
-

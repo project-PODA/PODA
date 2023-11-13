@@ -19,11 +19,15 @@ class BaseTabbarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let homeVC = HomeViewController()
+        let homeVM = HomeViewModel(firebaseDBManager: FirestorageDBManager(), firebaseImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+        let homeVC = HomeViewController(viewModel: homeVM)
+        homeVC.bind(to: homeVC.viewModel)
         
-        let profileVC = ProfileViewController(viewModel: ProfileViewModel())
-        let profileNavVC = BaseNavigationController(rootViewController: profileVC)
-        profileVC.bind(to: profileVC.viewModel)
+        
+        let viewModel = ProfileViewModel(fireDBManager: FirestorageDBManager(), fireImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+        let profileViewController = ProfileViewController(viewModel: viewModel)
+        let profileNavVC = BaseNavigationController(rootViewController: profileViewController)
+        profileViewController.bind(to: profileViewController.viewModel)
         
         viewControllers = [homeVC, profileNavVC]
         
@@ -103,15 +107,6 @@ class BaseTabbarController: UITabBarController {
         } else {
             customTabbarView.isHidden = hidden
         }
-    }
-    
-    
-    @objc private func didTapInfoButton() {
-        let infoVC = InfoViewController()
-        if let baseTabbar = self.tabBarController as? BaseTabbarController {
-            baseTabbar.setCustomTabbarHidden(true)
-        }
-        self.navigationController?.pushViewController(infoVC, animated: true)
     }
     
     

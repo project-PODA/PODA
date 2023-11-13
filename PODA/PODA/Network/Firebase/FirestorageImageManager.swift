@@ -113,7 +113,7 @@ class FireStorageImageManager {
                 
                 for item in result.items {
                     dispatchGroup.enter()
-                    item.getData(maxSize: 10 * 1024 * 1024) { data, error in
+                    item.getData(maxSize: 30 * 1024 * 1024) { data, error in
                         if let errCode = error as NSError? {
                             Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.localizedDescription)")
                             completion(.error(errCode.code, errCode.localizedDescription),[])
@@ -209,7 +209,7 @@ class FireStorageImageManager {
             
             let imageReference = storageReference.child("\(currentUserUID)/profile/profileImage")
 
-            imageReference.getData(maxSize: 10 * 1024 * 1024) { data, error in
+            imageReference.getData(maxSize: 30 * 1024 * 1024) { data, error in
                 if let errCode = error as NSError?  {
                     Logger.writeLog(.error, message: "[\(errCode.code)] : \(errCode.description)")
                     completion(.error(errCode.code, error!.localizedDescription), nil)

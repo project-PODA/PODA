@@ -318,7 +318,9 @@ class LoginViewController: BaseViewController, UIConfigurable {
     }
     
     @objc private func signUpButtonTap() {
-        let signUpVC = SignUpViewController()
+        let viewModel = SignUpViewModel(firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())), fireStorageManager: FirestorageDBManager(), smtpManager: SMTPManager(htmpParser: HTMLParser()))
+        
+        let signUpVC = SignUpViewController(viewModel: viewModel)
         self.navigationController?.pushViewController(signUpVC, animated: true)
     }
     
@@ -331,25 +333,29 @@ class LoginViewController: BaseViewController, UIConfigurable {
         fireAuthManager.userLogin(email: email, password: password){ [weak self] error in
             guard let self = self else {return}
             
-            if error == .none {
-                let tabBarController = BaseTabbarController()
-                navigationController!.pushViewController(tabBarController, animated: true)
-                
-                UserDefaultManager.isUserLoggedIn = true
-                UserDefaultManager.userEmail = email.lowercased()
-                UserDefaultManager.userPassword = password
-                
-            } else {
-                showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
-            }
             DispatchQueue.main.async{ [weak self] in
                 guard let self = self else {return}
-                loadingIndicator.stopAnimating()
-                setComponentDisable(true)
+                self.loadingIndicator.stopAnimating()
+                self.setComponentDisable(true)
+                
+                if error == .none {
+                    UserDefaultManager.isUserLoggedIn = true
+                    UserDefaultManager.userEmail = email.lowercased()
+                    UserDefaultManager.userPassword = password
+                    
+                    // 로그인 성공 후, sceneDelegate.switchToMainInterface() 호출 (switchToMainInterface :로그인 뷰 컨트롤러를 스택에서 제거하고, 메인페이지로 전환하기)
+                    if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                        sceneDelegate.switchToMainPage()
+                    }
+                    
+                } else {
+                    self.showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
+                }
             }
         }
     }
-    
+
+                 
     private func setComponentDisable(_ enabled : Bool){
         emailTextField.isEnabled = enabled
         passwordTextField.isEnabled = enabled

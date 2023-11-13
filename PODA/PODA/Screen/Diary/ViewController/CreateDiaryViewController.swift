@@ -18,11 +18,38 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     var ratio: Ratio?
     var diaryName: String?
     
+    private var currentImageView: UIImageView? {
+        willSet {
+            currentImageView?.layer.borderWidth = 0
+            deleteButton.isHidden = true
+        }
+        
+        didSet {
+            if let imageView = currentImageView {
+                deleteButton.isHidden = false
+                currentTextView = nil
+                
+                imageView.layer.borderWidth = 2
+                imageView.layer.borderColor = Palette.podaBlue.getColor().cgColor
+            }
+        }
+    }
+    private var currentTextView: UITextView?
     private var currentTextPosition: CGPoint?
     
     private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "취소", rightButtonTitle: "다음").then {
         $0.leftButton.addTarget(self, action: #selector(touchUpCancelButton), for: .touchUpInside)
         $0.rightButton.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
+    }
+    
+    private lazy var deleteButton = UIButton().then {
+        var config = getButtonConfiguration(title: "선택 항목 삭제", iconName: nil)
+        config.contentInsets = NSDirectionalEdgeInsets.init(top: 3, leading: 11, bottom: 3, trailing: 11)
+        $0.configuration = config
+        $0.backgroundColor = Palette.podaBlue.getColor()
+        $0.layer.cornerRadius = 11.5
+        $0.isHidden = true
+        $0.addTarget(self, action: #selector(touchUpDeleteButton), for: .touchUpInside)
     }
     
     private let scrollView = UIScrollView().then {
@@ -31,8 +58,17 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.backgroundColor = Palette.podaBlack.getColor()
     }
     
-    private let diaryView = UIView().then {
-        $0.backgroundColor = Palette.podaGray4.getColor()
+    private lazy var diaryView = DiaryView().then {
+        $0.clipsToBounds = true
+        $0.didTap = { touchedLocation in
+            if let imageView = self.currentImageView {
+                if !imageView.frame.contains(touchedLocation) {
+                    // UIImageView 영역 외부를 터치한 경우에만 아래 코드가 실행
+                    self.currentImageView = nil
+                }
+            }
+        }
+        
     }
     
     private lazy var backgroundButton = UIButton().then {
@@ -83,7 +119,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        
+        bindViewModel()
     }
     
     init(viewModel: CreateDiaryViewModel, ratio: Ratio) {
@@ -110,13 +146,20 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         scrollView.addSubview(diaryView)
         
-        [navigationBar, scrollView, decorateView, selectBackgroundColorView, selectTextColorView].forEach {
+        [navigationBar, deleteButton, 
+         scrollView, decorateView,
+         selectBackgroundColorView, selectTextColorView].forEach {
             view.addSubview($0)
         }
         
         navigationBar.snp.makeConstraints {
             $0.top.leading.trailing.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(40)
+        }
+        
+        deleteButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(6)
+            $0.centerX.equalToSuperview()
         }
         
         scrollView.snp.makeConstraints {
@@ -126,15 +169,14 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
         
         diaryView.snp.makeConstraints {
+            $0.top.equalTo(scrollView).offset(10)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(scrollView)
             
             switch ratio {
             case .square:
-                $0.top.equalTo(scrollView).offset(10)
                 $0.width.height.equalTo(UIScreen.main.bounds.width)
             case .rectangle:
-                $0.top.equalTo(scrollView).offset(10)
                 $0.width.equalTo(UIScreen.main.bounds.width)
                 $0.height.equalTo(UIScreen.main.bounds.width / 3 * 4)
             case .none:
@@ -172,11 +214,11 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpNextButton() {
+        currentImageView = nil
         let diaryImage = diaryView.convertToPNGData()
-        let detailDiaryViewController = DetailDiaryViewController()
-        detailDiaryViewController.ratio = ratio
-        detailDiaryViewController.diaryName = diaryName
-        detailDiaryViewController.pageInfo = [PageInfo(imageData: diaryImage!, backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")]
+        let detailDiaryViewController = DetailDiaryViewController(viewModel: viewModel)
+        viewModel.setDiaryName(diaryName ?? "")
+        viewModel.setPageInfo([PageInfo(imageData: diaryImage!, backgroundColor: diaryView.backgroundColor?.toHexString() ?? "")])
         navigationController?.pushViewController(detailDiaryViewController, animated: true)
     }
     
@@ -229,9 +271,9 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         present(stickerViewController, animated: true)
         
-        stickerViewController.touchedCell = { image in
+        stickerViewController.touchedCell = { [weak self] image in
             stickerViewController.dismiss(animated: true)
-            self.addImage(image)
+            self?.viewModel.handleNewImage(image)
         }
     }
     
@@ -245,7 +287,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         if let imageView = recognizer.view as? UIImageView {
             imageView.transform = imageView.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
+            
+            currentImageView = imageView
         } else if let textField = recognizer.view as? UITextView {
+            textField.resignFirstResponder()
             textField.transform = textField.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
         }
@@ -255,7 +300,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         if let imageView = recognizer.view as? UIImageView {
             imageView.transform = imageView.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
+            
+            currentImageView = imageView
         } else if let textField = recognizer.view as? UITextView {
+            textField.resignFirstResponder()
             textField.transform = textField.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
         }
@@ -266,28 +314,55 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             let translation = recognizer.translation(in: view)
             imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
+            
+            currentImageView = imageView
         } else if let textField = recognizer.view as? UITextView {
+            textField.resignFirstResponder()
             let translation = recognizer.translation(in: view)
             textField.center = CGPoint(x: textField.center.x + translation.x, y: textField.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
         }
     }
     
+    @objc func didTapImageView(_ recognizer: UITapGestureRecognizer) {
+        if let imageView = recognizer.view as? UIImageView {
+            currentImageView = imageView
+        }
+    }
+    
+    @objc func touchUpDeleteButton(_ sender: UIButton) {
+        deleteButton.isHidden = true
+        
+        if let imageView = currentImageView {
+            imageView.removeFromSuperview()
+            currentImageView = nil
+        } else if let textView = currentTextView {
+            textView.removeFromSuperview()
+            currentTextView = nil
+        }
+    }
+    
     // MARK: - Custom Method
     
     func bindViewModel() {
-        
+        viewModel.newImage.addObserver { [weak self] image in
+            guard let self = self, let image = image else { return }
+            addImage(image)
+        }
     }
     
-    private func getButtonConfiguration(title: String, iconName: String) -> UIButton.Configuration {
+    private func getButtonConfiguration(title: String, iconName: String?) -> UIButton.Configuration {
         var config = UIButton.Configuration.plain()
         var titleAttr = AttributedString.init(title)
         titleAttr.foregroundColor = Palette.podaWhite.getColor()
         titleAttr.font = UIFont.podaFont(.subhead1)
         config.attributedTitle = titleAttr
-        config.image = UIImage(named: iconName)
-        config.imagePlacement = .top
-        config.imagePadding = 10
+        
+        if let iconName = iconName {
+            config.image = UIImage(named: iconName)
+            config.imagePlacement = .top
+            config.imagePadding = 10
+        }
         
         return config
     }
@@ -297,8 +372,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
         
+        currentImageView = imageView
+        
         imageView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: 200, height: 200)
         diaryView.addSubview(imageView)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView(_:)))
+        imageView.addGestureRecognizer(tapGesture)
         
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
         imageView.addGestureRecognizer(pinchGesture)
@@ -351,8 +431,9 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
             if let error = error {
                 print("이미지 로딩 중 오류: \(error.localizedDescription)")
             } else if let selectedImage = object as? UIImage {
+                guard let self = self else { return }
                 DispatchQueue.main.async {
-                    self?.addImage(selectedImage)
+                    self.viewModel.handleNewImage(selectedImage)
                 }
             }
         }
@@ -363,6 +444,10 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
 
 extension CreateDiaryViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
+        currentTextView = textView
+        currentImageView = nil
+
+        deleteButton.isHidden = false
         selectTextColorView.isHidden = false
         
         currentTextPosition = textView.frame.origin
@@ -394,6 +479,7 @@ extension CreateDiaryViewController: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
+        deleteButton.isHidden = true
         textView.sizeToFit()
         textView.frame.origin = currentTextPosition ?? CGPoint()
     }
