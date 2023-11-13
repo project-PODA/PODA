@@ -404,13 +404,13 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         
         passwordTextField.snp.makeConstraints {
             $0.left.equalTo(emailLabel)
-            $0.right.equalToSuperview().offset(-20)
+            $0.right.equalTo(passwordEyeButton.snp.left).offset(-10)
             $0.top.equalTo(passwordDetailLabel.snp.bottom).offset(10)
             $0.height.equalTo(emailTextField)
         }
         
         passwordEyeButton.snp.makeConstraints {
-            $0.right.equalTo(passwordTextField).offset(-5)
+            $0.right.equalToSuperview().offset(-20)
             $0.centerY.equalTo(passwordTextField)
             $0.width.height.equalTo(24)
         }
@@ -427,13 +427,13 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         
         passwordConfirmationTextField.snp.makeConstraints {
             $0.left.equalTo(emailLabel)
-            $0.right.equalToSuperview().offset(-20)
+            $0.right.equalTo(confirmPasswordEyeButton.snp.left).offset(-10)
             $0.top.equalTo(passwordConfirmationLabel.snp.bottom).offset(10)
             $0.height.equalTo(emailTextField)
         }
         
         confirmPasswordEyeButton.snp.makeConstraints {
-            $0.right.equalTo(passwordConfirmationTextField).offset(-5)
+            $0.right.equalToSuperview().offset(-20)
             $0.centerY.equalTo(passwordConfirmationTextField)
             $0.width.height.equalTo(24)
         }
