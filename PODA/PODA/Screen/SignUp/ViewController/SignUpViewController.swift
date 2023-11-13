@@ -611,16 +611,24 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         scrollView.scrollIndicatorInsets = contentInsets
     }
     
+//    @objc private func signUpButtonTapped() {
+//        guard viewModel.isSignUpAllowed.value else { return }
+//        
+//        let agreeTermsVC = AgreeTermsViewController()
+//        let setProfileVC = SetProfileViewController(viewModel: SetProfileViewModel(firebaseAuth: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))), email: emailTextField.text!.lowercased(), password: passwordTextField.text!)
+//        setProfileVC.bind(to: setProfileVC.viewModel)
+//        
+//        agreeTermsVC.setProfileVC = setProfileVC
+//        
+//        self.navigationController?.pushViewController(agreeTermsVC, animated: true)
+//    }
+    
     @objc private func signUpButtonTapped() {
         guard viewModel.isSignUpAllowed.value else { return }
         
-        let agreeTermsVC = AgreeTermsViewController()
-        let setProfileVC = SetProfileViewController(viewModel: SetProfileViewModel(firebaseAuth: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))), email: emailTextField.text!.lowercased(), password: passwordTextField.text!)
-        setProfileVC.bind(to: setProfileVC.viewModel)
+        let completeVC = CompleteSignUpViewController()
         
-        agreeTermsVC.setProfileVC = setProfileVC
-        
-        self.navigationController?.pushViewController(agreeTermsVC, animated: true)
+        self.navigationController?.pushViewController(completeVC, animated: true)
     }
     
     @objc private func sendAuthUserCode() {

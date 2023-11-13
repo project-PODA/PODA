@@ -316,14 +316,20 @@ class LoginViewController: BaseViewController, UIConfigurable {
         eyeButton.setImage(image, for: .normal)
     }
     
+//    @objc private func didTapSignUpButton() {
+//        let viewModel = SignUpViewModel(
+//            firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())),
+//            fireStorageManager: FirestorageDBManager(),
+//            smtpManager: SMTPManager(htmpParser: HTMLParser()))
+//        
+//        let signUpVC = SignUpViewController(viewModel: viewModel)
+//        self.navigationController?.pushViewController(signUpVC, animated: true)
+//    }
+    
     @objc private func didTapSignUpButton() {
-        let viewModel = SignUpViewModel(
-            firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())),
-            fireStorageManager: FirestorageDBManager(),
-            smtpManager: SMTPManager(htmpParser: HTMLParser()))
-        
-        let signUpVC = SignUpViewController(viewModel: viewModel)
-        self.navigationController?.pushViewController(signUpVC, animated: true)
+        let agreeTermsVC = AgreeTermsViewController()
+
+        self.navigationController?.pushViewController(agreeTermsVC, animated: true)
     }
     
     @objc private func didTapLoginButton() {

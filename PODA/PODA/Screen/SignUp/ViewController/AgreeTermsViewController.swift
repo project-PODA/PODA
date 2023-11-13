@@ -209,10 +209,21 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
         allAgreeButton.setImage(allFilled ? UIImage(systemName: "checkmark.circle.fill") : UIImage(systemName: "checkmark.circle"), for: .normal)
     }
     
+//    @objc func didTapNextButton() {
+//        if let setProfileVC = self.setProfileVC {
+//            self.navigationController?.pushViewController(setProfileVC, animated: true)
+//        }
+//    }
+    
     @objc func didTapNextButton() {
-        if let setProfileVC = self.setProfileVC {
-            self.navigationController?.pushViewController(setProfileVC, animated: true)
-        }
+        let viewModel = SignUpViewModel(
+            firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())),
+            fireStorageManager: FirestorageDBManager(),
+            smtpManager: SMTPManager(htmpParser: HTMLParser())
+        )
+        
+        let signUpVC = SignUpViewController(viewModel: viewModel)
+        self.navigationController?.pushViewController(signUpVC, animated: true)
     }
     
     func updateNextButtonState() {
