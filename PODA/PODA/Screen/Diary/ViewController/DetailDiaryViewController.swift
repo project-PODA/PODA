@@ -86,7 +86,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
         view.endEditing(true)
     }
     
-    init(viewModel: CreateDiaryViewModel!) {
+    init(viewModel: CreateDiaryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -173,6 +173,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
                 guard let self = self, let viewControllers = navigationController?.viewControllers else { return }
                 for viewController in viewControllers {
                     if viewController is BaseTabbarController {
+                        // Home 페이지의 UI 업데이트를 위해 다이어리 전달
                         NotificationCenter.default.post(
                             name: DetailDiaryViewController.createDiaryNotificationName,
                             object: viewModel.getDiaryData()
@@ -214,7 +215,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
             DispatchQueue.main.async {
                 self.contentCountLabel.text = "\(textCount)자 / 100자"
                 
-                if textCount > 12 {
+                if textCount > 100 {
                     self.contentTextView.text = String(self.contentTextView.text.prefix(100))
                 }
             }
