@@ -10,7 +10,7 @@ import Then
 import SnapKit
 
 class AgreeTermsViewController: BaseViewController, UIConfigurable {
-    var setProfileVC: SetProfileViewController?
+//    var setProfileVC: SetProfileViewController?
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
@@ -65,8 +65,6 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
         $0.layer.borderWidth = 1
     }
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()

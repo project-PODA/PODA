@@ -104,6 +104,21 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
                 self.signUpButton.isEnabled = isAllowed
             }
         }
+        
+        viewModel.completeSignup.addObserver { [weak self] signUpStatus in
+            guard let self = self else { return }
+            loadingIndicator.stopAnimating()
+            switch signUpStatus {
+            case .success:
+                let completeSignUpVC = CompleteSignUpViewController()
+                navigationController?.pushViewController(completeSignUpVC, animated: true)
+            case .error(let error):
+                showAlert(title: "에러", message: error.description)
+            default:
+                break
+            }
+            
+        }
     }
     
     // MARK: UIComponent
@@ -625,10 +640,12 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
     
     @objc private func signUpButtonTapped() {
         guard viewModel.isSignUpAllowed.value else { return }
+        loadingIndicator.startAnimating()
+        viewModel.onCompleteSingupTapped()
         
-        let completeVC = CompleteSignUpViewController()
+//        let completeVC = CompleteSignUpViewController()
         
-        self.navigationController?.pushViewController(completeVC, animated: true)
+//        self.navigationController?.pushViewController(completeVC, animated: true)
     }
     
     @objc private func sendAuthUserCode() {
