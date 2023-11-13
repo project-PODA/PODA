@@ -10,9 +10,21 @@ import SnapKit
 import MessageUI
 import Then
 
-class NoticeViewController: BaseViewController, UIConfigurable {
+class NoticeViewController: BaseViewController, UIConfigurable, ViewModelBindable {
     
-    private var notices: [NoticeInfo] = []
+    
+    var viewModel: NoticeViewModel!
+    
+    init(viewModel: NoticeViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        bindViewModel()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
     // MARK: - Properties
     private let tableView = UITableView(frame: .zero, style: .plain).then {
@@ -20,26 +32,27 @@ class NoticeViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = .clear
     }
     
-    private let dbManager = FirestorageDBManager()
     
-    // MARK: - Lifecycle Methods    
+    // MARK: - Lifecycle Methods
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let baseTabbar = self.tabBarController as? BaseTabbarController {
             baseTabbar.setCustomTabbarHidden(true)
         }
-        getNotices()
-
+        viewModel.getNotices()
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
-        tableView.dataSource = self
-        tableView.delegate = self
+        setTableView()
     }
     
-
+    func setTableView() {
+        tableView.setUpTableView(delegate: self, dataSource: self, cellType: NoticeCell.self)
+    }
+    
     
     // MARK: - configUI
     func configUI() {
@@ -52,6 +65,21 @@ class NoticeViewController: BaseViewController, UIConfigurable {
             $0.left.right.bottom.equalToSuperview()
         }
     }
+    
+    
+    // MARK: - bindViewModel
+    func bindViewModel() {
+        viewModel.onNoticesChanged = { [weak self] in
+            DispatchQueue.main.async {
+                if let errorMessage = self?.viewModel.errorMessage {
+                    self?.showAlert(title: "에러", message: errorMessage)
+                } else {
+                    self?.tableView.reloadData()
+                }
+            }
+        }
+    }
+    
     
     // MARK: - funcs
     private func setupNavigationBarAppearance() {
@@ -74,6 +102,7 @@ class NoticeViewController: BaseViewController, UIConfigurable {
         ]
     }
     
+    
     private func setupTabBarAppearance() {
         let tabBarAppearance = UITabBarAppearance().then {
             $0.configureWithOpaqueBackground()
@@ -85,31 +114,7 @@ class NoticeViewController: BaseViewController, UIConfigurable {
         tabBarController?.tabBar.scrollEdgeAppearance = tabBarAppearance
     }
     
-    private func getNotices() {
-        dbManager.getNotices { [weak self] notices, error in
-            guard let self = self else { return }
-            
-            if error == .none && !notices.isEmpty {
-                self.notices = notices
-                print("Successfully loaded \(notices.count) notices")
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            } else {
-                print("Error loading notices: \(String(describing: error))")
-            }
-        }
-    }
     
-    func estimateHeightForContent(content: String) -> CGFloat {
-        let approximateWidthOfContent = tableView.frame.width - 40
-        let size = CGSize(width: approximateWidthOfContent, height: 1000)
-        let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]
-        
-        let estimatedFrame = NSString(string: content).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attributes, context: nil)
-        
-        return estimatedFrame.height
-    }
     
     // MARK: - objc
     @objc func didTapBackButton() {
@@ -121,33 +126,37 @@ class NoticeViewController: BaseViewController, UIConfigurable {
 // MARK: - extensions
 extension NoticeViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notices.count
+        return viewModel.notices.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "noticeCell", for: indexPath) as! NoticeCell
-        let notice = notices[indexPath.row]
-        cell.configure(title: notice.title, date: Date.updateTime(dateTime: notice.date), content: notice.content, isContentVisible: notice.isContentVisible)
+        let notice = viewModel.notices[indexPath.row]
+        
+        let formattedDate = viewModel.formattedDate(notice.date)
+        cell.configure(title: notice.title, date: formattedDate, content: notice.content, isContentVisible: notice.isContentVisible)
         cell.backgroundColor = .clear
         cell.selectionStyle = .none
         return cell
     }
 }
 
+
 extension NoticeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let notice = notices[indexPath.row]
+        let notice = viewModel.notices[indexPath.row]
         // 셀을 클릭하면 기본 높이 + 내용 레이블 측정한 값으로 변하도록
         if notice.isContentVisible {
-            let contentHeight = estimateHeightForContent(content: notice.content)
-            return 80 + (contentHeight * 1.3) + 50 // 내용 잘리지 않도록 여백 추가
+            let contentHeight = viewModel.estimateHeightForContent(content: notice.content, width: tableView.frame.width)
+            return 90 + (contentHeight * 1.35)
         } else {
             return 80
         }
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        notices[indexPath.row].isContentVisible.toggle() // 눌렀을 때 보이도록 전환
+        viewModel.toggleContentVisibility(at: indexPath.row)
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
 }
