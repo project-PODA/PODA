@@ -10,7 +10,7 @@ import Then
 import SnapKit
 
 class AgreeTermsViewController: BaseViewController, UIConfigurable {
-    var setProfileVC: SetProfileViewController?
+//    var setProfileVC: SetProfileViewController?
     
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back_podaBlue"), for: .normal)
@@ -65,8 +65,6 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
         $0.layer.borderWidth = 1
     }
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -209,10 +207,21 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
         allAgreeButton.setImage(allFilled ? UIImage(systemName: "checkmark.circle.fill") : UIImage(systemName: "checkmark.circle"), for: .normal)
     }
     
+//    @objc func didTapNextButton() {
+//        if let setProfileVC = self.setProfileVC {
+//            self.navigationController?.pushViewController(setProfileVC, animated: true)
+//        }
+//    }
+    
     @objc func didTapNextButton() {
-        if let setProfileVC = self.setProfileVC {
-            self.navigationController?.pushViewController(setProfileVC, animated: true)
-        }
+        let viewModel = SignUpViewModel(
+            firebaseAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())),
+            fireStorageManager: FirestorageDBManager(),
+            smtpManager: SMTPManager(htmpParser: HTMLParser())
+        )
+        
+        let signUpVC = SignUpViewController(viewModel: viewModel)
+        self.navigationController?.pushViewController(signUpVC, animated: true)
     }
     
     func updateNextButtonState() {

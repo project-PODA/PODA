@@ -37,6 +37,15 @@ enum NextButtonValidStatus {
     case none
 }
 
+enum CompleteSignUpValidStatus {
+    case success
+    case emptyText
+    case exceedTextLength
+    case profileImageEmpty
+    case error(String)
+    case none
+}
+
 class SignUpViewModel {
     
     var emailText: Observable<EmailTextValidStatus> = Observable(.none)
@@ -46,6 +55,12 @@ class SignUpViewModel {
     var isSignUpAllowed: Observable<Bool> {
         return Observable(emailAuthSuccess && authCodeSuccess && passwordAuthSuccess)
     }
+    var completeSignup: Observable<CompleteSignUpValidStatus> = Observable(.none)
+    
+    private var email = ""
+    private var password = ""
+    private var profileImage = UIImage(named: "image_profile")?.pngData()
+    private var nickName = "PODA"
     
     var emailAuthSuccess = false // 이메일 코드 전송 성공 여부
     var authCodeSuccess = false // 이메일 코드 인증 성공 여부
@@ -70,6 +85,7 @@ class SignUpViewModel {
         
         if emailAuthSuccess {
             emailText.value = .success
+            self.email = email
         } else {
             emailText.value = .wrongFormat
         }
@@ -92,6 +108,7 @@ class SignUpViewModel {
         
         if passwordAuthSuccess {
             passwordText.value = .success
+            self.password = password
         } else {
             passwordText.value = .wrongFormat
         }
@@ -128,6 +145,18 @@ class SignUpViewModel {
                 }
             } else {
                 completion(false, authError.description)
+            }
+        }
+    }
+    
+    func onCompleteSingupTapped() {
+        
+        firebaseAuthManager.signUpUser(email: self.email, password: self.password, profileImage: self.profileImage, nickName: self.nickName) { [weak self] error in
+            guard let self = self else { return }
+            if error == .none {
+                completeSignup.value = .success
+            } else {
+                completeSignup.value = .error(error.description)
             }
         }
     }
