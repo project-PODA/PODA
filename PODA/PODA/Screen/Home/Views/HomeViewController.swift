@@ -572,8 +572,9 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     
     // FIXME: - Bind 함수로 정리하기
     @objc func didTapAddPieceButton() {
-        let pieceViewModel = PieceViewModel()
+        //let pieceViewModel = PieceViewModel()
         let pieceViewController = PieceViewController() //(viewModel: pieceViewModel)
+        pieceViewController.isComeFromSaveDeleteVC = false
         pieceViewController.imageView.isUserInteractionEnabled = true
         navigationController?.pushViewController(pieceViewController, animated: true)
     }

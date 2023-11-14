@@ -15,6 +15,8 @@ import UIKit
  데이터가 변할 때마다 뷰모델 > 뷰로 전달 / 데이터가 변하면 그거에 따라서 뷰도 변경된다 (뷰가 변경되는 방법을 어떻게 깔끔하게 전달하느냐가 중요)
  */
 
+// 이미지 캐싱,, 용량 압축해서 올리는거 고려
+
 class HomeViewModel {
     
     // MARK: - Properties for diary
@@ -174,6 +176,8 @@ class HomeViewModel {
         randomPieceIndex = pieceList.count != 0 ? Int.random(in: 0..<pieceList.count) : nil
     }
     
+    // key: id, image로 두고 딕셔너리 만들어서 넣어두고 거기서 꺼내쓰기 ,,,,,,,
+    
     func getPieceImage(with pieceInfo: RealmPieceData) -> UIImage {
         guard let fileName = pieceInfo.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else { return UIImage() }
@@ -205,6 +209,7 @@ class HomeViewModel {
         NotificationCenter.default.addObserver(self, selector: #selector(handleCreateNotification), name: DetailDiaryViewController.createDiaryNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleDeleteDiaryNotification), name: SaveDeleteViewModel.deleteDiaryNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleDeletePieceNotification), name: SaveDeleteViewModel.deletePieceNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleModifyPieceDateNotification), name: PieceViewController.modifyPieceDateNotificationName, object: nil)
     }
     
     @objc func handleCreateNotification(_ notification: NSNotification) {
@@ -229,7 +234,16 @@ class HomeViewModel {
             }
         }
     }
+    
+    @objc func handleModifyPieceDateNotification(_ notification: NSNotification) {
+        if let (targetId, modifiedDate) = notification.object as? (UUID, String) {
+            if let targetIndex = pieceList.firstIndex(where: { $0.id == targetId } ) {
+                pieceList[targetIndex].pieceDate.forEach { _ in pieceList[targetIndex].pieceDate = modifiedDate }
+            }
+        }
+    }
 }
+
 
 /*
  웬만한 로직들을 여기에 두기
