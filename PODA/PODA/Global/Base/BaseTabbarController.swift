@@ -21,7 +21,8 @@ class BaseTabbarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let qrViewContorller = QRViewController()
+        let qrViewController = QRViewController()
+        qrViewController.backButton.isHidden = true
         
         let homeViewModel = HomeViewModel(firebaseDBManager: FirestorageDBManager(), firebaseImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
         let homeViewController = HomeViewController(viewModel: homeViewModel)
@@ -41,9 +42,9 @@ class BaseTabbarController: UITabBarController {
 
         infoViewController.bind(to: infoViewController.viewModel)
         
-        viewControllers = [HomeMenuViewController(), homeViewController, infoNavViewController]
+        //viewControllers = [HomeMenuViewController(), homeViewController, infoNavViewController]
         
-        //viewControllers = [qrViewContorller, homeViewController, infoNavViewController]
+        viewControllers = [qrViewController, homeViewController, infoNavViewController]
         
         // HomeViewController를 초기 실행될 앱으로 지정
         selectedIndex = 1
@@ -146,9 +147,23 @@ class BaseTabbarController: UITabBarController {
         }
     }
     
+    // FIXME: - 사용안할거면 지우기
+    private func setupModalQRViewController() {
+        let qrViewController = QRViewController()
+
+        // QRViewController를 내비게이션 컨트롤러로 감싸기
+        let qrNavigationController = BaseNavigationController(rootViewController: qrViewController)
+        qrNavigationController.modalPresentationStyle = .overFullScreen
+
+        // 모달로 표시
+        present(qrNavigationController, animated: true, completion: nil)
+    }
+    
     @objc private func qrTapped() {
         self.selectedIndex = 0
         updateTabbarImages()
+        
+        //setupModalQRViewController()
     }
     
     @objc private func homeTapped() {
