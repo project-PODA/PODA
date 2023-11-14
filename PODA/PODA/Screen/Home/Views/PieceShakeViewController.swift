@@ -20,7 +20,6 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
     // Realm 데이터베이스에서 불러온 ImageMemory 객체를 저장할 변수 선언
     var pieceList: [RealmPieceData]?
     
-    
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
