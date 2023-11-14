@@ -7,12 +7,15 @@
 
 import RealmSwift
 import UIKit
+import FirebaseAuth
 
 class RealmManager {
-    static let shared = RealmManager()
+    static let shared = RealmManager(fireAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())))
     
-    private init() {
-        
+    private let fireAuthManager: FireAuthManager
+    
+    private init(fireAuthManager: FireAuthManager) {
+        self.fireAuthManager = fireAuthManager
     }
     
     lazy var realm: Realm = {
@@ -58,6 +61,11 @@ class RealmManager {
             return
         }
         
+        guard let userId = fireAuthManager.getCurrentUserId() else {
+            print("사용자 ID를 가져오는 데 실패했습니다.")
+            return
+        }
+        
         let fileName = "\(UUID().uuidString).png"
         let filePath = documentDirectory.appendingPathComponent(fileName)
         
@@ -65,6 +73,7 @@ class RealmManager {
             try imageData.write(to: filePath)
             let realmPieceData = RealmPieceData()
             realmPieceData.id = UUID()
+            realmPieceData.userId = userId
             realmPieceData.imagePath = fileName
             realmPieceData.pieceDate = selectedDate
             realmPieceData.createDate = Date()
@@ -80,7 +89,12 @@ class RealmManager {
     
     // Realm 데이터 로드 함수
     func loadPieceData() -> Results<RealmPieceData> {
-        return realm.objects(RealmPieceData.self)
+        guard let userId = fireAuthManager.getCurrentUserId() else {
+            print("사용자 ID를 가져오는 데 실패했습니다.")
+            return realm.objects(RealmPieceData.self)
+        }
+        
+        return realm.objects(RealmPieceData.self).filter("userId == %@", userId)
     }
     
     // Realm 데이터 삭제 함수

@@ -36,13 +36,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //Realm 마이그레이션 관련 코드
         let config = Realm.Configuration(
-            schemaVersion: 2,
+            schemaVersion: 3,
             
             migrationBlock: { migration, oldSchemaVersion in
-                if oldSchemaVersion < 2 {
+                if oldSchemaVersion < 3 {
                     migration.enumerateObjects(ofType: RealmPieceData.className()) { oldObject, newObject in
-                        newObject?["createDate"] = Date()
-                        newObject?["id"] = UUID()
+                        newObject?["userId"] = String()
                     }
                 }
             }
