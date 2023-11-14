@@ -153,6 +153,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
         titleLabel.snp.makeConstraints { 
             $0.bottom.equalTo(dateLabel.snp.top)
             $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
         }
         
         dateLabel.snp.makeConstraints { 
