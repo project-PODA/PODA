@@ -10,6 +10,7 @@ import Then
 import SnapKit
 import PhotosUI
 import RealmSwift
+import NVActivityIndicatorView
 
 class PieceViewController: BaseViewController, UIConfigurable {
     
@@ -21,6 +22,8 @@ class PieceViewController: BaseViewController, UIConfigurable {
     var pieceList: [PieceData] = []
     var realmPieceList: [RealmPieceData] = []
     var pieceIndex: Int?
+    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
@@ -88,6 +91,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(addToGalleryButton)
         view.addSubview(pieceDate)
         view.addSubview(datePickerButton)
+        view.addSubview(loadingIndicator)
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
@@ -128,6 +132,10 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.width.equalTo(108)
             $0.height.equalTo(44)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
+        }
+        
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
         let currentDate = Date()
@@ -309,15 +317,18 @@ extension PieceViewController: PHPickerViewControllerDelegate {
         guard !results.isEmpty else {
             return
         }
-        
+
+        self.loadingIndicator.startAnimating()
+
         let selectedResult = results[0]
         
         selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
-            if let error = error {
-                print("이미지 로딩 중 오류: \(error.localizedDescription)")
-            } else if let selectedImage = object as? UIImage {
-                //print("선택된 이미지의 너비 \(selectedImage.size.width)")
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                self?.loadingIndicator.stopAnimating()
+                
+                if let error = error {
+                    print("이미지 로딩 중 오류: \(error.localizedDescription)")
+                } else if let selectedImage = object as? UIImage {
                     self?.imageView.image = selectedImage
                     self?.updateUIForImageAvailability(hasImage: true)
                 }
