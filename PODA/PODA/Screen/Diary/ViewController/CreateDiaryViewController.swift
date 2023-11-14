@@ -18,6 +18,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     var ratio: Ratio?
     var diaryName: String?
     
+    private var textViewTapCount = 0
+    
     private var currentImageView: UIImageView? {
         willSet {
             currentImageView?.layer.borderWidth = 0
@@ -26,15 +28,38 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         didSet {
             if let imageView = currentImageView {
+                setCurrentTextView(nil, tapCount: 0)
                 deleteButton.isHidden = false
-                currentTextView = nil
                 
                 imageView.layer.borderWidth = 2
                 imageView.layer.borderColor = Palette.podaBlue.getColor().cgColor
             }
         }
     }
-    private var currentTextView: UITextView?
+    
+    private var currentTextView: UITextView? {
+        willSet {
+            currentTextView?.layer.borderWidth = 0
+            deleteButton.isHidden = true
+        }
+        
+        didSet {
+            if let textView = currentTextView {
+                setCurrentImageView(nil)
+                deleteButton.isHidden = false
+                
+                if textViewTapCount == 1 {
+                    textView.layer.borderWidth = 2
+                    textView.layer.borderColor = Palette.podaBlue.getColor().cgColor
+                } else if textViewTapCount == 2 {
+                    textView.layer.borderWidth = 0
+                    textView.becomeFirstResponder()
+                    textViewTapCount = 0
+                }
+            }
+        }
+    }
+    
     private var currentTextPosition: CGPoint?
     
     private lazy var navigationBar = DiaryNavigationBar(leftButtonTitle: "취소", rightButtonTitle: "다음").then {
@@ -60,12 +85,12 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     private lazy var diaryView = DiaryView().then {
         $0.clipsToBounds = true
-        $0.didTap = { touchedLocation in
-            if let imageView = self.currentImageView {
-                if !imageView.frame.contains(touchedLocation) {
-                    // UIImageView 영역 외부를 터치한 경우에만 아래 코드가 실행
-                    self.currentImageView = nil
-                }
+        $0.didTap = { [weak self] touchedLocation in
+            guard let self else { return }
+            if let imageView = currentImageView, !imageView.frame.contains(touchedLocation) {
+                setCurrentImageView(nil)
+            } else if let textView = currentTextView, !textView.frame.contains(touchedLocation) {
+                setCurrentTextView(nil, tapCount: 0)
             }
         }
         
@@ -214,7 +239,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func touchUpNextButton() {
-        currentImageView = nil
+        setCurrentImageView(nil)
         let diaryImage = diaryView.convertToPNGData()
         let detailDiaryViewController = DetailDiaryViewController(viewModel: viewModel)
         viewModel.setDiaryName(diaryName ?? "")
@@ -294,11 +319,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             imageView.transform = imageView.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
             
-            currentImageView = imageView
-        } else if let textField = recognizer.view as? UITextView {
-            textField.resignFirstResponder()
-            textField.transform = textField.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
+            setCurrentImageView(imageView)
+        } else if let textView = recognizer.view as? UITextView {
+            textView.resignFirstResponder()
+            textView.transform = textView.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
+            
+            setCurrentTextView(textView, tapCount: 1)
         }
     }
     
@@ -307,11 +334,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             imageView.transform = imageView.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
             
-            currentImageView = imageView
-        } else if let textField = recognizer.view as? UITextView {
-            textField.resignFirstResponder()
-            textField.transform = textField.transform.rotated(by: recognizer.rotation)
+            setCurrentImageView(imageView)
+        } else if let textView = recognizer.view as? UITextView {
+            textView.resignFirstResponder()
+            textView.transform = textView.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
+            
+            setCurrentTextView(textView, tapCount: 1)
         }
     }
     
@@ -321,18 +350,32 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
             
-            currentImageView = imageView
-        } else if let textField = recognizer.view as? UITextView {
-            textField.resignFirstResponder()
+            setCurrentImageView(imageView)
+        } else if let textView = recognizer.view as? UITextView {
+            textView.resignFirstResponder()
             let translation = recognizer.translation(in: view)
-            textField.center = CGPoint(x: textField.center.x + translation.x, y: textField.center.y + translation.y)
+            textView.center = CGPoint(x: textView.center.x + translation.x, y: textView.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
+            
+            setCurrentTextView(textView, tapCount: 1)
         }
     }
     
     @objc func didTapImageView(_ recognizer: UITapGestureRecognizer) {
         if let imageView = recognizer.view as? UIImageView {
-            currentImageView = imageView
+            setCurrentImageView(imageView)
+        }
+    }
+    
+    @objc private func didTapTextView(_ recognizer: UITapGestureRecognizer) {
+        guard let textView = recognizer.view as? UITextView else { return }
+        textViewTapCount += 1
+        
+        // 선택되어있는 textView가 있는데 바로 다른 textView를 선택했을 때 tapCount를 1로 바꾸고 currentTextView 설정을 해줌
+        if currentTextView != textView {
+            setCurrentTextView(textView, tapCount: 1)
+        } else {
+            setCurrentTextView(textView, tapCount: textViewTapCount)
         }
     }
     
@@ -342,10 +385,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         if let imageView = currentImageView {
             imageView.removeFromSuperview()
-            currentImageView = nil
+            setCurrentImageView(nil)
         } else if let textView = currentTextView {
             textView.removeFromSuperview()
-            currentTextView = nil
+            setCurrentTextView(nil, tapCount: 0)
         }
     }
     
@@ -357,22 +400,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             guard let self = self, let image = image else { return }
             addImage(image)
         }
-    }
-    
-    private func getButtonConfiguration(title: String, iconName: String?) -> UIButton.Configuration {
-        var config = UIButton.Configuration.plain()
-        var titleAttr = AttributedString.init(title)
-        titleAttr.foregroundColor = Palette.podaWhite.getColor()
-        titleAttr.font = UIFont.podaFont(.subhead1)
-        config.attributedTitle = titleAttr
-        
-        if let iconName = iconName {
-            config.image = UIImage(named: iconName)
-            config.imagePlacement = .top
-            config.imagePadding = 10
-        }
-        
-        return config
     }
     
     private func addImage(_ image: UIImage) {
@@ -412,6 +439,10 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         textView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: diaryView.frame.width/2, height: 100)
         diaryView.addSubview(textView)
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTextView(_:)))
+        tapGesture.numberOfTapsRequired = 1
+        textView.addGestureRecognizer(tapGesture)
+        
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(_:)))
         textView.addGestureRecognizer(pinchGesture)
         
@@ -422,6 +453,31 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         textView.addGestureRecognizer(panGesture)
         
         return textView
+    }
+    
+    private func setCurrentImageView(_ imageView: UIImageView?) {
+        currentImageView = imageView
+    }
+    
+    private func setCurrentTextView(_ textView: UITextView?, tapCount: Int) {
+        textViewTapCount = tapCount
+        currentTextView = textView
+    }
+    
+    private func getButtonConfiguration(title: String, iconName: String?) -> UIButton.Configuration {
+        var config = UIButton.Configuration.plain()
+        var titleAttr = AttributedString.init(title)
+        titleAttr.foregroundColor = Palette.podaWhite.getColor()
+        titleAttr.font = UIFont.podaFont(.subhead1)
+        config.attributedTitle = titleAttr
+        
+        if let iconName = iconName {
+            config.image = UIImage(named: iconName)
+            config.imagePlacement = .top
+            config.imagePadding = 10
+        }
+        
+        return config
     }
 }
 
@@ -452,10 +508,7 @@ extension CreateDiaryViewController: PHPickerViewControllerDelegate {
 
 extension CreateDiaryViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
-        currentTextView = textView
-        currentImageView = nil
-
-        deleteButton.isHidden = false
+        setCurrentTextView(textView, tapCount: 2)
         selectTextColorView.isHidden = false
         
         currentTextPosition = textView.frame.origin
