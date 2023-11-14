@@ -58,12 +58,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaGray5.getColor()
     }
     
-//    let testPageButton = UIButton().then {
-//        $0.setUpButton(title: "불러오기 테스트", podaFont: .body2, cornerRadius: 5)
-//        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-//        $0.backgroundColor = Palette.podaGray5.getColor()
-//    }
-    
     // MARK: LifeCycle
     
     override func viewDidLoad() {
@@ -91,7 +85,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(addToGalleryButton)
         view.addSubview(pieceDate)
         view.addSubview(datePickerButton)
-//        view.addSubview(testPageButton)
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
@@ -133,13 +126,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.height.equalTo(44)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
         }
-        
-//        testPageButton.snp.makeConstraints {
-//            $0.right.equalToSuperview().offset(-20)
-//            $0.width.equalTo(108)
-//            $0.height.equalTo(44)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
-//        }
     }
     
     func setGesture() {
@@ -157,7 +143,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
-//        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
     }
     
     func getPieceDate(with pieceInfo: RealmPieceData) -> String {
@@ -171,25 +156,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         vectorIconImage.isHidden = hasImage
         addToGalleryButton.isHidden = hasImage
     }
-    
-//    func saveImageToRealm(image: UIImage, date: Date?) {
-//        guard let imageData = image.pngData(), let selectedDate = date else {
-//            print("경고: 이미지 데이터 변환에 실패 또는 날짜 변환 실패")
-//            return
-//        }
-//
-//        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//        let fileURL = directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("png")
-//
-//        do {
-//            try imageData.write(to: fileURL)
-//        } catch {
-//            print("경고: 파일로 이미지 저장 실패: \(error.localizedDescription)")
-//            return
-//        }
-//
-//        RealmManager.shared.saveImageMemory(imagePath: fileURL.path, memoryDate: selectedDate)
-//    }
     
     func saveImageToRealm(image: UIImage, date: Date?) {
         RealmManager.shared.savePieceData(image: image, pieceDate: date)
@@ -254,10 +220,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
     @objc func nextButtonTapped() {
         showSaveConfirmationAlert()
     }
-    
-//    @objc func testPageButtonTapped() {
-//        present(TestPageViewController(), animated: true)
-//    }
     
     @objc func addButtonTapped() {
         PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { [weak self] isAuthorized in
@@ -331,8 +293,3 @@ extension PieceViewController: PHPickerViewControllerDelegate {
         }
     }
 }
-
-//@objc private func moveToCompletsButtonTapped() {
-//    let pieceVC = PieceViewController()
-//    navigationController?.pushViewController(pieceVC, animated: true)
-//}
