@@ -145,14 +145,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
-    }
-    
-    func getPieceDate(with pieceInfo: RealmPieceData) -> String {
-        guard let pieceDate = pieceInfo.pieceDate else { return "" }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
-        return dateFormatter.string(from: pieceDate)
+        datePickerButton.addTarget(self, action: #selector(showCalendarModal), for: .touchUpInside)
     }
     
     func updateUIForImageAvailability(hasImage: Bool) {
@@ -276,6 +269,29 @@ class PieceViewController: BaseViewController, UIConfigurable {
         
         present(alertController, animated: true, completion: nil)
     }
+    
+    @objc func showCalendarModal() {
+        let calendarViewController = UIViewController()
+        calendarViewController.view.backgroundColor = Palette.podaWhite.getColor()
+        calendarViewController.modalPresentationStyle = .pageSheet
+        
+        if let sheetPresentationController = calendarViewController.presentationController as? UISheetPresentationController {
+            sheetPresentationController.detents = [.custom { _ in
+                return UIScreen.main.bounds.height / 2
+            }]
+            sheetPresentationController.prefersGrabberVisible = true
+        }
+        
+        let calendarView = UICalendarView()
+        calendarView.delegate = self
+        calendarViewController.view.addSubview(calendarView)
+        
+        calendarView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        present(calendarViewController, animated: true)
+    }
 }
 
 // MARK: - PHPickerViewControllerDelegate
@@ -301,5 +317,16 @@ extension PieceViewController: PHPickerViewControllerDelegate {
                 }
             }
         }
+    }
+}
+
+extension PieceViewController: UICalendarViewDelegate {
+    func calendarView(_ calendarView: UICalendarView, didSelectDate date: Date) {
+        print("디드셀렉트데이트")
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        let dateString = dateFormatter.string(from: date)
+        datePickerButton.setTitle(dateString, for: .normal)
+        dismiss(animated: true)
     }
 }
