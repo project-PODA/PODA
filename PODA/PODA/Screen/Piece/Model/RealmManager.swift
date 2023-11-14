@@ -119,4 +119,23 @@ class RealmManager {
             print("Realm에서 날짜 업데이트 실패: \(error.localizedDescription)")
         }
     }
+    
+    // userId에 저장된 로컬 데이터 삭제 함수
+    func deleteLocalUserData() {
+        guard let userId = fireAuthManager.getCurrentUserId() else {
+            print("로컬 데이터를 삭제 중 사용자 ID를 가져오는 데 실패")
+            return
+        }
+        
+        let objectsToDelete = realm.objects(RealmPieceData.self).filter("userId == %@", userId)
+        
+        do {
+            try realm.write {
+                realm.delete(objectsToDelete)
+                print("유저 로컬 데이터 삭제 성공")
+            }
+        } catch {
+            print("유저 로컬 데이터 삭제 실패: \(error.localizedDescription)")
+        }
+    }
 }

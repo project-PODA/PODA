@@ -25,6 +25,8 @@ class LeaveViewModel {
             return
         }
         
+        RealmManager.shared.deleteLocalUserData()
+
         fireAuthManager.deleteAccount { error in
             if error == .none {
                 self.onAccountDeletionSuccess?()
