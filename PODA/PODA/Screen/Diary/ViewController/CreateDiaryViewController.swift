@@ -23,13 +23,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     private var currentImageView: UIImageView? {
         willSet {
             currentImageView?.layer.borderWidth = 0
-            deleteButton.isHidden = true
+            editStackView.isHidden = true
         }
         
         didSet {
             if let imageView = currentImageView {
                 setCurrentTextView(nil, tapCount: 0)
-                deleteButton.isHidden = false
+                editStackView.isHidden = false
                 
                 imageView.layer.borderWidth = 2
                 imageView.layer.borderColor = Palette.podaBlue.getColor().cgColor
@@ -40,13 +40,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     private var currentTextView: UITextView? {
         willSet {
             currentTextView?.layer.borderWidth = 0
-            deleteButton.isHidden = true
+            editStackView.isHidden = true
         }
         
         didSet {
             if let textView = currentTextView {
                 setCurrentImageView(nil)
-                deleteButton.isHidden = false
+                editStackView.isHidden = false
                 
                 if textViewTapCount == 1 {
                     textView.layer.borderWidth = 2
@@ -67,16 +67,6 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         $0.rightButton.addTarget(self, action: #selector(touchUpNextButton), for: .touchUpInside)
     }
     
-    private lazy var deleteButton = UIButton().then {
-        var config = getButtonConfiguration(title: "선택 항목 삭제", iconName: nil)
-        config.contentInsets = NSDirectionalEdgeInsets.init(top: 3, leading: 11, bottom: 3, trailing: 11)
-        $0.configuration = config
-        $0.backgroundColor = Palette.podaBlue.getColor()
-        $0.layer.cornerRadius = 11.5
-        $0.isHidden = true
-        $0.addTarget(self, action: #selector(touchUpDeleteButton), for: .touchUpInside)
-    }
-    
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
         $0.isScrollEnabled = false
@@ -94,6 +84,20 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             }
         }
         
+    }
+    
+    private lazy var deleteButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_trash"), for: .normal)
+        $0.backgroundColor = .clear
+        $0.tintColor = Palette.podaWhite.getColor()
+        $0.addTarget(self, action: #selector(touchUpDeleteButton), for: .touchUpInside)
+    }
+    
+    private lazy var forwardButton = UIButton().then {
+        $0.setImage(UIImage(named: "icon_bringForward"), for: .normal)
+        $0.backgroundColor = .clear
+        $0.tintColor = Palette.podaWhite.getColor()
+        $0.addTarget(self, action: #selector(touchUpForwardButton), for: .touchUpInside)
     }
     
     private lazy var backgroundButton = UIButton().then {
@@ -116,6 +120,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     private lazy var textButton = UIButton().then {
         $0.configuration = getButtonConfiguration(title: "글 추가", iconName: "icon_text")
         $0.addTarget(self, action: #selector(touchUpTextButton), for: .touchUpInside)
+    }
+    
+    private let editStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.distribution = .fill
+        $0.spacing = 32
+        $0.isHidden = true
     }
     
     private let decorateStackView = UIStackView().then {
@@ -169,9 +180,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             decorateStackView.addArrangedSubview($0)
         }
         
+        [deleteButton, forwardButton].forEach {
+            editStackView.addArrangedSubview($0)
+        }
+        
         scrollView.addSubview(diaryView)
         
-        [navigationBar, deleteButton, 
+        [navigationBar, editStackView,
          scrollView, decorateView,
          selectBackgroundColorView, selectTextColorView].forEach {
             view.addSubview($0)
@@ -182,8 +197,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
             $0.height.equalTo(40)
         }
         
-        deleteButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(6)
+        editStackView.snp.makeConstraints {
+            $0.centerY.equalTo(navigationBar)
             $0.centerX.equalToSuperview()
         }
         
@@ -314,7 +329,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         selectTextColorView.isHidden = false
     }
     
-    @objc func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
+    @objc private func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
         if let imageView = recognizer.view as? UIImageView {
             imageView.transform = imageView.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1.0
@@ -329,7 +344,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
-    @objc func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
+    @objc private func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
         if let imageView = recognizer.view as? UIImageView {
             imageView.transform = imageView.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
@@ -344,7 +359,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
-    @objc func handlePan(_ recognizer: UIPanGestureRecognizer) {
+    @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
         if let imageView = recognizer.view as? UIImageView {
             let translation = recognizer.translation(in: view)
             imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
@@ -361,7 +376,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         }
     }
     
-    @objc func didTapImageView(_ recognizer: UITapGestureRecognizer) {
+    @objc private func didTapImageView(_ recognizer: UITapGestureRecognizer) {
         if let imageView = recognizer.view as? UIImageView {
             setCurrentImageView(imageView)
         }
@@ -380,8 +395,8 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     // 삭제 버튼 클릭시 현재 사용자가 편집 중인 (이미지 or 텍스트)가 삭제됨
-    @objc func touchUpDeleteButton(_ sender: UIButton) {
-        deleteButton.isHidden = true
+    @objc private func touchUpDeleteButton() {
+        editStackView.isHidden = true
         
         if let imageView = currentImageView {
             imageView.removeFromSuperview()
@@ -389,6 +404,15 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         } else if let textView = currentTextView {
             textView.removeFromSuperview()
             setCurrentTextView(nil, tapCount: 0)
+        }
+    }
+    
+    // 편집 중인 (이미지 or 텍스트)를 diaryView 맨 앞으로 가져옴
+    @objc private func touchUpForwardButton() {
+        if let imageView = currentImageView {
+            diaryView.bringSubviewToFront(imageView)
+        } else if let textView = currentTextView {
+            diaryView.bringSubviewToFront(textView)
         }
     }
     
@@ -541,7 +565,7 @@ extension CreateDiaryViewController: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        deleteButton.isHidden = true
+        editStackView.isHidden = true
         textView.sizeToFit()
         textView.frame.origin = currentTextPosition ?? CGPoint()
     }

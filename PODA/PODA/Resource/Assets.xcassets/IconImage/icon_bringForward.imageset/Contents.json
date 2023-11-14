@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "mdi-light_arrange-bring-forward.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "mdi-light_arrange-bring-forward@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "mdi-light_arrange-bring-forward@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
