@@ -382,7 +382,15 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         
         currentImageView = imageView
         
-        imageView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: 200, height: 200)
+        let imageWidth = image.size.width
+        let imageHeight = image.size.height
+        
+        if imageWidth > imageHeight {
+            imageView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: 200, height: 200 * imageHeight / imageWidth)
+        } else {
+            imageView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: 200 * imageWidth / imageHeight, height: 200)
+        }        
+        
         diaryView.addSubview(imageView)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView(_:)))
