@@ -99,7 +99,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
     private let contentLabel = UILabel().then {
         $0.lineBreakMode = .byCharWrapping
         $0.textColor = Palette.podaWhite.getColor()
-        $0.numberOfLines = 4
+        $0.numberOfLines = 5
         $0.addShadowToLabel()
     }
     
