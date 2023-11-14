@@ -12,12 +12,15 @@ import PhotosUI
 import RealmSwift
 
 class PieceViewController: BaseViewController, UIConfigurable {
+    
+    static let modifyPieceDateNotificationName = NSNotification.Name("modifyPieceDate")
         
     // MARK: UIComponents
     
     var isComeFromSaveDeleteVC = false
-    var sortedPieceList: [PieceData] = []
-    var indexPath = 0
+    var pieceList: [PieceData] = []
+    var realmPieceList: [RealmPieceData] = []
+    var pieceIndex: Int?
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
@@ -217,24 +220,31 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 self.saveImageToRealm(image: selectedImage, date: selectedDate)
                 self.navigationController?.popViewController(animated: true)
             } else {
-                // FIXME: - PieceData 타입을 가지는 RealmPieceList를 따로 또 만들어야하나..
                 // 날짜만 변경하는 메서드
-//                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
-//                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)
-//                
-//                let dateFormatter = DateFormatter()
-//                dateFormatter.dateFormat = "yyyy.MM.dd"
-//                let modifiedDate = dateFormatter.string(from: selectedDate)
-//                
-//                print(modifiedDate)
-//                
-//                guard let viewControllers = self.navigationController?.viewControllers else { return }
-//                for viewController in viewControllers {
-//                    if let viewController = viewController as? SaveDeleteViewController {
-//                        viewController.dateLabel.text = modifiedDate
-//                        self.navigationController?.popToViewController(viewController, animated: true)
-//                    }
-//                }
+                let targetId = pieceList[pieceIndex ?? 0].id
+                if let targetIndex = realmPieceList.firstIndex(where: { $0.id == targetId }) {
+                    let pieceInfo = realmPieceList[targetIndex]
+                    RealmManager.shared.updatePieceDate(pieceInfo, selectedDate)
+                } else {
+                    print("targetId와 일치하는 realmPieceList.id가 없어!!")
+                }
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy.MM.dd"
+                let modifiedDate = dateFormatter.string(from: selectedDate)
+                
+//                print("pieceVC에서 전달하는 targetId: \(targetId), modifiedDate: \(modifiedDate)")
+                NotificationCenter.default.post(
+                    name: PieceViewController.modifyPieceDateNotificationName,
+                    object: (targetId, modifiedDate))
+                
+                guard let viewControllers = self.navigationController?.viewControllers else { return }
+                for viewController in viewControllers {
+                    if let viewController = viewController as? SaveDeleteViewController {
+                        viewController.dateLabel.text = modifiedDate
+                        self.navigationController?.popToViewController(viewController, animated: true)
+                    }
+                }
             }
             print("pieceVC pop 될거야")
         }
