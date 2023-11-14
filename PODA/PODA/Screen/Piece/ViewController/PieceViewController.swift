@@ -149,7 +149,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
+        datePickerButton.addTarget(self, action: #selector(showCalendarModal), for: .touchUpInside)
     }
     
     func updateUIForImageAvailability(hasImage: Bool) {
@@ -242,60 +242,62 @@ class PieceViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    @objc func showDatePicker() {
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        datePicker.preferredDatePickerStyle = .wheels
-        datePicker.locale = Locale(identifier: "ko_KR")
-        
-        if let title = datePickerButton.title(for: .normal),
-           let currentDate = Date(dateString: title, format: "yyyy.MM.dd") {
-            datePicker.date = currentDate
-        }
-        
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
-        alertController.view.addSubview(datePicker)
-        
-        datePicker.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-        }
-        
-        let selectAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
-            let selectedDate = datePicker.date
-            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy.MM.dd")
-            self?.datePickerButton.setTitle(formattedDate, for: .normal)
-        }
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
-        
-        alertController.addAction(selectAction)
-        alertController.addAction(cancelAction)
-        
-        present(alertController, animated: true, completion: nil)
-    }
-    
-//    @objc func showCalendarModal() {
-//        let calendarViewController = UIViewController()
-//        calendarViewController.view.backgroundColor = Palette.podaWhite.getColor()
-//        calendarViewController.modalPresentationStyle = .pageSheet
+//    @objc func showDatePicker() {
+//        let datePicker = UIDatePicker()
+//        datePicker.datePickerMode = .date
+//        datePicker.preferredDatePickerStyle = .wheels
+//        datePicker.locale = Locale(identifier: "ko_KR")
 //        
-//        if let sheetPresentationController = calendarViewController.presentationController as? UISheetPresentationController {
-//            sheetPresentationController.detents = [.custom { _ in
-//                return UIScreen.main.bounds.height / 2
-//            }]
-//            sheetPresentationController.prefersGrabberVisible = true
+//        if let title = datePickerButton.title(for: .normal),
+//           let currentDate = Date(dateString: title, format: "yyyy.MM.dd") {
+//            datePicker.date = currentDate
 //        }
 //        
-//        let calendarView = UICalendarView()
-//        calendarView.delegate = self
-//        calendarViewController.view.addSubview(calendarView)
+//        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
+//        alertController.view.addSubview(datePicker)
 //        
-//        calendarView.snp.makeConstraints {
-//            $0.edges.equalToSuperview()
+//        datePicker.snp.makeConstraints {
+//            $0.centerX.equalToSuperview()
 //        }
 //        
-//        present(calendarViewController, animated: true)
+//        let selectAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
+//            let selectedDate = datePicker.date
+//            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy.MM.dd")
+//            self?.datePickerButton.setTitle(formattedDate, for: .normal)
+//        }
+//        
+//        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
+//        
+//        alertController.addAction(selectAction)
+//        alertController.addAction(cancelAction)
+//        
+//        present(alertController, animated: true, completion: nil)
 //    }
+    
+    @objc func showCalendarModal() {
+        let calendarViewController = UIViewController()
+        calendarViewController.view.backgroundColor = Palette.podaWhite.getColor()
+        calendarViewController.modalPresentationStyle = .pageSheet
+        
+        if let sheetPresentationController = calendarViewController.presentationController as? UISheetPresentationController {
+            sheetPresentationController.detents = [.custom { _ in
+                return UIScreen.main.bounds.height / 2
+            }]
+            sheetPresentationController.prefersGrabberVisible = true
+        }
+                
+        let calendarView = UICalendarView()
+//        calendarView.delegate = self
+        let dateSelection = UICalendarSelectionSingleDate(delegate: self)
+        calendarView.selectionBehavior = dateSelection
+        calendarViewController.view.addSubview(calendarView)
+        
+        calendarView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        present(calendarViewController, animated: true)
+    }
 }
 
 // MARK: - PHPickerViewControllerDelegate
@@ -324,13 +326,17 @@ extension PieceViewController: PHPickerViewControllerDelegate {
     }
 }
 
-//extension PieceViewController: UICalendarViewDelegate {
-//    func calendarView(_ calendarView: UICalendarView, didSelectDate date: Date) {
-//        print("디드셀렉트데이트")
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "yyyy.MM.dd"
-//        let dateString = dateFormatter.string(from: date)
-//        datePickerButton.setTitle(dateString, for: .normal)
-//        dismiss(animated: true)
-//    }
-//}
+extension PieceViewController: UICalendarSelectionSingleDateDelegate {
+    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+        guard let dateComponents = dateComponents,
+              let date = Calendar.current.date(from: dateComponents) else { return }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        let dateString = dateFormatter.string(from: date)
+        
+        DispatchQueue.main.async {
+            self.datePickerButton.setTitle(dateString, for: .normal)
+        }
+    }
+}
