@@ -176,12 +176,16 @@ class SaveDeleteViewController: BaseViewController, UIConfigurable {
     }
     
     @objc func didTapEditButton() {
-        let pieceViewModel = PieceViewModel()
+        //let pieceViewModel = PieceViewModel()
         let pieceViewController = PieceViewController() //(viewModel: pieceViewModel)
         //pieceViewModel.isComeFromSaveDeleteVC = true > 지근님 이거 뷰모델에 만들어주십쇼!
         //pieceViewModel.pieceIndex = viewModel.pieceIndex > 이것도!
         //pieceViewModel.realmPieceList = viewModel.realmPieceList
         //pieceViewModel.pieceList = viewModel.pieceList > 이것도!
+        pieceViewController.isComeFromSaveDeleteVC = true
+        pieceViewController.pieceIndex = viewModel.pieceIndex
+        pieceViewController.realmPieceList = viewModel.realmPieceList
+        pieceViewController.pieceList = viewModel.pieceList
         pieceViewController.imageView.image = imageView.image
         pieceViewController.vectorIconImage.isHidden = true
         pieceViewController.addToGalleryButton.isHidden = true
