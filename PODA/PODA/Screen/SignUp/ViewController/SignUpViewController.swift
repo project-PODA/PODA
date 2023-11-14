@@ -583,6 +583,10 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
     @objc private func passwordTextFieldDidChange(_ textField: UITextField) {
         guard let password = textField.text else { return }
         viewModel.setPasswordText(password: password)
+        // 비밀번호 텍스트 필드 내용 변경되면 비밀번호 확인 텍스트 필드를 비우기
+        passwordConfirmationTextField.text = ""
+        passwordConfirmationErrorLabel.text = "비밀번호가 일치하지 않습니다."
+        passwordConfirmationErrorLabel.textColor = Palette.podaRed.getColor()
     }
     
     @objc private func passwordConfirmationTextFieldDidChange(_ textField: UITextField) {
@@ -626,26 +630,26 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         scrollView.scrollIndicatorInsets = contentInsets
     }
     
-//    @objc private func signUpButtonTapped() {
-//        guard viewModel.isSignUpAllowed.value else { return }
-//        
-//        let agreeTermsVC = AgreeTermsViewController()
-//        let setProfileVC = SetProfileViewController(viewModel: SetProfileViewModel(firebaseAuth: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))), email: emailTextField.text!.lowercased(), password: passwordTextField.text!)
-//        setProfileVC.bind(to: setProfileVC.viewModel)
-//        
-//        agreeTermsVC.setProfileVC = setProfileVC
-//        
-//        self.navigationController?.pushViewController(agreeTermsVC, animated: true)
-//    }
+    //    @objc private func signUpButtonTapped() {
+    //        guard viewModel.isSignUpAllowed.value else { return }
+    //
+    //        let agreeTermsVC = AgreeTermsViewController()
+    //        let setProfileVC = SetProfileViewController(viewModel: SetProfileViewModel(firebaseAuth: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))), email: emailTextField.text!.lowercased(), password: passwordTextField.text!)
+    //        setProfileVC.bind(to: setProfileVC.viewModel)
+    //
+    //        agreeTermsVC.setProfileVC = setProfileVC
+    //
+    //        self.navigationController?.pushViewController(agreeTermsVC, animated: true)
+    //    }
     
     @objc private func signUpButtonTapped() {
         guard viewModel.isSignUpAllowed.value else { return }
         loadingIndicator.startAnimating()
         viewModel.onCompleteSingupTapped()
         
-//        let completeVC = CompleteSignUpViewController()
+        //        let completeVC = CompleteSignUpViewController()
         
-//        self.navigationController?.pushViewController(completeVC, animated: true)
+        //        self.navigationController?.pushViewController(completeVC, animated: true)
     }
     
     @objc private func sendAuthUserCode() {
@@ -707,6 +711,14 @@ extension UIView {
 }
 
 extension SignUpViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == passwordTextField {
+            // 비밀번호 텍스트 필드의 텍스트가 변경되면 비밀번호 확인 필드를 비우기
+            passwordConfirmationTextField.text = ""
+        }
+        return true
+    }
     
     func setupTextFields() {
         emailTextField.setUpTextField(delegate: self)
