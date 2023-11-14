@@ -435,6 +435,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         textView.isScrollEnabled = false
         textView.delegate = self
         textView.isUserInteractionEnabled = true
+        textView.autocorrectionType = .no
         
         textView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: diaryView.frame.width/2, height: 100)
         diaryView.addSubview(textView)
