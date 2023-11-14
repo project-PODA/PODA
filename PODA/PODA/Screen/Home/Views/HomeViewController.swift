@@ -110,7 +110,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         $0.numberOfLines = 2
         $0.textAlignment = .center
         $0.backgroundColor = Palette.podaGray6.getColor()
-        $0.layer.cornerRadius = 5
+        $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
     }
     
@@ -153,7 +153,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         $0.numberOfLines = 2
         $0.textAlignment = .center
         $0.backgroundColor = Palette.podaGray6.getColor()
-        $0.layer.cornerRadius = 5
+        $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
     }
     
