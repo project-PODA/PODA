@@ -20,11 +20,19 @@ class MorePieceViewModel {
         }
     }
     
-    var isSortedByPieceDate = true
+    var sortByLatest = true
+    
+    var sortedList: [PieceData] {
+        if sortByLatest {
+            return pieceList.sorted(by: { $0.pieceDate > $1.pieceDate } )
+        } else {
+            return pieceList.sorted(by: { $0.pieceDate < $1.pieceDate } )
+        }
+    }
     
     var pieceListLoaded: ([PieceData]) -> Void = { _ in }
     
-    var selectedOrderOptionState: ((Bool) -> Void)?
+    var latestPieceButtonSelectedState: ((Bool) -> Void)?
     
     var pieceCount: Int {
         return pieceList.count
@@ -43,16 +51,16 @@ class MorePieceViewModel {
     }
     
     func getPieceImage(_ index: Int) -> UIImage {
-        return pieceList[index].image
+        return sortedList[index].image
     }
     
-    func didTapPieceDateOrderButton() {
-        isSortedByPieceDate = true
-        selectedOrderOptionState?(true)
+    func didTapLatestPieceButton() {
+        sortByLatest = true
+        latestPieceButtonSelectedState?(true)
     }
     
-    func didTapCreateDateOrderButton() {
-        isSortedByPieceDate = false
-        selectedOrderOptionState?(false)
+    func didTapOldestPieceButton() {
+        sortByLatest = false
+        latestPieceButtonSelectedState?(false)
     }
 }

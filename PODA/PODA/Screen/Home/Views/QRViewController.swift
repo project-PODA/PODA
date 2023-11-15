@@ -24,7 +24,7 @@ class QRViewController: BaseViewController {
         //        $0.clipsToBounds = true
     }
     
-    private lazy var backButton = UIButton().then {
+    lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
         $0.layer.shadowOffset = CGSize(width: 1, height: 1)
         $0.layer.shadowOpacity = 1.0
@@ -96,6 +96,7 @@ class QRViewController: BaseViewController {
     }
     
     @objc func didTapBackButton() {
+        print("백버튼 클릭")
         dismiss(animated: true)
     }
 }
