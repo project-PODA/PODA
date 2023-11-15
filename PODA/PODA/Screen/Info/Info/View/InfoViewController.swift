@@ -51,12 +51,12 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
         setupNavigationBar()
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        if let baseTabbar = self.tabBarController as? BaseTabbarController {
-//            baseTabbar.setCustomTabbarHidden(true)
-//        }
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+            baseTabbar.setCustomTabbarHidden(false)
+        }
+    }
 //    
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)

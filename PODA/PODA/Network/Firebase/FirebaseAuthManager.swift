@@ -165,4 +165,8 @@ class FireAuthManager {
             }
         }
     }
+    
+    func getCurrentUserId() -> String? {
+        return Auth.auth().currentUser?.uid
+    }
 }
