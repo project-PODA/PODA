@@ -60,6 +60,7 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
     }
     
     private let nextButton = UIButton().then {
+        $0.isUserInteractionEnabled = false
         $0.setUpButton(title: "다음", podaFont: .button1, cornerRadius: 22)
         $0.setTitleColor(Palette.podaBlue.getColor(), for: .normal)
         $0.layer.borderColor = Palette.podaBlue.getColor().cgColor
@@ -241,4 +242,5 @@ class AgreeTermsViewController: BaseViewController, UIConfigurable {
             nextButton.isUserInteractionEnabled = false
         }
     }
+
 }
