@@ -10,14 +10,20 @@ import Then
 import SnapKit
 import PhotosUI
 import RealmSwift
+import NVActivityIndicatorView
 
 class PieceViewController: BaseViewController, UIConfigurable {
+    
+    static let modifyPieceDateNotificationName = NSNotification.Name("modifyPieceDate")
         
     // MARK: UIComponents
     
     var isComeFromSaveDeleteVC = false
-    var sortedPieceList: [PieceData] = []
-    var indexPath = 0
+    var pieceList: [PieceData] = []
+    var realmPieceList: [RealmPieceData] = []
+    var pieceIndex: Int?
+    
+    private lazy var loadingIndicator = CustomLoadingIndicator()
     
     let cancelButton = UIButton().then {
         $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
@@ -58,12 +64,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         $0.backgroundColor = Palette.podaGray5.getColor()
     }
     
-//    let testPageButton = UIButton().then {
-//        $0.setUpButton(title: "불러오기 테스트", podaFont: .body2, cornerRadius: 5)
-//        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-//        $0.backgroundColor = Palette.podaGray5.getColor()
-//    }
-    
     // MARK: LifeCycle
     
     override func viewDidLoad() {
@@ -91,7 +91,7 @@ class PieceViewController: BaseViewController, UIConfigurable {
         view.addSubview(addToGalleryButton)
         view.addSubview(pieceDate)
         view.addSubview(datePickerButton)
-//        view.addSubview(testPageButton)
+        view.addSubview(loadingIndicator)
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(20)
@@ -134,12 +134,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
         }
         
-//        testPageButton.snp.makeConstraints {
-//            $0.right.equalToSuperview().offset(-20)
-//            $0.width.equalTo(108)
-//            $0.height.equalTo(44)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-50)
-//        }
+        loadingIndicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        let currentDate = Date()
+        let formattedDate = currentDate.getCurrentTime(Dataforamt: "yyyy.MM.dd")
+        datePickerButton.setTitle(formattedDate, for: .normal)
     }
     
     func setGesture() {
@@ -156,40 +157,13 @@ class PieceViewController: BaseViewController, UIConfigurable {
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         addToGalleryButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
-        datePickerButton.addTarget(self, action: #selector(showDatePicker), for: .touchUpInside)
-//        testPageButton.addTarget(self, action: #selector(testPageButtonTapped), for: .touchUpInside)
-    }
-    
-    func getPieceDate(with pieceInfo: RealmPieceData) -> String {
-        guard let pieceDate = pieceInfo.pieceDate else { return "" }
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy.MM.dd"
-        return dateFormatter.string(from: pieceDate)
+        datePickerButton.addTarget(self, action: #selector(showCalendarModal), for: .touchUpInside)
     }
     
     func updateUIForImageAvailability(hasImage: Bool) {
         vectorIconImage.isHidden = hasImage
         addToGalleryButton.isHidden = hasImage
     }
-    
-//    func saveImageToRealm(image: UIImage, date: Date?) {
-//        guard let imageData = image.pngData(), let selectedDate = date else {
-//            print("경고: 이미지 데이터 변환에 실패 또는 날짜 변환 실패")
-//            return
-//        }
-//
-//        let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//        let fileURL = directory.appendingPathComponent(UUID().uuidString).appendingPathExtension("png")
-//
-//        do {
-//            try imageData.write(to: fileURL)
-//        } catch {
-//            print("경고: 파일로 이미지 저장 실패: \(error.localizedDescription)")
-//            return
-//        }
-//
-//        RealmManager.shared.saveImageMemory(imagePath: fileURL.path, memoryDate: selectedDate)
-//    }
     
     func saveImageToRealm(image: UIImage, date: Date?) {
         RealmManager.shared.savePieceData(image: image, pieceDate: date)
@@ -217,24 +191,31 @@ class PieceViewController: BaseViewController, UIConfigurable {
                 self.saveImageToRealm(image: selectedImage, date: selectedDate)
                 self.navigationController?.popViewController(animated: true)
             } else {
-                // FIXME: - PieceData 타입을 가지는 RealmPieceList를 따로 또 만들어야하나..
                 // 날짜만 변경하는 메서드
-//                guard let imageMemory = self.sortedPieceList?[indexPath] else { return }
-//                RealmManager.shared.updatePieceDate(imageMemory, selectedDate)
-//                
-//                let dateFormatter = DateFormatter()
-//                dateFormatter.dateFormat = "yyyy.MM.dd"
-//                let modifiedDate = dateFormatter.string(from: selectedDate)
-//                
-//                print(modifiedDate)
-//                
-//                guard let viewControllers = self.navigationController?.viewControllers else { return }
-//                for viewController in viewControllers {
-//                    if let viewController = viewController as? SaveDeleteViewController {
-//                        viewController.dateLabel.text = modifiedDate
-//                        self.navigationController?.popToViewController(viewController, animated: true)
-//                    }
-//                }
+                let targetId = pieceList[pieceIndex ?? 0].id
+                if let targetIndex = realmPieceList.firstIndex(where: { $0.id == targetId }) {
+                    let pieceInfo = realmPieceList[targetIndex]
+                    RealmManager.shared.updatePieceDate(pieceInfo, selectedDate)
+                } else {
+                    print("targetId와 일치하는 realmPieceList.id가 없어!!")
+                }
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy.MM.dd"
+                let modifiedDate = dateFormatter.string(from: selectedDate)
+                
+//                print("pieceVC에서 전달하는 targetId: \(targetId), modifiedDate: \(modifiedDate)")
+                NotificationCenter.default.post(
+                    name: PieceViewController.modifyPieceDateNotificationName,
+                    object: (targetId, modifiedDate))
+                
+                guard let viewControllers = self.navigationController?.viewControllers else { return }
+                for viewController in viewControllers {
+                    if let viewController = viewController as? SaveDeleteViewController {
+                        viewController.dateLabel.text = modifiedDate
+                        self.navigationController?.popToViewController(viewController, animated: true)
+                    }
+                }
             }
             print("pieceVC pop 될거야")
         }
@@ -255,10 +236,6 @@ class PieceViewController: BaseViewController, UIConfigurable {
         showSaveConfirmationAlert()
     }
     
-//    @objc func testPageButtonTapped() {
-//        present(TestPageViewController(), animated: true)
-//    }
-    
     @objc func addButtonTapped() {
         PhotoAccessHelper.requestPhotoLibraryAccess(presenter: self) { [weak self] isAuthorized in
             DispatchQueue.main.async {
@@ -273,36 +250,61 @@ class PieceViewController: BaseViewController, UIConfigurable {
         }
     }
     
-    @objc func showDatePicker() {
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        datePicker.preferredDatePickerStyle = .wheels
-        datePicker.locale = Locale(identifier: "ko_KR")
+//    @objc func showDatePicker() {
+//        let datePicker = UIDatePicker()
+//        datePicker.datePickerMode = .date
+//        datePicker.preferredDatePickerStyle = .wheels
+//        datePicker.locale = Locale(identifier: "ko_KR")
+//        
+//        if let title = datePickerButton.title(for: .normal),
+//           let currentDate = Date(dateString: title, format: "yyyy.MM.dd") {
+//            datePicker.date = currentDate
+//        }
+//        
+//        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
+//        alertController.view.addSubview(datePicker)
+//        
+//        datePicker.snp.makeConstraints {
+//            $0.centerX.equalToSuperview()
+//        }
+//        
+//        let selectAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
+//            let selectedDate = datePicker.date
+//            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy.MM.dd")
+//            self?.datePickerButton.setTitle(formattedDate, for: .normal)
+//        }
+//        
+//        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
+//        
+//        alertController.addAction(selectAction)
+//        alertController.addAction(cancelAction)
+//        
+//        present(alertController, animated: true, completion: nil)
+//    }
+    
+    @objc func showCalendarModal() {
+        let calendarViewController = UIViewController()
+        calendarViewController.view.backgroundColor = Palette.podaWhite.getColor()
+        calendarViewController.modalPresentationStyle = .pageSheet
         
-        if let title = datePickerButton.title(for: .normal),
-           let currentDate = Date(dateString: title, format: "yyyy.MM.dd") {
-            datePicker.date = currentDate
+        if let sheetPresentationController = calendarViewController.presentationController as? UISheetPresentationController {
+            sheetPresentationController.detents = [.custom { _ in
+                return UIScreen.main.bounds.height / 2
+            }]
+            sheetPresentationController.prefersGrabberVisible = true
+        }
+                
+        let calendarView = UICalendarView()
+//        calendarView.delegate = self
+        let dateSelection = UICalendarSelectionSingleDate(delegate: self)
+        calendarView.selectionBehavior = dateSelection
+        calendarViewController.view.addSubview(calendarView)
+        
+        calendarView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n\n", message: nil, preferredStyle: .actionSheet)
-        alertController.view.addSubview(datePicker)
-        
-        datePicker.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-        }
-        
-        let selectAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
-            let selectedDate = datePicker.date
-            let formattedDate = selectedDate.getCurrentTime(Dataforamt: "yyyy.MM.dd")
-            self?.datePickerButton.setTitle(formattedDate, for: .normal)
-        }
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .default, handler: nil)
-        
-        alertController.addAction(selectAction)
-        alertController.addAction(cancelAction)
-        
-        present(alertController, animated: true, completion: nil)
+        present(calendarViewController, animated: true)
     }
 }
 
@@ -315,15 +317,18 @@ extension PieceViewController: PHPickerViewControllerDelegate {
         guard !results.isEmpty else {
             return
         }
-        
+
+        self.loadingIndicator.startAnimating()
+
         let selectedResult = results[0]
         
         selectedResult.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (object, error) in
-            if let error = error {
-                print("이미지 로딩 중 오류: \(error.localizedDescription)")
-            } else if let selectedImage = object as? UIImage {
-                //print("선택된 이미지의 너비 \(selectedImage.size.width)")
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                self?.loadingIndicator.stopAnimating()
+                
+                if let error = error {
+                    print("이미지 로딩 중 오류: \(error.localizedDescription)")
+                } else if let selectedImage = object as? UIImage {
                     self?.imageView.image = selectedImage
                     self?.updateUIForImageAvailability(hasImage: true)
                 }
@@ -332,7 +337,17 @@ extension PieceViewController: PHPickerViewControllerDelegate {
     }
 }
 
-//@objc private func moveToCompletsButtonTapped() {
-//    let pieceVC = PieceViewController()
-//    navigationController?.pushViewController(pieceVC, animated: true)
-//}
+extension PieceViewController: UICalendarSelectionSingleDateDelegate {
+    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+        guard let dateComponents = dateComponents,
+              let date = Calendar.current.date(from: dateComponents) else { return }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
+        let dateString = dateFormatter.string(from: date)
+        
+        DispatchQueue.main.async {
+            self.datePickerButton.setTitle(dateString, for: .normal)
+        }
+    }
+}

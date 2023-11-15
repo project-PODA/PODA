@@ -48,22 +48,22 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
         super.viewDidLoad()
         configUI()
         setTableView()
+        setupNavigationBar()
     }
     
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let baseTabbar = self.tabBarController as? BaseTabbarController {
-            baseTabbar.setCustomTabbarHidden(true)
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if let baseTabbar = self.tabBarController as? BaseTabbarController {
-            baseTabbar.setCustomTabbarHidden(false)
-        }
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+//            baseTabbar.setCustomTabbarHidden(true)
+//        }
+//    }
+//    
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        if let baseTabbar = self.tabBarController as? BaseTabbarController {
+//            baseTabbar.setCustomTabbarHidden(false)
+//        }
+//    }
     
     func bindViewModel() {
         
@@ -96,6 +96,39 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
         }
     }
     
+    private func setupNavigationBar() {
+        navigationController?.navigationBar.isHidden = false
+        
+        navigationItem.title = "PODA"
+        navigationItem.leftBarButtonItem = nil
+        
+        navigationController?.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .semibold),
+            NSAttributedString.Key.foregroundColor: UIColor(named: "podaWhite") ?? .white
+        ]
+    }
+    
+//    private func setupNavigationBarAppearance() {
+//        self.navigationController?.navigationBar.isHidden = false
+//
+//        let navigationBarAppearance = UINavigationBarAppearance().then {
+//            $0.configureWithOpaqueBackground()
+//            $0.backgroundColor = .clear
+//            $0.titleTextAttributes = [.foregroundColor: Palette.podaWhite.getColor()]
+//            $0.shadowColor = nil
+//        }
+//        
+//        navigationController?.navigationBar.standardAppearance = navigationBarAppearance
+//        navigationController?.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+//        
+//        self.navigationItem.title = "공지사항"
+//        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "icon_back")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(didTapBackButton))
+//        
+//        navigationController?.navigationBar.titleTextAttributes = [
+//            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .semibold),
+//            NSAttributedString.Key.foregroundColor: UIColor(named: "podaWhite") ?? .white
+//        ]
+//    }
     
     func setTableView() {
         tableView.setUpTableView(delegate: self, dataSource: self, cellType: InfoCell.self)

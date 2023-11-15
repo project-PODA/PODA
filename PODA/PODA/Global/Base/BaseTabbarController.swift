@@ -24,12 +24,20 @@ class BaseTabbarController: UITabBarController {
         homeVC.bind(to: homeVC.viewModel)
         
         
-        let viewModel = ProfileViewModel(fireDBManager: FirestorageDBManager(), fireImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-        let profileViewController = ProfileViewController(viewModel: viewModel)
-        let profileNavVC = BaseNavigationController(rootViewController: profileViewController)
-        profileViewController.bind(to: profileViewController.viewModel)
+//        let viewModel = ProfileViewModel(fireDBManager: FirestorageDBManager(), fireImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+//        let profileViewController = ProfileViewController(viewModel: viewModel)
+//        let profileNavVC = BaseNavigationController(rootViewController: profileViewController)
+//        profileViewController.bind(to: profileViewController.viewModel)
         
-        viewControllers = [homeVC, profileNavVC]
+        let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+        
+        let infoVC = InfoViewController(viewModel: InfoViewModel(fireAuthManager: fireAuthManager))
+        
+        let infoNavVC = BaseNavigationController(rootViewController: infoVC)
+
+        infoVC.bind(to: infoVC.viewModel)
+        
+        viewControllers = [homeVC, infoNavVC]
         
         setupCustomTabbar()
         updateTabbarImages()

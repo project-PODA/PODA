@@ -104,6 +104,21 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
                 self.signUpButton.isEnabled = isAllowed
             }
         }
+        
+        viewModel.completeSignup.addObserver { [weak self] signUpStatus in
+            guard let self = self else { return }
+            loadingIndicator.stopAnimating()
+            switch signUpStatus {
+            case .success:
+                let completeSignUpVC = CompleteSignUpViewController()
+                navigationController?.pushViewController(completeSignUpVC, animated: true)
+            case .error(let error):
+                showAlert(title: "에러", message: error.description)
+            default:
+                break
+            }
+            
+        }
     }
     
     // MARK: UIComponent
@@ -404,13 +419,13 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         
         passwordTextField.snp.makeConstraints {
             $0.left.equalTo(emailLabel)
-            $0.right.equalToSuperview().offset(-20)
+            $0.right.equalTo(passwordEyeButton.snp.left).offset(-10)
             $0.top.equalTo(passwordDetailLabel.snp.bottom).offset(10)
             $0.height.equalTo(emailTextField)
         }
         
         passwordEyeButton.snp.makeConstraints {
-            $0.right.equalTo(passwordTextField).offset(-5)
+            $0.right.equalToSuperview().offset(-20)
             $0.centerY.equalTo(passwordTextField)
             $0.width.height.equalTo(24)
         }
@@ -427,13 +442,13 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         
         passwordConfirmationTextField.snp.makeConstraints {
             $0.left.equalTo(emailLabel)
-            $0.right.equalToSuperview().offset(-20)
+            $0.right.equalTo(confirmPasswordEyeButton.snp.left).offset(-10)
             $0.top.equalTo(passwordConfirmationLabel.snp.bottom).offset(10)
             $0.height.equalTo(emailTextField)
         }
         
         confirmPasswordEyeButton.snp.makeConstraints {
-            $0.right.equalTo(passwordConfirmationTextField).offset(-5)
+            $0.right.equalToSuperview().offset(-20)
             $0.centerY.equalTo(passwordConfirmationTextField)
             $0.width.height.equalTo(24)
         }
@@ -568,6 +583,10 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
     @objc private func passwordTextFieldDidChange(_ textField: UITextField) {
         guard let password = textField.text else { return }
         viewModel.setPasswordText(password: password)
+        // 비밀번호 텍스트 필드 내용 변경되면 비밀번호 확인 텍스트 필드를 비우기
+        passwordConfirmationTextField.text = ""
+        passwordConfirmationErrorLabel.text = "비밀번호가 일치하지 않습니다."
+        passwordConfirmationErrorLabel.textColor = Palette.podaRed.getColor()
     }
     
     @objc private func passwordConfirmationTextFieldDidChange(_ textField: UITextField) {
@@ -611,16 +630,26 @@ class SignUpViewController: BaseViewController, ViewModelBindable, UIConfigurabl
         scrollView.scrollIndicatorInsets = contentInsets
     }
     
+    //    @objc private func signUpButtonTapped() {
+    //        guard viewModel.isSignUpAllowed.value else { return }
+    //
+    //        let agreeTermsVC = AgreeTermsViewController()
+    //        let setProfileVC = SetProfileViewController(viewModel: SetProfileViewModel(firebaseAuth: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))), email: emailTextField.text!.lowercased(), password: passwordTextField.text!)
+    //        setProfileVC.bind(to: setProfileVC.viewModel)
+    //
+    //        agreeTermsVC.setProfileVC = setProfileVC
+    //
+    //        self.navigationController?.pushViewController(agreeTermsVC, animated: true)
+    //    }
+    
     @objc private func signUpButtonTapped() {
         guard viewModel.isSignUpAllowed.value else { return }
+        loadingIndicator.startAnimating()
+        viewModel.onCompleteSingupTapped()
         
-        let agreeTermsVC = AgreeTermsViewController()
-        let setProfileVC = SetProfileViewController(viewModel: SetProfileViewModel(firebaseAuth: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))), email: emailTextField.text!.lowercased(), password: passwordTextField.text!)
-        setProfileVC.bind(to: setProfileVC.viewModel)
+        //        let completeVC = CompleteSignUpViewController()
         
-        agreeTermsVC.setProfileVC = setProfileVC
-        
-        self.navigationController?.pushViewController(agreeTermsVC, animated: true)
+        //        self.navigationController?.pushViewController(completeVC, animated: true)
     }
     
     @objc private func sendAuthUserCode() {
@@ -682,6 +711,14 @@ extension UIView {
 }
 
 extension SignUpViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField == passwordTextField {
+            // 비밀번호 텍스트 필드의 텍스트가 변경되면 비밀번호 확인 필드를 비우기
+            passwordConfirmationTextField.text = ""
+        }
+        return true
+    }
     
     func setupTextFields() {
         emailTextField.setUpTextField(delegate: self)

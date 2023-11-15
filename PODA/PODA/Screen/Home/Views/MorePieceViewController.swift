@@ -275,7 +275,7 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
     @objc func didTapfloatingButton() {
         if !viewModel.pieceCountState {
             let pieceShakeViewController = PieceShakeViewController()
-            pieceShakeViewController.pieceList = pieceList
+            pieceShakeViewController.pieceList = viewModel.realmPieceList
             navigationController?.pushViewController(pieceShakeViewController, animated: true)
         }
     }
