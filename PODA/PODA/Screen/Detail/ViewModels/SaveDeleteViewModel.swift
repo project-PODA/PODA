@@ -22,20 +22,9 @@ class SaveDeleteViewModel {
     
     var realmPieceList: [RealmPieceData] = []
     
-    var pieceList: [PieceData] = [] {
-        didSet {
-            // pieceList 데이터가 담겼을 때 didSet 실행
-            // pieceListLoaded() > 클로져를 통해서 데이터가 변한 시점을 전달
-            pieceListLoaded(self.pieceList)
-        }
-    }
-    
-    var pieceListLoaded: ([PieceData]) -> Void = { _ in }
-    
-    var selectedOrderOptionState: ((Bool) -> Void)?
+    var pieceList: [PieceData] = []
     
     var pieceIndex: Int?
-    var isSortedByPieceDate = true
     
     func deleteDiaryData(_ completion: @escaping (() -> ())) {
         guard let diaryName = diaryData?.diaryName else { return }
@@ -56,16 +45,6 @@ class SaveDeleteViewModel {
                 }
             }
         }
-    }
-    
-    func didTapPieceDateOrderButton() {
-        isSortedByPieceDate = true
-        selectedOrderOptionState?(true)
-    }
-    
-    func didTapCreateDateOrderButton() {
-        isSortedByPieceDate = false
-        selectedOrderOptionState?(false)
     }
     
     func deletePieceData(_ index: Int) {

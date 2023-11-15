@@ -14,9 +14,6 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
    
     var viewModel: MorePieceViewModel!
     
-    var pieceList: Results<RealmPieceData>?
-    private var isSortedByPieceDate = true
-    
     private lazy var backButton = UIButton().then {
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
@@ -29,18 +26,18 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
         $0.textAlignment = .center
     }
     
-    private lazy var pieceDateOrderButton = UIButton().then {
-        $0.setUpButton(title: "추억날짜순", podaFont: .caption)
+    private lazy var latestPieceButton = UIButton().then {
+        $0.setUpButton(title: "최신순", podaFont: .caption)
         $0.layer.cornerRadius = 14
         $0.layer.borderWidth = 0.5
-        $0.addTarget(self, action: #selector(didTapPieceDateOrderButton), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(didTapLatestPieceButton), for: .touchUpInside)
     }
     
-    private lazy var createDateOrderButton = UIButton().then {
-        $0.setUpButton(title: "등록순", podaFont: .caption)
+    private lazy var oldestPieceButton = UIButton().then {
+        $0.setUpButton(title: "오래된순", podaFont: .caption)
         $0.layer.cornerRadius = 14
         $0.layer.borderWidth = 0.5
-        $0.addTarget(self, action: #selector(didTapCreateDateOrderButton), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(didTapOldestPieceButton), for: .touchUpInside)
     }
     
     private let pieceCountLabel = UILabel().then {
@@ -48,7 +45,7 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
         $0.textAlignment = .center
     }
     
-    private lazy var pieceAlbumCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
+    private lazy var pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 16.0
@@ -80,6 +77,7 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()
+        setPieceUI()
     }
     
     init(viewModel: MorePieceViewModel) {
@@ -92,7 +90,7 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
     }
     
     func configUI() {
-        [backButton, emptyMorePieceLabel, pieceDateOrderButton, createDateOrderButton, pieceCountLabel, pieceAlbumCollectionView, bubbleImageView, infoLabel, floatingButton].forEach {
+        [backButton, emptyMorePieceLabel, latestPieceButton, oldestPieceButton, pieceCountLabel, pieceCollectionView, bubbleImageView, infoLabel, floatingButton].forEach {
             view.addSubview($0)
         }
         
@@ -106,17 +104,17 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
             $0.center.equalToSuperview()
         }
         
-        pieceDateOrderButton.snp.makeConstraints {
+        latestPieceButton.snp.makeConstraints {
             $0.top.equalTo(backButton.snp.bottom).offset(28)
             $0.left.equalToSuperview().offset(20)
-            $0.width.equalTo(72)
+            $0.width.equalTo(60)
             $0.height.equalTo(28)
         }
         
-        createDateOrderButton.snp.makeConstraints {
+        oldestPieceButton.snp.makeConstraints {
             $0.top.equalTo(backButton.snp.bottom).offset(28)
-            $0.left.equalTo(pieceDateOrderButton.snp.right).offset(5)
-            $0.width.equalTo(60)
+            $0.left.equalTo(latestPieceButton.snp.right).offset(5)
+            $0.width.equalTo(64)
             $0.height.equalTo(28)
         }
         
@@ -125,8 +123,8 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
             $0.right.equalToSuperview().offset(-20)
         }
         
-        pieceAlbumCollectionView.snp.makeConstraints {
-            $0.top.equalTo(pieceDateOrderButton.snp.bottom).offset(24)
+        pieceCollectionView.snp.makeConstraints {
+            $0.top.equalTo(latestPieceButton.snp.bottom).offset(24)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.bottom.equalToSuperview()
@@ -184,63 +182,60 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
 //            }
 //        }
 //    }
+    func setPieceUI() {
+        let pieceCount = self.viewModel.pieceCount
+        pieceCountLabel.setUpLabel(title: "총 \(pieceCount)개", podaFont: .body1)
+        
+        if viewModel.pieceEmptyState {
+            pieceUI(true)
+        } else {
+            pieceUI(false)
+            
+            if viewModel.sortByLatest {
+                viewModel.latestPieceButtonSelectedState?(true)
+            } else {
+                viewModel.latestPieceButtonSelectedState?(false)
+            }
+            
+            if viewModel.pieceCountState {
+                bubbleImageView.isHidden = false
+                infoLabel.isHidden = false
+            } else {
+                bubbleImageView.isHidden = true
+                infoLabel.isHidden = true
+            }
+        }
+
+    }
     
-    func setPieceUI(_ isHidden: Bool) {
+    func pieceUI(_ isHidden: Bool) {
         self.pieceCountLabel.isHidden = isHidden
         self.emptyMorePieceLabel.isHidden = !isHidden
-        self.pieceDateOrderButton.isHidden = isHidden
-        self.createDateOrderButton.isHidden = isHidden
-        self.pieceAlbumCollectionView.isHidden = isHidden
+        self.latestPieceButton.isHidden = isHidden
+        self.oldestPieceButton.isHidden = isHidden
+        self.pieceCollectionView.isHidden = isHidden
     }
     
     func bindViewModel() {
-        viewModel.pieceListLoaded = { [weak self] _ in
+        viewModel.latestPieceButtonSelectedState = { [weak self] isLatestPieceButtonOn in
             guard let self else { return }
             DispatchQueue.main.async {
-                let pieceCount = self.viewModel.pieceCount
-                self.pieceCountLabel.setUpLabel(title: "총 \(pieceCount)개", podaFont: .body1)
-                
-                if self.viewModel.pieceEmptyState {
-                    self.setPieceUI(true)
+                if isLatestPieceButtonOn {
+                    self.oldestPieceButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.oldestPieceButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.oldestPieceButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.latestPieceButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.latestPieceButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.latestPieceButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                    self.pieceCollectionView.reloadData()
                 } else {
-                    self.setPieceUI(false)
-                    
-                    if self.viewModel.isSortedByPieceDate {
-                        self.viewModel.selectedOrderOptionState?(true)
-                    } else {
-                        self.viewModel.selectedOrderOptionState?(false)
-                    }
-                    
-                    if self.viewModel.pieceCountState {
-                        self.bubbleImageView.isHidden = false
-                        self.infoLabel.isHidden = false
-                    } else {
-                        self.bubbleImageView.isHidden = true
-                        self.infoLabel.isHidden = true
-                    }
-                }
-            }
-        }
-        
-        viewModel.selectedOrderOptionState = { [weak self] isPieceDateOrderButtonOn in
-            guard let self else { return }
-            DispatchQueue.main.async {
-                if isPieceDateOrderButtonOn {
-                    self.createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-                    self.createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-                    self.createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-                    self.pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-                    self.pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-                    self.pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-                    self.pieceAlbumCollectionView.reloadData()
-                } else {
-                    self.createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-                    self.createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-                    self.createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-                    self.pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-                    self.pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-                    self.pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-                    self.pieceAlbumCollectionView.reloadData()
+                    self.oldestPieceButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.oldestPieceButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.oldestPieceButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                    self.latestPieceButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.latestPieceButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.latestPieceButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.pieceCollectionView.reloadData()
                 }
             }
         }
@@ -263,15 +258,14 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
         navigationController?.popViewController(animated: true)
     }
     
-    @objc func didTapPieceDateOrderButton() {
-        viewModel.didTapPieceDateOrderButton()
+    @objc func didTapLatestPieceButton() {
+        viewModel.didTapLatestPieceButton()
     }
     
-    @objc func didTapCreateDateOrderButton() {
-        viewModel.didTapCreateDateOrderButton()
+    @objc func didTapOldestPieceButton() {
+        viewModel.didTapOldestPieceButton()
     }
     
-    // FIXME: - 고치기
     @objc func didTapfloatingButton() {
         if !viewModel.pieceCountState {
             let pieceShakeViewController = PieceShakeViewController()
