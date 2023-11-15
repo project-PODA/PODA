@@ -12,7 +12,7 @@ import NVActivityIndicatorView
 
 class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable {
     
-    var viewModel: HomeViewModel! // (생성자 initializer 만들기 귀찮으면 ! 붙여서 var viewModel: HomeViewModel! 하삼)
+    var viewModel: HomeViewModel!
     
     private lazy var loadingIndicator = CustomLoadingIndicator()
     
@@ -185,23 +185,19 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad")
         configUI()
-        loadingIndicator.startAnimating()
         viewModel.loadDiaryData()
         viewModel.registerNotification()
-        print(viewModel.diaryList)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("viewWillAppear")
         view.bringSubviewToFront(loadingIndicator)
         viewModel.login()
         // FIXME: - loadPieceData도 viewDidLoad에서만 호출해도 될 듯. pieceVC에서 realm에 추가, 업데이트 & 홈의 pieceList에도 추가, 업데이트 한다면..
         viewModel.loadPieceData()
         setPieceUI()
-        //setDiaryUI()
+        viewModel.diaryDataLoaded?()
     }
     
     init(viewModel: HomeViewModel) {
@@ -393,22 +389,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
             $0.height.equalTo(1132)
         }
     }
-    
-    // FIXME: - loadingIndicator 좀 어떻게 해바
-    func setDiaryUI() {
-        if viewModel.diaryEmptyState {
-            diaryUI(true)
-        } else {
-            diaryUI(false)
-            diaryCollectionView.reloadData()
-        }
-        loadingIndicator.stopAnimating()
-    }
-    
-    func diaryUI(_ isHidden: Bool) {
-        emptyDiaryLabel.isHidden = !isHidden
-        diaryCollectionView.isHidden = isHidden
-    }
+
     
     func setPieceUI() {
         let pieceCount = self.viewModel.pieceCount
@@ -453,15 +434,46 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         oldestPieceButton.isHidden = isHidden
         latestPieceButton.isHidden = isHidden
     }
-    
+
     func bindViewModel() {
         // 다이어리 데이터가 바뀔 때마다 얘를 다시 호출, 데이터 변경이 완료된 후 클로저에서 어떤 걸 실행할 지 정해주기
-        viewModel.diaryDataLoaded = { [weak self] _ in
+        // 이렇게 돼면 다이어리 하나가 추가될 때마다 UI 업데이트되고 collectionView도 리로드돼서 비효율적임. 1,2,3,4권 이런식으로 UI 업데이트가 눈에 다 보임
+        // 데이터가 다 불러와지면 업데이트하기 위해서 HomeViewModel 'if diaryCount == totalDiaryCount' 부분을 구현함
+//        viewModel.diaryDataLoaded = { [weak self] _ in
+//            guard let self else { return }
+//            DispatchQueue.main.async {
+//                //self.setDiaryUI()
+//                let diaryCount = self.viewModel.diaryCount
+//                self.diaryCountLabel.setUpLabel(title: "\(diaryCount)권", podaFont: .subhead4)
+//                self.diaryCollectionView.reloadData()
+//            }
+//        }
+        
+        viewModel.diaryDataLoaded = { [weak self] in
             guard let self else { return }
             DispatchQueue.main.async {
-                self.setDiaryUI()
-                let diaryCount = self.viewModel.diaryCount
-                self.diaryCountLabel.setUpLabel(title: "\(diaryCount)권", podaFont: .subhead4)
+                if self.viewModel.diaryEmptyState {
+                    self.emptyDiaryLabel.isHidden = false
+                    self.diaryCollectionView.isHidden = true
+                    self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
+                } else {
+                    self.emptyDiaryLabel.isHidden = true
+                    self.diaryCollectionView.isHidden = false
+                    self.diaryCountLabel.setUpLabel(title: "\(self.viewModel.diaryCount)권", podaFont: .subhead4)
+                    self.viewModel.sortDiaryList()
+                    self.diaryCollectionView.reloadData()
+                }
+            }
+        }
+        
+        viewModel.loadingIndicatorState = { [weak self] isLoading in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                if isLoading {
+                    self.loadingIndicator.startAnimating()
+                } else {
+                    self.loadingIndicator.stopAnimating()
+                }
             }
         }
         

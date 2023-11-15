@@ -83,7 +83,7 @@ class FireStorageImageManager {
     }
     
     
-    func getDiaryImage(dinaryName: String, completion: @escaping (FireStorageImageError, [Data]) -> Void) {
+    func getDiaryImage(diaryName: String, completion: @escaping (FireStorageImageError, [Data]) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageImageError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageImageError.unavailableUUID.description),[])
@@ -93,7 +93,7 @@ class FireStorageImageManager {
         DispatchQueue.global(qos: .userInteractive).async{ [weak self] in
             guard let self = self else {return}
             
-            let imageReference = storageReference.child("\(currentUserUID)/images/\(dinaryName)")
+            let imageReference = storageReference.child("\(currentUserUID)/images/\(diaryName)")
             
             imageReference.listAll { (result, error) in
                 if let errCode = error as NSError? {
