@@ -62,6 +62,7 @@ class QRViewController: BaseViewController {
         DispatchQueue.global(qos: .userInitiated).async {
             self.captureSession.stopRunning()
         }
+        removeCameraOutputData()
     }
     
     private func initCameraDevice() {
@@ -119,6 +120,11 @@ class QRViewController: BaseViewController {
                 $0.centerX.equalToSuperview()
             }
         }
+    }
+    
+    private func removeCameraOutputData() {
+        guard let output = output else { return }
+        captureSession.removeOutput(output)
     }
     
     @objc func didTapBackButton() {
