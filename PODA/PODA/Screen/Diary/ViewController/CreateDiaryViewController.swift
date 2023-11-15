@@ -255,6 +255,7 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     
     @objc private func touchUpNextButton() {
         setCurrentImageView(nil)
+        setCurrentTextView(nil, tapCount: 0)
         let diaryImage = diaryView.convertToPNGData()
         let detailDiaryViewController = DetailDiaryViewController(viewModel: viewModel)
         viewModel.setDiaryName(diaryName ?? "")
