@@ -51,10 +51,17 @@ class QRViewController: BaseViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        initCameraOutputData()
-        displayPreview()
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.captureSession.startRunning()
+        CameraAccessHelper.requestCameraAccess(presenter: self) { [weak self] isAuthorized in
+            DispatchQueue.main.async {
+                if isAuthorized {
+                    guard let self else { return }
+                    self.initCameraOutputData()
+                    self.displayPreview()
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        self.captureSession.startRunning()
+                    }
+                }
+            }
         }
     }
     
