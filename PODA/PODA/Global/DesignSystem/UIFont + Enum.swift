@@ -48,7 +48,7 @@ extension UIFont {
         case .display2:
             return UIFont(name: "Pretendard-Bold", size: 28) ?? UIFont()
         case .display3:
-            return UIFont(name: "Pretendard-Bold", size: 36) ?? UIFont()
+            return UIFont(name: "Pretendard-Bold", size: 31) ?? UIFont()
         }
     }
 }

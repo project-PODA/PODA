@@ -11,6 +11,5 @@ import UIKit
 struct PieceData {
     var id: UUID
     var image: UIImage
-    var createDate: String
     var pieceDate: String
 }
