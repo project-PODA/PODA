@@ -133,18 +133,24 @@ class SignUpViewModel {
                     if emailCheckError == .none {
                         completion(false, "유저 정보가 존재합니다. 다른 계정으로 가입해주세요.")
                     } else {
-                        self.smtpManager.sendAuth(userEmail: email, logoImage: UIImage(named: "logo_poda")?.pngData()!) { authCode, success in
-                            if (authCode >= 10000 && authCode <= 99999) && success {
-                                self.userAuthCode = authCode
-                                completion(true, "인증 코드가 발송되었습니다. 이메일을 확인해 주세요.")
-                            } else {
-                                completion(false, "이메일 전송에 실패했습니다.")
+                        self.fireStoreDB.getSMTPInfo { smtpInfo, error in
+                            guard let smtpInfo = smtpInfo, error == .none else {
+                                completion(false, "SMTP 정보를 가져오는 데 실패했습니다: \(error.description)")
+                                return
+                            }
+                            self.smtpManager.sendAuth(userEmail: email, logoImage: UIImage(named: "logo_poda")?.pngData(), smtpInfo: smtpInfo) { authCode, success in
+                                if success {
+                                    self.userAuthCode = authCode
+                                    completion(true, "인증 코드가 발송되었습니다. 이메일을 확인해 주세요.")
+                                } else {
+                                    completion(false, "이메일 전송에 실패했습니다.")
+                                }
                             }
                         }
                     }
                 }
             } else {
-                completion(false, authError.description)
+                completion(false, "관리자 로그인에 실패했습니다: \(authError.description)")
             }
         }
     }

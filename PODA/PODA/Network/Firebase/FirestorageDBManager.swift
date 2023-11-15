@@ -420,6 +420,36 @@ class FirestorageDBManager {
         }
         
     }
+    
+    func getSMTPInfo(completion: @escaping (SMTPInfo?, FireStorageDBError) -> Void) {
+        guard let _ = Auth.auth().currentUser?.uid else {
+            let error = FireStorageDBError.unavailableUUID
+            Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
+            completion(nil, .error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
+            return
+        }
+        
+        let collectionRef = db.collection("SMTP")
+        let documentRef = collectionRef.document("Naver")
+        
+        documentRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                if let smtpDataString = document["smtpInfo"] as? String {
+                    if let smtpInfo = SMTPInfo.fromJson(jsonString: smtpDataString, model: SMTPInfo.self) {
+                        completion(SMTPInfo(smtpAddress: smtpInfo.smtpAddress, email: smtpInfo.email, password: smtpInfo.password), .none)
+                        
+                    } else {
+                        completion(nil, .error(FireStorageDBError.decodingError.code, FireStorageDBError.decodingError.description))
+                        Logger.writeLog(.error, message: FireStorageDBError.decodingError.description)
+                    }
+                }
+            } else {
+                Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
+                completion(nil, .error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
+            }
+        }
+    }
+    
     func isDiaryPath(refDocPath: String, accountPath: String) -> Bool {
         return refDocPath == accountPath ? false : true
     }
