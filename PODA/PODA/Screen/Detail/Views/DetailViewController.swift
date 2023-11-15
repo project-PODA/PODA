@@ -99,7 +99,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
     private let contentLabel = UILabel().then {
         $0.lineBreakMode = .byCharWrapping
         $0.textColor = Palette.podaWhite.getColor()
-        $0.numberOfLines = 4
+        $0.numberOfLines = 5
         $0.addShadowToLabel()
     }
     
@@ -153,6 +153,7 @@ class DetailViewController: BaseViewController, UIConfigurable {
         titleLabel.snp.makeConstraints { 
             $0.bottom.equalTo(dateLabel.snp.top)
             $0.left.equalToSuperview().offset(20)
+            $0.right.equalToSuperview().offset(-20)
         }
         
         dateLabel.snp.makeConstraints { 
