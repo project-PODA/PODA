@@ -346,18 +346,31 @@ class LoginViewController: BaseViewController, UIConfigurable {
                 UserDefaultManager.userEmail = userInfo.email.lowercased()
                 UserDefaultManager.userPassword = userInfo.password
                 
-                // 로그인 성공 후, sceneDelegate.switchToMainInterface() 호출 (switchToMainInterface :로그인 뷰 컨트롤러를 스택에서 제거하고, 메인페이지로 전환하기)
-                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                    sceneDelegate.switchToMainPage()
+                // 로그인 성공 후 온보딩 페이지 표시 여부 결정
+                if !UserDefaultManager.hasCompletedOnboarding {
+                    self.showOnboarding()
+                } else {
+                    self.switchToMainPage()
                 }
             } else {
                 self.showAlert(title: "에러", message: "ID와 비밀번호를 확인해주세요.")
             }
             
-            loadingIndicator.stopAnimating()
+            self.loadingIndicator.stopAnimating()
         }
     }
-
+    
+    private func showOnboarding() {
+        let onboardingVC = OnboardingViewController()
+        onboardingVC.modalPresentationStyle = .fullScreen
+        present(onboardingVC, animated: true, completion: nil)
+    }
+    
+    private func switchToMainPage() {
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.switchToMainPage()
+        }
+    }
                  
     private func setComponentDisable(_ enabled : Bool){
         emailTextField.isEnabled = enabled
