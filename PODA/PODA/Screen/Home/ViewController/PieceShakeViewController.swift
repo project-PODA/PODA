@@ -13,19 +13,18 @@ import Then
 
 class PieceShakeViewController: BaseViewController, UIConfigurable {
     
+    
     private var floatingImages: [(imageView: UIImageView, vector: CGVector)] = []
     
     
     // Realm 데이터베이스에서 불러온 ImageMemory 객체를 저장할 변수 선언
-    var pieceList: Results<ImageMemory>?
+    var pieceList: [RealmPieceData]?
     
-    // 백 버튼을 위한 lazy var 선언, 실제 사용될 때 초기화됨
     private lazy var backButton = UIButton().then {
-        // 버튼에 이미지 설정, .normal 상태일 때 "icon_back" 이미지 사용
         $0.setImage(UIImage(named: "icon_back"), for: .normal)
-        // 버튼이 탭되었을 때 실행될 메서드(didTapBackButton) 연결
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
+    
     
     private let translucentView = UIView().then {
         $0.backgroundColor = Palette.podaBlack.getColor().withAlphaComponent(0.8)
@@ -50,12 +49,24 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         }
     }
     
+    
+    private lazy var captureButton = UIButton().then {
+        $0.setUpButton(title: "화면캡쳐 📸", podaFont: .button1)
+        $0.backgroundColor = Palette.podaBlue.getColor()
+        $0.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+        $0.layer.cornerRadius = 22
+        $0.addTarget(self, action: #selector(captureScreen), for: .touchUpInside)
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         displayRandomImages()
         configUI()
         hideTranslucentView()
+        
     }
+    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -63,8 +74,9 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         startFloatingAnimation()
     }
     
+    
     func configUI() {
-        [backButton, translucentView].forEach {
+        [backButton, captureButton, translucentView].forEach {
             view.addSubview($0)
         }
         
@@ -74,18 +86,62 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
             $0.width.height.equalTo(30)
         }
         
+        captureButton.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-20)
+            $0.width.equalTo(120)
+            $0.height.equalTo(44)
+        }
+        
         translucentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
     }
     
+    
+    @objc func captureScreen() {
+        // 버튼을 숨기고 캡쳐
+        backButton.isHidden = true
+        captureButton.isHidden = true
+        
+        // 화면 캡쳐
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
+        view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        // 버튼 다시 보이게 함
+        backButton.isHidden = false
+        captureButton.isHidden = false
+        
+        // 갤러리에 이미지 저장
+        if let imageToSave = image {
+            UIImageWriteToSavedPhotosAlbum(imageToSave, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+        }
+    }
+    
+    
+    // 이미지 저장 완료 처리
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            // 에러 발생시 토스트 메시지로 알림
+            showToastMessage("저장 오류: \(error.localizedDescription)", withDuration: 3.0, delay: 0)
+        } else {
+            // 성공 메시지 토스트로 표시
+            showToastMessage("이미지가 갤러리에 저장되었습니다.", withDuration: 3.0, delay: 0)
+        }
+    }
+    
+    
     @objc func didTapBackButton() {
         navigationController?.popViewController(animated: true) // 네비게이션 스택에서 현재 뷰 컨트롤러를 팝
     }
     
+    
     @objc func didTapTranslucentView() {
         translucentView.isHidden = true
     }
+    
     
     // 팬 제스처 인식기 업데이트를 처리하는 메서드
     @objc func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
@@ -116,79 +172,6 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
         default:
             break
         }
-    }
-    
-    private func hideTranslucentView() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTranslucentView))
-        translucentView.addGestureRecognizer(tapGesture)
-    }
-    
-    // 이미지를 랜덤하게 표시하는 메서드
-    private func displayRandomImages() {
-        guard let pieceList = pieceList, pieceList.count >= 6 else { return }
-        
-        let imageViewSize = CGSize(width: 300, height: 300) // 이미지 뷰의 크기
-        var usedIndexes = Set<Int>() // 사용된 인덱스를 추적하기 위한 집합
-        
-        while usedIndexes.count < 6 {
-            let randomPieceIndex = Int(arc4random_uniform(UInt32(pieceList.count)))
-            
-            // 이미 사용된 인덱스인 경우 루프의 다음 반복으로 이동
-            if usedIndexes.contains(randomPieceIndex) {
-                continue
-            }
-            
-            // 새 인덱스를 usedIndexes 집합에 추가
-            usedIndexes.insert(randomPieceIndex)
-            
-            // 랜덤하게 선택된 ImageMemory 객체로부터 이미지를 불러옴
-            let imageMemory = pieceList[randomPieceIndex]
-            let image = getPieceImage(with: imageMemory)
-            
-            // UIImageView 생성 및 초기 설정
-            let imageView = UIImageView(image: image).then {
-                $0.contentMode = .scaleAspectFit // 이미지의 비율을 유지하면서 뷰에 맞춤
-                $0.isUserInteractionEnabled = true // 사용자 상호작용 활성화
-            }
-            
-            view.addSubview(imageView)
-            imageView.snp.makeConstraints { make in
-                let maxX = view.bounds.width - imageViewSize.width
-                let maxY = view.bounds.height - imageViewSize.height
-                
-                let randomX = CGFloat(arc4random_uniform(UInt32(maxX)))
-                let randomY = CGFloat(arc4random_uniform(UInt32(maxY)))
-                make.left.equalTo(view.snp.left).offset(randomX)
-                make.top.equalTo(view.snp.top).offset(randomY)
-                make.width.height.equalTo(imageViewSize)
-            }
-            
-            // UIPanGestureRecognizer 추가
-            let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-            imageView.addGestureRecognizer(panGesture)
-            
-            // 랜덤한 각도를 계산하여 이미지 뷰에 적용
-            let randomAngle = CGFloat.random(in: -40...40) * .pi / 180
-            imageView.transform = CGAffineTransform(rotationAngle: randomAngle)
-        }
-    }
-    
-    // 이미지 뷰를 초기화하고 움직임 벡터를 설정하는 메서드
-    private func setupFloatingImages() {
-        for imageView in self.view.subviews.compactMap({ $0 as? UIImageView }) {
-            // backButton과 translucentView를 제외하고 floatingImages 배열에 추가
-            guard imageView != backButton.imageView, imageView != translucentView.subviews.first(where: { $0 is UIImageView }) else { continue }
-            
-            let speed = CGFloat.random(in: 0.1...0.4) // 속도 랜덤하게 설정
-            let vector = CGVector(dx: speed * (Bool.random() ? 1 : -1), dy: speed * (Bool.random() ? 1 : -1))
-            floatingImages.append((imageView, vector))
-        }
-    }
-    
-    // 애니메이션 시작하는 메서드
-    private func startFloatingAnimation() {
-        let displayLink = CADisplayLink(target: self, selector: #selector(step))
-        displayLink.add(to: .main, forMode: .default)
     }
     
     
@@ -222,12 +205,108 @@ class PieceShakeViewController: BaseViewController, UIConfigurable {
             }
         }
     }
-  
+    
+    
+    private func showToastMessage(_ message: String, withDuration: Double, delay: Double) {
+        let toastLabel = UILabel(frame: CGRect(x: self.view.center.x - 100, y: self.view.center.y, width: 200, height: 36))
+        toastLabel.setUpLabel(title: message, podaFont: .caption)
+        toastLabel.textColor = Palette.podaWhite.getColor()
+        toastLabel.textAlignment = .center
+        toastLabel.backgroundColor = Palette.podaBlack.getColor().withAlphaComponent(0.7)
+        toastLabel.layer.cornerRadius = 7.0
+        toastLabel.clipsToBounds = true
+        
+        view.addSubview(toastLabel)
+        
+        UIView.animate(withDuration: 1.0, delay: 1.0, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: {(isCompleted) in
+            toastLabel.removeFromSuperview()
+        })
+    }
+    
+    
+    private func hideTranslucentView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapTranslucentView))
+        translucentView.addGestureRecognizer(tapGesture)
+    }
+    
+    
+    // 이미지를 랜덤하게 표시하는 메서드
+    private func displayRandomImages() {
+        guard let pieceList = pieceList, pieceList.count >= 6 else { return }
+        
+        let imageViewSize = CGSize(width: 300, height: 300) // 이미지 뷰의 크기
+        var usedIndexes = Set<Int>() // 사용된 인덱스를 추적하기 위한 집합
+        
+        while usedIndexes.count < 6 {
+            let randomPieceIndex = Int(arc4random_uniform(UInt32(pieceList.count)))
+            
+            // 이미 사용된 인덱스인 경우 루프의 다음 반복으로 이동
+            if usedIndexes.contains(randomPieceIndex) {
+                continue
+            }
+            
+            // 새 인덱스를 usedIndexes 집합에 추가
+            usedIndexes.insert(randomPieceIndex)
+            
+            // 랜덤하게 선택된 ImageMemory 객체로부터 이미지를 불러옴
+            let pieceInfo = pieceList[randomPieceIndex]
+            let image = getPieceImage(with: pieceInfo)
+            
+            // UIImageView 생성 및 초기 설정
+            let imageView = UIImageView(image: image).then {
+                $0.contentMode = .scaleAspectFit // 이미지의 비율을 유지하면서 뷰에 맞춤
+                $0.isUserInteractionEnabled = true // 사용자 상호작용 활성화
+            }
+            
+            view.addSubview(imageView)
+            imageView.snp.makeConstraints { make in
+                let maxX = view.bounds.width - imageViewSize.width
+                let maxY = view.bounds.height - imageViewSize.height
+                
+                let randomX = CGFloat(arc4random_uniform(UInt32(maxX)))
+                let randomY = CGFloat(arc4random_uniform(UInt32(maxY)))
+                make.left.equalTo(view.snp.left).offset(randomX)
+                make.top.equalTo(view.snp.top).offset(randomY)
+                make.width.height.equalTo(imageViewSize)
+            }
+            
+            // UIPanGestureRecognizer 추가
+            let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+            imageView.addGestureRecognizer(panGesture)
+            
+            // 랜덤한 각도를 계산하여 이미지 뷰에 적용
+            let randomAngle = CGFloat.random(in: -40...40) * .pi / 180
+            imageView.transform = CGAffineTransform(rotationAngle: randomAngle)
+        }
+    }
+    
+    
+    // 이미지 뷰를 초기화하고 움직임 벡터를 설정하는 메서드
+    private func setupFloatingImages() {
+        for imageView in self.view.subviews.compactMap({ $0 as? UIImageView }) {
+            // backButton과 translucentView를 제외하고 floatingImages 배열에 추가
+            guard imageView != backButton.imageView, imageView != translucentView.subviews.first(where: { $0 is UIImageView }) else { continue }
+            
+            let speed = CGFloat.random(in: 0.1...0.4) // 속도 랜덤하게 설정
+            let vector = CGVector(dx: speed * (Bool.random() ? 1 : -1), dy: speed * (Bool.random() ? 1 : -1))
+            floatingImages.append((imageView, vector))
+        }
+    }
+    
+    
+    // 애니메이션 시작하는 메서드
+    private func startFloatingAnimation() {
+        let displayLink = CADisplayLink(target: self, selector: #selector(step))
+        displayLink.add(to: .main, forMode: .default)
+    }
+    
     
     // ImageMemory 객체로부터 UIImage를 가져오는 메서드
-    func getPieceImage(with imageMemory: ImageMemory) -> UIImage {
+    private func getPieceImage(with pieceInfo: RealmPieceData) -> UIImage {
         // 파일 이름과 문서 디렉토리 경로를 확인하여 이미지 데이터를 로드
-        guard let fileName = imageMemory.imagePath,
+        guard let fileName = pieceInfo.imagePath,
               let documentDirectory = RealmManager.shared.getDocumentDirectory() else {
             return UIImage() // 조건에 맞지 않는 경우 빈 UIImage 반환
         }

@@ -72,7 +72,7 @@ extension UIViewController {
         
         DispatchQueue.main.async {
             self.dismiss(animated: true) {
-                let loginViewController = LoginViewController()
+                let loginViewController = LoginViewController(viewModel: LoginViewModel())
                 let navigationController = BaseNavigationController(rootViewController: loginViewController)
                 if let sceneDelegate = self.view.window?.windowScene?.delegate as? SceneDelegate {
                     UIView.transition(with: sceneDelegate.window!, duration: 0.5, options: .transitionCrossDissolve, animations: {
@@ -84,7 +84,7 @@ extension UIViewController {
         }
     }
     
-    private func makeAnimation(animationType: AnimationType, for textField: UITextField) {
+    func makeAnimation(animationType: AnimationType, for textField: UITextField) {
         switch animationType {
         case .shake:
             let shakeAnimation = CABasicAnimation(keyPath: "position")

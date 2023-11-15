@@ -87,7 +87,7 @@ enum FireStorageImageError: Equatable {
     }
 }
 
-enum FireAuthError: Equatable {
+enum FireAuthError: Equatable, Error {
     case unknown
     case error(Int, String)
     case unavailableUUID

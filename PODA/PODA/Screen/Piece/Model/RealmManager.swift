@@ -7,12 +7,15 @@
 
 import RealmSwift
 import UIKit
+import FirebaseAuth
 
 class RealmManager {
-    static let shared = RealmManager()
+    static let shared = RealmManager(fireAuthManager: FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator())))
     
-    private init() {
-        
+    private let fireAuthManager: FireAuthManager
+    
+    private init(fireAuthManager: FireAuthManager) {
+        self.fireAuthManager = fireAuthManager
     }
     
     lazy var realm: Realm = {
@@ -46,15 +49,20 @@ class RealmManager {
     }
     
     // 이미지를 Document 디렉토리에 저장하고, 그 경로를 Realm에 저장하는 함수
-    func saveImageMemory(image: UIImage?, memoryDate: Date?) {
+    func savePieceData(image: UIImage?, pieceDate: Date?) {
         guard let imageData = image?.pngData(),
               let documentDirectory = getDocumentDirectory() else {
             print("이미지 또는 Document 디렉토리를 가져오는데 실패했습니다.")
             return
         }
         
-        guard let selectedDate = memoryDate else {
+        guard let selectedDate = pieceDate else {
             print("경고: 날짜 변환 실패")
+            return
+        }
+        
+        guard let userId = fireAuthManager.getCurrentUserId() else {
+            print("사용자 ID를 가져오는 데 실패했습니다.")
             return
         }
         
@@ -63,14 +71,16 @@ class RealmManager {
         
         do {
             try imageData.write(to: filePath)
-            let imageMemory = ImageMemory()
-            imageMemory.imagePath = fileName
-            imageMemory.memoryDate = selectedDate
-            imageMemory.createDate = Date()
+            let realmPieceData = RealmPieceData()
+            realmPieceData.id = UUID()
+            realmPieceData.userId = userId
+            realmPieceData.imagePath = fileName
+            realmPieceData.pieceDate = selectedDate
+            realmPieceData.createDate = Date()
             
             try realm.write {
-                realm.add(imageMemory)
-                print("저장 성공: \(imageMemory)")
+                realm.add(realmPieceData)
+                print("저장 성공: \(realmPieceData)")
             }
         } catch {
             print("이미지를 저장하거나 Realm에 데이터를 저장하는 데 문제가 발생: \(error.localizedDescription)")
@@ -78,15 +88,20 @@ class RealmManager {
     }
     
     // Realm 데이터 로드 함수
-    func loadImageMemories() -> Results<ImageMemory> {
-        return realm.objects(ImageMemory.self)
+    func loadPieceData() -> Results<RealmPieceData> {
+        guard let userId = fireAuthManager.getCurrentUserId() else {
+            print("사용자 ID를 가져오는 데 실패했습니다.")
+            return realm.objects(RealmPieceData.self)
+        }
+        
+        return realm.objects(RealmPieceData.self).filter("userId == %@", userId)
     }
     
     // Realm 데이터 삭제 함수
-    func deleteImageMemory(_ imageMemory: ImageMemory) {
+    func deletePieceData(_ pieceInfo: RealmPieceData) {
         do {
             try realm.write {
-                realm.delete(imageMemory)
+                realm.delete(pieceInfo)
                 print("Realm에서 이미지 메모리 삭제 성공")
             }
         } catch {
@@ -94,14 +109,33 @@ class RealmManager {
         }
     }
     
-    func updatePieceDate(_ imageMemory: ImageMemory, _ date: Date) {
+    func updatePieceDate(_ pieceInfo: RealmPieceData, _ date: Date) {
         do {
             try realm.write {
-                imageMemory.memoryDate = date
+                pieceInfo.pieceDate = date
                 print("Realm에서 날짜 업데이트 성공")
             }
         } catch {
             print("Realm에서 날짜 업데이트 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    // userId에 저장된 로컬 데이터 삭제 함수
+    func deleteLocalUserData() {
+        guard let userId = fireAuthManager.getCurrentUserId() else {
+            print("로컬 데이터를 삭제 중 사용자 ID를 가져오는 데 실패")
+            return
+        }
+        
+        let objectsToDelete = realm.objects(RealmPieceData.self).filter("userId == %@", userId)
+        
+        do {
+            try realm.write {
+                realm.delete(objectsToDelete)
+                print("유저 로컬 데이터 삭제 성공")
+            }
+        } catch {
+            print("유저 로컬 데이터 삭제 실패: \(error.localizedDescription)")
         }
     }
 }

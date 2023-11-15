@@ -10,12 +10,15 @@ import UIKit
 class BaseNavigationController: UINavigationController {
     var rootViewController: UIViewController?
     
+    override var childForStatusBarStyle: UIViewController? {
+            return topViewController 
+        }
+    
     override init(rootViewController: UIViewController) {
         super.init(rootViewController: rootViewController)
         self.rootViewController = rootViewController
         self.navigationBar.isHidden = true
         //configTheme()
-        
     }
     
     required init?(coder aDecoder: NSCoder) {

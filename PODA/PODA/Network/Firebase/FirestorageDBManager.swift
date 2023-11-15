@@ -12,7 +12,7 @@ import FirebaseStorage
 class FirestorageDBManager {
     private let db = Firestore.firestore()
     
-    func createDiary(deviceName: String, pageDataList: [PageInfo], title: String, description: String, frameRate: Ratio, completion: @escaping (FireStorageDBError) -> Void) {
+    func createDiary(deviceName: String, pageDataList: [PageInfo]?, title: String, description: String, frameRate: Ratio, completion: @escaping (FireStorageDBError) -> Void) {
         guard let currentUserUID = Auth.auth().currentUser?.uid else {
             Logger.writeLog(.error, message: "[\(FireStorageDBError.unavailableUUID.code)] : \(FireStorageDBError.unavailableUUID.description)")
             completion(.error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
@@ -26,10 +26,10 @@ class FirestorageDBManager {
             updateTime: "",
             diaryTitle: title,
             description: description,
-            frameRate: frameRate.toString(),
-            diaryDetail: DiaryDetail(
-                pageInfo : pageDataList
-            )
+            frameRate: frameRate.toString()
+//            diaryDetail: DiaryDetail(
+//                pageInfo : pageDataList
+//            )
         )
         
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
@@ -420,6 +420,36 @@ class FirestorageDBManager {
         }
         
     }
+    
+    func getSMTPInfo(completion: @escaping (SMTPInfo?, FireStorageDBError) -> Void) {
+        guard let _ = Auth.auth().currentUser?.uid else {
+            let error = FireStorageDBError.unavailableUUID
+            Logger.writeLog(.error, message: "[\(error.code)] : \(error.description)")
+            completion(nil, .error(FireStorageDBError.unavailableUUID.code, FireStorageDBError.unavailableUUID.description))
+            return
+        }
+        
+        let collectionRef = db.collection("SMTP")
+        let documentRef = collectionRef.document("Naver")
+        
+        documentRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                if let smtpDataString = document["smtpInfo"] as? String {
+                    if let smtpInfo = SMTPInfo.fromJson(jsonString: smtpDataString, model: SMTPInfo.self) {
+                        completion(SMTPInfo(smtpAddress: smtpInfo.smtpAddress, email: smtpInfo.email, password: smtpInfo.password), .none)
+                        
+                    } else {
+                        completion(nil, .error(FireStorageDBError.decodingError.code, FireStorageDBError.decodingError.description))
+                        Logger.writeLog(.error, message: FireStorageDBError.decodingError.description)
+                    }
+                }
+            } else {
+                Logger.writeLog(.error, message: FireStorageDBError.documentEmpty.description)
+                completion(nil, .error(FireStorageDBError.documentEmpty.code, FireStorageDBError.documentEmpty.description))
+            }
+        }
+    }
+    
     func isDiaryPath(refDocPath: String, accountPath: String) -> Bool {
         return refDocPath == accountPath ? false : true
     }
