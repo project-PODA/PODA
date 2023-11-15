@@ -110,7 +110,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         $0.numberOfLines = 2
         $0.textAlignment = .center
         $0.backgroundColor = Palette.podaGray6.getColor()
-        $0.layer.cornerRadius = 5
+        $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
     }
     
@@ -153,7 +153,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         $0.numberOfLines = 2
         $0.textAlignment = .center
         $0.backgroundColor = Palette.podaGray6.getColor()
-        $0.layer.cornerRadius = 5
+        $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
     }
     
@@ -489,17 +489,16 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         }
     }
     
-    // FIXME: - Bind 함수로 정리하기
-    func goToPieceSaveDeleteVC(_ index: Int, _ sortedList: [PieceData]) {
+    func goToPieceSaveDeleteVC(_ index: Int, _ pieceList: [PieceData]) {
         // MVC 에서는 saveDeleteVC.indexPath = index 이렇게 직접 전달하지만, MVVM 에서는 직접 값을 전달하는게 아니라 다음 뷰가 필요한 뷰모델을 전달해줘야함
         let saveDeleteViewModel = SaveDeleteViewModel()
         let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
         saveDeleteViewModel.realmPieceList = viewModel.realmPieceList
-        saveDeleteViewModel.pieceList = viewModel.sortedList
+        saveDeleteViewModel.pieceList = pieceList
         saveDeleteViewModel.pieceIndex = index
         saveDeleteViewModel.isDiaryImage = false
-        saveDeleteViewController.dateLabel.setUpLabel(title: viewModel.sortedList[index].pieceDate, podaFont: .body1)
-        saveDeleteViewController.imageView.image = viewModel.sortedList[index].image
+        saveDeleteViewController.dateLabel.setUpLabel(title: pieceList[index].pieceDate, podaFont: .body1)
+        saveDeleteViewController.imageView.image = pieceList[index].image
         saveDeleteViewController.addButton.isHidden = true
         navigationController?.pushViewController(saveDeleteViewController, animated: true)
         // present 는 viewController만 가지고 있음. 그래서 뷰컨에서는 self.present 이런식으로 쓸 수 있지만 뷰모델에서는 사용 불가 그래서 메서드 만들때 fromCurrentVC로 뷰컨을 받은 다음 fromCurrentVC.present 이런식으로 사용해야함
@@ -529,7 +528,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     }
     
     @objc func didTapCapsuleImage() {
-        goToPieceSaveDeleteVC(self.viewModel.randomPieceIndex ?? 0, self.viewModel.pieceList)
+        goToPieceSaveDeleteVC(viewModel.randomPieceIndex ?? 0, viewModel.pieceList)
     }
     
     @objc func didTapAddDiaryButton() {
@@ -552,9 +551,8 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         navigationController?.pushViewController(moreDiaryViewController, animated: true)  // >> MVVM에서 뷰 전환을 뷰모델이 해야한다 뷰컨이 해야한다 정해져있는거 아님. 우리는 유경님 말대로 뷰컨에서 하기로 함
     }
     
-    // FIXME: - Bind 함수로 정리하기
     @objc func didTapAddPieceButton() {
-        //let pieceViewModel = PieceViewModel()
+        //let pieceViewModel = PieceViewModel() (MVVM 패턴 적용 후)
         let pieceViewController = PieceViewController() //(viewModel: pieceViewModel)
         pieceViewController.isComeFromSaveDeleteVC = false
         pieceViewController.imageView.isUserInteractionEnabled = true
@@ -582,14 +580,13 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
 
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // FIXME: - 이 부분을 어떻게 MVVM으로 할까
         if collectionView == diaryCollectionView {
             let detailViewModel = DetailViewModel()
             let detailViewController = DetailViewController(viewModel: detailViewModel)
             detailViewModel.diaryData = viewModel.getDiaryData(indexPath.row)
             navigationController?.pushViewController(detailViewController, animated: true)
         } else {
-            goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedList)
+            goToPieceSaveDeleteVC(indexPath.row, viewModel.sortedList)
         }
     }
     
@@ -611,7 +608,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.pieceImageView.image = self.viewModel.sortedList[indexPath.item].image
+            cell.pieceImageView.image = viewModel.sortedList[indexPath.item].image
             return cell
         }
     }

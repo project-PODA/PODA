@@ -11,17 +11,22 @@ import SnapKit
 class BaseTabbarController: UITabBarController {
     
     private let customTabbarView = UIView()
+    private let qrContainerView = UIView()
     private let homeContainerView = UIView()
     private let profileContainerView = UIView()
+    private let qrImageView = UIImageView()
     private let homeImageView = UIImageView()
     private let profileImageView = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let homeVM = HomeViewModel(firebaseDBManager: FirestorageDBManager(), firebaseImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-        let homeVC = HomeViewController(viewModel: homeVM)
-        homeVC.bind(to: homeVC.viewModel)
+        let qrViewController = QRViewController()
+        qrViewController.backButton.isHidden = true
+        
+        let homeViewModel = HomeViewModel(firebaseDBManager: FirestorageDBManager(), firebaseImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
+        let homeViewController = HomeViewController(viewModel: homeViewModel)
+        homeViewController.bind(to: homeViewController.viewModel)
         
         
 //        let viewModel = ProfileViewModel(fireDBManager: FirestorageDBManager(), fireImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
@@ -31,13 +36,18 @@ class BaseTabbarController: UITabBarController {
         
         let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
         
-        let infoVC = InfoViewController(viewModel: InfoViewModel(fireAuthManager: fireAuthManager))
-        
-        let infoNavVC = BaseNavigationController(rootViewController: infoVC)
+        let infoViewController = InfoViewController(viewModel: InfoViewModel(fireAuthManager: fireAuthManager))
+    
+        let infoNavViewController = BaseNavigationController(rootViewController: infoViewController)
 
-        infoVC.bind(to: infoVC.viewModel)
+        infoViewController.bind(to: infoViewController.viewModel)
         
-        viewControllers = [homeVC, infoNavVC]
+        //viewControllers = [HomeMenuViewController(), homeViewController, infoNavViewController]
+        
+        viewControllers = [qrViewController, homeViewController, infoNavViewController]
+        
+        // HomeViewController를 초기 실행될 앱으로 지정
+        selectedIndex = 1
         
         setupCustomTabbar()
         updateTabbarImages()
@@ -45,10 +55,16 @@ class BaseTabbarController: UITabBarController {
     
     private func updateTabbarImages() {
         switch self.selectedIndex {
-        case 0: // 홈
+        case 0: // QR
+            qrImageView.image = UIImage(named: "icon_qrCode.selected")
+            homeImageView.image = UIImage(named: "icon_home")
+            profileImageView.image = UIImage(named: "icon_person")
+        case 1: // 홈
+            qrImageView.image = UIImage(named: "icon_qrCode")
             homeImageView.image = UIImage(named: "icon_home.selected")
             profileImageView.image = UIImage(named: "icon_person")
-        case 1: // 마이페이지
+        case 2: // 마이페이지
+            qrImageView.image = UIImage(named: "icon_qrCode")
             homeImageView.image = UIImage(named: "icon_home")
             profileImageView.image = UIImage(named: "icon_person.selected")
         default:
@@ -62,32 +78,43 @@ class BaseTabbarController: UITabBarController {
         customTabbarView.layer.cornerRadius = 40
         view.addSubview(customTabbarView)
         
-        [homeContainerView, profileContainerView].forEach {
+        [qrContainerView, homeContainerView, profileContainerView].forEach {
             $0.layer.cornerRadius = 35
             $0.isUserInteractionEnabled = true
             customTabbarView.addSubview($0)
         }
         
+        qrContainerView.addSubview(qrImageView)
         homeContainerView.addSubview(homeImageView)
         profileContainerView.addSubview(profileImageView)
         
         customTabbarView.snp.makeConstraints {
             $0.height.equalTo(80)
-            $0.width.equalTo(200)
+            $0.width.equalTo(280)
             $0.bottom.equalTo(view.snp.bottom).offset(-20)
             $0.centerX.equalToSuperview()
         }
         
-        homeContainerView.snp.makeConstraints {
+        qrContainerView.snp.makeConstraints {
             $0.height.width.equalTo(60)
             $0.left.equalTo(customTabbarView.snp.left).offset(7.5)
             $0.centerY.equalToSuperview()
+        }
+        
+        homeContainerView.snp.makeConstraints {
+            $0.height.width.equalTo(60)
+            $0.center.equalToSuperview()
         }
         
         profileContainerView.snp.makeConstraints {
             $0.height.width.equalTo(60)
             $0.right.equalTo(customTabbarView.snp.right).offset(-7.5)
             $0.centerY.equalToSuperview()
+        }
+        
+        qrImageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.width.height.equalTo(60)
         }
         
         homeImageView.snp.makeConstraints {
@@ -99,6 +126,9 @@ class BaseTabbarController: UITabBarController {
             $0.center.equalToSuperview()
             $0.width.height.equalTo(60)
         }
+        
+        let qrTapGesture = UITapGestureRecognizer(target: self, action: #selector(qrTapped))
+        qrContainerView.addGestureRecognizer(qrTapGesture)
         
         let homeTapGesture = UITapGestureRecognizer(target: self, action: #selector(homeTapped))
         homeContainerView.addGestureRecognizer(homeTapGesture)
@@ -117,14 +147,32 @@ class BaseTabbarController: UITabBarController {
         }
     }
     
+    // FIXME: - 사용안할거면 지우기
+    private func setupModalQRViewController() {
+        let qrViewController = QRViewController()
+
+        // QRViewController를 내비게이션 컨트롤러로 감싸기
+        let qrNavigationController = BaseNavigationController(rootViewController: qrViewController)
+        qrNavigationController.modalPresentationStyle = .overFullScreen
+
+        // 모달로 표시
+        present(qrNavigationController, animated: true, completion: nil)
+    }
+    
+    @objc private func qrTapped() {
+        self.selectedIndex = 0
+        updateTabbarImages()
+        
+        //setupModalQRViewController()
+    }
     
     @objc private func homeTapped() {
-        self.selectedIndex = 0
+        self.selectedIndex = 1
         updateTabbarImages()
     }
     
     @objc private func profileTapped() {
-        self.selectedIndex = 1
+        self.selectedIndex = 2
         updateTabbarImages()
     }
 }

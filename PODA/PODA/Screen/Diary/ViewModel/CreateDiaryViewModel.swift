@@ -81,10 +81,13 @@ class CreateDiaryViewModel {
         }
     }
     
-    // 제목과 내용을 모두 입력했는지 확인하는 메소드
-    func isFilledAll(title: String?, content: String) -> Bool {
+    func isTitleEmpty(_ title: String?) -> Bool {
         guard let title = title else { return false }
-        return title.isEmpty || content == "내용을 입력하세요."
+        
+        // 입력된 텍스트가 공백으로만 이루어져 있는지 확인
+        let isWhiteSpace = title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        
+        return isWhiteSpace
     }
     
     func handleSaveButton(_ completion: @escaping (() -> ())) {
