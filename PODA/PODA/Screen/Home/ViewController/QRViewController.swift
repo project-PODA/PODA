@@ -15,6 +15,11 @@ class QRViewController: BaseViewController {
     private var videoPreviewLayer = AVCaptureVideoPreviewLayer()
     private var captureSession = AVCaptureSession()
     private var cameraDevice: AVCaptureDevice?
+    // output = AVCaptureMetadataOutput() > 이렇게 하면, 탭바가 실행되면서 QRViewController도 같이 실행되는데 이 때 AVCaptureMetadataOutput()가 생성되면서 아래 오류가 생김
+    // Thread 1: "*** -[AVCaptureMetadataOutput setMetadataObjectTypes:] Unsupported type found (org.iso.QRCode) - use -availableMetadataObjectTypes"
+    // 따라서 생성하지 말고 아래처럼 타입 선언까지만 해주기
+    private var output: AVCaptureMetadataOutput?
+
     
     // FIXME: - QR 테두리 cornerRadius 줘 말아.. 어차피 링크로 엄청 빠르게 연결돼서 안 보이긴 함
     private var qrBorderView = UIView().then {
@@ -33,12 +38,30 @@ class QRViewController: BaseViewController {
         $0.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
     }
     
+    private var infoLabel = UILabel().then {
+        $0.setUpLabel(title: "QR코드를 스캔해주세요", podaFont: .subhead3)
+        $0.textColor = Palette.podaWhite.getColor()
+        $0.addShadowToLabel()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initCameraDevice()
         initCameraInputData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         initCameraOutputData()
         displayPreview()
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.captureSession.startRunning()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        DispatchQueue.global(qos: .userInitiated).async {
+            self.captureSession.stopRunning()
+        }
     }
     
     private func initCameraDevice() {
@@ -62,7 +85,9 @@ class QRViewController: BaseViewController {
     }
     
     private func initCameraOutputData() {
-        let output = AVCaptureMetadataOutput()
+        output = AVCaptureMetadataOutput()
+        
+        guard let output = output else { return }
         captureSession.addOutput(output)
         
         output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
@@ -76,10 +101,10 @@ class QRViewController: BaseViewController {
             self.videoPreviewLayer.frame = self.view.layer.bounds
             self.view.layer.addSublayer(self.videoPreviewLayer)
             
-            [self.backButton, self.qrBorderView].forEach {
+            [self.backButton, self.infoLabel, self.qrBorderView].forEach {
                 self.view.addSubview($0)
             }
-            [self.backButton, self.qrBorderView].forEach {
+            [self.backButton, self.infoLabel, self.qrBorderView].forEach {
                 self.view.bringSubviewToFront($0)
             }
             
@@ -88,15 +113,15 @@ class QRViewController: BaseViewController {
                 $0.left.equalToSuperview().offset(20)
                 $0.width.height.equalTo(30)
             }
-        }
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.captureSession.startRunning()
+            
+            self.infoLabel.snp.makeConstraints {
+                $0.top.equalTo(self.view.safeAreaLayoutGuide).offset(6)
+                $0.centerX.equalToSuperview()
+            }
         }
     }
     
     @objc func didTapBackButton() {
-        print("백버튼 클릭")
         dismiss(animated: true)
     }
 }

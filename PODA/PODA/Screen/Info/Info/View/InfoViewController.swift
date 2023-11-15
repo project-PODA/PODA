@@ -11,7 +11,7 @@ import MessageUI
 import Then
 
 
-class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable {
+class InfoViewController: BaseViewController, UIConfigurable {
     
     
     var viewModel: InfoViewModel!
@@ -57,19 +57,15 @@ class InfoViewController: BaseViewController, UIConfigurable, ViewModelBindable 
             baseTabbar.setCustomTabbarHidden(false)
         }
     }
-//    
+    
+//
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)
 //        if let baseTabbar = self.tabBarController as? BaseTabbarController {
 //            baseTabbar.setCustomTabbarHidden(false)
 //        }
 //    }
-    
-    func bindViewModel() {
-        
-    }
-    
-    
+
     func configUI() {
         
         let backButton = UIBarButtonItem(image: UIImage(named: "icon_back")?.withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(didTapBackButton))

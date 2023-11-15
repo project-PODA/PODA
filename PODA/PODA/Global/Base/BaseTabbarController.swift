@@ -28,21 +28,14 @@ class BaseTabbarController: UITabBarController {
         let homeViewController = HomeViewController(viewModel: homeViewModel)
         homeViewController.bind(to: homeViewController.viewModel)
         
-        
 //        let viewModel = ProfileViewModel(fireDBManager: FirestorageDBManager(), fireImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
 //        let profileViewController = ProfileViewController(viewModel: viewModel)
 //        let profileNavVC = BaseNavigationController(rootViewController: profileViewController)
 //        profileViewController.bind(to: profileViewController.viewModel)
         
         let fireAuthManager = FireAuthManager(firestorageDBManager: FirestorageDBManager(), firestorageImageManager: FireStorageImageManager(imageManipulator: ImageManipulator()))
-        
         let infoViewController = InfoViewController(viewModel: InfoViewModel(fireAuthManager: fireAuthManager))
-    
         let infoNavViewController = BaseNavigationController(rootViewController: infoViewController)
-
-        infoViewController.bind(to: infoViewController.viewModel)
-        
-        //viewControllers = [HomeMenuViewController(), homeViewController, infoNavViewController]
         
         viewControllers = [qrViewController, homeViewController, infoNavViewController]
         
@@ -147,23 +140,9 @@ class BaseTabbarController: UITabBarController {
         }
     }
     
-    // FIXME: - 사용안할거면 지우기
-    private func setupModalQRViewController() {
-        let qrViewController = QRViewController()
-
-        // QRViewController를 내비게이션 컨트롤러로 감싸기
-        let qrNavigationController = BaseNavigationController(rootViewController: qrViewController)
-        qrNavigationController.modalPresentationStyle = .overFullScreen
-
-        // 모달로 표시
-        present(qrNavigationController, animated: true, completion: nil)
-    }
-    
     @objc private func qrTapped() {
         self.selectedIndex = 0
         updateTabbarImages()
-        
-        //setupModalQRViewController()
     }
     
     @objc private func homeTapped() {
