@@ -110,7 +110,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         $0.numberOfLines = 2
         $0.textAlignment = .center
         $0.backgroundColor = Palette.podaGray6.getColor()
-        $0.layer.cornerRadius = 5
+        $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
     }
     
@@ -153,22 +153,22 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         $0.numberOfLines = 2
         $0.textAlignment = .center
         $0.backgroundColor = Palette.podaGray6.getColor()
-        $0.layer.cornerRadius = 5
+        $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
     }
     
-    private lazy var pieceDateOrderButton = UIButton().then {
-        $0.setUpButton(title: "추억날짜순", podaFont: .caption)
+    private lazy var latestPieceButton = UIButton().then {
+        $0.setUpButton(title: "최신순", podaFont: .caption)
         $0.layer.cornerRadius = 14
         $0.layer.borderWidth = 0.5
-        $0.addTarget(self, action: #selector(didTapPieceDateOrderButton), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(didTapLatestPieceButton), for: .touchUpInside)
     }
     
-    private lazy var createDateOrderButton = UIButton().then {
-        $0.setUpButton(title: "등록순", podaFont: .caption)
+    private lazy var oldestPieceButton = UIButton().then {
+        $0.setUpButton(title: "오래된순", podaFont: .caption)
         $0.layer.cornerRadius = 14
         $0.layer.borderWidth = 0.5
-        $0.addTarget(self, action: #selector(didTapCreateDateOrderButton), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(didTapOldestPieceButton), for: .touchUpInside)
     }
     
     private lazy var pieceCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout()).then {
@@ -249,7 +249,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         
         scrollView.addSubview(contentView)
         
-        [timeCapsuleLabel, pieceDateLabel, pieceDateImageView, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, createDateOrderButton, pieceDateOrderButton, pieceCollectionView].forEach {
+        [timeCapsuleLabel, pieceDateLabel, pieceDateImageView, emptyTimeCapsuleLabel, timeCapsuleImageView, diaryMenuStackView, moreDiaryButton, emptyDiaryLabel, diaryCollectionView, pieceMenuStackView, morePieceButton, emptyPieceLabel, oldestPieceButton, latestPieceButton, pieceCollectionView].forEach {
             contentView.addSubview($0)
         }
         
@@ -359,23 +359,23 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
             $0.height.equalTo(180)
         }
         
-        pieceDateOrderButton.snp.makeConstraints {
+        latestPieceButton.snp.makeConstraints {
             $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(12)
             $0.left.equalToSuperview().offset(20)
-            $0.width.equalTo(72)
+            $0.width.equalTo(60)
             $0.height.equalTo(28)
         }
         
-        createDateOrderButton.snp.makeConstraints {
+        oldestPieceButton.snp.makeConstraints {
             $0.top.equalTo(pieceMenuStackView.snp.bottom).offset(12)
-            $0.left.equalTo(pieceDateOrderButton.snp.right).offset(5)
-            $0.width.equalTo(60)
+            $0.left.equalTo(latestPieceButton.snp.right).offset(5)
+            $0.width.equalTo(64)
             $0.height.equalTo(28)
         }
         
         // FIXME: - cell size 정한 후 height 수정하기
         pieceCollectionView.snp.makeConstraints {
-            $0.top.equalTo(createDateOrderButton.snp.bottom).offset(18)
+            $0.top.equalTo(oldestPieceButton.snp.bottom).offset(18)
             $0.left.equalToSuperview().offset(20)
             $0.right.equalToSuperview().offset(-20)
             $0.height.equalTo(180)
@@ -416,7 +416,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         
         if viewModel.pieceEmptyState {
             pieceUI(true)
-            viewModel.isSortedByPieceDate = true
+            viewModel.sortByLatest = true
             contentView.snp.updateConstraints {
                 $0.height.equalTo(1132)
             }
@@ -426,10 +426,10 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
                 $0.height.equalTo(1152)
             }
             
-            if viewModel.isSortedByPieceDate {
-                viewModel.selectedOrderOptionState?(true)
+            if viewModel.sortByLatest {
+                viewModel.latestPieceButtonSelectedState?(true)
             } else {
-                viewModel.selectedOrderOptionState?(false)
+                viewModel.latestPieceButtonSelectedState?(false)
             }
             
             let randomPieceIndex = self.viewModel.randomPieceIndex
@@ -450,8 +450,8 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         pieceDateLabel.isHidden = isHidden
         emptyPieceLabel.isHidden = !isHidden
         pieceCollectionView.isHidden = isHidden
-        createDateOrderButton.isHidden = isHidden
-        pieceDateOrderButton.isHidden = isHidden
+        oldestPieceButton.isHidden = isHidden
+        latestPieceButton.isHidden = isHidden
     }
     
     func bindViewModel() {
@@ -465,59 +465,40 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
             }
         }
         
-//        viewModel.diaryEmptyState = { [weak self] isDiaryEmpty in
-//            guard let self else { return }
-//            DispatchQueue.main.async {
-//                if isDiaryEmpty {
-//                    //self.diaryCountLabel.setUpLabel(title: "0권", podaFont: .subhead4)
-//                    self.emptyDiaryLabel.isHidden = false
-//                    self.diaryCollectionView.isHidden = true
-//                } else {
-//                    //let diaryCount = self.viewModel.diaryCountInt
-//                    //self.diaryCountLabel.setUpLabel(title: "\(diaryCount)권", podaFont: .subhead4)
-//                    self.emptyDiaryLabel.isHidden = true
-//                    self.diaryCollectionView.isHidden = false
-//                    self.diaryCollectionView.reloadData()
-//                }
-//                self.loadingIndicator.stopAnimating()
-//            }
-//        }
-        
-        viewModel.selectedOrderOptionState = { [weak self] isPieceDateOrderButtonOn in
+        viewModel.latestPieceButtonSelectedState = { [weak self] isLatestPieceButtonOn in
                 guard let self else { return }
                 DispatchQueue.main.async {
-                if isPieceDateOrderButtonOn {
-                    self.createDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-                    self.createDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-                    self.createDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
-                    self.pieceDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-                    self.pieceDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-                    self.pieceDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                if isLatestPieceButtonOn {
+                    self.oldestPieceButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.oldestPieceButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.oldestPieceButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.latestPieceButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.latestPieceButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.latestPieceButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
                     self.pieceCollectionView.reloadData()
                 } else {
-                    self.createDateOrderButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
-                    self.createDateOrderButton.backgroundColor = Palette.podaWhite.getColor()
-                    self.createDateOrderButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
-                    self.pieceDateOrderButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
-                    self.pieceDateOrderButton.backgroundColor = Palette.podaBlack.getColor()
-                    self.pieceDateOrderButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
+                    self.oldestPieceButton.setTitleColor(Palette.podaBlack.getColor(), for: .normal)
+                    self.oldestPieceButton.backgroundColor = Palette.podaWhite.getColor()
+                    self.oldestPieceButton.layer.borderColor = Palette.podaWhite.getColor().cgColor
+                    self.latestPieceButton.setTitleColor(Palette.podaWhite.getColor(), for: .normal)
+                    self.latestPieceButton.backgroundColor = Palette.podaBlack.getColor()
+                    self.latestPieceButton.layer.borderColor = Palette.podaGray4.getColor().cgColor
                     self.pieceCollectionView.reloadData()
                 }
             }
         }
     }
     
-    // FIXME: - Bind 함수로 정리하기
-    func goToPieceSaveDeleteVC(_ index: Int, _ sortedList: [PieceData]) {
+    func goToPieceSaveDeleteVC(_ index: Int, _ pieceList: [PieceData]) {
         // MVC 에서는 saveDeleteVC.indexPath = index 이렇게 직접 전달하지만, MVVM 에서는 직접 값을 전달하는게 아니라 다음 뷰가 필요한 뷰모델을 전달해줘야함
         let saveDeleteViewModel = SaveDeleteViewModel()
         let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
         saveDeleteViewModel.realmPieceList = viewModel.realmPieceList
-        saveDeleteViewModel.pieceList = viewModel.sortedList
+        saveDeleteViewModel.pieceList = pieceList
         saveDeleteViewModel.pieceIndex = index
         saveDeleteViewModel.isDiaryImage = false
-        saveDeleteViewController.dateLabel.setUpLabel(title: viewModel.sortedList[index].pieceDate, podaFont: .body1)
-        saveDeleteViewController.imageView.image = viewModel.sortedList[index].image
+        saveDeleteViewController.dateLabel.setUpLabel(title: pieceList[index].pieceDate, podaFont: .body1)
+        saveDeleteViewController.imageView.image = pieceList[index].image
         saveDeleteViewController.addButton.isHidden = true
         navigationController?.pushViewController(saveDeleteViewController, animated: true)
         // present 는 viewController만 가지고 있음. 그래서 뷰컨에서는 self.present 이런식으로 쓸 수 있지만 뷰모델에서는 사용 불가 그래서 메서드 만들때 fromCurrentVC로 뷰컨을 받은 다음 fromCurrentVC.present 이런식으로 사용해야함
@@ -547,7 +528,7 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
     }
     
     @objc func didTapCapsuleImage() {
-        goToPieceSaveDeleteVC(self.viewModel.randomPieceIndex ?? 0, self.viewModel.pieceList)
+        goToPieceSaveDeleteVC(viewModel.randomPieceIndex ?? 0, viewModel.pieceList)
     }
     
     @objc func didTapAddDiaryButton() {
@@ -570,9 +551,8 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         navigationController?.pushViewController(moreDiaryViewController, animated: true)  // >> MVVM에서 뷰 전환을 뷰모델이 해야한다 뷰컨이 해야한다 정해져있는거 아님. 우리는 유경님 말대로 뷰컨에서 하기로 함
     }
     
-    // FIXME: - Bind 함수로 정리하기
     @objc func didTapAddPieceButton() {
-        //let pieceViewModel = PieceViewModel()
+        //let pieceViewModel = PieceViewModel() (MVVM 패턴 적용 후)
         let pieceViewController = PieceViewController() //(viewModel: pieceViewModel)
         pieceViewController.isComeFromSaveDeleteVC = false
         pieceViewController.imageView.isUserInteractionEnabled = true
@@ -583,31 +563,30 @@ class HomeViewController: BaseViewController, ViewModelBindable, UIConfigurable 
         let morePieceViewModel = MorePieceViewModel()
         let morePieceViewController = MorePieceViewController(viewModel: morePieceViewModel)
         morePieceViewModel.realmPieceList = viewModel.realmPieceList
-        morePieceViewModel.pieceList = viewModel.sortedList
+        morePieceViewModel.pieceList = viewModel.pieceList
         morePieceViewController.bind(to: morePieceViewController.viewModel)
         navigationController?.pushViewController(morePieceViewController, animated: true)
     }
     
-    @objc func didTapPieceDateOrderButton() {
+    @objc func didTapLatestPieceButton() {
         // 뷰 모델한테 탭 됐다고 알려주기
-        viewModel.didTapPieceDateOrderButton()
+        viewModel.didTapLatestPieceButton()
     }
     
-    @objc func didTapCreateDateOrderButton() {
-        viewModel.didTapCreateDateOrderButton()
+    @objc func didTapOldestPieceButton() {
+        viewModel.didTapOldestPieceButton()
     }
 }
 
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // FIXME: - 이 부분을 어떻게 MVVM으로 할까
         if collectionView == diaryCollectionView {
             let detailViewModel = DetailViewModel()
             let detailViewController = DetailViewController(viewModel: detailViewModel)
             detailViewModel.diaryData = viewModel.getDiaryData(indexPath.row)
             navigationController?.pushViewController(detailViewController, animated: true)
         } else {
-            goToPieceSaveDeleteVC(indexPath.row, self.viewModel.sortedList)
+            goToPieceSaveDeleteVC(indexPath.row, viewModel.sortedList)
         }
     }
     
@@ -629,7 +608,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         } else {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PieceCollectionViewCell.identifier, for: indexPath) as? PieceCollectionViewCell else { return UICollectionViewCell() }
             
-            cell.pieceImageView.image = self.viewModel.sortedList[indexPath.item].image
+            cell.pieceImageView.image = viewModel.sortedList[indexPath.item].image
             return cell
         }
     }

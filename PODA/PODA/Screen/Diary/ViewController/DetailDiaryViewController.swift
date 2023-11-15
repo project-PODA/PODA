@@ -146,8 +146,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
         
         contentTextView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(353)
+            $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(166)
         }
         
@@ -164,7 +163,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
     }
     
     @objc private func touchUpSaveButton() {
-        if viewModel.isFilledAll(title: titleTextField.text, content: contentTextView.text) {
+        if viewModel.isTitleEmpty(titleTextField.text) {
             showAlert()
         } else {
             loadingIndicator.startAnimating()
@@ -231,7 +230,7 @@ class DetailDiaryViewController: BaseViewController, UIConfigurable, ViewModelBi
     }
     
     private func showAlert() {
-        let alertController = UIAlertController(title: "알림", message: "제목과 내용을 모두 적어주세요.", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "알림", message: "다이어리 제목을 적어주세요.", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "확인", style: .default)
         
         alertController.addAction(okAction)

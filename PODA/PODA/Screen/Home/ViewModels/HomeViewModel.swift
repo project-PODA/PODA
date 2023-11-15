@@ -49,13 +49,13 @@ class HomeViewModel {
 
     var pieceList: [PieceData] = []
     
-    var isSortedByPieceDate = true
+    var sortByLatest = true
     
     var sortedList: [PieceData] {
-        if isSortedByPieceDate {
+        if sortByLatest {
             return pieceList.sorted(by: { $0.pieceDate > $1.pieceDate } )
         } else {
-            return pieceList.sorted(by: { $0.createDate > $1.createDate } )
+            return pieceList.sorted(by: { $0.pieceDate < $1.pieceDate } )
         }
     }
     
@@ -74,7 +74,7 @@ class HomeViewModel {
         return pieceCount < 6
     }
     
-    var selectedOrderOptionState: ((Bool) -> Void)?
+    var latestPieceButtonSelectedState: ((Bool) -> Void)?
      
     var randomPieceIndex: Int?
     var onLoadingStatus: ((Bool) -> Void)?
@@ -158,19 +158,16 @@ class HomeViewModel {
     }
     
     // MARK: - Helpers for piece
-    // FIXME: - 추억날짜 최신순/오래된순으로 정렬 변경하면 createDateFormatter 삭제하기
     func loadPieceData() {
         realmPieceList = RealmManager.shared.loadPieceData().map { $0 }
-        let pieceDateFormatter = DateFormatter()
-        pieceDateFormatter.dateFormat = "yyyy.MM.dd"
-        let createDateFormatter = DateFormatter()
-        createDateFormatter.dateFormat = "yyyy.MM.dd HH:mm:ss"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy.MM.dd"
         for realmPiece in realmPieceList {
             // FIXME: - 수정
             // pieceList에 추가하려는 id가 없는 경우에만 append > 이렇게 하거나 이 메서드 실행될 때 pieceList를 [] 빈 배열로 초기화 해주기(이렇게 하면 갯수 많아졌을 때 실행될 때마다 모든 piece를 배열에 추가해야하는 단점이 있을 듯)
             if !pieceList.contains(where: { $0.id == realmPiece.id }) {
                 let image = getPieceImage(with: realmPiece)
-                pieceList.append(PieceData(id: realmPiece.id ?? UUID(), image: image, createDate: createDateFormatter.string(from: realmPiece.createDate ?? Date()), pieceDate: pieceDateFormatter.string(from: realmPiece.pieceDate ?? Date())))
+                pieceList.append(PieceData(id: realmPiece.id ?? UUID(), image: image, pieceDate: dateFormatter.string(from: realmPiece.pieceDate ?? Date())))
             }
         }
         randomPieceIndex = pieceList.count != 0 ? Int.random(in: 0..<pieceList.count) : nil
@@ -195,14 +192,14 @@ class HomeViewModel {
         return UIImage()
     }
     
-    func didTapPieceDateOrderButton() {
-        isSortedByPieceDate = true
-        selectedOrderOptionState?(true)
+    func didTapLatestPieceButton() {
+        sortByLatest = true
+        latestPieceButtonSelectedState?(true)
     }
     
-    func didTapCreateDateOrderButton() {
-        isSortedByPieceDate = false
-        selectedOrderOptionState?(false)
+    func didTapOldestPieceButton() {
+        sortByLatest = false
+        latestPieceButtonSelectedState?(false)
     }
     
     func registerNotification() {
