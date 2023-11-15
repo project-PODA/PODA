@@ -19,14 +19,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         if UserDefaultManager.isUserLoggedIn {
-            switchToMainPage()
-        } else {
-            let loginViewController = LoginViewController(viewModel: LoginViewModel())
-            let navigationController = BaseNavigationController(rootViewController: loginViewController)
-            window?.rootViewController = navigationController
+                if UserDefaultManager.hasCompletedOnboarding {
+                    switchToMainPage()
+                } else {
+                    let onboardingVC = OnboardingViewController()
+                    window?.rootViewController = onboardingVC
+                }
+            } else {
+                let loginViewController = LoginViewController(viewModel: LoginViewModel())
+                let navigationController = BaseNavigationController(rootViewController: loginViewController)
+                window?.rootViewController = navigationController
+            }
+            window?.makeKeyAndVisible()
         }
-        window?.makeKeyAndVisible()
-    }
     
     //로그인 뷰 컨트롤러를 스택에서 제거하고, 메인페이지로 전환하기
     func switchToMainPage() {
