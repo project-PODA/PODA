@@ -462,9 +462,9 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
         textView.becomeFirstResponder()
         textView.inputAccessoryView = selectTextColorView
         textView.backgroundColor = .clear
-        textView.font = UIFont.podaFont(.body2)
+        textView.font = UIFont.podaFont(.display1)
         textView.textAlignment = .center
-        textView.textContainer.maximumNumberOfLines = 4
+        textView.textContainer.maximumNumberOfLines = 5
         textView.isScrollEnabled = false
         textView.delegate = self
         textView.isUserInteractionEnabled = true
@@ -547,7 +547,7 @@ extension CreateDiaryViewController: UITextViewDelegate {
         
         currentTextPosition = textView.frame.origin
         
-        textView.frame = CGRect(x: diaryView.frame.width/4, y: diaryView.frame.height/4, width: diaryView.frame.width/2, height: 100)
+        textView.frame = CGRect(x: 0, y: 60, width: diaryView.frame.width, height: diaryView.frame.height)
         
         selectTextColorView.touchedColor = { color in
             textView.tintColor = color
