@@ -17,7 +17,7 @@ class InfoViewModel {
         self.fireAuthManager = fireAuthManager
     }
     
-    let items: [String] = ["버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고"]
+    let items: [String] = ["로그인된 계정", "버전", "개인정보처리방침", "서비스 이용 약관", "공지사항", "기능 추가 요청/오류 신고"]
     
     func getItemsCount() -> Int {
         return items.count
@@ -44,6 +44,9 @@ class InfoViewModel {
         UserDefaultManager.userPassword = ""
     }
     
+    func getLoggedInUserEmail() -> String {
+        return UserDefaultManager.userEmail
+    }
     
     enum SendMailError: Error {
         case appVersionError

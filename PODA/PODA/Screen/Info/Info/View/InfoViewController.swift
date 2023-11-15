@@ -78,7 +78,7 @@ class InfoViewController: BaseViewController, UIConfigurable {
         
         tableView.snp.makeConstraints {
             $0.top.trailing.leading.equalToSuperview()
-            $0.height.equalTo(400)
+            $0.height.equalTo(450)
         }
         
         logoutButton.snp.makeConstraints {
@@ -95,7 +95,7 @@ class InfoViewController: BaseViewController, UIConfigurable {
     private func setupNavigationBar() {
         navigationController?.navigationBar.isHidden = false
         
-        navigationItem.title = "PODA"
+        navigationItem.title = "정보"
         navigationItem.leftBarButtonItem = nil
         
         navigationController?.navigationBar.titleTextAttributes = [
@@ -191,11 +191,17 @@ extension InfoViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "infoCell", for: indexPath) as! InfoCell
         
-        if indexPath.row == 0 {
+        
+        
+        if indexPath.row == 1 {
             if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                 cell.setVersion(version)
             }
-        } else {
+        } else if indexPath.row == 0 {
+                    cell.setEmail(viewModel.getLoggedInUserEmail())
+        }
+        
+        else {
             let itemTitle = viewModel.getItemTitle(indexPath.row)
             cell.setTitle(itemTitle)
         }
@@ -213,23 +219,25 @@ extension InfoViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
-        case 0: // 버전
+        case 0: // 사용자 이메일 정보
             break
-        case 1: // 개인정보처리방침
+        case 1: // 버전
+            break
+        case 2: // 개인정보처리방침
             if let url = URL(string: "https://poda-project.notion.site/7f58cdb40f3348b8b486960f255b051e?pvs=4") {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
-        case 2: // 서비스 이용 약관
+        case 3: // 서비스 이용 약관
             if let url = URL(string: "https://poda-project.notion.site/f6e3b59ad589488c8079f184d11136a4?pvs=4") {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
-        case 3: // 공지사항
+        case 4: // 공지사항
             let noticeVC = NoticeViewController(viewModel: NoticeViewModel(fireDBManager: FirestorageDBManager()))
-            
-            
             self.navigationController?.pushViewController(noticeVC, animated: true)
-        case 4: // 기능 추가 요청/오류 신고
+        case 5: // 기능 추가 요청/오류 신고
             didTapEmailSupportButton()
+            
+            
         default:
             break
         }

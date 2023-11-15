@@ -25,15 +25,16 @@ class HomeViewModel {
     private let firebaseImageManager: FireStorageImageManager
     
     // 핵심 데이터(모델)
-    var diaryList: [DiaryData] = [] {
-        didSet {
-            // diaryDataList 데이터가 담겼을 때 didSet 실행
-            // diaryDataLoaded() > 클로져를 통해서 데이터가 변한 시점을 전달
-            diaryDataLoaded(self.diaryList)
-        }
-    }
-    
-    var diaryDataLoaded: ([DiaryData]) -> Void = { _ in }
+    var diaryList: [DiaryData] = [] 
+//    {
+//        didSet {
+//             diaryDataList 데이터가 담겼을 때 didSet 실행
+//             diaryDataLoaded() > 클로져를 통해서 데이터가 변한 시점을 전달
+//            diaryDataLoaded(self.diaryList)
+//        }
+//    }
+//    
+//    var diaryDataLoaded: ([DiaryData]) -> Void = { _ in }
     
     var diaryEmptyState: Bool {
         return diaryList.isEmpty
@@ -42,6 +43,10 @@ class HomeViewModel {
     var diaryCount: Int {
         return diaryList.count
     }
+    
+    var diaryDataLoaded: (() -> Void)?
+    
+    var loadingIndicatorState: ((Bool) -> Void)?
     
     // MARK: - Properties for piece
     // 핵심 데이터(모델)
@@ -77,7 +82,6 @@ class HomeViewModel {
     var latestPieceButtonSelectedState: ((Bool) -> Void)?
      
     var randomPieceIndex: Int?
-    var onLoadingStatus: ((Bool) -> Void)?
     
     init(firebaseDBManager: FirestorageDBManager, firebaseImageManager: FireStorageImageManager) {
         self.firebaseDBManager = firebaseDBManager
@@ -93,21 +97,24 @@ class HomeViewModel {
     
     // MARK: - Helpers for diary
     func loadDiaryData() {
+        loadingIndicatorState?(true)
+        
         firebaseDBManager.getDiaryDocuments { [weak self] diaryNameList, error in
             guard let self else { return }
             if error == .none {
                 if diaryNameList.count == 1 {
                     // account라는 document 하나는 default로 있으므로 dairyList.count == 1 이면 추가된 다이어리는 0이라는 의미
-                    diaryList = []
+                    DispatchQueue.main.async {
+                        self.loadingIndicatorState?(false)
+                    }
                 } else {
                     for diaryName in diaryNameList {
                         if diaryName != "account" {
                             firebaseDBManager.getDiaryData(diaryNameList: [diaryName]) { diaryInfoList, error in
-                                if error == .none {
-                                    self.getDiaryImage(diaryInfoList)
+                                if error == .none, let diaryInfo = diaryInfoList.first {
+                                    self.getDiaryImage(diaryInfo, diaryNameList.count - 1)
                                 }
                             }
-                            diaryList.sort { $0.createDate > $1.createDate }
                         }
                     }
                 }
@@ -130,21 +137,33 @@ class HomeViewModel {
 //        return list
 //    }
     
-    func getDiaryImage(_ diaryInfoList: [DiaryInfo]) {
-        guard let diaryInfo = diaryInfoList.first else { return }
-        firebaseImageManager.getDiaryImage(dinaryName: diaryInfo.diaryName) { [weak self] error, imageList in
+    func getDiaryImage(_ diaryInfo: DiaryInfo, _ totalDiaryCount: Int) {
+        firebaseImageManager.getDiaryImage(diaryName: diaryInfo.diaryName) { [weak self] error, imageList in
             guard let self = self else { return }
             if error == .none {
                 self.diaryList.append(DiaryData(
-                    pageDataList: diaryInfoList[0].diaryDetail?.pageInfo ?? [],
+                    pageDataList: diaryInfo.diaryDetail?.pageInfo ?? [],
                     diaryName: diaryInfo.diaryName,
                     diaryImageList: imageList,
                     createDate: diaryInfo.createTime,
                     ratio: Ratio(rawValue: diaryInfo.frameRate) ?? .square,
                     description: diaryInfo.description)
                 )
+                // totalDiaryCount는 diaryNameList에서 account라는 document 하나를 뺀 갯수. 즉 유저가 만든 다이어리의 갯수!
+                // diaryList 배열에 모든 다이어리가 하나씩 추가되고 나서 UI 업데이트, 로딩바가 멈추도록 if diaryCount == totalDiaryCount 조건을 걸음
+                // 이 조건이 없는 경우 diaryList 배열에 하나씩 추가될 때마다 UI가 업데이트 되어 1,2,3,4권 이런식으로 바뀌는게 눈에 보이고 로딩바도 첫번째 데이터를 받아오는 순간 멈춤
+                if diaryCount == totalDiaryCount {
+                    DispatchQueue.main.async {
+                        self.diaryDataLoaded?()
+                        self.loadingIndicatorState?(false)
+                    }
+                }
             }
         }
+    }
+    
+    func sortDiaryList() {
+        diaryList.sort { $0.createDate > $1.createDate }
     }
     
     func getDiaryData(_ index: Int) -> DiaryData {
@@ -212,7 +231,6 @@ class HomeViewModel {
     @objc func handleCreateNotification(_ notification: NSNotification) {
         if let diaryData = notification.object as? DiaryData {
             diaryList.append(diaryData)
-            diaryList.sort { $0.createDate > $1.createDate }
         }
     }
     

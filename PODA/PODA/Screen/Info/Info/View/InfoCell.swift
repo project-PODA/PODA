@@ -75,5 +75,12 @@ class InfoCell: UITableViewCell {
         disclosureIcon.isHidden = true
     }
     
+    func setEmail(_ email: String) {
+        titleLabel.text = "로그인된 계정"
+        detailLabel.text = email
+        detailLabel.textColor = Palette.podaBlue.getColor()
+        disclosureIcon.isHidden = true
+    }
+    
 }
 

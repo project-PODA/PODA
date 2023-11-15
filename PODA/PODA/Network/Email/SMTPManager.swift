@@ -9,20 +9,21 @@ import Foundation
 import SwiftSMTP
 class SMTPManager {
     
-    private let hostSMTP = SMTP(hostname: "smtp.naver.com", email: "poda_official@naver.com", password: "podapoda17")
+//    private let hostSMTP = SMTP(hostname: "smtp.naver.com", email: "poda_official@naver.com", password: "podapoda17")
     private let htmlParser : HTMLParser
     
     init(htmpParser : HTMLParser) {
         self.htmlParser = htmpParser
     }
     
-    func sendAuth(userEmail: String, logoImage: Data?, completion: @escaping (Int, Bool) -> Void) {
+    func sendAuth(userEmail: String, logoImage: Data?, smtpInfo: SMTPInfo, completion: @escaping (Int, Bool) -> Void) {
         let code = Int.random(in: 10000...99999)
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
-            let fromUser = Mail.User(email: "poda_official@naver.com")
+            let hostSMTP =  SMTP(hostname: smtpInfo.smtpAddress, email: smtpInfo.email, password: smtpInfo.password)
+            let fromUser = Mail.User(email: smtpInfo.email)
             let toUser = Mail.User(email: userEmail)
-            
+
             if let imageData = logoImage {
                 let base64String = imageData.base64EncodedString(options: .lineLength64Characters)
                 
