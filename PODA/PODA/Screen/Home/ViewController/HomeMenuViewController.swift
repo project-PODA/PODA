@@ -120,9 +120,6 @@ class HomeMenuViewController: BaseViewController, UIConfigurable {
     @objc func didTapCloseButton() {
         dismiss(animated: true)
     }
-}
-
-extension HomeMenuViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
     @objc func didTapQrButton() {
         CameraAccessHelper.requestCameraAccess(presenter: self) { [weak self] isAuthorized in
