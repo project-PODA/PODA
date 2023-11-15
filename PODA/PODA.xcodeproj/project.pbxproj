@@ -35,7 +35,6 @@
 		276985952AD8E20D00A5100D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 276985932AD8E20D00A5100D /* LaunchScreen.storyboard */; };
 		2794D7AC2ADFFDD900B999EC /* PieceImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794D7AB2ADFFDD900B999EC /* PieceImageModel.swift */; };
 		2794D7AE2AE01C9700B999EC /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794D7AD2AE01C9700B999EC /* RealmManager.swift */; };
-		2794D7B02AE0216000B999EC /* TestPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2794D7AF2AE0216000B999EC /* TestPageViewController.swift */; };
 		27986DDE2AE125B900D27C84 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 27986DDD2AE125B900D27C84 /* RealmSwift */; };
 		27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */; };
 		27AA45822AEA400D0051C365 /* CameraAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */; };
@@ -179,7 +178,6 @@
 		276985962AD8E20D00A5100D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2794D7AB2ADFFDD900B999EC /* PieceImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieceImageModel.swift; sourceTree = "<group>"; };
 		2794D7AD2AE01C9700B999EC /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
-		2794D7AF2AE0216000B999EC /* TestPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPageViewController.swift; sourceTree = "<group>"; };
 		27AA457F2AEA240C0051C365 /* PhotoAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAccessHelper.swift; sourceTree = "<group>"; };
 		27AA45812AEA400D0051C365 /* CameraAccessHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAccessHelper.swift; sourceTree = "<group>"; };
 		27AD25B22AF37F5E00B2FDDF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -494,7 +492,6 @@
 			isa = PBXGroup;
 			children = (
 				27D2652A2ADD21B800B6E211 /* PieceViewController.swift */,
-				2794D7AF2AE0216000B999EC /* TestPageViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -1199,7 +1196,6 @@
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				2794D7AE2AE01C9700B999EC /* RealmManager.swift in Sources */,
 				27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */,
-				2794D7B02AE0216000B999EC /* TestPageViewController.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
 				26BFF5882AFE444400EF02E3 /* PieceShakeViewModel.swift in Sources */,
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
