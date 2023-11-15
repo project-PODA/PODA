@@ -355,29 +355,29 @@
 		26B79F6A2AE1133600455539 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				26BD63DA2AFA6CF800552469 /* Models */,
-				26B79F732AE113C500455539 /* Views */,
-				26B79F742AE113CE00455539 /* ViewModels */,
+				26BD63DA2AFA6CF800552469 /* Model */,
+				26B79F732AE113C500455539 /* ViewController */,
+				26B79F742AE113CE00455539 /* ViewModel */,
 				26B79F752AE113D600455539 /* Cell */,
 			);
 			path = Home;
 			sourceTree = "<group>";
 		};
-		26B79F732AE113C500455539 /* Views */ = {
+		26B79F732AE113C500455539 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
 				26B79F6B2AE1135000455539 /* HomeViewController.swift */,
 				26B79F6D2AE1139000455539 /* HomeMenuViewController.swift */,
 				26A7D4962AE56B3200810D63 /* MoreDiaryViewController.swift */,
 				26B79F712AE113B600455539 /* MorePieceViewController.swift */,
+				D82F57C12B04598E00BDEB00 /* OnboardingViewController.swift */,
 				26AE844C2AF1E451004CFB6B /* QRViewController.swift */,
 				D8777E052AF5649400DFEA6A /* PieceShakeViewController.swift */,
-				D82F57C12B04598E00BDEB00 /* OnboardingViewController.swift */,
 			);
-			path = Views;
+			path = ViewController;
 			sourceTree = "<group>";
 		};
-		26B79F742AE113CE00455539 /* ViewModels */ = {
+		26B79F742AE113CE00455539 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				265347502AF8F1BD00412A96 /* HomeViewModel.swift */,
@@ -385,7 +385,7 @@
 				26BFF5802AFE1A8E00EF02E3 /* MorePieceViewModel.swift */,
 				26BFF5872AFE444400EF02E3 /* PieceShakeViewModel.swift */,
 			);
-			path = ViewModels;
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		26B79F752AE113D600455539 /* Cell */ = {
@@ -399,13 +399,13 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
-		26BD63DA2AFA6CF800552469 /* Models */ = {
+		26BD63DA2AFA6CF800552469 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				26BD63DB2AFA6D1500552469 /* DiaryData.swift */,
 				26BFF5822AFE1CA300EF02E3 /* RealmPieceData.swift */,
 			);
-			path = Models;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		26BFF5842AFE3BF400EF02E3 /* ViewModels */ = {
