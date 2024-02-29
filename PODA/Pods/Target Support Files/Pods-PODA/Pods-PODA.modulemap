@@ -1,0 +1,6 @@
+framework module Pods_PODA {
+  umbrella header "Pods-PODA-umbrella.h"
+
+  export *
+  module * { export * }
+}
