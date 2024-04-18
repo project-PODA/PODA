@@ -78,6 +78,8 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
         super.viewDidLoad()
         configUI()
         setPieceUI()
+        // FIXME: - viewDidLoad 될 때마다 말고 한번만 등록할 수 없나
+        viewModel.registerNotification()
     }
     
     init(viewModel: MorePieceViewModel) {
@@ -148,40 +150,6 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
         }
     }
     
-//    func setPieceUI() {
-//        print("setPieceUI 실행됨")
-//        let pieceCount = self.viewModel.pieceCount
-//        self.pieceCountLabel.setUpLabel(title: "총 \(pieceCount)개", podaFont: .body1)
-//        
-//        if viewModel.pieceEmptyState {
-//            self.pieceCountLabel.isHidden = true
-//            self.emptyMorePieceLabel.isHidden = false
-//            self.pieceDateOrderButton.isHidden = true
-//            self.createDateOrderButton.isHidden = true
-//            self.pieceAlbumCollectionView.isHidden = true
-//        } else {
-//            self.pieceCountLabel.isHidden = false
-//            self.emptyMorePieceLabel.isHidden = true
-//            self.pieceDateOrderButton.isHidden = false
-//            self.createDateOrderButton.isHidden = false
-//            self.pieceAlbumCollectionView.isHidden = false
-//            
-//            print("MorePieceVC 172 isSortedByPieceDate: \(isSortedByPieceDate)")
-//            if self.viewModel.isSortedByPieceDate {
-//                self.viewModel.selectedOrderOptionState?(true)
-//            } else {
-//                self.viewModel.selectedOrderOptionState?(false)
-//            }
-//            
-//            if viewModel.pieceCountState {
-//                bubbleImageView.isHidden = false
-//                infoLabel.isHidden = false
-//            } else {
-//                bubbleImageView.isHidden = true
-//                infoLabel.isHidden = true
-//            }
-//        }
-//    }
     func setPieceUI() {
         let pieceCount = self.viewModel.pieceCount
         pieceCountLabel.setUpLabel(title: "총 \(pieceCount)개", podaFont: .body1)
@@ -217,6 +185,12 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
     }
     
     func bindViewModel() {
+        // 날짜변경 업데이트 후 reload
+        viewModel.pieceListLoaded = { [weak self] _ in
+            guard let self else { return }
+            self.pieceCollectionView.reloadData()
+        }
+        
         viewModel.latestPieceButtonSelectedState = { [weak self] isLatestPieceButtonOn in
             guard let self else { return }
             DispatchQueue.main.async {
@@ -245,7 +219,8 @@ class MorePieceViewController: BaseViewController, ViewModelBindable, UIConfigur
         let saveDeleteViewModel = SaveDeleteViewModel()
         let saveDeleteViewController = SaveDeleteViewController(viewModel: saveDeleteViewModel)
         saveDeleteViewModel.realmPieceList = viewModel.realmPieceList
-        saveDeleteViewModel.pieceList = viewModel.pieceList
+        //최신순, 오래된순으로 정렬된 리스트와 그 리스트의 index를 함께 넘겨줘야함
+        saveDeleteViewModel.pieceList = viewModel.sortedList
         saveDeleteViewModel.pieceIndex = index
         saveDeleteViewModel.isDiaryImage = false
         saveDeleteViewController.dateLabel.setUpLabel(title: viewModel.getPieceDate(index), podaFont: .body1)

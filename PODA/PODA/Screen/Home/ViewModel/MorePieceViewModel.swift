@@ -47,7 +47,7 @@ class MorePieceViewModel {
     }
     
     func getPieceDate(_ index: Int) -> String {
-        return pieceList[index].pieceDate
+        return sortedList[index].pieceDate
     }
     
     func getPieceImage(_ index: Int) -> UIImage {
@@ -62,5 +62,17 @@ class MorePieceViewModel {
     func didTapOldestPieceButton() {
         sortByLatest = false
         latestPieceButtonSelectedState?(false)
+    }
+    
+    func registerNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleModifyPieceDateNotification), name: PieceViewController.modifyPieceDateNotificationName, object: nil)
+    }
+    
+    @objc func handleModifyPieceDateNotification(_ notification: NSNotification) {
+        if let (targetId, modifiedDate) = notification.object as? (UUID, String) {
+            if let targetIndex = pieceList.firstIndex(where: { $0.id == targetId } ) {
+                pieceList[targetIndex].pieceDate.forEach { _ in pieceList[targetIndex].pieceDate = modifiedDate }
+            }
+        }
     }
 }

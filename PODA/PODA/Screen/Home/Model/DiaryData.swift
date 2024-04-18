@@ -16,6 +16,7 @@ struct DiaryData: Equatable {
     var ratio: Ratio
     var description: String
     
+    // FIXME: - diaryName으로 비교하고 있어서 이름이 동일한 다이어리가 있는 경우에는 위험,, 다른 비교 방법 찾기. uuid 추가?
     static func == (lhs: DiaryData, rhs: DiaryData) -> Bool {
 //        return lhs == rhs
         return lhs.diaryName == rhs.diaryName
