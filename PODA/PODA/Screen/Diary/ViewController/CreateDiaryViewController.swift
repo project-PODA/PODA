@@ -361,13 +361,13 @@ class CreateDiaryViewController: BaseViewController, ViewModelBindable, UIConfig
     }
     
     @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
-        if let imageView = recognizer.view as? UIImageView {
+        if let imageView = recognizer.view as? UIImageView, currentImageView == imageView {
             let translation = recognizer.translation(in: view)
             imageView.center = CGPoint(x: imageView.center.x + translation.x, y: imageView.center.y + translation.y)
             recognizer.setTranslation(CGPoint.zero, in: view)
             
             setCurrentImageView(imageView)
-        } else if let textView = recognizer.view as? UITextView {
+        } else if let textView = recognizer.view as? UITextView, currentTextView == textView {
             textView.resignFirstResponder()
             let translation = recognizer.translation(in: view)
             textView.center = CGPoint(x: textView.center.x + translation.x, y: textView.center.y + translation.y)
