@@ -8,11 +8,15 @@
 import UIKit
 import FirebaseCore
 import RealmSwift
+import NMapsMap
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        NMFAuthManager.shared().clientId = "e1j7f72o43"
+        
         var filePath: String = ""
         
         #if DEBUG

@@ -15,7 +15,8 @@ struct DiaryData: Equatable {
     var createDate: String
     var ratio: Ratio
     var description: String
-    
+
+    // FIX: - 다이어리 제목으로 비교하지말고 ID 생성하기
     static func == (lhs: DiaryData, rhs: DiaryData) -> Bool {
 //        return lhs == rhs
         return lhs.diaryName == rhs.diaryName

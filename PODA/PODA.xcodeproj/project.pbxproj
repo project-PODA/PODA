@@ -23,6 +23,13 @@
 		26B79F722AE113B600455539 /* MorePieceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F712AE113B600455539 /* MorePieceViewController.swift */; };
 		26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */; };
 		26BD63DC2AFA6D1500552469 /* DiaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BD63DB2AFA6D1500552469 /* DiaryData.swift */; };
+		26BE4FE22BF3AFDC00A4D947 /* ClientKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BE4FE12BF3AFDC00A4D947 /* ClientKey.swift */; };
+		26BE4FE42BF3AFF200A4D947 /* LocationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BE4FE32BF3AFF200A4D947 /* LocationData.swift */; };
+		26BE4FE62BF3B00300A4D947 /* LocationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BE4FE52BF3B00300A4D947 /* LocationModel.swift */; };
+		26BE4FE82BF3B01400A4D947 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BE4FE72BF3B01400A4D947 /* LocationService.swift */; };
+		26BE4FEA2BF3B02300A4D947 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BE4FE92BF3B02300A4D947 /* MapViewController.swift */; };
+		26BE4FEC2BF3B03300A4D947 /* PhotoBoothData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BE4FEB2BF3B03300A4D947 /* PhotoBoothData.swift */; };
+		26BE4FEE2BF3B04600A4D947 /* PhotoBoothService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BE4FED2BF3B04600A4D947 /* PhotoBoothService.swift */; };
 		26BFF5812AFE1A8E00EF02E3 /* MorePieceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5802AFE1A8E00EF02E3 /* MorePieceViewModel.swift */; };
 		26BFF5832AFE1CA300EF02E3 /* RealmPieceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5822AFE1CA300EF02E3 /* RealmPieceData.swift */; };
 		26BFF5862AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26BFF5852AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift */; };
@@ -168,6 +175,13 @@
 		26B79F712AE113B600455539 /* MorePieceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceViewController.swift; sourceTree = "<group>"; };
 		26B79F762AE113F400455539 /* DiaryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryCollectionViewCell.swift; sourceTree = "<group>"; };
 		26BD63DB2AFA6D1500552469 /* DiaryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryData.swift; sourceTree = "<group>"; };
+		26BE4FE12BF3AFDC00A4D947 /* ClientKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientKey.swift; sourceTree = "<group>"; };
+		26BE4FE32BF3AFF200A4D947 /* LocationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationData.swift; sourceTree = "<group>"; };
+		26BE4FE52BF3B00300A4D947 /* LocationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationModel.swift; sourceTree = "<group>"; };
+		26BE4FE72BF3B01400A4D947 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		26BE4FE92BF3B02300A4D947 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		26BE4FEB2BF3B03300A4D947 /* PhotoBoothData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoBoothData.swift; sourceTree = "<group>"; };
+		26BE4FED2BF3B04600A4D947 /* PhotoBoothService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoBoothService.swift; sourceTree = "<group>"; };
 		26BFF5802AFE1A8E00EF02E3 /* MorePieceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MorePieceViewModel.swift; sourceTree = "<group>"; };
 		26BFF5822AFE1CA300EF02E3 /* RealmPieceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmPieceData.swift; sourceTree = "<group>"; };
 		26BFF5852AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveDeleteViewModel.swift; sourceTree = "<group>"; };
@@ -317,7 +331,7 @@
 				D8433AD22AFB8C5400481E96 /* Info */,
 				D8B9B9122AF9C68D009BCDC5 /* Leave */,
 				D840F0322AFDBFC20022E88E /* Notice */,
-				1B883AA82AE4FA89004D5FCE /* ViewController(추후에 삭제) */,
+				1B883AA82AE4FA89004D5FCE /* ViewController(추후에 삭제) */,
 			);
 			path = Info;
 			sourceTree = "<group>";
@@ -331,12 +345,26 @@
 			path = Profile;
 			sourceTree = "<group>";
 		};
-		1B883AA82AE4FA89004D5FCE /* ViewController(추후에 삭제) */ = {
+		1B883AA82AE4FA89004D5FCE /* ViewController(추후에 삭제) */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "ViewController(추후에 삭제)";
 			path = "ViewController(추후에 삭제)";
+			sourceTree = "<group>";
+		};
+		262E3C572BD1734E00A1E303 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				26BE4FE12BF3AFDC00A4D947 /* ClientKey.swift */,
+				26BE4FE32BF3AFF200A4D947 /* LocationData.swift */,
+				26BE4FE52BF3B00300A4D947 /* LocationModel.swift */,
+				26BE4FE72BF3B01400A4D947 /* LocationService.swift */,
+				26BE4FE92BF3B02300A4D947 /* MapViewController.swift */,
+				26BE4FEB2BF3B03300A4D947 /* PhotoBoothData.swift */,
+				26BE4FED2BF3B04600A4D947 /* PhotoBoothService.swift */,
+			);
+			path = Map;
 			sourceTree = "<group>";
 		};
 		2683649B2AE2CDC100872ABB /* Detail */ = {
@@ -718,7 +746,6 @@
 				20FDEFBA73DBB650B3DC388A /* Pods-PODA.debug.xcconfig */,
 				B1D1756B85AB81F2128EE805 /* Pods-PODA.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -941,6 +968,7 @@
 		E28A2CF92ADC6B99004401D1 /* Screen */ = {
 			isa = PBXGroup;
 			children = (
+				262E3C572BD1734E00A1E303 /* Map */,
 				E24331C42AE0F33F00244A5A /* Diary */,
 				D879F77B2ADD941400FFB3F7 /* Login */,
 				D879F7782ADD93E900FFB3F7 /* SignUp */,
@@ -1162,9 +1190,9 @@
 			);
 			mainGroup = 2769857C2AD8E20B00A5100D;
 			packageReferences = (
-				5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit.git" */,
+				5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit" */,
 				E27DD4E42ADD15C5002B194A /* XCRemoteSwiftPackageReference "Then" */,
-				27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift.git" */,
+				27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				5FEC85B92AE14E0F000E5D4C /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				27DB5D0B2AE2532900489318 /* XCRemoteSwiftPackageReference "NVActivityIndicatorView" */,
 				27DB5D0E2AE2544100489318 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
@@ -1271,7 +1299,9 @@
 				5FD54B232AD910B30092D75B /* UIViewController + Extension.swift in Sources */,
 				2794D7AE2AE01C9700B999EC /* RealmManager.swift in Sources */,
 				27AA45802AEA240C0051C365 /* PhotoAccessHelper.swift in Sources */,
+				26BE4FE82BF3B01400A4D947 /* LocationService.swift in Sources */,
 				5FD54B362AD911EE0092D75B /* NetworkProtocol + NetworkError.swift in Sources */,
+				26BE4FEE2BF3B04600A4D947 /* PhotoBoothService.swift in Sources */,
 				26BFF5882AFE444400EF02E3 /* PieceShakeViewModel.swift in Sources */,
 				5F2B1CD92ADCD62900DAA9C8 /* UIFont + Enum.swift in Sources */,
 				5FD54B1E2AD910460092D75B /* BaseNavigationController.swift in Sources */,
@@ -1280,6 +1310,7 @@
 				5F5447C62AE6350E00365DB7 /* HTMLParser.swift in Sources */,
 				5FD54B342AD911D30092D75B /* NetworkManager.swift in Sources */,
 				5F54EBFA2ADFFF3100331E59 /* FirestorageDBManager.swift in Sources */,
+				26BE4FEC2BF3B03300A4D947 /* PhotoBoothData.swift in Sources */,
 				5FD54B3A2AD912340092D75B /* UserDefaultManager.swift in Sources */,
 				5FD54B522AD915690092D75B /* ProfileViewModel.swift in Sources */,
 				D879F77A2ADD940700FFB3F7 /* SignUpViewController.swift in Sources */,
@@ -1296,6 +1327,7 @@
 				2794D7AC2ADFFDD900B999EC /* PieceImageModel.swift in Sources */,
 				5FD54B4A2AD913460092D75B /* Logger.swift in Sources */,
 				26E3FBAF2AF52FA800680C76 /* MorePieceCollectionViewCell.swift in Sources */,
+				26BE4FE62BF3B00300A4D947 /* LocationModel.swift in Sources */,
 				E2981D1C2AFA41C100E8D262 /* DiaryAPI.swift in Sources */,
 				D879F7772ADD478400FFB3F7 /* LoginViewController.swift in Sources */,
 				2683649D2AE2CDDE00872ABB /* DetailViewController.swift in Sources */,
@@ -1315,11 +1347,13 @@
 				D8777E062AF5649400DFEA6A /* PieceShakeViewController.swift in Sources */,
 				26BFF5862AFE3C3D00EF02E3 /* SaveDeleteViewModel.swift in Sources */,
 				276985892AD8E20B00A5100D /* AppDelegate.swift in Sources */,
+				26BE4FE42BF3AFF200A4D947 /* LocationData.swift in Sources */,
 				5F54EBF62ADFFE8600331E59 /* Encodable + Extension.swift in Sources */,
 				E289E0852AFE2E8000037120 /* LoginUserInfo.swift in Sources */,
 				D8433AD62AFB92A000481E96 /* InfoViewModel.swift in Sources */,
 				5FE44D412AE93B1900DB3EB1 /* NoticeInfo.swift in Sources */,
 				5F5447C92AE6354B00365DB7 /* InquireManager.swift in Sources */,
+				26BE4FE22BF3AFDC00A4D947 /* ClientKey.swift in Sources */,
 				2769858B2AD8E20B00A5100D /* SceneDelegate.swift in Sources */,
 				26B79F772AE113F400455539 /* DiaryCollectionViewCell.swift in Sources */,
 				26BFF5812AFE1A8E00EF02E3 /* MorePieceViewModel.swift in Sources */,
@@ -1365,6 +1399,7 @@
 				5FD54B4F2AD913F00092D75B /* Date + Extension.swift in Sources */,
 				26B79F6E2AE1139000455539 /* HomeMenuViewController.swift in Sources */,
 				5F54EBF82ADFFEA700331E59 /* Decodable + Extension.swift in Sources */,
+				26BE4FEA2BF3B02300A4D947 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1510,6 +1545,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PODA;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "\"PODA\" 앱에서 사용자의 위치를 기반으로 한 포토부스 정보 제공을 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 추억 다이어리 꾸미기, 나의 추억 조각 등록 및 저장, 프로필 기능 이용을 위해 사진 라이브러리 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -1547,6 +1583,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PODA;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_NSCameraUsageDescription = "\"PODA\" 앱에서 QR코드 촬영기능 이용을 위해 카메라에 접근하도록 허용합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "\"PODA\" 앱에서 사용자의 위치를 기반으로 한 포토부스 정보 제공을 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "\"PODA\" 앱에서 추억 다이어리 꾸미기, 나의 추억 조각 등록 및 저장, 프로필 기능 이용을 위해 사진 라이브러리 접근하도록 허용합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -1594,7 +1631,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift.git" */ = {
+		27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
@@ -1618,7 +1655,7 @@
 				minimumVersion = 6.0.0;
 			};
 		};
-		5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit.git" */ = {
+		5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
@@ -1647,7 +1684,7 @@
 /* Begin XCSwiftPackageProductDependency section */
 		27986DDD2AE125B900D27C84 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift.git" */;
+			package = 27986DDC2AE125B900D27C84 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
 		};
 		27DB5D0C2AE2532900489318 /* NVActivityIndicatorView */ = {
@@ -1662,7 +1699,7 @@
 		};
 		5FD54B082AD90AE00092D75B /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit.git" */;
+			package = 5FD54B072AD90AE00092D75B /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 		5FEC85BA2AE14E0F000E5D4C /* FirebaseAnalytics */ = {

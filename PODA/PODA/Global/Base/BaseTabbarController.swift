@@ -37,7 +37,10 @@ class BaseTabbarController: UITabBarController {
         let infoViewController = InfoViewController(viewModel: InfoViewModel(fireAuthManager: fireAuthManager))
         let infoNavViewController = BaseNavigationController(rootViewController: infoViewController)
         
-        viewControllers = [qrViewController, homeViewController, infoNavViewController]
+        let mapViewController = MapViewController()
+        
+        //viewControllers = [qrViewController, homeViewController, infoNavViewController]
+        viewControllers = [qrViewController, homeViewController, mapViewController]
         
         // HomeViewController를 초기 실행될 앱으로 지정
         selectedIndex = 1
